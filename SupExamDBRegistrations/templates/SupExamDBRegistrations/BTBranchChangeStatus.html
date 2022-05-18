@@ -1,0 +1,49 @@
+{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+
+{% load static %}
+
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form action="" method="post" >
+            {% csrf_token %}
+      </div>
+       {{form.as_p}}
+      <div class = "row">
+       <h4>Branch Changes for the AYear:{{ayear}}</h4>
+      </div>
+        <div class = "row">
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">RollNo</td>
+                    <td style="border: 1px solid black;">CurrentDept</td>
+                    <td style="border: 1px solid black;">NewDept</td>
+                    <td style="border: 1px solid black;">AYear</td>
+            </th>
+            {% for sub  in rows %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ sub.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                  {{ sub.RollNo }}
+              </td>
+              <td style="border: 1px solid black;">
+                {{ sub.CurrentDept }}
+            </td>
+            <td style="border: 1px solid black;">
+              {{ sub.NewDept }}
+            </td>
+            <td style="border: 1px solid black;">
+            {{ sub.CurrentDept }}
+            </td>
+        </tr>
+            {% endfor %}
+    </div>
+    <input type = 'submit' name="Submit" value='Submit' hidden>
+    </form>
+       </div>
+      </div>
+{% endblock %}

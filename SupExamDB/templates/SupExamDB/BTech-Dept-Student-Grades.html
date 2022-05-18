@@ -1,0 +1,207 @@
+{% extends 'SupExamDB/printinghome.html' %}
+
+{% load static %}
+
+{% block sub %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    function printFunc(){
+      var prtContent = document.getElementById("grade-sheet");
+      
+      var WinPrint = window.open('', '', 'left=0,top=0,width=21cm,height=29.7cm,toolbar=0,scrollbars=0,status=0 ');
+      //var htmlStr = "<html> " + prtContent. + "</html>";
+      console.log(prtContent.outerHTML);
+      WinPrint.document.style = "width: 21cm; height:29.7cm; margin: 30mm 45mm 30mm 45mm;";
+      for(var ind =0;ind<8;ind++){
+        WinPrint.document.write("<br>")
+      }
+      WinPrint.document.write("<center><b>B.Tech.</b></center>");
+      WinPrint.document.write("<br>");
+      WinPrint.document.write("<br>");
+      WinPrint.document.write(  "<center> " + prtContent.outerHTML + "</center>" );
+      WinPrint.document.close();
+      WinPrint.focus();
+      WinPrint.print();
+      WinPrint.close();
+    }
+  </script>
+
+<div class="container">
+    <div class="row">
+            <div class="col-sm-9">
+              {% if studentEventPage.has_other_pages %}
+                <nav aria-label="Page navigation conatiner"></nav>
+                <ul class="pagination justify-content-center">
+                  {% if studentEventPage.has_previous %}
+                  <li><a href="?page={{ studentEventPage.previous_page_number }}" class="page-link">&laquo; PREV </a></li>
+                  {% endif %}
+                  {% if studentEventPage.has_next %}
+                  <li><a href="?page={{ studentEventPage.next_page_number }}" class="page-link"> NEXT &raquo;</a></li>
+                {% endif %}
+                </ul>
+                </nav>
+              {% endif %}
+            </div>
+            <div class="col-sm-2">
+
+            </div>
+            <div class="col-sm-1">
+              <button onclick="printFunc()">Print</button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class=container id="grade-sheet">
+      <table class="table" id="stud-details" width="85%"" cellpadding=5 style="border-collapse: collapse; " >
+          <th scope="col" class="col-sm-2"></th>
+          <th scope="col" class="col-sm-6"></th>
+          <th scope="col" class="col-sm-2"></th>
+          <th scope="col" class="col-sm-2"></th>
+        <tbody id="stud-details-body">
+         <tr>
+           <td style="text-align: left;">
+            {% if 'Cycle' in programmeDetails.Specialization %} 
+              <b>Cycle:</b>
+            {% else %}
+              <b>Branch:</b>
+            {% endif %}
+           </td>
+           <td style="text-align: left;">
+              <b>{{programmeDetails.Specialization}}</b>
+           </td>
+           <td style="text-align: right;">
+            <b>Year/Sem:</b>
+           </td>
+           <td style="text-align: left;">
+              {{yearSemStr}}
+           </td>
+         </tr>
+         <tr>
+          <td style="text-align: left;">
+            {% if 'Cycle' in programmeDetails.Specialization %} 
+              <b>RegNo:</b>
+            {% else %}
+              <b>RollNo:</b>
+            {% endif %}
+           </td>
+           <td style="text-align: left;">
+            {% if 'Cycle' in programmeDetails.Specialization %} 
+              <b>{{studentDetails.RegNo}}</b>
+            {% else %}
+              <b>{{studentDetails.RollNo}}</b>
+            {% endif %}
+           </td>
+           <td style="text-align: right;">
+            <b>Exams Held In:</b>
+           </td>
+           <td style="text-align: left;">
+              {{heldInStr}}
+           </td>
+         </tr>
+         <tr>
+          <td style="text-align: left;">
+            <b>Name:</b>
+           </td>
+           <td style="text-align: left;">
+            <b>{{studentDetails.Name}}</b>
+           </td>
+         </tr>
+        </tbody>  
+      </table>
+      <br>
+      <table class="table"  id="grades" width="85%"" cellpadding=5 style="border-collapse: collapse; border: 1 px solid black;" width=>
+      <thead>
+        <tr>
+          <th scope="col" class="col-sm-2" style="border: 1px solid black; text-align: center;"><b>Sub Code</b></th>
+          <th scope="col" class="col-sm-6" style="text-align: left; border: 1px solid black;"><b>Subject Name</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>Credits</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>Grade</b></th>
+        </tr>
+      </thead>
+      <tbody id="grades-table-body">
+        {% for studentGradesRec in studentGrades %}
+        <tr>
+          {% if forloop.last %}
+          <td style="border-left: 1px solid black; text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="border-left: 1px solid black; text-align: center;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.SubCode}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: left;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: left;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.SubName}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: center;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.Credits}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: center;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.Grade}}
+          </td>
+        </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+    
+    <br>
+    <table class="table" id="CGPA" width="85%"" cellpadding=5 style="border-collapse: collapse;" >
+      <thead>
+        <tr>
+          <th scope="col" class="col-sm-12" ></th>
+          <th scope="col" class="col-sm-2"></th>
+          <th scope="col" class="col-sm-2"></th>
+          <th scope="col" class="col-sm-2"></th>
+        </tr>
+      </thead>
+      <tbody id="CGPA-body">
+        {% if eventStatus.IsRegular %} 
+        <tr>
+          <td>
+            <b>Semester Grade Point Average(SGPA): {{studentCGPA.SGPA}}</b>
+          </td>
+          <td>
+
+          </td>
+          <td>
+
+          </td>
+          <td>
+
+          </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Cumulative Grade Point Average(CGPA): {{studentCGPA.CGPA}}</b>
+            </td>
+            <td>
+  
+            </td>
+            <td>
+  
+            </td>
+            <td>
+  
+            </td>
+            </tr>
+        {% endif %}
+        
+
+      </tbody>
+    </table>
+    <!-- <p id="CGPA">
+
+    </p> -->
+    </div>
+{% endblock %}

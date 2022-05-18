@@ -1,0 +1,40 @@
+
+{% extends 'SupExamDBRegistrations/registrationcancellation.html' %}
+
+{% load static %}
+
+{% block sub %}
+<div class="container">
+    <div class="row">
+        
+      </div>
+       {{ form.as_p}}
+      <div class = "row">
+       
+      </div>
+        <div class = "row">
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">SubCode </td>
+                    <td style="border: 1px solid black;">BYear </td>
+                    <td style="border: 1px solid black;">BSem </td>
+            </th>
+            {% for sub  in SubCodes %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ sub.SubCode }}
+                </td>
+                <td style="border: 1px solid black;">
+                  {{ BYear }}
+              </td>
+              <td style="border: 1px solid black;">
+                {{ BSem }}
+            </td>
+            </tr>
+            {% endfor %}
+    </div>
+        
+       </div>
+      </div>
+{% endblock %}

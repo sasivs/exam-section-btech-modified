@@ -1,0 +1,60 @@
+{% extends 'GradesProcessing/gphome1.html' %}
+
+{% block sub%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    
+     $(document).ready(function(){
+       $subcodes = $("#subcodes");
+        $subcodes.on("change", function(){
+          var studentIDBox = document.getElementById('subcodes');
+          var anchorElement = document.getElementById("printing-form-ref");
+          var myUrl = "{% url 'BTechMakeupMarksPage1' 8888 %}";
+          anchorElement.href = myUrl.replace('8888', studentIDBox.options[studentIDBox.selectedIndex].value);
+          console.log(myUrl.replace('8888', studentIDBox.options[studentIDBox.selectedIndex].value));
+        });
+     });  
+ </script>
+
+<div class="container">
+    <div class="row">
+            <div class="col-sm-2">
+              <b>SubCode</b> <br>
+              <select id="subcodes">
+                  <option disabled selected="true">-- select SubCode --</option>
+                  {% for rec in studentSubCodes %}
+                      <option value={{rec.SubCode}}> {{rec.SubCode}} </option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-1">
+                
+            </div>
+            <div class="col-sm-2">
+              
+            </div>
+            <div class="col-sm-1">
+              
+          </div>
+            <div class="col-sm-2">
+                
+            </div>
+            <div class="col-sm-2">
+
+            </div>
+            <div class="col-sm-2">
+              <b>Get Roll nos</b> <br>
+              <center>
+                    <a class="btn btn-primary" href="#" role="button" id="printing-form-ref">Go</a>
+                </center>
+            </div>
+        </div>
+      
+    <!-- <p id="CGPA">
+
+    </p> -->
+    
+</div>
+
+
+{% endblock %}

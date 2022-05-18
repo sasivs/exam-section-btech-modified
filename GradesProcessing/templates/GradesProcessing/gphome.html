@@ -1,0 +1,27 @@
+{% extends 'Registrations/home.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTechMakeupMarks' %}">Makeup Registraion Marks </a>
+                  </li>               
+                 
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'StudentMakeupMarkStatus' %}">StudentMakeupMarkStatus </a>
+                  </li> 
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTechMakeupResults' %}">StudentMakeupResults </a>
+                  </li>
+              </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %}
+            {% endblock %}
+        </div>
+       </div>
+{% endblock %}

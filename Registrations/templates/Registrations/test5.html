@@ -1,0 +1,13 @@
+{% extends 'Registrations/index.html' %}
+
+{% comment %} used to call forms {% endcomment %}
+{% block sub %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for choice in form.a %}
+        {{choice.choice_label}}
+        <div class='form-check form-check-inline'>{{choice.tag}} </div> 
+        {% endfor %}
+        <input type = 'submit' value='Submit'>
+    </form>
+{% endblock %} 

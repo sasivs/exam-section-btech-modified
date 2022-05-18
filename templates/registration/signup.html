@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="col-md-5" style="margin-top: 42px" >
+
+        <div class="row">
+            <div class="col-sm-4"><a href="{% url 'home' %}" style="color: white;text-decoration: none;"><button type="button" class="btn btn-secondary  ">Go back</button></a>
+                <a href="{% url 'faculty_signup' %}" style="text-decoration: none; "><img src="{% static 'img/faculty.png' %}" class="img-responsive"  title="Faculty" style="margin: 0 auto;">
+                    <button class="btn btn-info center-block" style="margin-top: 15px; color: white">Faculty</button>
+                </a>
+            </div>
+            <div class="col-sm-4" style="margin-top: 35px;">
+                <a href="{% url 'ntstaff_signup' %}" style="text-decoration: none;"><img src="{% static 'img/staff.png' %}" class="img-responsive"   title="Staff" style="margin: 0 auto;">
+                    <button class="btn btn-info center-block" style="margin-top: 15px;color: white;">Staff</button>
+                </a>
+            </div>
+            <div class="col-sm-4"  style="margin-top: 35px;">
+                <a href="{% url 'student_signup' %}" style="text-decoration: none;"><img src="{% static 'img/student.png' %}" class="img-responsive"   title="Student" style="margin: 0 auto;">
+                    <button class="btn btn-info center-block" style="margin-top: 15px;color: white;">Student</button>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

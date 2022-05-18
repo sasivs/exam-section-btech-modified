@@ -1,0 +1,33 @@
+{% extends 'SupExamDB/suphome.html' %}
+{% block content %}
+{% for deptKey,deptVal in summaryStats.items  %}
+    {% for yearKey, yearVal in deptVal.items %}
+        <div class="container">
+    <table class="table"  id="grades" width="85%"" cellpadding=5 style="border-collapse: collapse; border: 1 px solid black;" width=>
+      <thead> <center> <h4>  {{yearKey}} {{deptKey}} </h4> </center>
+        <tr>
+          <th scope="col" class="col-sm-1" style="border: 1px solid black; text-align: center;"><b>SubCode</b></th>
+        <th scope="col" class="col-sm-1" style="border: 1px solid black; text-align: center;"><b>Regulation</b></th>
+          <th scope="col" class="col-sm-7" style="text-align: left; border: 1px solid black;"><b>SubName</b></th>
+          <th scope="col" class="col-sm-1" style="text-align: center; border: 1px solid black;"><b>Passed</b></th>
+          <th scope="col" class="col-sm-1" style="text-align: center; border: 1px solid black;"><b>Failed</b></th>
+          <th scope="col" class="col-sm-1" style="text-align: center; border: 1px solid black;"><b>Total</b></th>
+        </tr>
+      </thead>
+      <tbody id="grades-table-body">
+        {% for rec in yearVal %}
+            <tr>
+             <td style="border: 1px solid black; text-align: center;">{{rec.SubCode}}</td>
+             <td style="border: 1px solid black; text-align: center;">{% if rec.Regulation == 2 %} R17 {% else %} R18 {% endif %} </td> 
+             <td style="border: 1px solid black; text-align: left;">{{rec.SubName}} </td> 
+             <td style="border: 1px solid black; text-align: center;">{{rec.Passed}} </td>
+             <td style="border: 1px solid black; text-align: center;">{{rec.Failed}} </td>
+             <td style="border: 1px solid black; text-align: center;">{{rec.Total}} </td> 
+            </tr>
+        {% endfor %}
+      </tbody>
+        </table>
+    </div>
+    {% endfor %}
+{% endfor %}
+{% endblock %}
