@@ -1,0 +1,33 @@
+{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+
+{% block sub %}
+<div class="container">
+  <div class="row">
+      <h1> Update Cycle name for not proimoted students</h1>
+          <form action="" method="post">
+              {% csrf_token %}
+              <div class="container">
+                  <table>
+                      <th>
+                          <tr>
+                              <td style="border: 1px solid black;">RegNo </td>
+                              <td style="border: 1px solid black;">Update Cycle</td>
+                          </tr>
+                      </th>
+                      {% for field  in form.myFields %}
+                          <tr>
+                              <td style="border: 1px solid black;">
+                                  {{ field.0 }}
+                              </td>
+                              <td style="border: 1px solid black;">
+                                  {{ field.1 }}
+                              </td>
+                          </tr>
+                      {% endfor %}
+                  </table>
+                  <input type = 'submit' value='Submit'>
+              </div>
+          </form>
+  </div>
+</div>
+{% endblock %}

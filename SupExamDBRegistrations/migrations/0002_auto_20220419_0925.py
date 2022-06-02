@@ -10,27 +10,27 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='Subjects_Staging',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('SubCode', models.CharField(max_length=10)),
-                ('SubName', models.CharField(max_length=100)),
-                ('BYear', models.IntegerField()),
-                ('BSem', models.IntegerField()),
-                ('Dept', models.IntegerField()),
-                ('OfferedYear', models.IntegerField()),
-                ('Regulation', models.IntegerField()),
-                ('Creditable', models.IntegerField()),
-                ('Credits', models.IntegerField()),
-                ('Type', models.CharField(max_length=10)),
-                ('Category', models.CharField(max_length=10)),
-            ],
-            options={
-                'db_table': 'Subjects_Staging',
-                'managed': False,
-            },
-        ),
+        # migrations.CreateModel(
+        #     name='Subjects_Staging',
+        #     fields=[
+        #         ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+        #         ('SubCode', models.CharField(max_length=10)),
+        #         ('SubName', models.CharField(max_length=100)),
+        #         ('BYear', models.IntegerField()),
+        #         ('BSem', models.IntegerField()),
+        #         ('Dept', models.IntegerField()),
+        #         ('OfferedYear', models.IntegerField()),
+        #         ('Regulation', models.IntegerField()),
+        #         ('Creditable', models.IntegerField()),
+        #         ('Credits', models.IntegerField()),
+        #         ('Type', models.CharField(max_length=10)),
+        #         ('Category', models.CharField(max_length=10)),
+        #     ],
+        #     options={
+        #         'db_table': 'Subjects_Staging',
+        #         'managed': False,
+        #     },
+        # ),
         migrations.AlterModelOptions(
             name='studentbacklogs',
             options={'managed': False},

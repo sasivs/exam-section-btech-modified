@@ -22,8 +22,17 @@
             </div>
           </div>
           {% if RollNo %}
-          <div> <p> Students who have R grade in a previous offfering of the course should attend in study mode. By default the option that gets selected is Study mode for those cases. You are requested to not change that. </p>
-          <p> This is the registration page for {{RollNo}} : {{Name}} </p> </div>
+          <div> 
+            {% if msg == 2 %}
+            <p><strong>**Please select mode of study for selected subjects**</strong></p>
+            {% endif %}
+              {% if msg == 1 %}
+              <p><strong>**Number of credits exceeded**</strong></p>
+              <p><strong>**Study mode({{ study }}) + Exam mode({{ exam }}) credits should be less than 34 while Study mode ({{ study }}) credits should be less than 32**</strong></p>
+              {% endif %}  
+            <p> Students who have R grade in a previous offfering of the course should attend in study mode. By default the option that gets selected is Study mode for those cases. You are requested to not change that. </p>
+          <p> This is the registration page for {{RollNo}} : {{Name}} </p> 
+        </div>
           {% endif %}
           <div class="container">
               <table>
@@ -32,6 +41,7 @@
                           <td style="border: 1px solid black;">SubCode </td>
                           <td style="border: 1px solid black;">SubName</td>
                           <td style="border: 1px solid black;">Credits</td>
+                          <td style="border: 1px solid black;">Mode of Registration</td>
                           <td style="border: 1px solid black;">Selection(Y/N)</td>
                           <td style="border: 1px solid black;">Mode(Study)</td>
                           <td style="border: 1px solid black;">Mode(Exam)</td>
@@ -48,6 +58,9 @@
                           <td style="border: 1px solid black;">
                               {{ field.2 }}
                           </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.6 }}
+                        </td>
                           <td style="border: 1px solid black;">
                               {{ field.3 }}
                           </td>

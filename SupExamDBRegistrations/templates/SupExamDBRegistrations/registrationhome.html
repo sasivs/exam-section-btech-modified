@@ -7,8 +7,11 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'AddRegulation' %}">Add Regulation</a>
+              </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTRegistrationUpload' %}">Regular Registrations</a>
+                    <a class="nav-link" href="{% url 'SupBTRegistrations' %}">Regular Registrations</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTBacklogRegistrations' %}">Backlog Registrations</a>
@@ -29,7 +32,45 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTBranchChangeStatus' %}">Branch Change Status</a>
                   </li>
-                  
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTRegistrationsFinalize' %}">Finalize Registrations</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'StudentInfoFileUpload' %}">Upload Student Info</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GenerateRollList' %}">Generate Roll List</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'OpenElectiveRegistrations' %}">Open Elective Registrations</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'DepartmentElectiveRegistrationsAll' %}">DEC Register all</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'DepartmentElectiveRegistrationsUpload' %}">DEC Registrations File Upload</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'DroppedRegularRegistrations' %}">Dropped Regular Courses Registrations</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesUpload' %}">Upload Grades</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesFinalize' %}">Finalize Grades</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MakeupRegistrations' %}">Makeup Registrations</a>
+                  </li>  
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'NotPromotedList' %}">Not Promoted List</a>
+                  </li>  
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'NotPromotedUpload' %}">Upload Not Promoted List</a>
+                  </li>  
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'NotPromotedStatus' %}">Not Promoted Status</a>
+                  </li>  
               </ul>
         </div>
         <div class="col-md-10">

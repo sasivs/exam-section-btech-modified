@@ -1,0 +1,56 @@
+{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+
+{% block sub %}
+ 
+
+
+
+<div class="container">
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Generate</button>
+        </form>
+       </div>
+</div>
+<!-- {% if notPromoted %} -->
+<div class="container">
+  <div class="row">
+    <table>
+      <th>
+          <tr>
+              <td style="border: 1px solid black;">RegNo </td>
+              <td style="border: 1px solid black;">AYear</td>
+              <td style="border: 1px solid black;">BYear</td>
+              <td style="border: 1px solid black;">PoA</td>
+          </tr>
+      </th>
+      {% for np  in notPromoted %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ np.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.AYear }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.BYear }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.PoA }}
+                </td>
+            </tr>
+            {% endfor %}
+    </table>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <a href="{% url 'DownloadFile' %}" download="{{ download_name }}">
+      <button type="button">Download</button>
+    </a>
+  </div>
+</div>
+<!-- {% endif %} -->
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+
+{% load static %}
+
+{% block sub %}
+ 
+
+
+
+<div class="container">
+    <div class="row">
+        <form action="" method="post" >
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" value="submit">Finalize</button> 
+        </form>
+    </div>
+</div>
+{% endblock %}

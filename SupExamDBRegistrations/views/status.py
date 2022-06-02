@@ -49,7 +49,8 @@ def btech_regular_registration_status(request):
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            mode = strs[5]
+            regulation = int(strs[5])
+            mode = strs[6]
             if(mode=='R'):
                 deptObj = ProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 #print(deptObj)

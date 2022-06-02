@@ -15,7 +15,7 @@
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
     <a class="navbar-brand" href="#">
-       <img src="{% static 'gradeSheetPrinting/images/logo.jpg' %}" alt="" width="80" height="80">
+       <img src="{% static 'gradeSheetPrinting/images/nit-logo.png' %}" alt="" width="80" height="80">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -40,7 +40,7 @@
           <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
             <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
             <li><a class="dropdown-item" href="{% url 'SupBTRegistrationStatusHome' %}">Registration Status</a></li>
-            <li><a class="dropdown-item" href="#">ManageRegistrations</a></li>
+            <!-- <li><a class="dropdown-item" href="{% url 'ManageRegistrations' %}">ManageRegistrations</a></li> -->
             <li><a class="dropdown-item" href="{% url 'SupBTCancellationHome' %}">Student Cancellation</a></li>
             <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
           </ul>
