@@ -1,0 +1,43 @@
+{% extends 'SupExamDBRegistrations/registrationhome.html' %} {% block sub %}
+
+
+
+
+<div class="container">
+    <div class="row">
+        <strong> Your data upload for grade points Information has the following errors</strong>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="container">
+                <table>
+                    <th>
+                        <tr>
+                            <td style="border: 1px solid black;">Regulation </td>
+                            <td style="border: 1px solid black;">Grade </td>
+                            <td style="border: 1px solid black;">Points</td>
+                            <td style="border: 1px solid black;">Do you want to update(Y/N)</td>
+                        </tr>
+                    </th>
+                    {% for field in form.myFields %}
+                    <tr>
+                        <td style="border: 1px solid black;">
+                            {{ field.0 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.1 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.2 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.3 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <input type='submit' value='Submit'>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

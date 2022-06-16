@@ -55,9 +55,12 @@ def dept_elective_regs_upload(request):
             for chunk in file.chunks():
                 data += chunk
             dataset = XLSX().create_dataset(data)
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    Dept=dept,Mode=mode,Regulation=regulation)
+            currentRegEventId = currentRegEventId[0].id
             for i in range(len(dataset)):
                 regNo = int(dataset[i][0])
-                reg = StudentRegistrations_Staging(RegNo=regNo, AYear=ayear,ASem=asem,BYear=byear,Mode=1,sub_id=subId)
+                reg = StudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId,Mode=1,sub_id=subId)
                 reg.save()
             return render(request, 'SupExamDBRegistrations/Dec_Regs_success.html')
         elif regId != '--Choose Event--':

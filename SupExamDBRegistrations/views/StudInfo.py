@@ -1,3 +1,4 @@
+from distutils.log import error
 from typing import Set
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -6,7 +7,7 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from SupExamDBRegistrations.forms import StudentInfoFileUpload, StudentInfoUpdateForm
+from SupExamDBRegistrations.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm, UpdateNonFirstYearSectionForm
 from SupExamDBRegistrations.models import StudentInfo, StudentInfoResource
 from .home import is_Superintendent
 from tablib import Dataset
@@ -94,3 +95,55 @@ def student_info_error_handler(request):
         print(studInfoErrRows[0])
         form = StudentInfoUpdateForm(Options = studInfoErrRows)
     return(render(request, 'SupExamDBRegistrations/BTStudentInfoUploadErrorHandler.html',{'form':form}))
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def update_rollno(request):
+    if request.method == 'POST':
+        form = UpdateRollNumberForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            data = bytes()
+            for chunk in file.chunks():
+                data+=chunk
+            dataset = XLSX().create_dataset(data)
+            errorStudentInfoRolls = []
+            for i in range(len(dataset)):
+                row = dataset[i]
+                # print(row, row[0])
+                if StudentInfo.objects.filter(RegNo=row[0]).exists():
+                    studentRow = StudentInfo.objects.get(RegNo=row[0])
+                    studentRow.RollNo = row[1]
+                    studentRow.save()
+                else:
+                    errorStudentInfoRolls.append(row)
+        return render(request, 'SUpExamDBRegistrations/UpdateRollNumberSuccess.html', {'form':form, 'errorStudentInfoRolls':errorStudentInfoRolls})
+    else:
+        form = UpdateRollNumberForm()
+    return render(request, 'SupExamDBRegistrations/UpdateRollNumber.html', {'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def update_non_first_year_section(request):
+    form = UpdateNonFirstYearSectionForm(request.POST, request.FILES)
+    if request.method == 'POST':
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            data = bytes()
+            for chunk in file.chunks():
+                data+=chunk
+            dataset = XLSX().create_dataset(data)
+            errorStudentInfoSection = []
+            for i in range(len(dataset)):
+                row = dataset[i]
+                if StudentInfo.objects.filter(RegNo=row[0]).exists():
+                    studentRow = StudentInfo.objects.get(RegNo=row[0])
+                    studentRow.NonFirstYearSection = row[3]
+                    studentRow.save()
+                else:
+                    errorStudentInfoSection.append(row)
+        return render(request, 'SUpExamDBRegistrations/UpdateNonFirstYearSectionSuccess.html', {'form':form, \
+            'errorStudentInfoSection':errorStudentInfoSection})
+    else:
+        form = UpdateNonFirstYearSectionForm()
+    return render(request, 'SupExamDBRegistrations/UpdateNonFirstYearSection.html', {'form':form})

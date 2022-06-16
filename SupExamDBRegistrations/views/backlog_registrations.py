@@ -36,19 +36,14 @@ def btech_backlog_registration(request):
         currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
         currentRegEventId = currentRegEventId[0].id
-        con = {key:request.POST[key] for key in request.POST.keys()} 
-        if('RegNo' in request.POST.keys()):
-            studentBacklogs = StudentBacklogs.objects.filter(BYear=byear,Dept=dept)
-            reg_status = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
-            studentRegistrations=[]
-            for regevent in reg_status:
-                studentRegistrations += list(StudentRegistrations_Staging.objects.\
-                    filter(RegNo=request.POST['RegNo'],RegEventId=regevent.id))
-            for row in studentBacklogs:
-                for entry in studentRegistrations:
-                    if row.sub_id == entry.sub_id:
-                        con[str('RadioMode'+str(row.sub_id))] = list(str(entry.Mode))
-        form = BacklogRegistrationForm(con)
+        con = {} 
+        if 'Submit' not in request.POST.keys() and 'RegEvent' in request.POST.keys():
+            con['RegEvent']=request.POST['RegEvent']
+            if 'RegNo' in request.POST.keys():
+                con['RegNo']=request.POST['RegNo']
+            form = BacklogRegistrationForm(con)
+        elif 'RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST:
+            form = BacklogRegistrationForm(request.POST)
         if not 'RegNo' in request.POST.keys():
             pass 
         elif not 'Submit' in request.POST.keys():
@@ -97,7 +92,7 @@ def btech_backlog_registration(request):
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
                             StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
-                                sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
+                                sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
                         elif(sub[5]):
                             #delete record from registration table
                             StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
@@ -119,14 +114,14 @@ def btech_backlog_registration(request):
                     context['Name'] = studentInfo[0].Name  
                 return render(request, 'SupExamDBRegistrations/BTBacklogRegistration.html',context)
         else:
-            print("form validation failed")             
+            print("form validation failed")   
+            print(form.errors.as_data())          
     else:
         form = BacklogRegistrationForm()
     context = {'form':form, 'msg':0}
     if(len(studentInfo)!=0):
         context['RollNo'] = studentInfo[0].RollNo
         context['Name'] = studentInfo[0].Name  
-    print(request.POST)
     return render(request, 'SupExamDBRegistrations/BTBacklogRegistration.html',context)
 
 @login_required(login_url="/login/")

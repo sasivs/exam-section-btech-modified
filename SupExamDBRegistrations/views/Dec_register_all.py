@@ -51,9 +51,12 @@ def dept_elective_regs_all(request):
             else:
                 rolls = RollLists.objects.filter(Cycle=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
             print(rolls)
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    Dept=dept,Mode=mode,Regulation=regulation)
+            currentRegEventId = currentRegEventId[0].id
             for i in rolls:
                 regNo = i['RegNo']
-                reg = StudentRegistrations_Staging(RegNo=regNo, AYear=ayear,ASem=asem,BYear=byear,Mode=1,sub_id=subId)
+                reg = StudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                 reg.save()
             return render(request, 'SupExamDBRegistrations/Dec_Regs_success.html')
         elif regId != '--Choose Event--':

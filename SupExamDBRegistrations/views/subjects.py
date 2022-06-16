@@ -27,7 +27,6 @@ def subject_upload(request):
         regIDs += [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs1]
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
-            print(form.cleaned_data['regID'])
             if(form.cleaned_data['regID']!='--Choose Event--'):
                 (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(form.cleaned_data['regID'])]
                 file = form.cleaned_data['file']
@@ -35,7 +34,6 @@ def subject_upload(request):
                 for chunk in file.chunks():
                     data += chunk
                 dataset = XLSX().create_dataset(data)
-                # mode = 1 # hard-coded to study mode as these are regular registrations
                 newDataset= Dataset()
                 errorDataset = Dataset()#To store subjects rows which are not related to present registration event
                 errorDataset.headers = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
@@ -56,7 +54,7 @@ def subject_upload(request):
                 result = Subject_resource.import_data(newDataset, dry_run=True)
                 if not result.has_errors():
                     Subject_resource.import_data(newDataset, dry_run=False)
-                    if(errorDataset!=None):
+                    if(len(errorDataset)!=0):
                         subErrRows = [ (errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3],\
                             errorDataset[i][4],errorDataset[i][5],errorDataset[i][6],errorDataset[i][7],errorDataset[i][8],\
                             errorDataset[i][9], errorDataset[i][10] ) for i in range(len(errorDataset))]
@@ -66,10 +64,8 @@ def subject_upload(request):
                     return(render(request,'SupExamDBRegistrations/BTSubjectsUploadSuccess.html'))
                 else:
                     errors = result.row_errors()
-                    print(errors[0][1][0].error)
                     indices = set([i for i in range(len(newDataset))])    
                     errorIndices = set([i[0]-1 for i in errors])
-                    print(errors[0][0])
                     cleanIndices = indices.difference(errorIndices)
                     cleanDataset = Dataset()
                     for i in list(cleanIndices):
@@ -93,7 +89,7 @@ def subject_upload(request):
                         errorData[i][9], errorData[i][10] ) for i in range(len(errorData))]
                     request.session['subErrRows'] = subErrRows
                     request.session['currentRegEventId'] = currentRegEventId                
-                    return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler' ))
+                    return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
 
         else:
             print(form.errors)

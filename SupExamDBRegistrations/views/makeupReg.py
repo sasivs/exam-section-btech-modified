@@ -34,8 +34,14 @@ def makeup_registrations(request):
         currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
         currentRegEventId = currentRegEventId[0].id
-        con = {key:request.POST[key] for key in request.POST.keys()}
-        form = MakeupRegistrationsForm(con)
+        con = {} 
+        if 'Submit' not in request.POST.keys() and 'RegEvent' in request.POST.keys():
+            con['RegEvent']=request.POST['RegEvent']
+            if 'RegNo' in request.POST.keys():
+                con['RegNo']=request.POST['RegNo']
+            form = MakeupRegistrationsForm(con)
+        elif 'RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST:
+            form = MakeupRegistrationsForm(request.POST)
         if 'RegNo' not in request.POST.keys() :
             pass
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' not in request.POST.keys():

@@ -6,8 +6,9 @@ from django.conf.urls.static import static
 from SupExamDBRegistrations.views import backlog_registrations, cancellations, first_backlog_registrations, grades, \
     home, manage, open_elective_registrations, grades,\
     regular_registrations, status, subjects, StudInfo, RollList, branch_change, add_regulation, \
-        Dec_upload_file,Dec_register_all, dropped_regular_regs, makeupReg, not_promoted
+        Dec_upload_file,Dec_register_all, dropped_regular_regs, makeupReg, not_promoted, mandatory_credits, grade_points
 from SupExamDB import views as supviews
+# from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
     path('sindex',supviews.sup_home, name='sindex'),
     path("logout", supviews.logout_request, name="logout_request"),
@@ -18,6 +19,8 @@ urlpatterns = [
 
     path('StudentInfoFileUpload',StudInfo.StudInfoFileUpload, name = 'StudentInfoFileUpload'),
     path('StudentInfoUploadErrorHandler', StudInfo.student_info_error_handler, name = 'StudentInfoUploadErrorHandler'),
+    path('UpdateRollNumber', StudInfo.update_rollno, name='UpdateRollNumber'),
+    path('UpdateNonFirstYearSection', StudInfo.update_non_first_year_section, name='UpdateNonFirstYearSection'),
 
     path('SupBTRegistrations', regular_registrations.btech_regular_registration, name = 'SupBTRegistrations'),
     path('SupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'SupBTRegistrationsFinalize'),
@@ -30,10 +33,11 @@ urlpatterns = [
     path('getBTRegisteredSubjects/<int:regNo>/',regular_registrations.get_btregistered_subjects,name='getBTRegisteredSubjects'),
     
     path('SupBTBacklogRegistrations', backlog_registrations.btech_backlog_registration, name = 'SupBTBacklogRegistrations'),
-    #path('SupBTBacklogRegistrationStatus', regular_registrations.btech_backlog_registration_status, name = 'SupBTBacklogRegistrationStatus'),
     #Registration Status
+    path('SupBTBacklogRegistrationStatus', status.btech_backlog_registration_status, name = 'SupBTBacklogRegistrationStatus'),
     path('SupBTRegistrationStatusHome', status.btech_registration_status_home, name = 'SupBTRegistrationStatusHome'),
     path('SupBTRegularRegistrationStatus', status.btech_regular_registration_status, name = 'SupBTRegularRegistrationStatus'),
+    path('SupBTMakeupRegistrationStatus', status.btech_makeup_registration_status, name='SupBTMakeupRegistrationStatus'),
     
 
     path('ManageRegistrations', manage.manage_registrations,name='ManageRegistrations'),
@@ -55,7 +59,8 @@ urlpatterns = [
     path('SupBTBranchChange',branch_change.branch_change, name='SupBTBranchChange'),
     path('SupBTBranchChangeStatus',branch_change.branch_change_status, name='SupBTBranchChangeStatus'),
     path('GenerateRollList',RollList.generateRollList,name='GenerateRollList'),
-    path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
+    path('FinalizeRollLists', RollList.rolllist_finalize, name='FinalizeRollLists'),
+    # path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
 
     path('OpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='OpenElectiveRegistrations'),
     path('DepartmentElectiveRegistrationsUpload',Dec_upload_file.dept_elective_regs_upload, name='DepartmentElectiveRegistrationsUpload'),
@@ -78,6 +83,16 @@ urlpatterns = [
     path('NotPromotedUpload', not_promoted.not_promoted_upload, name='NotPromotedUpload'),
     path('NotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='NotPromotedUploadErrorHandler'),
     path('NotPromotedStatus', not_promoted.not_promoted_status, name='NotPromotedStatus'),
+
+    path('NotPromotedBModeRegistrations', not_promoted.not_promoted_backlog_mode_regs, name='NotPromotedBModeRegistrations'),
+
+    path('MandatoryCredits',mandatory_credits.mandatory_credits_upload, name='MandatoryCredits'),
+
+    path('GradePointsUpload', grade_points.grade_points_upload, name='GradePointsUpload'),
+    path('GradePointsUploadErrorHandler', grade_points.grade_points_upload_error_handler, name='GradePointsUploadErrorHandler'),
+
+    path('GradeChallenge', grades.grade_challenge, name='GradeChallenge'),
+
 
 ]
 

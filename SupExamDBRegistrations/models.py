@@ -1,4 +1,5 @@
 from audioop import maxpp
+from pyexpat import model
 # from typing_extensions import Required
 from django.contrib.auth.models import User
 from import_export import resources
@@ -175,6 +176,17 @@ class RollLists(models.Model):
     class Meta:
         db_table = 'RollLists'
         managed = False
+    
+class RollLists_Staging(models.Model):
+    RegNo = models.IntegerField()
+    Dept = models.IntegerField()
+    AYear = models.IntegerField()
+    BYear = models.IntegerField()
+    Cycle = models.IntegerField()
+    Regulation = models.IntegerField()
+    class Meta:
+        db_table = 'RollLists_Staging'
+        managed = False
 
 class Subjects_Staging(models.Model):
     SubCode = models.CharField(max_length=10) 
@@ -327,6 +339,7 @@ class RegularRegistrationSummary(models.Model):
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     Dept = models.IntegerField()
+    Regulation = models.IntegerField()
     RegisteredSubjects = models.CharField(max_length=300)
     class Meta:
         db_table = 'RegularRegistrationSummaryV'
@@ -338,10 +351,28 @@ class BacklogRegistrationSummary(models.Model):
     Name = models.CharField(max_length=70)
     AYear = models.IntegerField()
     ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
     Dept = models.IntegerField()
+    Regulation = models.IntegerField()
     RegisteredSubjects = models.CharField(max_length=300)
     class Meta:
         db_table = 'BacklogRegistrationSummaryV'
+        managed = False
+
+class MakeupRegistrationSummary(models.Model):
+    RegNo = models.IntegerField()
+    RollNo = models.IntegerField()
+    Name = models.CharField(max_length=70)
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Dept = models.IntegerField()
+    Regulation = models.IntegerField()
+    RegisteredSubjects = models.CharField(max_length=300)
+    class Meta:
+        db_table = 'MakeupRegistrationSummaryV'
         managed = False
 
 class Regulation(models.Model):
@@ -368,4 +399,26 @@ class MandatoryCredits(models.Model):
     class Meta:
         db_table = 'MandatoryCredits'
         managed = False
-    
+
+class GradePoints(models.Model):
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    Points = models.IntegerField()
+    class Meta:
+        db_table = 'GradePoints'
+        managed = False
+class GradePointsResource(resources.ModelResource):
+    class Meta:
+        model = GradePoints
+
+class GradeChallenge(models.Model):
+    RegId = models.IntegerField()
+    PreviousGrade = models.CharField(max_length=2)
+    UpdatedGrade = models.CharField(max_length=2)
+    class Meta:
+        db_table = 'GradeChallenge'
+        managed = True
+class GradeChallengeResource(resources.ModelResource):
+    class Meta:
+        model = GradeChallenge
+

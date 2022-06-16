@@ -1,0 +1,25 @@
+{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong> Roll List has been successfully finalized. <strong>
+        {% if errRows|length %}
+            <br>
+            <strong>These Reg Numbers are not present in roll list for this registration event.</strong>
+            <br>
+            <table>
+                <tr>
+                <th>RegNo</th>
+                </tr>
+                {% for i in errRows %}
+                <tr>
+                    <td>{{ i }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
