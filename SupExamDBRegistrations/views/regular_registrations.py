@@ -10,7 +10,7 @@ import SupExamDBRegistrations
 from ..forms import BacklogRegistrationForm, DBYBSAYASSelectionForm, FirstYearBacklogRegistrationForm,\
      RegistrationForm1, StudentCancellationForm, StudentRegistrationUpdateForm,RegistrationsUploadForm, TestForm,\
           RegistrationsFinalizeEventForm
-from ..models import CurrentAcademicYear, RegistrationStatus, StudentBacklogs, StudentCancellation, \
+from ..models import CurrentAcademicYear, RegistrationStatus, RollLists_Staging, StudentBacklogs, StudentCancellation, \
     StudentGrades, StudentInfo, StudentMakeupBacklogsVsRegistrations,\
      StudentRegistrations, StudentRegistrationsResource, ProgrammeModel, SubjectStagingResource, Subjects_Staging, \
          RollLists, Subjects, StudentRegistrations_Staging
@@ -37,7 +37,7 @@ def btech_regular_registration(request):
                 currentRegEventId = currentRegEventId[0].id
                 mode = 1
                 if(byear==1):
-                    rolls = RollLists.objects.filter(AYear=ayear,BYear=byear,Cycle=dept,Regulation=regulation)
+                    rolls = RollLists_Staging.objects.filter(AYear=ayear,BYear=byear,Cycle=dept,Regulation=regulation)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
@@ -52,7 +52,7 @@ def btech_regular_registration(request):
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
                 else:
-                    rolls = RollLists.objects.filter(AYear=ayear,BYear=byear,Dept=dept, Regulation=regulation)
+                    rolls = RollLists_Staging.objects.filter(AYear=ayear,BYear=byear,Dept=dept, Regulation=regulation)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})

@@ -19,3 +19,34 @@ def logout_request(request):
 @user_passes_test(is_Superintendent)
 def registration_home(request):
     return render(request,'SupExamDBRegistrations/BTRegistrationHome.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def grades_home(request):
+    return render(request, 'SupExamDBRegistrations/grades_home.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def pre_registrations_home(request):
+    return render(request, 'SupExamDBRegistrations/preRegistrations_home.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def branch_change_home(request):
+    return render(request, 'SupExamDBRegistrations/branchChange_home.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def rolllist_home(request):
+    return render(request, 'SupExamDBRegistrations/rollList_home.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def not_promoted_home(request):
+    return render(request, 'SupExamDBRegistrations/not_promoted_home.html')
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def faculty_home(request):
+    return render(request, 'SupExamDBRegistrations/faculty_home.html')

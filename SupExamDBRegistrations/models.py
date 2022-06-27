@@ -134,12 +134,16 @@ class SubjectFacultyInfo(models.Model):
         managed = False
 
 class FacultyInfo(models.Model):
+    FacultyId = models.IntegerField(default=100)
     Name = models.CharField(max_length=100)
     Phone = models.IntegerField()
     Email = models.CharField(max_length=50)
     class Meta:
         db_table = 'FacultyInfo'
-        managed = False
+        managed = True
+class FacultyInfoResource(resources.ModelResource):
+    class Meta:
+        model = FacultyInfo
 
 class StudentInfo(models.Model):
     RegNo = models.IntegerField()
@@ -422,3 +426,11 @@ class GradeChallengeResource(resources.ModelResource):
     class Meta:
         model = GradeChallenge
 
+class RegulationChange(models.Model):
+    RegEventId= models.IntegerField()
+    StudentId = models.IntegerField()
+    PreviousRegulation = models.IntegerField()
+    PresentRegulation = models.IntegerField()
+    class Meta:
+        db_table  = 'RegulationChange'
+        managed = False

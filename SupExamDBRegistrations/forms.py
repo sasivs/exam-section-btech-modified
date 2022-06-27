@@ -1373,6 +1373,136 @@ class NotPromotedBacklogRegistrationForm(forms.Form):
                 self['Check' + str(SubjectDetails[0].id)], self['RadioMode' + str(SubjectDetails[0].id)],True,\
                     'D',regEvent.AYear, regEvent.Regulation, SubjectDetails[0].id, bRow.id))
 
+class RollListRegulationDifferanceForm(forms.Form):
+    def __init__(self, Options = None, *args,**kwargs):
+        super(RollListRegulationDifferanceForm,self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.radioFields = []
+        Choices = [('YES','YES'),('NO','NO')]
+        for row in range(len(Options[0])):
+            stud_info = StudentInfo.objects.get(RegNo=Options[0][row]) 
+            self.fields['RadioMode' + str(Options[0][row])] = forms.CharField(required = True, widget = forms.RadioSelect(choices=Choices))
+            self.radioFields.append(self['RadioMode' + str(Options[0][row])])
+            self.myFields.append((Options[0][row],Options[1],stud_info.Regulation,self['RadioMode' + str(Options[0][row])]))
+
+
+
+class RollListStatusForm(forms.Form):
+    def __init__(self, Options = None, *args,**kwargs):
+        super(RollListStatusForm,self).__init__(*args, **kwargs)
+        self.myFields=[]
+        aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
+        deptChoices = [(0,'--Select Dept--')] + deptChoices
+        bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
+        self.fields['aYear'] =  forms.IntegerField(label='Select AYear', widget=forms.Select(choices=aYearChoices))
+        self.fields['bYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=bYearChoices))
+        self.fields['dept'] = forms.CharField(label='Select Department', widget=forms.Select(choices=deptChoices))
+        for row in range(len(Options)):
+            self.myFields.append((Options[row][0],Options[row][1],Options[row][2],Options[row][3]))
+
+
+class FacultyUploadForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(FacultyUploadForm, self).__init__(*args, **kwargs)
+        self.fields['file'] = forms.FileField()
+
+
+class FacultyInfoUpdateForm(forms.Form):
+    def __init__(self, Options=None, *args,**kwargs):
+        super(FacultyInfoUpdateForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.checkFields = []
+        for fi in range(len(Options)):
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.checkFields.append(self['Check' + str(Options[fi][0])])
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], self['Check' + str(Options[fi][0])]))
+
+  
+
+
+class FacultyDeletionForm(forms.Form):
+    def __init__(self, Options=None, *args,**kwargs):
+        super(FacultyDeletionForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.checkFields = []
+        for fi in range(len(Options)):
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.checkFields.append(self['Check' + str(Options[fi][0])])
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], self['Check' + str(Options[fi][0])]))
+
+
+  
+class FacultyAssignmentForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(FacultyAssignmentForm,self).__init__(*args, **kwargs)
+        regIDs = RegistrationStatus.objects.filter(Status=1)
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        regEventIDKVs = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
+            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
+                    for oIndex, option in enumerate(regIDs)]
+        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs,\
+            attrs={'onchange':"submit();"}))
+        if 'RegEvent' in self.data and self.data['RegEvent']!= '-- Select Registration Event --':
+            regId = self.data.get('RegEvent')
+            strs = regId.split(':')
+            depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+            years = {1:'I',2:'II',3:'III',4:'IV'}
+            deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
+            rom2int = {'I':1,'II':2,'III':3,'IV':4}
+            strs = regId.split(':')
+            dept = deptDict[strs[0]]
+            ayear = int(strs[3])
+            asem = int(strs[4])
+            byear = rom2int[strs[1]]
+            bsem = rom2int[strs[2]]
+            regulation = int(strs[5])
+            mode = strs[6]
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    Dept=dept,Mode=mode,Regulation=regulation)
+            currentRegEventId = currentRegEventId[0].id
+            subjects = Subjects.objects.filter(RegEventId=currentRegEventId)
+            subjects = [(sub['id'],sub['SubCode']) for sub in subjects]
+            subjects.sort(itemgetter(0))
+            subjects = [(0,'--Select Subjects--')] + subjects
+            self.fields['Subjects'] = forms.CharField(label='Subjects', widget = forms.Select(choices=subjects,\
+                 attrs={'onchange':'submit();'}))  
+            if('Subjects' in self.data and self.data['Subjects']!='--Select Subjects--'):
+                self.myFields = []
+                self.checkFields = []
+                self.radioFields = []
+                studentMakeups = StudentMakeups.objects.filter(RegNo=self.data['RegNo'], BYear=byear, BSem=bsem)
+                for mk in studentMakeups:
+                    already_registered = StudentRegistrations_Staging.objects.filter(RegNo=self.data['RegNo'], sub_id=mk.sub_id, \
+                        RegEventId=currentRegEventId)
+                    if len(already_registered) != 0:
+                        self.fields['Check' + str(mk.sub_id)] = forms.BooleanField(required=False, \
+                        widget=CheckboxInput(attrs={'checked':True}))
+                    else:
+                        self.fields['Check' + str(mk.sub_id)] = forms.BooleanField(required=False, \
+                        widget=CheckboxInput())
+                    if(mk.Grade == 'I'):
+                        self.fields['RadioMode' + str(mk.sub_id)] = forms.ChoiceField(required=False, \
+                            widget=RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
+                    elif mk.Grade == 'F':
+                        self.fields['RadioMode' + str(mk.sub_id)] = forms.ChoiceField(required=False, \
+                            widget=RadioSelect(attrs={'checked': True}), choices=[('0', 'Exam Mode')])
+                    elif mk.Grade == 'X':
+                        self.fields['RadioMode' + str(mk.sub_id)] = forms.ChoiceField(required=False, \
+                            widget=RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode'),('0', 'Exam Mode')])
+                    self.checkFields.append(self['Check' + str(mk.sub_id)])
+                    self.radioFields.append(self['RadioMode' + str(mk.sub_id)])
+                    self.myFields.append((mk.SubCode, mk.SubName, mk.Credits, self['Check' + str(mk.sub_id)],\
+                        self['RadioMode' + str(mk.sub_id)],'M', mk.OfferedYear,mk.Regulation, mk.sub_id))
+
 
 
 

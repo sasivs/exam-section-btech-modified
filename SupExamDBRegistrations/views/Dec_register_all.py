@@ -10,7 +10,7 @@ import SupExamDBRegistrations
 from ..forms import BacklogRegistrationForm, DBYBSAYASSelectionForm, DeptElectiveRegsForm, FirstYearBacklogRegistrationForm,\
      RegistrationForm1, StudentCancellationForm, StudentRegistrationUpdateForm,RegistrationsUploadForm, TestForm,\
           RegistrationsFinalizeEventForm, OpenElectiveRegistrationsForm
-from ..models import CurrentAcademicYear, RegistrationStatus, StudentBacklogs, StudentCancellation, \
+from ..models import CurrentAcademicYear, RegistrationStatus, RollLists_Staging, StudentBacklogs, StudentCancellation, \
     StudentGrades, StudentInfo, StudentMakeupBacklogsVsRegistrations,\
      StudentRegistrations, StudentRegistrationsResource, ProgrammeModel, SubjectStagingResource, Subjects_Staging, \
          RollLists, Subjects, StudentRegistrations_Staging
@@ -47,9 +47,9 @@ def dept_elective_regs_all(request):
             regulation = int(strs[5])
             mode = strs[6]
             if(byear!=1):
-                rolls = RollLists.objects.filter(Dept=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
+                rolls = RollLists_Staging.objects.filter(Dept=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
             else:
-                rolls = RollLists.objects.filter(Cycle=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
+                rolls = RollLists_Staging.objects.filter(Cycle=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
             print(rolls)
             currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)

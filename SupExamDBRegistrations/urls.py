@@ -6,14 +6,27 @@ from django.conf.urls.static import static
 from SupExamDBRegistrations.views import backlog_registrations, cancellations, first_backlog_registrations, grades, \
     home, manage, open_elective_registrations, grades,\
     regular_registrations, status, subjects, StudInfo, RollList, branch_change, add_regulation, \
-        Dec_upload_file,Dec_register_all, dropped_regular_regs, makeupReg, not_promoted, mandatory_credits, grade_points
+        Dec_upload_file,Dec_register_all, dropped_regular_regs, makeupReg, not_promoted, mandatory_credits, grade_points, FacultyAssignment
 from SupExamDB import views as supviews
 # from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
     path('sindex',supviews.sup_home, name='sindex'),
     path("logout", supviews.logout_request, name="logout_request"),
     path('home', supviews.sup_home, name='home'),
+    path('SupBTPreRegistrationHome', home.pre_registrations_home, name="SupBTPreRegistrationHome"),
+    path('SupBTBranchChangeHome', home.branch_change_home, name='SupBTBranchChangeHome'),
     path('SupBTRegistrationHome', home.registration_home, name = 'SupBTRegistrationHome'),
+    path('SupBTRollListHome', home.rolllist_home, name='SupBTRollListHome'),
+    path('SupBTGradesHome', home.grades_home, name="SupBTGradesHome"),
+    path('SupBTNotPromotedHome', home.not_promoted_home, name="SupBTNotPromotedHome"),
+    path('SupBTFacultyHome', home.faculty_home, name='SupBTFacultyHome'),
+
+    path('FacultyInfoUpload', FacultyAssignment.faculty_upload, name = 'FacultyInfoUpload'),
+    path('FacultyInfoUploadErrorHandler', FacultyAssignment.FacultyInfo_upload_error_handler, name = 'FacultyInfoUploadErrorHandler'),
+    path('FacultyInfoStatus', FacultyAssignment.FacultyInfo_upload_status, name = 'FacultyInfoStatus'),
+    path('FacultyInfoDeletion', FacultyAssignment.Faculty_delete, name = 'FacultyInfoDeletion'),
+    path('FacultyAssignment', FacultyAssignment.Faculty_Assignment, name = 'FacultyAssignment'),
+
 
     path('AddRegulation', add_regulation.addRegulation, name = 'AddRegulation'),
 
@@ -59,6 +72,7 @@ urlpatterns = [
     path('SupBTBranchChange',branch_change.branch_change, name='SupBTBranchChange'),
     path('SupBTBranchChangeStatus',branch_change.branch_change_status, name='SupBTBranchChangeStatus'),
     path('GenerateRollList',RollList.generateRollList,name='GenerateRollList'),
+    path('RollListStatus',RollList.RollList_Status,name='RollListStatus'),
     path('FinalizeRollLists', RollList.rolllist_finalize, name='FinalizeRollLists'),
     # path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
 
