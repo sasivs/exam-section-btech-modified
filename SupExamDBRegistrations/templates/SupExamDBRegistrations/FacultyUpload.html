@@ -1,12 +1,10 @@
-{% extends 'SupExamDBRegistrations/preRegistrations_home.html' %} {% block sub %}
+{% extends 'SupExamDBRegistrations/faculty_home.html' %} {% block sub %}
 
 
 
 
 <div class="container">
     <div class="row">
-        <strong>It is the minimum number of credits to be required for a student in a particular academic year to be promoted.
-        </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Upload</button>

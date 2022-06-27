@@ -1,10 +1,17 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/branchChange_home.html' %}
 
 {% load static %}
 
 {% block sub %}
 <div class="container">
     <div class="row">
+        <strong>Select the Academic Year.
+            <br>
+            It will result all the details of the branch change students
+            <br>
+            (make a note that if a student has studied his first year in 
+            2021-2022,Entering 2022 will result the branch changes of his batch because in 2022-2023 the branch change process would be done)
+            </strong>
         <form action="" method="post" >
             {% csrf_token %}
       </div>

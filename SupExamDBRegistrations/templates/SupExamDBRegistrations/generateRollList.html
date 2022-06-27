@@ -1,9 +1,19 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/rollList_home.html' %}
 
 {% block sub %}
  
 <div class="container">
     <div class="row">
+      <strong>
+        Generate Roll List: <br>
+        ** While generating Roll List for II B.Tech,make sure the Branch Change Process is done**
+        <br>
+        Choose the event for which you want to generate the roll list
+        <br>
+      Reminder: <br>
+      Before doing the registrations for the particular event,make sure you upload all the required subjects and finalize them.
+ 
+      </strong>
         <form  method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}

@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/preRegistrations_home.html' %}
 
 {% load static %}
 
@@ -6,6 +6,21 @@
 
 <div class="container">
     <div class="row">
+        <strong>
+            Add the regulation for all the required events
+        </strong>
+        <ul>
+            <li><strong>AdmYear-Admission Year</strong></li>
+            <li><strong>AYear-Academic Year</strong></li>
+            <li><strong>ASem-Academic Semester</strong></li>
+            <li><strong>BYear-B.Tech Year</strong></li>
+            <li><strong>BSem-B.Tech Semester</strong></li>
+        </ul>
+        <strong>
+            Note:
+            In case of regular/makeup registrations, regulation should be added to all the I,II,III,IV B.Tech Events
+        </strong>
+
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}

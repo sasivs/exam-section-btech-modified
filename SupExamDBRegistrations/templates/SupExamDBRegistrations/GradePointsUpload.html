@@ -1,10 +1,16 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %} {% block sub %}
+{% extends 'SupExamDBRegistrations/grades_home.html' %} {% block sub %}
 
 
 
 
 <div class="container">
     <div class="row">
+        <strong>Upload the gradepoints file for the respective regulation in .xlsx format
+            <br>
+                        Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below
+                        <br>
+                        Regulation,Grade,Points
+                        </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} 
             {{ form.as_p }}

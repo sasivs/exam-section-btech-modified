@@ -7,6 +7,16 @@
 
 <div class="container">
     <div class="row">
+      <strong>
+        **DEC(Department Elective Courses) must be uploaded here only**  
+        <br>
+        Upload the subjects information file for the corresponding event  in .xlsx format  having the following fields 
+        <br>
+        Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below
+        <br>
+        SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable
+        <br>
+        </strong>
         <form  method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}

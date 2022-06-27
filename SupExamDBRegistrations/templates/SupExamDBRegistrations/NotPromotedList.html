@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/not_promoted_home.html' %}
 
 {% block sub %}
  
@@ -7,6 +7,10 @@
 
 <div class="container">
     <div class="row">
+      <strong>
+        On selecting the appropriate event, it generates the list of all the students.Download option is available at the bottom.On Download an Excel file will be generated.
+
+      </strong>
         <form  method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}

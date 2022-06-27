@@ -3,6 +3,10 @@
 {% block sub %}
 <div class="container">
     <div class="row">
+      <strong>Register the students corresponding to the selected event
+        <br>
+                **All the eligible students will be registered**
+                </strong>
         <form  method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}

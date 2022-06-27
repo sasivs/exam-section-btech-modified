@@ -1,0 +1,40 @@
+{% extends 'SupExamDBRegistrations/faculty_home.html' %} {% load static %} {% block sub %}
+
+
+
+
+
+<div class="container">
+
+    <div class="row">
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">FacultyId </td>
+                    <td style="border: 1px solid black;">Name</td>
+                    <td style="border: 1px solid black;">Phone</td>
+                    <td style="border: 1px solid black;">Email</td>
+
+                </tr>
+            </th>
+            {% for facinfo in fac_info %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ facinfo.FacultyId }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ facinfo.Name }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ facinfo.Phone }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ facinfo.Email }}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

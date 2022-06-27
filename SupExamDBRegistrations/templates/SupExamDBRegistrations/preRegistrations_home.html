@@ -1,0 +1,35 @@
+{% extends 'SupExamDB/suphome.html' %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'AddRegulation' %}">Add Regulation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MandatoryCredits' %}">Mandatory Credits</a>
+                  </li> 
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ManageRegistrations' %}">Manage Registrations</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'StudentInfoFileUpload' %}">Upload Student Info</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'UpdateRollNumber' %}">Update Roll Number</a>
+                  </li> 
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'UpdateNonFirstYearSection' %}">Update Non First Year Section</a>
+                  </li> 
+            </ul>
+        </div>
+        <div class="col-md-10">
+          {% block sub %}
+          {% endblock %}
+      </div>
+    </div>
+</div>
+{% endblock content %}

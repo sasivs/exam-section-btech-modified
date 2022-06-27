@@ -1,9 +1,10 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/preRegistrations_home.html' %}
 
 {% block sub %}
 
 <div class="container">
     <div class="row">
+        <strong>Enable/Disable(Activate/Deactivate) the events based on the requirement </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}

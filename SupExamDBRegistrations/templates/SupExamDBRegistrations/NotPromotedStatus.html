@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/not_promoted_home.html' %}
 
 {% load static %}
 
@@ -9,6 +9,9 @@
 
 <div class="container">
     <div class="row">
+        <strong>
+            On selecting the event,  list of all the eligible students will be displayed 
+        </strong>
         <form action="" method="post" >
           {% csrf_token %}
           {{ form.as_p }}

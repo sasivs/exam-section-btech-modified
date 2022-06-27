@@ -1,0 +1,21 @@
+{% extends 'SupExamDBRegistrations/subjecthome.html' %}
+ 
+{% block sub %}
+ 
+ 
+<div class="container">
+    <div class="row">
+<strong>Upload the open elective subjects information file for the corresponding event  in .xlsx format  having the following fields 
+  <br>
+    Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below
+    <br>
+    SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable
+    </strong>
+        <form  method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Upload</button> 
+        </form>
+       </div>
+</div>
+{% endblock %}

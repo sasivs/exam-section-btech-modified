@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/registrationhome.html' %}
+{% extends 'SupExamDBRegistrations/grades_home.html' %}
 
 {% load static %}
 
@@ -9,6 +9,11 @@
 
 <div class="container">
     <div class="row">
+      <strong>NOTE:
+        **Finalize the grades only after uploading all the  grades corresponding to that particular event and also make sure that the grade challenge procedure is done for the selected event**
+        <br>
+        **Grades once finalized cannot be modified for that particular event**
+        </strong>
         <form action="" method="post" >
           {% csrf_token %}
           {{ form.as_p }}

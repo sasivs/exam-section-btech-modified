@@ -1,20 +1,23 @@
-{% extends 'SupExamDBRegistrations/grades_home.html' %} {% block sub %}
+{% extends 'SupExamDBRegistrations/faculty_home.html' %} {% block sub %}
+
 
 
 
 
 <div class="container">
     <div class="row">
-        <strong> Your data upload for grade points Information has the following errors</strong>
+        <strong> Your data upload for Faculty Info Information has the following errors</strong>
         <form action="" method="post">
             {% csrf_token %}
             <div class="container">
                 <table>
                     <th>
                         <tr>
-                            <td style="border: 1px solid black;">Regulation </td>
-                            <td style="border: 1px solid black;">Grade </td>
-                            <td style="border: 1px solid black;">Points</td>
+                            <td style="border: 1px solid black;">FacultyId </td>
+                            <td style="border: 1px solid black;">Name</td>
+                            <td style="border: 1px solid black;">Phone</td>
+                            <td style="border: 1px solid black;">Email</td>
+
                             <td style="border: 1px solid black;">Do you want to update(Y/N)</td>
                         </tr>
                     </th>
@@ -32,6 +35,9 @@
                         <td style="border: 1px solid black;">
                             {{ field.3 }}
                         </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.4 }}
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -39,5 +45,10 @@
             </div>
         </form>
     </div>
+
+    <!-- <p id="CGPA">
+
+    </p> -->
+
 </div>
 {% endblock %}
