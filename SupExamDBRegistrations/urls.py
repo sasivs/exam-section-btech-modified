@@ -72,9 +72,13 @@ urlpatterns = [
     path('SupBTBranchChange',branch_change.branch_change, name='SupBTBranchChange'),
     path('SupBTBranchChangeStatus',branch_change.branch_change_status, name='SupBTBranchChangeStatus'),
     path('GenerateRollList',RollList.generateRollList,name='GenerateRollList'),
+    path('RollListSectionUpload',RollList.UploadSectionInfo,name='RollListSectionUpload'),
+    path('RollListFeeUpload',RollList.RollListFeeUpload,name='RollListFeeUpload'),
+
+    path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
     path('RollListStatus',RollList.RollList_Status,name='RollListStatus'),
     path('FinalizeRollLists', RollList.rolllist_finalize, name='FinalizeRollLists'),
-    # path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
+     path('NotRegisteredStatus',RollList.NotRegisteredStatus,name='NotRegisteredStatus'),
 
     path('OpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='OpenElectiveRegistrations'),
     path('DepartmentElectiveRegistrationsUpload',Dec_upload_file.dept_elective_regs_upload, name='DepartmentElectiveRegistrationsUpload'),

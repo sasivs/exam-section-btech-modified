@@ -6,12 +6,15 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.db.models import Q
+from numpy import flatiter
 # from requests import options
 
-from SupExamDBRegistrations.forms import RollListStatusForm, RollListRegulationDifferanceForm,RollListErrorHandlerForm,\
-     RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm
+from SupExamDBRegistrations.forms import RollListStatusForm, RollListRegulationDifferenceForm,RollListErrorHandlerForm,\
+     RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
+        RollListFeeUploadForm, NotRegisteredStatusForm
 from SupExamDBRegistrations.models import Regulation, RegulationChange, RollLists_Staging, StudentInfo, StudentInfoResource, NotPromoted, RollLists,\
-    RegistrationStatus,StudentRegistrations_Staging
+    RegistrationStatus,StudentRegistrations_Staging, StudentBacklogs, StudentMakeups, DroppedRegularCourses, Subjects, NotRegistered
 from .home import is_Superintendent
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -29,11 +32,10 @@ def generateRollList(request):
             else:
                 not_promoted_regno = request.session.get('not_promoted_regno')
                 
-            ayasbybsr = (ayear,asem,byear,bsem,regulation)
             
             not_promoted_regnos =[]
             ayasbybsr = (ayear,asem,byear,bsem,regulation)
-            form = RollListRegulationDifferanceForm((not_promoted_regno,regulation),request.POST)
+            form = RollListRegulationDifferenceForm((not_promoted_regno,regulation),request.POST)
            
             if(form.is_valid()):
         
@@ -43,32 +45,33 @@ def generateRollList(request):
                         choice = form.cleaned_data.get('RadioMode'+str(sReg))
                         
                         s_info = StudentInfo.objects.get(RegNo=sReg)
-                        roll = RollLists_Staging(RegNo=sReg, Dept=s_info.Dept, AYear=ayear, BYear=byear, Cycle=s_info.Cycle, Regulation=regulation)
                         if(choice == 'YES'):
                             if(byear ==1):
                                 not_promoted_regnos.append(sReg)
                             else:
-                                roll = RollLists_Staging.objects.filter(RegNo=sReg, Dept=s_info.Dept, AYear=ayear, BYear=byear, Cycle=s_info.Cycle, Regulation=regulation)
-                                if(len(roll) ==0):
+                                roll = RollLists_Staging.objects.filter(student=s_info, RegEventId_id=request.session.get('currentRegEventId'))
+                                if(len(roll) == 0):
+                                    roll = RollLists_Staging(student=s_info, RegEventId_id=request.session.get('currentRegEventId'))
                                     roll.save()
                             prev_regulation  = s_info.Regulation
                             s_info.Regulation = regulation
                             s_info.save()
                             if(prev_regulation != regulation):
                                 currentRegEventId = request.session.get('currentRegEventId')
-                                regu_change = RegulationChange(RegEventId = currentRegEventId, StudentId= s_info.id, \
+                                regu_change = RegulationChange(RegEventId = currentRegEventId, student= s_info, \
                                     PreviousRegulation=prev_regulation ,PresentRegulation=regulation)
                                 regu_change.save()
                         #else:
                 
                 if(len(not_promoted_regnos)!=0 and byear ==1 ):
                         request.session['not_promoted_regno'] = (not_promoted_regnos)
+                        request.session['ayasbybsr'] = ayasbybsr
+                        request.session['currentRegEventId'] = request.session.get('currentRegEventId')
                         return HttpResponseRedirect(reverse('FirstYearRollListsCycleHandler' ))
                 return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html')) 
             
         else:
             form = GenerateRollListForm(request.POST)
-            print(request.POST)
             if(form.is_valid()):
                 depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
                 years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -88,96 +91,101 @@ def generateRollList(request):
                     currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                         Dept=dept,Mode=mode,Regulation=regulation)
                     currentRegEventId = currentRegEventId[0].id
-                    request.session['currentRegEventId'] = currentRegEventId
-                    
-                    if(byear==1):
-                        reg_rgs = StudentInfo.objects.filter(AdmissionYear=ayear,Cycle=dept,Regulation=regulation)
-                        reg_rgs = [(row.RegNo,row.Dept,row.Cycle) for row in reg_rgs]
-                        not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=1, PoA='R')
+                    if mode == 'R':
+                        if(byear==1):
+                            reg_rgs = StudentInfo.objects.filter(AdmissionYear=ayear,Cycle=dept,Regulation=regulation)
+                            not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=1, Regulation=regulation, PoA='R', student__Cycle=dept)
 
-                        not_prom_regs = [row.RegNo for row in not_prom_regs]
-                    
-                        final_not_prom_regs = []
-                        for row in reg_rgs:
-                            roll = RollLists_Staging.objects.filter(RegNo=row[0], Dept=row[1], AYear=ayear,BYear=byear, Cycle=row[2], Regulation=regulation)
-                            if(len(roll) ==0):
-                                roll = RollLists_Staging(RegNo=row[0], Dept=row[1], AYear=ayear,BYear=byear, Cycle=row[2], Regulation=regulation)
-                                roll.save()
-                    
-                        for reg in not_prom_regs:
-                            s_info = StudentInfo.objects.get(RegNo=reg)
-                            if(s_info.Cycle==dept):
-                                final_not_prom_regs.append(reg)   
-                        not_prom_regs = final_not_prom_regs
-                        if(len( not_prom_regs) !=0):
-                            form = RollListRegulationDifferanceForm(Options = (not_prom_regs,regulation))
-                            if(len(not_prom_regs)!=0):
+                            not_prom_regs = [row.student.RegNo for row in not_prom_regs]
+                        
+                            for row in reg_rgs:
+                                roll = RollLists_Staging.objects.filter(student=row, Cycle=row.Cycle, RegEventId_id=currentRegEventId)
+                                if(len(roll) ==0):
+                                    roll = RollLists_Staging(student=row, Cycle=row.Cycle, RegEventId_id=currentRegEventId)
+                                    roll.save()
+                        
+                            if(len( not_prom_regs) !=0):
+                                form = RollListRegulationDifferenceForm(Options = (not_prom_regs,regulation))
                                 request.session['not_promoted_regno_firstyear'] = not_prom_regs
                                 request.session['ayasbybsr'] = ayasbybsr
-                            return render(request, 'SupExamDBRegistrations/RollListNotPromotedRegulation.html',{'form':form})
-                        return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html'))
-                            
-                   
-                    # for row in not_prom_regs:
-                    #     roll = RollLists_Staging.objects.get(RegNo=row[0], Dept=row[1], AYear=ayear,BYear=byear, Cycle=row[2], Regulation=regulation)
-                    #     if(len(roll) != 0):
-                    #         roll.delete()
-                        
+                                request.session['currentRegEventId'] = currentRegEventId
+                                return render(request, 'SupExamDBRegistrations/RollListNotPromotedRegulation.html',{'form':form})
+                            return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html'))
 
-                    # print(not_prom_regs)
-                    # if(len(not_prom_regs)!=0):
-                    #     request.session['not_prom_regs'] = (not_prom_regs,ayasbybsr)
-                    #     return HttpResponseRedirect(reverse('FirstYearRollListsCycleHandler' )) 
-                    # print(reg_rgs)
-                    # print("here")
-                    # print(not_prom_regs)
-                       
-                    else:
-                        reg_rgs = RollLists_Staging.objects.filter(AYear=ayear-1,Dept=dept,BYear=byear-1,Regulation=regulation)
-                        reg_rgs = [(row.RegNo,row.Dept,row.Cycle) for row in reg_rgs]
-                        pres_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=byear)
-                        present_not_prom_regs=[]
-                        not_promoted_regno=[]
-                        for reg in pres_not_prom_regs:
-                            not_promoted_regno.append(reg.RegNo)
+                                
+                        else:
+                            if byear==2:
+                                prev_regEventId = RegistrationStatus.objects.filter(AYear=ayear-1, BYear=byear-1, Regulation=regulation, Mode=mode)
+                            else:
+                                prev_regEventId = RegistrationStatus.objects.filter(AYear=ayear-1, BYear=byear-1, Regulation=regulation, Mode=mode, Dept=dept)  
+                            present_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=byear)
+                            not_promoted_bmode = NotPromoted.objects.filter(AYear=ayear-2, BYear=byear-1, PoA='B')
+                            not_promoted_regs = present_not_prom_regs | not_promoted_bmode
+                            prev_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1, BYear=byear-1)
+                            prev_not_prom_regd_no = prev_not_prom_regs.values_list('student__RegNo', flat=True)
+                            prev_not_prom_regs = prev_not_prom_regs.values_list('student', flat=True)
+                            reg_rgs = RollLists_Staging.objects.filter(~Q(student__in=prev_not_prom_regs), RegEventId_id__in=prev_regEventId, student__Dept=dept)
 
-                        present_not_prom_regs = [row.RegNo for row in present_not_prom_regs]
-                        prev_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1, BYear=byear-1)
-                        prev_not_prom_regs = [row.RegNo for row in prev_not_prom_regs]
-                        final_regs = []
-                        not_prom_prev_prev_bmode = NotPromoted.objects.filter(AYear = ayear-2, BYear= 1, PoA='B')
-                        not_prom_prev_prev_bmode = [row.RegNo for row in not_prom_prev_prev_bmode]
-                        not_promoted_prev_bmode =  NotPromoted.objects.filter(AYear = ayear-1, BYear= 1, PoA='B')
-                        not_promoted_prev_bmode = [row.RegNo for row in not_promoted_prev_bmode]
-                        for reg in not_prom_prev_prev_bmode:
-                            if(reg not in  not_promoted_prev_bmode):
-                                not_promoted_regno.append(reg)
+                            for reg in reg_rgs:
+                                if not RollLists_Staging.objects.filter(student=reg.student, RegEventId_id=currentRegEventId).exists():
+                                    roll = RollLists_Staging(student=reg.student, RegEventId_id=currentRegEventId)
+                                    roll.save()
                             
-                        for reg in reg_rgs:
-                            if(reg not in prev_not_prom_regs):
-                                final_regs.append(reg)
-                        # for reg in present_not_prom_regs:
-                        #     s_info = StudentInfo.objects.get(RegNo=reg)
-                        #     if(s_info.Regulation==regulation):
-                        #         final_regs.append(reg)
-                        for row in final_regs:
-                            roll = RollLists_Staging.objects.filter(RegNo=row[0], Dept=row[1], AYear=ayear,BYear=byear, Cycle=row[2], Regulation=regulation)
-                            if(len(roll) ==0):
-                                roll = RollLists_Staging(RegNo=row[0], Dept=row[1], AYear=ayear,BYear=byear, Cycle=row[2], Regulation=regulation)
+                            StudentRegistrations_Staging.objects.filter(RegNo__in=prev_not_prom_regd_no,RegEventId=currentRegEventId).delete()
+                            RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student__in=prev_not_prom_regs).delete()
+
+                            not_promoted_regno=[row.student.RegNo for row in not_promoted_regs]
+                            
+                            if(len(not_promoted_regno) != 0):
+                                request.session['not_promoted_regno'] = not_promoted_regno
+                                request.session['ayasbybsr'] = ayasbybsr
+                                request.session['currentRegEventId'] = currentRegEventId
+                                form = RollListRegulationDifferenceForm(Options = (not_promoted_regno,regulation))
+                                return render(request, 'SupExamDBRegistrations/RollListNotPromotedRegulation.html',{'form':form})
+
+                    elif mode == 'B':
+                        if byear == 1:
+                            backlog_rolls = StudentBacklogs.objects.filter(BYear=byear, Dept=dept).values_list('RegNo', flat=True).disticnt()
+                            for regd_no in backlog_rolls:
+                                student = StudentInfo.objects.get(RegNo=regd_no)
+                                if not RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student=student, Cycle=dept).exists():
+                                    roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student, Cycle=dept)
+                                    roll.save()
+                        else:
+                            backlog_rolls = StudentBacklogs.objects.filter(BYear=byear,Dept=dept).values_list('RegNo', flat=True).distinct()
+                            for regd_no in backlog_rolls:
+                                student = StudentInfo.objects.get(RegNo=regd_no)
+                                if not RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student=student).exists():
+                                    roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student)
+                                    roll.save()
+                    elif mode == 'M':
+                        makeup_rolls = StudentMakeups.objects.filter(Dept=dept, BYear=byear, BSem=bsem).values_list('RegNo', flat=True).distinct()
+                        if byear==1:
+                            for regd_no in makeup_rolls:
+                                student = StudentInfo.objects.get(RegNo=regd_no)
+                                if not RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student=student, Cycle=dept).exists():
+                                        roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student, Cycle=dept)
+                                        roll.save()
+                        else:
+                            for regd_no in makeup_rolls:
+                                student = StudentInfo.objects.get(RegNo=regd_no)
+                                if not RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student=student).exists():
+                                        roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student)
+                                        roll.save()
+                    elif mode == 'D':
+                        dropped_courses = DroppedRegularCourses.objects.filter(subject__RegEvent__BYear=byear, subject_RegEvent_Regulation=regulation)
+                        dropped_regno=[]
+                        for row in dropped_courses:
+                            sub_reg = StudentRegistrations_Staging.objects.filter(RegNo=row.student.RegNo, sub_id=row.sub_id)
+                            if(len(sub_reg) == 0):
+                                dropped_regno.append(row.student)
+                        dropped_regno = list(set(dropped_regno))
+                        for student in dropped_regno:
+                            if not RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student=student).exists():
+                                roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                                 roll.save()
-                        for row in prev_not_prom_regs:
-                            roll = RollLists_Staging.objects.filter(RegNo=row[0], Dept=row[1], AYear=ayear,BYear=byear, Cycle=row[2], Regulation=regulation)
-                            if(len(roll) != 0):
-                                roll.delete()
-                            #also remove from registrations staging table.
-                            StudentRegistrations_Staging.objects.filter(RegNo=row[0],RegEventId=currentRegEventId).delete()  
-                        if(len(not_promoted_regno) != 0):
-                            request.session['not_promoted_regno'] = not_promoted_regno
-                            request.session['ayasbybsr'] = ayasbybsr
-                            form = RollListRegulationDifferanceForm(Options = (not_promoted_regno,regulation))
-                            return render(request, 'SupExamDBRegistrations/RollListNotPromotedRegulation.html',{'form':form})
+                    return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html'))
 
-                        return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html'))
     else:
         form = GenerateRollListForm()
     return  render(request, 'SupExamDBRegistrations/generateRollList.html',{'form':form})
@@ -187,83 +195,25 @@ def generateRollList(request):
 def first_year_rollLists_cycle_handler(request):
     not_prom_regs = request.session.get('not_promoted_regno')
     (ayear,asem,byear,bsem,regulation)=request.session.get('ayasbybsr')
-    print(ayear)
+    currentRegEventId = request.session.get('currentRegEventId')
     if(request.method == 'POST'):
         form = RollListsCycleHandlerForm(not_prom_regs,request.POST)
-        print("In post")
         if(form.is_valid()):
-            print("valid")
             for cIndex, sReg in enumerate(not_prom_regs):
-                print(cIndex,sReg)
                 if(form.cleaned_data.get('RadioMode'+str(sReg))):
                     cycle = form.cleaned_data.get('RadioMode'+str(sReg))
                     s_info = StudentInfo.objects.get(RegNo=sReg)
-                    roll = RollLists_Staging(RegNo=sReg, Dept=s_info.Dept, AYear=ayear, BYear=byear, Cycle=cycle, Regulation=regulation)
+                    roll = RollLists_Staging(student=s_info, RegEventId_id=currentRegEventId, Cycle=cycle)
                     s_info.Cycle=cycle
-                    print(s_info.Dept)
                     s_info.save()
                     roll.save()
-                    print(roll.Dept,roll.RegNo,roll.AYear,roll.BYear, roll.Cycle)
         return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html'))
     else:
         form = RollListsCycleHandlerForm(Options=not_prom_regs)
     return (render(request, 'SupExamDBRegistrations/RollListsCycleHandlerForm.html',{'form':form}))
 
 
-@login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
-def rolllist_finalize(request):
-    if request.method == 'POST':
-        print(request.FILES, request.POST)
-        form = RollListFinalizeForm(request.POST,request.FILES)
-        if form.is_valid():
-            file = form.cleaned_data['file']
-            regEvent = form.cleaned_data['regID']
-            strs = regEvent.split(':')
-            depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-            years = {1:'I',2:'II',3:'III',4:'IV'}
-            deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
-            rom2int = {'I':1,'II':2,'III':3,'IV':4}
-            dept = deptDict[strs[0]]
-            ayear = int(strs[3])
-            asem = int(strs[4])
-            byear = rom2int[strs[1]]
-            bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
-            mode = strs[6]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-            currentRegEventId = currentRegEventId[0].id
-            data = bytes()
-            for chunk in file.chunks():
-                data += chunk
-            dataset = XLSX().create_dataset(data)
-            errorRolls = []
-            for i in range(len(dataset)):
-                row = dataset[i]
-                roll = RollLists_Staging.objects.filter(RegNo=row[0], AYear=ayear, Dept=dept, BYear=byear, Regulation=regulation)
-                if len(roll) != 0:
-                    checkRoll = RollLists.objects.filter(RegNo=roll[0].RegNo, AYear=roll[0].AYear, Dept=roll[0].Dept, \
-                        BYear=roll[0].BYear, Cycle=roll[0].Cycle, Regulation=roll[0].Regulation)
-                    if len(checkRoll) == 0:
-                        finalRoll = RollLists(RegNo=roll[0].RegNo, AYear=roll[0].AYear, Dept=roll[0].Dept, \
-                            BYear=roll[0].BYear, Cycle=roll[0].Cycle, Regulation=roll[0].Regulation )
-                        finalRoll.save()
-                else:
-                    newRow = (row[0])
-                    errorRolls.append(newRow)
-            # if len(errorRolls) != 0:
-            #     request.session['rollListErrRows'] = errorRolls
-            #     request.session['currentRegEventId'] = currentRegEventId
-            #     return redirect('FinalizeRollListErrorHandler')
-            return render(request, 'SupExamDBRegistrations/FianlizeRollListsSuccess.html', {'errRows':errorRolls})
-        else:
-            print("Not valid")
-            print(form.errors.as_data())
-        return HttpResponse('Hi')
-    else:
-        form = RollListFinalizeForm()
-    return render(request, 'SupexamDBRegistrations/RollListsFinalize.html', {'form':form})
+
 
 
 @login_required(login_url="/login/")
@@ -346,31 +296,161 @@ def RollList_Status(request):
         form = RollListStatusForm(Options=Option)
         return render(request, 'SupexamDBRegistrations/RollListStatus.html', {'form':form})
 
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def UploadSectionInfo(request):
+    if(request.method=='POST'):
+        form=UploadSectionInfoForm( request.POST,request.FILES)
+        if(form.is_valid()):
+            file = form.cleaned_data['file']
+            data = bytes()
+            for chunk in file.chunks():
+                data += chunk
+            dataset = XLSX().create_dataset(data)
+            errDataset=Dataset()
+            regeventid=form.cleaned_data['regID']
+            errDataset.headers=['id','RegEventId','RegNo','Cycle','Section']
+            errData = []
+            if(form.cleaned_data['regID']!='--Choose Event--'):
+                for row in dataset:
+                    if RollLists_Staging.objects.filter(id=row[0]).exists():
+                        roll=RollLists_Staging.objects.get(id=row[0])
+                        roll.Section=row[4]
+                        roll.save()
+                    else:
+                        errDataset.append(row)
+                for i in errDataset:
+                    errData.append(i)
+                if(len(errData)!=0):
+                    SecInfoErrRows = [ (errData[i][0],errData[i][1],errData[i][2],errData[i][3] ) for i in range(len(errData))]
+                    request.session['SecInfoErrRows'] = SecInfoErrRows
+                    return HttpResponseRedirect(reverse('UploadSectionInfoErrorHandler'))
+                return (render(request, 'SupExamDBRegistrations/SectionInfoUploadSuccess.html'))
+                  
+    else:
+        form = UploadSectionInfoForm()
+    return  render(request, 'SupExamDBRegistrations/SectionUpload.html',{'form':form})
 
-# @login_required(login_url="/login/")
-# @user_passes_test(is_Superintendent)
-# def regulation_differance_handler(request):
-#     not_promoted_regno = request.session.get('not_promoted_regno')[0]
-#     (ayear,asem,byear,bsem,regulation)= request.session.get('not_promoted_regno')[1]
-#     if(request.method == 'POST'):
-#         form = RollistRegulationDifferanceForm(not_promoted_regno,regulation,request.POST)
-#         if(form.is_valid()):
-#             for cIndex, sReg in enumerate(not_promoted_regno):
-#                 print(cIndex,sReg)
-#                 if(form.cleaned_data.get('RadioMode'+str(sReg))):
-#                     choice = form.cleaned_data.get('RadioMode'+str(sReg))
-#                     s_info = StudentInfo.objects.get(RegNo=sReg)
-#                     roll = RollLists_Staging(RegNo=sReg, Dept=s_info.Dept, AYear=ayear, BYear=byear, Cycle=s_info.Cycle, Regulation=regulation)
-#                     if(choice == 'YES'):
-#                         roll.save()
-#                         s_info.Regulation = regulation
-#                         s_info.save()
-#                     #else:
 
-#         return (render(request, 'SupExamDBRegistrations/RollListGenerateSuccess.html'))
-#     else:
-#         form = RollistRegulationDifferanceForm(Options = (not_promoted_regno,regulation))
-#         return (render(request, 'SupExamDBRegistrations/RollListNotPromotedRegulation.html',{'form':form}))
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def UploadSectionInfoErrorHandler(request):
+    SectionInfoRows = request.session.get('SecInfoErrRows')
+    for row in SectionInfoRows:
+        print(row[0])
+    if(request.method=='POST'):
+        form = UpdateSectionInfoForm(SectionInfoRows,request.POST)
+        if(form.is_valid()):
+            for cIndex, fRow in enumerate(SectionInfoRows):
+                if(form.cleaned_data.get('Check'+str(fRow[0]))):
+                    RollLists_Staging.objects.filter(id=fRow[0]).update(\
+                        regEventId=fRow[1],RegNo=fRow[2],Cycle=fRow[3],Section=fRow[4])
+            return render(request, 'SupExamDBRegistrations/SectionInfoUploadSuccess.html')
+    else:
+        form = UpdateSectionInfoForm(Options=SectionInfoRows)
+    return(render(request, 'SupExamDBRegistrations/SectionInfoUploadErrorHandler.html',{'form':form}))
+
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def RollList_Status(request):
+    if request.method == 'POST':
+        form = RollListStatusForm(request.POST)
+        if(form.is_valid()):
+            if request.POST['regID'] != 'Choose Registration ID':
+                regEvent = form.cleaned_data['regID']
+                strs = regEvent.split(':')
+                depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+                years = {1:'I',2:'II',3:'III',4:'IV'}
+                deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
+                rom2int = {'I':1,'II':2,'III':3,'IV':4}
+                dept = deptDict[strs[0]]
+                ayear = int(strs[3])
+                asem = int(strs[4])
+                byear = rom2int[strs[1]]
+                bsem = rom2int[strs[2]]
+                regulation = int(strs[5])
+                mode = strs[6]
+                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                        Dept=dept,Mode=mode,Regulation=regulation)
+                currentRegEventId = currentRegEventId[0].id
+                rollListStatus=RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
+                if request.POST.get('download'):
+                    from SupExamDBRegistrations.utils import RollListBookGenerator
+                    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+                    response['Content-Disposition'] = 'attachment; filename=RollList({event}).xlsx'.format(event=regEvent)
+                    BookGenerator = RollListBookGenerator(rollListStatus, regEvent)
+                    workbook = BookGenerator.generate_workbook()
+                    workbook.save(response)
+                    return response
+
+                return (render(request, 'SupExamDBRegistrations/RollListStatus.html',{'form':form,'rolls': rollListStatus}))            
+    form = RollListStatusForm()
+    return render(request, 'SupexamDBRegistrations/RollListStatus.html', {'form':form})
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def RollListFeeUpload(request):
+    if(request.method=='POST'):
+        form=RollListFeeUploadForm( request.POST,request.FILES)
+        if(form.is_valid()):
+            file = form.cleaned_data['file']
+            data = bytes()
+            for chunk in file.chunks():
+                data += chunk
+            dataset = XLSX().create_dataset(data)
+            regeventid=form.cleaned_data['regID']
+            if(form.cleaned_data['regID']!='--Choose Event--'):
+                paid_regd_no = []
+                for row in dataset:
+                    paid_regd_no.append(row[2])
+                rolls = RollLists_Staging.objects.filter(RegEventId_id=regeventid)
+                rolls = rolls.values_list('student__RegNo', flat=True)
+                unpaid_regd_no = rolls.exclude(student__RegNo__in=paid_regd_no)
+                error_regd_no = set(paid_regd_no).difference(set(rolls))
+                for regd_no in unpaid_regd_no:
+                    not_registered = NotRegistered(student=regd_no.student, RegEventId_id=regeventid)
+                    not_registered.save()
+                unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
+                StudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
+                RollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=regeventid).delete() 
+                return (render(request, 'SupExamDBRegistrations/RollListFeeUploadSuccess.html'), {'errors':error_regd_no})      
+    else:
+        form = RollListFeeUploadForm()
+    return  render(request, 'SupExamDBRegistrations/RollListFeeUpload.html',{'form':form})
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def NotRegisteredStatus(request):
+    if request.method == 'POST':
+        form = NotRegisteredStatusForm(request.POST)
+        if(form.is_valid):
+            regEventId=request.POST.get('regID')
+            not_regd_status=NotRegistered.objects.filter(RegEventId_id=regEventId) 
+            return (render(request, 'SupExamDBRegistrations/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
+    else:
+        form = NotRegisteredStatusForm()
+        return render(request, 'SupexamDBRegistrations/NotRegisteredStatus.html', {'form':form})
+
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def rolllist_finalize(request):
+    if request.method == 'POST':
+        form = RollListFinalizeForm(request.POST)
+        if form.is_valid():
+            regEvent = form.cleaned_data['regID']
+            rolls = RollLists_Staging.objects.filter(RegEventId_id=regEvent)
+            for roll in rolls:
+                finalized_roll = RollLists(student=roll.student, RegEventId=roll.RegEventId, Section=roll.Section, Cycle=roll.Cycle)
+                finalized_roll.save()
+            return render(request, 'SupExamDBRegistrations/RollListFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
+    form = RollListFinalizeForm()
+    return render(request, 'SupExamDBRegistrations/RollListFinalize.html', {'form':form})
 
 
 
@@ -382,8 +462,7 @@ def RollList_Status(request):
 # @login_required(login_url="/login/")
 # @user_passes_test(is_Superintendent)
 # def rolllist_finalize_error_handler(request):
-#     errRolls = request.session.get('rollListErrRows')
-#     currentRegEventId = request.session.get('currentRegEventId')
+    
 #     if request.method == 'POST':
 #         form = RollListErrorHandlerForm(errRolls, request.POST)
 #         if form.is_valid():

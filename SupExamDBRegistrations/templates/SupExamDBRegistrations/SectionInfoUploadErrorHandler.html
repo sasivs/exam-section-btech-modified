@@ -1,0 +1,57 @@
+{% extends 'SupExamDBRegistrations/rollList_home.html' %} {% block sub %}
+
+
+
+
+
+<div class="container">
+    <div class="row">
+        <strong> Your data upload for Section Info Information has the following errors</strong>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="container">
+                <table>
+                    <th>
+                        <tr>
+                            <td style="border: 1px solid black;">id </td>
+                            <td style="border: 1px solid black;">RegEventId</td>
+                            <td style="border: 1px solid black;">RegNo</td>
+                            <td style="border: 1px solid black;">Cycle</td>
+                            <td style="border: 1px solid black;">Section</td>
+                            <td style="border: 1px solid black;">Do you want to update(Y/N)</td>
+                        </tr>
+                    </th>
+                    {% for field in form.myFields %}
+                    <tr>
+                        <td style="border: 1px solid black;">
+                            {{ field.0 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.1 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.2 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.3 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.4 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.5 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <input type='submit' value='Submit'>
+            </div>
+        </form>
+    </div>
+
+    <!-- <p id="CGPA">
+
+    </p> -->
+
+</div>
+{% endblock %}

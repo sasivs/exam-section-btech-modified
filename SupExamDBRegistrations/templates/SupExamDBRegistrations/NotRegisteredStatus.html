@@ -5,43 +5,53 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Generate</button>
-            <button type="submit" name="download" value="download">Download</button>
         </form>
     </div>
-</div>
     <div class="container">
         <div class="row">
             <table>
                 <th>
                     <tr>
                         <td style="border: 1px solid black;">id </td>
-                        <td style="border: 1px solid black;">RegEventId </td>
                         <td style="border: 1px solid black;">RegNo </td>
-                        <td style="border: 1px solid black;">Cycle </td>
-                        <td style="border: 1px solid black;">Section</td>
+                        <td style="border: 1px solid black;">AYear </td>
+                        <td style="border: 1px solid black;">AYear </td>
+                        <td style="border: 1px solid black;">ASem </td>
+                        <td style="border: 1px solid black;">BSem </td>
+                        <td style="border: 1px solid black;">Dept </td>
+                        <td style="border: 1px solid black;">Regulation </td> 
                     </tr>
                 </th>
-                {% for field in rolls %}
+                {% for field in not_regd %}
                 <tr>
                     <td style="border: 1px solid black;">
                         {{ field.id }}
                     </td>
                     <td style="border: 1px solid black;">
-                        {{ field.RegEventId_id }}
-                    </td>
-                    <td style="border: 1px solid black;">
                         {{ field.student.RegNo }}
                     </td>
                     <td style="border: 1px solid black;">
-                        {{ field.Cycle }}
+                        {{ field.RegEventId.AYear }}
                     </td>
                     <td style="border: 1px solid black;">
-                        {{ field.Section }}
+                        {{ field.RegEventId.BYear }}
+                    </td> 
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.ASem }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.BSem }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.Dept }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.Regulation }}
                     </td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
     </div>
-
+</div>
 {% endblock %}

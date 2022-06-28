@@ -1,0 +1,26 @@
+{% extends 'SupExamDBRegistrations/rollList_home.html' %} {% block sub %}
+
+
+
+<div class="container">
+    <div class="row">
+        <strong> Your data RollList Fee upload has been done successfully <strong>   
+    </div>
+    {% if errors %}
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td>RegNo</td>
+                </tr>
+            </thead>
+            {% for regd_no in errors %}
+            <tr>
+                <td>{{regd_no}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

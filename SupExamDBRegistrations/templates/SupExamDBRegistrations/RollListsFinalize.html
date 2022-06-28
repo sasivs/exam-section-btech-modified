@@ -15,5 +15,10 @@
           <button type="submit" value="submit">Finalize</button> 
         </form>
     </div>
+    {% if success %}
+    <div class="row">
+      <strong>{{success}}</strong>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
