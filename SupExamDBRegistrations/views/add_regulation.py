@@ -4,7 +4,7 @@ from django.urls import reverse
 from SupExamDBRegistrations.forms import BacklogRegistrationForm, RegistrationsEventForm, \
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, AddRegulationForm
 from SupExamDBRegistrations.models import RegistrationStatus, StudentBacklogs, StudentInfo, StudentRegistrations,\
-     SubjectStagingResource, Subjects, Subjects_Staging, Regulation
+     Subjects, Subjects_Staging, Regulation
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.contrib.auth import logout 

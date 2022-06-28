@@ -4,8 +4,8 @@ from django.urls import reverse
 from SupExamDBRegistrations.forms import BacklogRegistrationForm, RegistrationsEventForm, \
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, DroppedRegularRegistrationsForm,\
         MakeupRegistrationsForm, NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm, NotPromotedBacklogRegistrationForm
-from SupExamDBRegistrations.models import MandatoryCredits, NotPromotedResource, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, \
-    SubjectStagingResource, Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging, RollLists,StudentGradePoints,\
+from SupExamDBRegistrations.models import MandatoryCredits, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, \
+     Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging, RollLists,StudentGradePoints,\
         NotPromoted,RollLists_Staging
 from SupExamDBRegistrations.views import RollList 
 from .home import is_Superintendent

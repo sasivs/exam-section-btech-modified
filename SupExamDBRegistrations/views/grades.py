@@ -6,7 +6,7 @@ from SupExamDBRegistrations.forms import BacklogRegistrationForm, GradesUploadFo
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, GradesUpdateForm,\
          GradesFinalizeForm, GradeChallengeForm
 from SupExamDBRegistrations.models import RegistrationStatus, Regulation, StudentBacklogs, StudentGrades, StudentInfo, \
-    StudentMakeupBacklogsVsRegistrations, StudentRegistrations, SubjectStagingResource, Subjects, Subjects_Staging, \
+    StudentMakeupBacklogsVsRegistrations, StudentRegistrations, Subjects, Subjects_Staging, \
         DroppedRegularCourses, StudentGrades_StagingResource, StudentGrades_Staging, GradeChallengeResource
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 

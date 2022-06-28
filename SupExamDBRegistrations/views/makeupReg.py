@@ -5,7 +5,7 @@ from SupExamDBRegistrations.forms import BacklogRegistrationForm, RegistrationsE
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, DroppedRegularRegistrationsForm,\
         MakeupRegistrationsForm
 from SupExamDBRegistrations.models import RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, \
-    SubjectStagingResource, Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging
+   Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.contrib.auth import logout 
