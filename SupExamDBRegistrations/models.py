@@ -1,11 +1,84 @@
-from audioop import maxpp
-from pyexpat import model
-# from typing_extensions import Required
 from django.contrib.auth.models import User
 from import_export import resources
 from django.db import models
 
 
+class ProgrammeModel(models.Model):
+    PID = models.IntegerField(primary_key=True)
+    ProgrammeName = models.CharField(max_length=20)
+    ProgrammeType = models.CharField(max_length=10)
+    Specialization = models.CharField(max_length=100)
+    Dept = models.IntegerField()
+    class Meta:
+        db_table = 'Departments'
+        managed = False
+
+class StudentInfo(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    RegNo = models.IntegerField()
+    RollNo = models.IntegerField()
+    Name = models.CharField(max_length=70)
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    AdmissionYear = models.IntegerField()
+    Gender = models.CharField(max_length=10)
+    Category = models.CharField(max_length=20)
+    GuardianName = models.CharField(max_length=50)
+    Phone = models.IntegerField()
+    email = models.CharField(max_length=50)
+    Address1 = models.CharField(max_length=150)
+    Address2 = models.CharField(max_length=100, null=True)
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+
+    class Meta:
+        db_table = 'StudentInfo'
+        managed = True
+
+class StudentInfoResource(resources.ModelResource):
+    class Meta:
+        model = StudentInfo 
+        
+class RegistrationStatus(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    Mode = models.CharField(max_length=1) # R for Regular B for Backlog
+    Status = models.IntegerField()
+    class Meta:
+        db_table = 'Registration_Status'
+        managed = False
+
+class RollLists(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    Section = models.CharField(max_length=2, default='NA')
+    class Meta:
+        db_table = 'RollLists'
+        managed = True
+    
+class RollLists_Staging(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    Section = models.CharField(max_length=2, default='NA')
+    class Meta:
+        db_table = 'RollLists_Staging'
+        managed = True
         
 # Create your models here.
 class StudentRegistrations(models.Model):
@@ -26,32 +99,11 @@ class StudentRegistrations_Staging(models.Model):
         db_table = 'StudentRegistrations_Staging'
         managed =False
 
-class ProgrammeModel(models.Model):
-    PID = models.IntegerField(primary_key=True)
-    ProgrammeName = models.CharField(max_length=20)
-    ProgrammeType = models.CharField(max_length=10)
-    Specialization = models.CharField(max_length=100)
-    Dept = models.IntegerField()
-    class Meta:
-        db_table = 'Departments'
-        managed = False
 
 class StudentRegistrationsResource(resources.ModelResource):
     class Meta:
         model = StudentRegistrations 
 
-class RegistrationStatus(models.Model):
-    AYear = models.IntegerField()
-    ASem = models.IntegerField()
-    BYear = models.IntegerField()
-    BSem = models.IntegerField()
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    Mode = models.CharField(max_length=1) # R for Regular B for Backlog
-    Status = models.IntegerField()
-    class Meta:
-        db_table = 'Registration_Status'
-        managed = False
 
 class MakeupSummaryStats(models.Model):
     SubName = models.CharField(max_length=100)
@@ -145,52 +197,7 @@ class FacultyInfoResource(resources.ModelResource):
     class Meta:
         model = FacultyInfo
 
-class StudentInfo(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    Name = models.CharField(max_length=70)
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    AdmissionYear = models.IntegerField()
-    Gender = models.CharField(max_length=10)
-    Category = models.CharField(max_length=20)
-    GuardianName = models.CharField(max_length=50)
-    Phone = models.IntegerField()
-    email = models.CharField(max_length=50)
-    Address1 = models.CharField(max_length=150)
-    Address2 = models.CharField(max_length=100)
-    Cycle = models.IntegerField()
-    FirstYearSection = models.CharField(max_length=10)
-    NonFirstYearSection = models.CharField(max_length=10)
-    class Meta:
-        db_table = 'StudentInfo'
-        managed = False
 
-class StudentInfoResource(resources.ModelResource):
-    class Meta:
-        model = StudentInfo 
-
-class RollLists(models.Model):
-    RegNo = models.IntegerField()
-    Dept = models.IntegerField()
-    AYear = models.IntegerField()
-    BYear = models.IntegerField()
-    Cycle = models.IntegerField()
-    Regulation = models.IntegerField()
-    class Meta:
-        db_table = 'RollLists'
-        managed = False
-    
-class RollLists_Staging(models.Model):
-    RegNo = models.IntegerField()
-    Dept = models.IntegerField()
-    AYear = models.IntegerField()
-    BYear = models.IntegerField()
-    Cycle = models.IntegerField()
-    Regulation = models.IntegerField()
-    class Meta:
-        db_table = 'RollLists_Staging'
-        managed = False
 
 class Subjects_Staging(models.Model):
     SubCode = models.CharField(max_length=10) 
@@ -204,10 +211,12 @@ class Subjects_Staging(models.Model):
     Credits = models.IntegerField()
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
-    RegEventId = models.IntegerField()
+    # RegEventId = models.IntegerField()
+    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+
     class Meta:
         db_table = 'Subjects_Staging'
-        managed = False
+        managed = True
 
 class Subjects(models.Model):
     SubCode = models.CharField(max_length=10) 
@@ -221,27 +230,28 @@ class Subjects(models.Model):
     Credits = models.IntegerField()
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
-    RegEventId = models.IntegerField()
+    # RegEventId = models.IntegerField()
+    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE, default=31)
+    
     class Meta:
         db_table = 'Subjects'
-        managed = False
+        managed = True
 
 
-class SubjectStagingResource(resources.ModelResource):
-    class Meta:
-        model = Subjects_Staging 
+# class SubjectStagingResource(resources.ModelResource):
+#     class Meta:
+#         model = Subjects_Staging 
 
 class NotPromoted(models.Model):
     AYear = models.IntegerField()
     BYear = models.IntegerField()
-    RegNo = models.IntegerField()
+    Regulation = models.IntegerField()
+    student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
     PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     class Meta:
         db_table = 'NotPromoted'
         managed = False
-class NotPromotedResource(resources.ModelResource):
-    class Meta:
-        model = NotPromoted
+
 
 
 class StudentCancellation(models.Model):
@@ -389,11 +399,11 @@ class Regulation(models.Model):
         # managed = False
 
 class DroppedRegularCourses(models.Model):
-    RegNo = models.IntegerField()
-    sub_id = models.IntegerField()
+    student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
     class Meta:
         db_table = 'DroppedRegularCourses'
-        managed = False
+        managed = True
     
 class MandatoryCredits(models.Model):
     Regulation = models.IntegerField()
@@ -427,10 +437,18 @@ class GradeChallengeResource(resources.ModelResource):
         model = GradeChallenge
 
 class RegulationChange(models.Model):
-    RegEventId= models.IntegerField()
-    StudentId = models.IntegerField()
+    RegEventId= models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
     PreviousRegulation = models.IntegerField()
     PresentRegulation = models.IntegerField()
     class Meta:
         db_table  = 'RegulationChange'
         managed = False
+
+class NotRegistered(models.Model):
+    RegEventId= models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'NotRegistered'
+        managed = True
+

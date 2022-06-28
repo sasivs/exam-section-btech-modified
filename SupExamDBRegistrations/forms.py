@@ -143,7 +143,7 @@ class StudentInfoUpdateForm(forms.Form):
             self.checkFields.append(self['Check' + str(Options[row][0])])
             self.myFields.append((Options[row][0], Options[row][1], Options[row][2],Options[row][3],Options[row][4],Options[row][5],\
                 Options[row][6],Options[row][7],Options[row][8],Options[row][9],Options[row][10],Options[row][11],Options[row][12],Options[row][13],\
-                     Options[row][14],Options[row][15],self['Check' + str(Options[row][0])]))
+                     self['Check' + str(Options[row][0])]))
 class RollListsCycleHandlerForm(forms.Form):
     def __init__(self, Options = None, *args, **kwargs):
         super(RollListsCycleHandlerForm, self).__init__(*args, **kwargs)
@@ -415,23 +415,7 @@ class GenerateRollListForm(forms.Form):
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=26, widget=forms.Select(choices=myChoices))
 
-class RollListFinalizeForm(forms.Form):
-    def __init__(self,  *args,**kwargs):
-        super(RollListFinalizeForm, self).__init__(*args, **kwargs)
-        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
-        myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
-            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
-                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
-                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        #attrs={'onchange':"submit();"}
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
-            max_length=26, widget=forms.Select(choices=myChoices))
-        self.fields['file'] = forms.FileField(label='Upload File')
+
 
 class RollListErrorHandlerForm(forms.Form):
     def __init__(self, Options=None, *args,**kwargs):
@@ -1373,9 +1357,9 @@ class NotPromotedBacklogRegistrationForm(forms.Form):
                 self['Check' + str(SubjectDetails[0].id)], self['RadioMode' + str(SubjectDetails[0].id)],True,\
                     'D',regEvent.AYear, regEvent.Regulation, SubjectDetails[0].id, bRow.id))
 
-class RollListRegulationDifferanceForm(forms.Form):
+class RollListRegulationDifferenceForm(forms.Form):
     def __init__(self, Options = None, *args,**kwargs):
-        super(RollListRegulationDifferanceForm,self).__init__(*args, **kwargs)
+        super(RollListRegulationDifferenceForm,self).__init__(*args, **kwargs)
         self.myFields = []
         self.radioFields = []
         Choices = [('YES','YES'),('NO','NO')]
@@ -1502,6 +1486,110 @@ class FacultyAssignmentForm(forms.Form):
                     self.radioFields.append(self['RadioMode' + str(mk.sub_id)])
                     self.myFields.append((mk.SubCode, mk.SubName, mk.Credits, self['Check' + str(mk.sub_id)],\
                         self['RadioMode' + str(mk.sub_id)],'M', mk.OfferedYear,mk.Regulation, mk.sub_id))
+
+class UploadSectionInfoForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(UploadSectionInfoForm, self).__init__(*args, **kwargs)
+        self.fields['file'] = forms.FileField()
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
+            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        #attrs={'onchange':"submit();"}
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))
+
+
+
+
+
+class UpdateSectionInfoForm(forms.Form):
+    def __init__(self, Options=None, *args,**kwargs):
+        super(UpdateSectionInfoForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.checkFields = []
+        for fi in range(len(Options)):
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.checkFields.append(self['Check' + str(Options[fi][0])])
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4], self['Check' + str(Options[fi][0])]))
+
+
+
+class RollListStatusForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(RollListStatusForm,self).__init__(*args, **kwargs)
+        self.myFields=[]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
+            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))
+
+class RollListFeeUploadForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(RollListFeeUploadForm, self).__init__(*args, **kwargs)
+        self.fields['file'] = forms.FileField()
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        myChoices = [(option[7], depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        #attrs={'onchange':"submit();"}
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))
+
+class RollListFinalizeForm(forms.Form):
+    def __init__(self,  *args,**kwargs):
+        super(RollListFinalizeForm, self).__init__(*args, **kwargs)
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        myChoices = [(option[7], depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))
+        self.fields['file'] = forms.FileField(label='Upload File')
+
+class NotRegisteredStatusForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(NotRegisteredStatusForm,self).__init__(*args, **kwargs)
+        self.myFields=[]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        myChoices = [(option[7], depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        self.fields['RegEventId'] =  forms.IntegerField(label='Select RegEventId', widget=forms.Select(choices=myChoices))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))
+
+
 
 
 

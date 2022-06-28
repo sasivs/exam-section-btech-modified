@@ -30,11 +30,11 @@ def StudInfoFileUpload(request):
             dataset = XLSX().create_dataset(data)
             newDataset = Dataset()
             newDataset.headers = ['RegNo','RollNo','Name','Regulation','Dept','AdmissionYear','Gender','Category',\
-                'GuardianName','Phone','email','Address1','Address2','Cycle','FirstYearSection','NonFirstYearSection']
+                'GuardianName','Phone','email','Address1','Address2','Cycle']
             for i in range(len(dataset)):
                 row = dataset[i]
                 newRow = (row[0],row[1],row[2],row[3],row[4],row[12],row[5],row[6],row[7],row[8],row[9],row[10],row[11],\
-                    row[13],row[14],row[15])
+                    row[13])
                 newDataset.append(newRow)
             print(newDataset)
             StudInfo_resource = StudentInfoResource()
@@ -65,8 +65,8 @@ def StudInfoFileUpload(request):
                     errorData.append(newDataset[i])
                 studInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],\
                     errorData[i][4],errorData[i][5],errorData[i][6],errorData[i][7],errorData[i][8],\
-                        errorData[i][9], errorData[i][10], errorData[i][11],errorData[i][12], errorData[i][13], errorData[i][14]\
-                        ,errorData[i][15] ) for i in range(len(errorData))]
+                        errorData[i][9], errorData[i][10], errorData[i][11],errorData[i][12], errorData[i][13])\
+                             for i in range(len(errorData))]
                 request.session['studInfoErrRows'] = studInfoErrRows
                 return HttpResponseRedirect(reverse('StudentInfoUploadErrorHandler'))
         else:
@@ -88,8 +88,7 @@ def student_info_error_handler(request):
                     StudentInfo.objects.filter(RegNo=studRow[0]).update(RollNo = studRow[1],Name = studRow[2],\
                         Regulation = studRow[3], Dept = studRow[4], AdmissionYear = studRow[5], Gender = studRow[6],\
                         Category = studRow[7], GuardianName = studRow[8], Phone = studRow[9], email = studRow[10], \
-                            Address1 = studRow[11], Address2 = studRow[12], Cycle = studRow[13], FirstYearSection=studRow[14], 
-                            NonFirstYearSection=studRow[15])
+                            Address1 = studRow[11], Address2 = studRow[12], Cycle = studRow[13])
             return render(request, 'SupExamDBRegistrations/BTStudentInfoUploadSuccess.html')
     else:
         print(studInfoErrRows[0])
