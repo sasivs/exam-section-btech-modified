@@ -12,7 +12,7 @@ from ..forms import BacklogRegistrationForm, DBYBSAYASSelectionForm, FirstYearBa
           RegistrationsFinalizeEventForm, OpenElectiveRegistrationsForm
 from ..models import CurrentAcademicYear, RegistrationStatus, StudentBacklogs, StudentCancellation, \
     StudentGrades, StudentInfo, StudentMakeupBacklogsVsRegistrations,\
-     StudentRegistrations, StudentRegistrationsResource, ProgrammeModel, Subjects_Staging, \
+     StudentRegistrations,  ProgrammeModel, Subjects_Staging, \
          RollLists, Subjects, StudentRegistrations_Staging
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
