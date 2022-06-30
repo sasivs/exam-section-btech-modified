@@ -12,9 +12,11 @@
                 <table>
                     <th>
                         <tr>
+                            <td style="border: 1px solid black;">sid </td>
                             <td style="border: 1px solid black;">RegNo </td>
                             <td style="border: 1px solid black;">AYear</td>
                             <td style="border: 1px solid black;">BYear</td>
+                            <td style="border: 1px solid black;">Regulation</td>
                             <td style="border: 1px solid black;">PoA</td>
                             <td style="border: 1px solid black;">Do you want to update(Y/N)</td>
                         </tr>
@@ -36,7 +38,12 @@
                         <td style="border: 1px solid black;">
                             {{ field.4 }}
                         </td>
-
+                        <td style="border: 1px solid black;">
+                            {{ field.5 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.6 }}
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>

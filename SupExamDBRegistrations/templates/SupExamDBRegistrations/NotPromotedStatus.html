@@ -25,19 +25,23 @@
                     <td style="border: 1px solid black;">RegNo </td>
                     <td style="border: 1px solid black;">AYear</td>
                     <td style="border: 1px solid black;">BYear</td>
+                    <td style="border: 1px solid black;">Regulation</td>
                     <td style="border: 1px solid black;">PoA</td>
                 </tr>
             </th>
             {% for np  in notPromoted %}
             <tr>
                 <td style="border: 1px solid black;">
-                    {{ np.RegNo }}
+                    {{ np.student.RegNo }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ np.AYear }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ np.BYear }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.Regulation }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ np.PoA }}

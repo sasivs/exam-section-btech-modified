@@ -1,4 +1,4 @@
-from .models import Subjects_Staging, StudentInfo, FacultyInfo, StudentGrades_Staging, GradePoints, GradeChallenge
+from .models import Subjects_Staging, StudentInfo, FacultyInfo, StudentGrades_Staging, GradePoints, GradeChallenge, NotPromoted
 from import_export import resources
 
 
@@ -25,3 +25,7 @@ class GradePointsResource(resources.ModelResource):
 class GradeChallengeResource(resources.ModelResource):
     class Meta:
         model = GradeChallenge
+
+class NotPromotedResource(resources.ModelResource):
+    class Meta:
+        model = NotPromoted

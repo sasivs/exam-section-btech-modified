@@ -98,7 +98,6 @@ urlpatterns = [
 
     path('NotPromotedList', not_promoted.not_promoted_list, name='NotPromotedList'),
 
-    path('DownloadFile', not_promoted.download_file, name='DownloadFile'),
 
     path('NotPromotedUpload', not_promoted.not_promoted_upload, name='NotPromotedUpload'),
     path('NotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='NotPromotedUploadErrorHandler'),

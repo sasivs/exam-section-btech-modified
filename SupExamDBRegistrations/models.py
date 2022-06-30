@@ -62,6 +62,7 @@ class RollLists(models.Model):
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
         db_table = 'RollLists'
+        unique_together = ('student', 'RegEventId')
         managed = True
     
 class RollLists_Staging(models.Model):
@@ -75,6 +76,7 @@ class RollLists_Staging(models.Model):
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
         db_table = 'RollLists_Staging'
+        unique_together = ('student', 'RegEventId')
         managed = True
         
 # Create your models here.
@@ -257,7 +259,8 @@ class NotPromoted(models.Model):
     PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     class Meta:
         db_table = 'NotPromoted'
-        managed = False
+        unique_together=('AYear', 'BYear', 'Regulation', 'student')
+        managed = True
 
 
 

@@ -1,3 +1,4 @@
+from locale import currency
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -7,6 +8,7 @@ from SupExamDBRegistrations.forms import BacklogRegistrationForm, RegistrationsE
 from SupExamDBRegistrations.models import MandatoryCredits, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, \
      Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging, RollLists,StudentGradePoints,\
         NotPromoted,RollLists_Staging
+from SupExamDBRegistrations.resources import NotPromotedResource
 from SupExamDBRegistrations.views import RollList 
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
@@ -40,101 +42,65 @@ def not_promoted_list(request):
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
-            if byear != 1:
-                rolls = RollLists.objects.filter(AYear=ayear, BYear=byear, Dept=dept, Regulation=regulation)
-            else:
-                rolls = RollLists.objects.filter(AYear=ayear, BYear=byear, Cycle=dept, Regulation=regulation)
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
+            rolls = RollLists.objects.filter(RegEventId__in=currentRegEventId)
+            print(rolls)
+            
             mandatory_credits = MandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
             mandatory_credits = mandatory_credits[0].Credits
             np = []
-            excel_data = {'RegNo':[], 'AYear':[], 'BYear':[], 'PoA':[]}
             for roll in rolls:
-                regno = roll.RegNo
-                grades = StudentGradePoints.objects.filter(RegNo=regno, AYear=ayear, BYear=byear).filter(~Q(Grade='F')).\
+                grades = StudentGradePoints.objects.filter(RegNo=roll.student.RegNo, AYear=ayear, BYear=byear).filter(~Q(Grade='F')).\
                     filter(~Q(Grade='I')).filter(~Q(Grade='X')).filter(~Q(Grade='R'))
                 credits=0
                 for g in grades:
                     credits += g.Credits
                 if credits < mandatory_credits:
-                    d = {'RegNo':regno, 'AYear':ayear, 'BYear':byear, 'PoA':'R'}
+                    d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'R'}
                     np.append(d)
-                    excel_data['RegNo'].append(d['RegNo'])
-                    excel_data['AYear'].append(d['AYear'])
-                    excel_data['BYear'].append(d['BYear'])
-                    excel_data['PoA'].append(d['PoA'])
                 else:
                     if byear == 2 or byear == 3:
-                        backlogs = StudentBacklogs.objects.filter(RegNo=regno, BYear=byear-1)
+                        backlogs = StudentBacklogs.objects.filter(RegNo=roll.student.RegNo, BYear=byear-1)
                         if len(backlogs) != 0:
-                            d = {'RegNo':regno, 'AYear':ayear, 'BYear':byear, 'PoA':'B'}
+                            d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
-                            excel_data['RegNo'].append(d['RegNo'])
-                            excel_data['AYear'].append(d['AYear'])
-                            excel_data['BYear'].append(d['BYear'])
-                            excel_data['PoA'].append(d['PoA'])
                         else:
-                            dropped_courses = DroppedRegularCourses.objects.filter(RegNo=regno)
+                            dropped_courses = DroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
                             for course in dropped_courses:
                                 sub = Subjects.objects.get(id=course.sub_id)
                                 offeredEvent = RegistrationStatus.objects.get(id=sub.RegEventId)
                                 if offeredEvent.BYear == byear-1:
-                                    check_registration = StudentRegistrations.objects.filter(RegNo=regno, sub_id=course.sub_id)
+                                    check_registration = StudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
                                     if len(check_registration) == 0:
-                                        d = {'RegNo':regno, 'AYear':ayear, 'BYear':byear, 'PoA':'B'}
+                                        d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                         np.append(d)
-                                        excel_data['RegNo'].append(d['RegNo'])
-                                        excel_data['AYear'].append(d['AYear'])
-                                        excel_data['BYear'].append(d['BYear'])
-                                        excel_data['PoA'].append(d['PoA'])
                     elif byear == 4:
-                        backlogs = StudentBacklogs.objects.filter(RegNo=regno)
+                        backlogs = StudentBacklogs.objects.filter(RegNo=roll.student.RegNo)
                         if len(backlogs) != 0:
-                            d = {'RegNo':regno, 'AYear':ayear, 'BYear':byear, 'PoA':'B'}
+                            d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
-                            excel_data['RegNo'].append(d['RegNo'])
-                            excel_data['AYear'].append(d['AYear'])
-                            excel_data['BYear'].append(d['BYear'])
-                            excel_data['PoA'].append(d['PoA'])
                         else:
-                            dropped_courses = DroppedRegularCourses.objects.filter(RegNo=regno)
+                            dropped_courses = DroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
                             for course in dropped_courses:
                                 sub = Subjects.objects.get(id=course.sub_id)
-                                check_registration = StudentRegistrations.objects.filter(RegNo=regno, sub_id=course.sub_id)
+                                check_registration = StudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
                                 if len(check_registration) == 0:
-                                    d = {'RegNo':regno, 'AYear':ayear, 'BYear':byear, 'PoA':'B'}
+                                    d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                     np.append(d)
-                                    excel_data['RegNo'].append(d['RegNo'])
-                                    excel_data['AYear'].append(d['AYear'])
-                                    excel_data['BYear'].append(d['BYear'])
-                                    excel_data['PoA'].append(d['PoA'])
-            event = event.replace(':','_')
-            dname = str(event)+".xlsx"
-            name=MEDIA_ROOT + str(event) + ".xlsx"
-            reqData = pd.DataFrame.from_dict(excel_data)
-            writer = pd.ExcelWriter(name, engine='xlsxwriter')
-            reqData.to_excel(writer, sheet_name='Sheet1', index=False)
-            writer.save()
-            request.session['filename']=dname
-            request.session['filepath']=name
-            return render(request, 'SupExamDBRegistrations/NotPromotedList.html', {'form':form, 'notPromoted':np, 'download_link':name, 'download_name':dname})
+            if request.POST.get('download'):
+                    from SupExamDBRegistrations.utils import NotPromotedBookGenerator
+                    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+                    response['Content-Disposition'] = 'attachment; filename=NotPromoted({regevent}).xlsx'.format(regevent=event)
+                    BookGenerator = NotPromotedBookGenerator(np, regulation, event)
+                    workbook = BookGenerator.generate_workbook()
+                    workbook.save(response)
+                    return response
+            return render(request, 'SupExamDBRegistrations/NotPromotedList.html', {'form':form, 'notPromoted':np})
     else:
         form = NotPromotedListForm()
     return render(request, 'SupExamDBRegistrations/NotPromotedList.html', {'form':form})
 
-# Import mimetypes module
-# import os module
-# Import HttpResponse module
 
-
-# Define function to download pdf file using template
-def download_file(request):
-    filepath=request.session.get('filepath')
-    filename = request.session.get('filename')
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-    response = HttpResponse(path, content_type=mime_type)
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
 
 def not_promoted_upload(request):
     if request.method == 'POST':
@@ -156,28 +122,32 @@ def not_promoted_upload(request):
                 data += chunk
             dataset = XLSX().create_dataset(data)
             newDataset= Dataset()
-            newDataset.headers =['RegNo', 'AYear', 'BYear', 'PoA']
+            newDataset.headers =['student', 'AYear', 'BYear', 'Regulation','PoA']
             errorDataset = Dataset()
-            errorDataset.headers=['RegNo', 'AYear', 'BYear', 'PoA']
+            errorDataset.headers=['student_id', 'RegNo', 'AYear', 'BYear', 'Regulation', 'PoA']
             for i in range(len(dataset)):
                 row = dataset[i]
-                if row[1] == ayear and row[2] == byear:
-                    newRow = (row[0],row[1],row[2],row[3])
+                print(row)
+                if row[2] == ayear and row[3] == byear and row[4] == regulation:
+                    newRow = (row[0],row[2],row[3], row[4], row[5])
                     newDataset.append(newRow)
                 else:
-                    newRow = (row[0],row[1],row[2],row[3])
+                    newRow = (row[0],row[1],row[2],row[3],row[4],row[5])
                     errorDataset.append(newRow)
             not_promoted_resource = NotPromotedResource()
             result = not_promoted_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 not_promoted_resource.import_data(newDataset, dry_run=False)
                 if (len(errorDataset)!=0):
-                    npErrRows = [(errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3]) for i in range(len(errorDataset))]
+                    print("here")
+                    npErrRows = [(errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3], errorDataset[i][4], errorDataset[i][5]) for i in range(len(errorDataset))]
                     request.session['npErrRows'] = npErrRows
                     request.session['RegEvent'] = regEvent
                     return HttpResponseRedirect(reverse('NotPromotedUploadErrorHandler' ))
                 return(render(request,'SupExamDBRegistrations/NotPromotedUploadSuccess.html'))
             else:
+                print("here1")
+
                 errors = result.row_errors()
                 print(errors[0][1][0].error)
                 indices = set([i for i in range(len(newDataset))])    
@@ -196,11 +166,11 @@ def not_promoted_upload(request):
                         print('Something went wrong in plain import')
                 errorData = Dataset()
                 for i in list(errorIndices):
-                    newRow = (newDataset[i][0],newDataset[i][1],newDataset[i][2],newDataset[i][3])
+                    newRow = (newDataset[i][0],dataset[i][1],newDataset[i][1],newDataset[i][2],newDataset[i][3], newDataset[i][4])
                     errorData.append(newRow)
                 for i in errorDataset:
                     errorData.append(i)
-                npErrRows = [(errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3]) for i in range(len(errorData))]
+                npErrRows = [(errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3], errorData[i][4], errorData[i][5]) for i in range(len(errorData))]
                 request.session['npErrRows'] = npErrRows
                 request.session['RegEvent'] = regEvent
                 return HttpResponseRedirect(reverse('NotPromotedUploadErrorHandler' ))
@@ -219,7 +189,7 @@ def not_promoted_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(npErrRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    NotPromoted.objects.filter(RegNo=fRow[0],AYear=fRow[1], BYear=fRow[2]).update(PoA=fRow[3])
+                    NotPromoted.objects.filter(student_id=fRow[0],AYear=fRow[2], BYear=fRow[3], Regulation=fRow[4]).update(PoA=fRow[5])
             return render(request, 'SupExamDBRegistrations/NotPromotedUploadSuccess.html')
     else:
         form = NotPromotedUpdateForm(Options=npErrRows)
@@ -242,9 +212,8 @@ def not_promoted_status(request):
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
-            notPromoted = NotPromoted.objects.filter(AYear=ayear, BYear=byear)
-            print(notPromoted)
-            return render(request, 'SupExamDBRegistrations/NotPromotedStatus.html', {'notPromoted':notPromoted.values(), 'form':form})
+            notPromoted = NotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation)
+            return render(request, 'SupExamDBRegistrations/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
     else:
         form = NotPromotedStatusForm()
     return render(request, 'SupExamDBRegistrations/NotPromotedStatus.html', {'form':form})
