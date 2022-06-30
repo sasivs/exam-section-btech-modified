@@ -25,7 +25,9 @@ urlpatterns = [
     path('FacultyInfoUploadErrorHandler', FacultyAssignment.FacultyInfo_upload_error_handler, name = 'FacultyInfoUploadErrorHandler'),
     path('FacultyInfoStatus', FacultyAssignment.FacultyInfo_upload_status, name = 'FacultyInfoStatus'),
     path('FacultyInfoDeletion', FacultyAssignment.Faculty_delete, name = 'FacultyInfoDeletion'),
-    path('FacultyAssignment', FacultyAssignment.Faculty_Assignment, name = 'FacultyAssignment'),
+    path('FacultyAssignment', FacultyAssignment.faculty_assignment, name = 'FacultyAssignment'),
+    path('FacultyAssignmentStatus', FacultyAssignment.faculty_assignment_status, name = 'FacultyAssignmentStatus'),
+    path('FacultyAssignemntDetail/<int:pk>', FacultyAssignment.faculty_assignment_detail, name='FacultyAssignmentDetail'),
 
 
     path('AddRegulation', add_regulation.addRegulation, name = 'AddRegulation'),
@@ -78,7 +80,7 @@ urlpatterns = [
     path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
     path('RollListStatus',RollList.RollList_Status,name='RollListStatus'),
     path('FinalizeRollLists', RollList.rolllist_finalize, name='FinalizeRollLists'),
-     path('NotRegisteredStatus',RollList.NotRegisteredStatus,name='NotRegisteredStatus'),
+    path('NotRegisteredStatus',RollList.NotRegisteredStatus,name='NotRegisteredStatus'),
 
     path('OpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='OpenElectiveRegistrations'),
     path('DepartmentElectiveRegistrationsUpload',Dec_upload_file.dept_elective_regs_upload, name='DepartmentElectiveRegistrationsUpload'),

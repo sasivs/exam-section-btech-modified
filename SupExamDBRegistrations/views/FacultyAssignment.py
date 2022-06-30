@@ -1,9 +1,11 @@
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from SupExamDBRegistrations.forms import FacultyAssignmentForm,FacultyDeletionForm,FacultyInfoUpdateForm,BacklogRegistrationForm, RegistrationsEventForm,FacultyUploadForm, \
-    SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm
-from SupExamDBRegistrations.models import FacultyInfo, FacultyInfoResource,RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging
+    SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, FacultyAssignmentStatusForm
+from SupExamDBRegistrations.models import FacultyInfo, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging,\
+    RollLists, FacultyAssignment
+from SupExamDBRegistrations.resources import FacultyInfoResource
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.contrib.auth import logout 
@@ -128,13 +130,64 @@ def Faculty_delete(request):
         form = FacultyDeletionForm(Options=fac_info)
     return render(request, 'SupExamDBRegistrations/FacultyInfoDeletion.html',{'form':form})
 
+
+
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
-def Faculty_Assignment(request):
+def faculty_assignment(request):
     if(request.method =='POST'):
         form = FacultyAssignmentForm(request.POST)
-       
-    else:
-        form = FacultyAssignmentForm()
+        print("here")
+        if(form.is_valid()):
+            print("here")
+            regeventid=form.cleaned_data['regID']
+            subjects = Subjects.objects.filter(RegEventId_id=regeventid)
+            print(subjects)
+            request.session['currentRegEventId']=regeventid
+            return render(request, 'SupExamDBRegistrations/FacultyAssignment.html', {'form': form, 'subjects':subjects})
+    
+    form = FacultyAssignmentForm()
     return render(request, 'SupExamDBRegistrations/FacultyAssignment.html',{'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def faculty_assignment_status(request):
+    if(request.method =='POST'):
+        form = FacultyAssignmentStatusForm(request.POST)
+        if(form.is_valid()):
+            regeventid=form.cleaned_data['regID']
+            faculty = FacultyAssignment.objects.filter(subject__RegEventId__id=regeventid)
+            return render(request, 'SupExamDBRegistrations/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
+    else:
+        form = FacultyAssignmentStatusForm()
+    return render(request, 'SupExamDBRegistrations/FacultyAssignmentStatus.html',{'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def faculty_assignment_detail(request,pk):
+    subject = Subjects.objects.get(id=pk)
+    faculty = FacultyInfo.objects.all()
+    sections = RollLists.objects.filter(RegEventId_id=request.session.get('currentRegEventId')).values_list('Section', flat=True).distinct()
+    faculty_assigned = FacultyAssignment.objects.filter(subject=subject)
+    co_ordinator=''
+    faculty_section={}
+    if faculty_assigned:
+        co_ordinator = faculty_assigned[0].co_ordinator_id
+        faculty_section = {row.Section: row.faculty_id for row in faculty_assigned}
+        print(faculty_section)
+    if request.method == 'POST':
+        for sec in sections:
+            if request.POST.get('faculty-'+str(sec)):
+                if faculty_assigned and faculty_assigned.get(Section=sec):
+                    faculty_row = faculty_assigned.get(Section=sec)
+                    faculty_row.co_ordinator_id = request.POST.get('course-coordinator') or 0
+                    faculty_row.faculty_id = request.POST.get('faculty-'+str(sec))
+                    faculty_row.save()
+                else:
+                    faculty_row = FacultyAssignment(subject=subject, co_ordinator_id=request.POST.get('course-coordinator'),\
+                        faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec)
+                    faculty_row.save()
+        return redirect('FacultyAssignment')
+    return render(request, 'SupExamDBRegistrations/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
+        'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_section})
 

@@ -3,7 +3,8 @@ from operator import itemgetter
 from random import choices
 from shutil import SpecialFileError
 from .models import NotPromoted, ProgrammeModel, RegistrationStatus, RegularRegistrationSummary, StudentMakeups, StudentRegistrations, StudentInfo, Subjects,\
-     Subjects_Staging, Regulation, DroppedRegularCourses, StudentRegistrations_Staging, BacklogRegistrationSummary, MakeupRegistrationSummary
+     Subjects_Staging, Regulation, DroppedRegularCourses, StudentRegistrations_Staging, BacklogRegistrationSummary,\
+         MakeupRegistrationSummary, RollLists, FacultyInfo
 from django import forms 
 from django.forms import CheckboxInput, RadioSelect, ValidationError
 from .models import StudentBacklogs
@@ -404,7 +405,7 @@ class GenerateRollListForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
@@ -1562,7 +1563,7 @@ class RollListFinalizeForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
@@ -1570,7 +1571,6 @@ class RollListFinalizeForm(forms.Form):
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=26, widget=forms.Select(choices=myChoices))
-        self.fields['file'] = forms.FileField(label='Upload File')
 
 class NotRegisteredStatusForm(forms.Form):
     def __init__(self, *args,**kwargs):
@@ -1585,9 +1585,40 @@ class NotRegisteredStatusForm(forms.Form):
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        self.fields['RegEventId'] =  forms.IntegerField(label='Select RegEventId', widget=forms.Select(choices=myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=26, widget=forms.Select(choices=myChoices))
+
+class FacultyAssignmentForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(FacultyAssignmentForm, self).__init__(*args, **kwargs)
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        myChoices = [(option[7], depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        #attrs={'onchange':"submit();"}
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
+        widget=forms.Select(choices=myChoices))
+
+
+class FacultyAssignmentStatusForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(FacultyAssignmentStatusForm,self).__init__(*args, **kwargs)
+        regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in regIDs]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        regEventIDKVs = [(option[7], depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
+                    for oIndex, option in enumerate(regIDs)]
+        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        self.fields['regID'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs))
+      
 
 
 
