@@ -11,6 +11,7 @@ from django.contrib.auth import logout
 from django.db.models import F
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
+from SupExamDBRegistrations.resources import SubjectStagingResource
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)

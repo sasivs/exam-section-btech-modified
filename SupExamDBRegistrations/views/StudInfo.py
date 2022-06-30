@@ -8,7 +8,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from SupExamDBRegistrations.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm, UpdateNonFirstYearSectionForm
-from SupExamDBRegistrations.models import StudentInfo, StudentInfoResource
+from SupExamDBRegistrations.models import StudentInfo
+from SupExamDBRegistrations.resources import StudentInfoResource
 from .home import is_Superintendent
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX

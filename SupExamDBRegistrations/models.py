@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from import_export import resources
 from django.db import models
 
 
@@ -37,9 +36,7 @@ class StudentInfo(models.Model):
         db_table = 'StudentInfo'
         managed = True
 
-class StudentInfoResource(resources.ModelResource):
-    class Meta:
-        model = StudentInfo 
+
         
 class RegistrationStatus(models.Model):
     AYear = models.IntegerField()
@@ -100,9 +97,7 @@ class StudentRegistrations_Staging(models.Model):
         managed =False
 
 
-class StudentRegistrationsResource(resources.ModelResource):
-    class Meta:
-        model = StudentRegistrations 
+
 
 
 class MakeupSummaryStats(models.Model):
@@ -193,12 +188,10 @@ class FacultyInfo(models.Model):
     class Meta:
         db_table = 'FacultyInfo'
         managed = True
-class FacultyInfoResource(resources.ModelResource):
-    class Meta:
-        model = FacultyInfo
 
 
 
+from .models import RegistrationStatus
 class Subjects_Staging(models.Model):
     SubCode = models.CharField(max_length=10) 
     SubName= models.CharField(max_length=100)
@@ -212,11 +205,12 @@ class Subjects_Staging(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     # RegEventId = models.IntegerField()
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('SupExamDBRegistrations.RegistrationStatus', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'Subjects_Staging'
         managed = True
+
 
 class Subjects(models.Model):
     SubCode = models.CharField(max_length=10) 
@@ -231,16 +225,28 @@ class Subjects(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     # RegEventId = models.IntegerField()
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE, default=31)
+    RegEventId = models.ForeignKey('SupExamDBRegistrations.RegistrationStatus', on_delete=models.CASCADE)
     
     class Meta:
         db_table = 'Subjects'
         managed = True
 
+#         # import_id_fields = ('id',)
+#         # RegEventId = fields.Field(
+#         #     column_name='id',
+#         #     attribute='id',
+#         #     widget=ForeignKeyWidget(RegistrationStatus, 'id')
+#         # )
+class FacultyAssignment(models.Model):
+    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
+    Section = models.CharField(max_length=2, default='NA')
+    faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
+    co_ordinator = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
 
-# class SubjectStagingResource(resources.ModelResource):
-#     class Meta:
-#         model = Subjects_Staging 
+    class Meta:
+        db_table = 'FacultyAssignment'
+        managed = True
+
 
 class NotPromoted(models.Model):
     AYear = models.IntegerField()
@@ -305,9 +311,7 @@ class StudentGrades_Staging(models.Model):
         db_table = 'StudentGrades_Staging'
         managed = False
 
-class StudentGrades_StagingResource(resources.ModelResource):
-    class Meta:
-        model = StudentGrades_Staging
+
 
 class StudentGradePoints(models.Model):
     RegNo = models.IntegerField()
@@ -421,9 +425,7 @@ class GradePoints(models.Model):
     class Meta:
         db_table = 'GradePoints'
         managed = False
-class GradePointsResource(resources.ModelResource):
-    class Meta:
-        model = GradePoints
+
 
 class GradeChallenge(models.Model):
     RegId = models.IntegerField()
@@ -432,9 +434,7 @@ class GradeChallenge(models.Model):
     class Meta:
         db_table = 'GradeChallenge'
         managed = True
-class GradeChallengeResource(resources.ModelResource):
-    class Meta:
-        model = GradeChallenge
+
 
 class RegulationChange(models.Model):
     RegEventId= models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
@@ -451,4 +451,57 @@ class NotRegistered(models.Model):
     class Meta:
         db_table = 'NotRegistered'
         managed = True
+
+# class PartialSeatCancellation(models.Model):
+#     CYCLE_CHOICES = (
+#         (10,'PHYSICS'),
+#         (9,'CHEMISTRY')
+#     )
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     Regulation = models.IntegerField()
+#     Dept = models.IntegerField()
+#     AdmissionYear = models.IntegerField()
+#     Gender = models.CharField(max_length=10)
+#     Category = models.CharField(max_length=20)
+#     GuardianName = models.CharField(max_length=50)
+#     Phone = models.IntegerField()
+#     email = models.CharField(max_length=50)
+#     Address1 = models.CharField(max_length=150)
+#     Address2 = models.CharField(max_length=100, null=True)
+#     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+#     cancelled_on = models.DateTimeField(auto_now_add=True)
+#     class Meta:
+#         db_table = 'PartialSeatCancellation'
+#         managed = True
+
+# class PermanantSeatCancellation(models.Model):
+#     CYCLE_CHOICES = (
+#         (10,'PHYSICS'),
+#         (9,'CHEMISTRY')
+#     )
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     Regulation = models.IntegerField()
+#     Dept = models.IntegerField()
+#     AdmissionYear = models.IntegerField()
+#     Gender = models.CharField(max_length=10)
+#     Category = models.CharField(max_length=20)
+#     GuardianName = models.CharField(max_length=50)
+#     Phone = models.IntegerField()
+#     email = models.CharField(max_length=50)
+#     Address1 = models.CharField(max_length=150)
+#     Address2 = models.CharField(max_length=100, null=True)
+#     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+#     cancelled_on = models.DateTimeField(auto_now_add=True)
+#     class Meta:
+#         db_table = 'PartialSeatCancellation'
+#         managed = True
+
+# class PartialSeatCancelledRegistrations(models.Model):
+
+
+
 

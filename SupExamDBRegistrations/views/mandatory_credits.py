@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from SupExamDBRegistrations.forms import GenerateRollListForm, MandatoryCreditsForm, RollListsCycleHandlerForm
-from SupExamDBRegistrations.models import MandatoryCredits, Regulation, StudentInfo, StudentInfoResource, NotPromoted, RollLists
+from SupExamDBRegistrations.models import MandatoryCredits, Regulation, StudentInfo, NotPromoted, RollLists
 from .home import is_Superintendent
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX

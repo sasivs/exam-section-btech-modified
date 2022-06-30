@@ -6,7 +6,8 @@ from SupExamDBRegistrations.forms import BacklogRegistrationForm, GradePointsUpl
         MakeupRegistrationsForm, NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm, GradePointsUpdateForm
 from SupExamDBRegistrations.models import MandatoryCredits, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, \
      Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging, RollLists,StudentGradePoints,\
-        NotPromoted, GradePointsResource, GradePoints
+        NotPromoted, GradePoints
+from SupExamDBRegistrations.resources import GradePointsResource
 from SupExamDBRegistrations.views import RollList
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 

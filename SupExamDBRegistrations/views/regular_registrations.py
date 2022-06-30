@@ -37,7 +37,7 @@ def btech_regular_registration(request):
                 currentRegEventId = currentRegEventId[0].id
                 mode = 1
                 if(byear==1):
-                    rolls = RollLists_Staging.objects.filter(AYear=ayear,BYear=byear,Cycle=dept,Regulation=regulation)
+                    rolls = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
@@ -47,12 +47,14 @@ def btech_regular_registration(request):
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
                     for roll in rolls:
                         for sub in subs:
-                            regRow = StudentRegistrations_Staging(RegNo=roll.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
-                            regRow.save()
+                            if not StudentRegistrations_Staging.objects.filter(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id).exists():
+                                regRow = StudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
+                                regRow.save()
+                    StudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
                 else:
-                    rolls = RollLists_Staging.objects.filter(AYear=ayear,BYear=byear,Dept=dept, Regulation=regulation)
+                    rolls = RollLists_Staging.objects.filter(RegEvent_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
@@ -62,9 +64,11 @@ def btech_regular_registration(request):
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
                     for roll in rolls:
                         for sub in subs:
-                            regRow = StudentRegistrations_Staging(RegNo=roll.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
-                            regRow.save()
+                            if not StudentRegistrations_Staging.objects.filter(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id).exists():
+                                regRow = StudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
+                                regRow.save()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
+                    StudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
                     return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
     else:
         regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
