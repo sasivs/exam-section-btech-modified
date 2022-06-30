@@ -191,7 +191,6 @@ class FacultyInfo(models.Model):
 
 
 
-from .models import RegistrationStatus
 class Subjects_Staging(models.Model):
     SubCode = models.CharField(max_length=10) 
     SubName= models.CharField(max_length=100)
@@ -209,6 +208,7 @@ class Subjects_Staging(models.Model):
 
     class Meta:
         db_table = 'Subjects_Staging'
+        unique_together = ('SubCode', 'RegEventId')
         managed = True
 
 
@@ -229,6 +229,7 @@ class Subjects(models.Model):
     
     class Meta:
         db_table = 'Subjects'
+        unique_together = ('SubCode', 'RegEventId')
         managed = True
 
 #         # import_id_fields = ('id',)

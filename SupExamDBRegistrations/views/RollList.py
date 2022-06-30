@@ -96,7 +96,7 @@ def generateRollList(request):
                         if(byear==1):
                             reg_rgs = StudentInfo.objects.filter(AdmissionYear=ayear,Cycle=dept,Regulation=regulation)
                             not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=1, Regulation=regulation, PoA='R', student__Cycle=dept)
-                            regular_regd_no = reg_rgs.values_list('RegNo', flat=True)
+                            regular_regd_no = list(reg_rgs.values_list('RegNo', flat=True))
                             not_prom_regs = [row.student.RegNo for row in not_prom_regs]
 
                             valid_rolls = regular_regd_no+not_prom_regs

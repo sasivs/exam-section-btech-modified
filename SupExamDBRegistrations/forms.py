@@ -555,16 +555,10 @@ class DroppedRegularRegistrationsForm(forms.Form):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            dropped_courses = DroppedRegularCourses.objects.all()
-            dropped_regno=[]
-            for row in dropped_courses:
-                sub_reg = StudentRegistrations_Staging.objects.filter(RegNo=row.RegNo, sub_id=row.sub_id)
-                if(len(sub_reg) == 0):
-                    sub = Subjects.objects.get(id=row.sub_id)
-                    regEvent = RegistrationStatus.objects.get(id=sub.RegEventId)
-                    if(regEvent.BYear == byear and regEvent.Regulation == regulation):
-                        dropped_regno.append(row.RegNo)
-            dropped_regno = list(set(dropped_regno))
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    Dept=dept,Mode=mode,Regulation=regulation)
+            currentRegEventId = currentRegEventId[0].id
+            dropped_regno = list(RollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
             dropped_regno = [(reg, reg) for reg in dropped_regno]  
             dropped_regno = [(0,'--Select Roll Number --')] + dropped_regno
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=dropped_regno, \
@@ -738,15 +732,12 @@ class BacklogRegistrationForm(forms.Form):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            if byear == 1:
-                studentBacklogs = list(StudentBacklogs.objects.filter(BYear=byear, Dept=dept, BSem=bsem).\
-                    values('RegNo','RollNo').distinct())
-                studentBacklogs += list(StudentBacklogs.objects.filter(BYear=byear).filter(~Q(Dept=dept)).\
-                    filter(~Q(BSem=bsem)).values('RegNo','RollNo').distinct())
-            else:
-                studentBacklogs = StudentBacklogs.objects.filter(BYear=byear,Dept=dept).values('RegNo','RollNo').distinct()
-            studentBacklogs = [(rec['RegNo'], rec['RegNo']) for rec in studentBacklogs]
-            studentBacklogs = list(set(studentBacklogs))
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    Dept=dept,Mode=mode,Regulation=regulation)
+            currentRegEventId = currentRegEventId[0].id
+            
+            studentBacklogs = list(RollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
+            studentBacklogs = [(row.student.RegNo, row.student.RegNo) for row in studentBacklogs]
             studentBacklogs = [(0,'--Select Reg Number--')] + studentBacklogs
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentBacklogs,\
                  attrs={'onchange':'submit();'}))  
@@ -913,14 +904,15 @@ class MakeupRegistrationsForm(forms.Form):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            studentMakeupRolls = StudentMakeups.objects.filter(Dept=dept, BYear=byear, BSem=bsem).values('RegNo').distinct()
+            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    Dept=dept,Mode=mode,Regulation=regulation)
+            currentRegEventId = currentRegEventId[0].id
+            studentMakeupRolls = list(RollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
+            studentMakeupRolls = [(row.student.RegNo, row.student.RegNo) for row in studentMakeupRolls]
             studentMakeupRolls = [(roll['RegNo'],roll['RegNo']) for roll in studentMakeupRolls]
             studentMakeupRolls = [(0,'--Select Reg Number--')] + studentMakeupRolls
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentMakeupRolls,\
                  attrs={'onchange':'submit();'}))  
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-            currentRegEventId = currentRegEventId[0].id
             if('RegNo' in self.data and self.data['RegNo']!='--Select Reg Number--'):
                 self.myFields = []
                 self.checkFields = []

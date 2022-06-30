@@ -78,9 +78,9 @@ def btech_backlog_registration(request):
                         # for regular and dropped there is no need to check if it is selected!!!
                         if form.cleaned_data['Check'+str(sub[9])] == False:   #delete regular_record from the registration table
                             reg = StudentRegistrations_Staging.objects.\
-                                filter(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId,sub_id = sub[9], id=sub[10])
+                                filter(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId_id,sub_id = sub[9], id=sub[10])
                             if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.get(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId,\
+                                StudentRegistrations_Staging.objects.get(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId_id,\
                                      sub_id = sub[9], id=sub[10]).delete()
                                 new_dropped_course = DroppedRegularCourses(RegNo=request.POST['RegNo'], sub_id=sub[9])
                                 new_dropped_course.save()

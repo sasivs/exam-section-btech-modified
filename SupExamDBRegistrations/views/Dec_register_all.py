@@ -46,18 +46,17 @@ def dept_elective_regs_all(request):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            if(byear!=1):
-                rolls = RollLists_Staging.objects.filter(Dept=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
-            else:
-                rolls = RollLists_Staging.objects.filter(Cycle=dept, AYear=ayear, BYear=byear, Regulation=regulation).values()
-            print(rolls)
+            
             currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
+
+            rolls = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
             for i in rolls:
-                regNo = i['RegNo']
-                reg = StudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
+                reg = StudentRegistrations_Staging(RegNo=i.student.RegNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                 reg.save()
+            rolls = rolls.values_list('student__RegNo', flat=True)
+            StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(RegNo__in=rolls).delete()
             return render(request, 'SupExamDBRegistrations/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
@@ -73,7 +72,6 @@ def dept_elective_regs_all(request):
             currentRegEventId = currentRegEventId[0].id
             subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
-            print(subjects)
             form = DeptElectiveRegsForm(subjects,data)
     else:
         form = DeptElectiveRegsForm()
