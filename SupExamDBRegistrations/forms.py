@@ -737,7 +737,7 @@ class BacklogRegistrationForm(forms.Form):
             currentRegEventId = currentRegEventId[0].id
             
             studentBacklogs = list(RollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
-            studentBacklogs = [(row.student.RegNo, row.student.RegNo) for row in studentBacklogs]
+            studentBacklogs = [(row, row) for row in studentBacklogs]
             studentBacklogs = [(0,'--Select Reg Number--')] + studentBacklogs
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentBacklogs,\
                  attrs={'onchange':'submit();'}))  
@@ -908,8 +908,7 @@ class MakeupRegistrationsForm(forms.Form):
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
             studentMakeupRolls = list(RollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
-            studentMakeupRolls = [(row.student.RegNo, row.student.RegNo) for row in studentMakeupRolls]
-            studentMakeupRolls = [(roll['RegNo'],roll['RegNo']) for roll in studentMakeupRolls]
+            studentMakeupRolls = [(row, row) for row in studentMakeupRolls]
             studentMakeupRolls = [(0,'--Select Reg Number--')] + studentMakeupRolls
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentMakeupRolls,\
                  attrs={'onchange':'submit();'}))  
@@ -979,7 +978,7 @@ class NotPromotedUpdateForm(forms.Form):
             self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
             self.fields['Check'+str(Options[fi][0])].initial = False  
             self.checkFields.append(self['Check' + str(Options[fi][0])])
-            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], self['Check' + str(Options[fi][0])])) 
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], Options[fi][4], Options[fi][5], self['Check' + str(Options[fi][0])])) 
 
 class NotPromotedStatusForm(forms.Form):
       def __init__(self, Options=None, *args,**kwargs):
@@ -1487,7 +1486,7 @@ class UploadSectionInfoForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
@@ -1539,7 +1538,7 @@ class RollListFeeUploadForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\

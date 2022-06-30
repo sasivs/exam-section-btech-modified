@@ -159,15 +159,15 @@ def generateRollList(request):
                                 return render(request, 'SupExamDBRegistrations/generateRollList.html',{'form':form,'regulation_form':regulation_form })
 
                     elif mode == 'B':
-                        backlog_rolls = StudentBacklogs.objects.filter(BYear=byear, Dept=dept).values_list('RegNo', flat=True)
-                        backlog_rolls = list(set(backlog_rolls))
-                        backlog_rolls.sort()
 
                         initial_roll_list = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
                         RollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=backlog_rolls).delete()
                         if byear == 1:
 
+                            backlog_rolls = StudentBacklogs.objects.filter(BYear=byear, Dept=dept).values_list('RegNo', flat=True)
+                            backlog_rolls = list(set(backlog_rolls))
+                            backlog_rolls.sort()
 
                             for regd_no in backlog_rolls:
                                 student = StudentInfo.objects.get(RegNo=regd_no)
@@ -176,13 +176,17 @@ def generateRollList(request):
                                     roll.save()
                         else:
 
+                            backlog_rolls = StudentBacklogs.objects.filter(BYear=byear, Dept=dept, BSem=bsem).values_list('RegNo', flat=True)
+                            backlog_rolls = list(set(backlog_rolls))
+                            backlog_rolls.sort()
+
                             for regd_no in backlog_rolls:
-                                student = StudentInfo.objects.get(RegNo=regd_no)
+                                student = StudentInfo.objects.get(RegNo=regd_no) 
                                 if not initial_roll_list.filter(student=student).exists():
                                     roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                                     roll.save()
                     elif mode == 'M':
-                        makeup_rolls = StudentMakeups.objects.filter(Dept=dept, BYear=byear, BSem=bsem).values_list('RegNo', flat=True).distinct()
+                        makeup_rolls = list(StudentMakeups.objects.filter(Dept=dept, BYear=byear, BSem=bsem).values_list('RegNo', flat=True).distinct())
                         makeup_rolls.sort()
                         initial_roll_list = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
@@ -340,21 +344,21 @@ def UploadSectionInfo(request):
             dataset = XLSX().create_dataset(data)
             errDataset=Dataset()
             regeventid=form.cleaned_data['regID']
-            errDataset.headers=['id','RegEventId','RegNo','Cycle','Section']
+            errDataset.headers=['id','RegNo','Cycle','Section']
             errData = []
             if(form.cleaned_data['regID']!='--Choose Event--'):
                 for row in dataset:
                     if RollLists_Staging.objects.filter(id=row[0]).exists():
                         roll=RollLists_Staging.objects.get(id=row[0])
-                        roll.Cycle = row[3]
-                        roll.Section=row[4]
+                        roll.Cycle = row[8]
+                        roll.Section=row[9]
                         roll.save()
                     else:
                         errDataset.append(row)
                 for i in errDataset:
                     errData.append(i)
                 if(len(errData)!=0):
-                    SecInfoErrRows = [ (errData[i][0],errData[i][1],errData[i][2],errData[i][3] ) for i in range(len(errData))]
+                    SecInfoErrRows = [ (errData[i][0],errData[i][1],errData[i][8],errData[i][9] ) for i in range(len(errData))]
                     request.session['SecInfoErrRows'] = SecInfoErrRows
                     return HttpResponseRedirect(reverse('UploadSectionInfoErrorHandler'))
                 return (render(request, 'SupExamDBRegistrations/SectionInfoUploadSuccess.html'))
@@ -446,7 +450,7 @@ def RollListFeeUpload(request):
                     not_registered = NotRegistered(student=regd_no.student, RegEventId_id=regeventid)
                     not_registered.save()
                 unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
-                # StudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
+                StudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
                 RollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=regeventid).delete() 
                 return render(request, 'SupExamDBRegistrations/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
     else:

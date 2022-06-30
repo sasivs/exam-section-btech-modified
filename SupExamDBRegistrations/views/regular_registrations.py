@@ -45,9 +45,10 @@ def btech_regular_registration(request):
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
+                    initial_registrations = StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
-                            if not StudentRegistrations_Staging.objects.filter(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id).exists():
+                            if not initial_registrations.filter(RegNo=roll.student.RegNo, sub_id=sub.id).exists():
                                 regRow = StudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
                                 regRow.save()
                     StudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
@@ -62,9 +63,10 @@ def btech_regular_registration(request):
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'SupExamDBRegistrations/BTRegistrationUploadSuccess.html', {'msg':msg})
+                    initial_registrations = StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
-                            if not StudentRegistrations_Staging.objects.filter(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id).exists():
+                            if not initial_registrations.filter(RegNo=roll.student.RegNo, sub_id=sub.id).exists():
                                 regRow = StudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
                                 regRow.save()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
