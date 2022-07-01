@@ -1,27 +1,21 @@
-from typing import Set
-# from click import option
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.shortcuts import redirect
 from django.urls import reverse
 from django.db.models import Q
-from numpy import flatiter
-# from requests import options
 
-from SupExamDBRegistrations.forms import RollListStatusForm, RollListRegulationDifferenceForm,RollListErrorHandlerForm,\
+from SupExamDBRegistrations.forms import RollListStatusForm, RollListRegulationDifferenceForm,\
      RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
 from SupExamDBRegistrations.models import Regulation, RegulationChange, RollLists_Staging, StudentInfo, NotPromoted, RollLists,\
-    RegistrationStatus,StudentRegistrations_Staging, StudentBacklogs, StudentMakeups, DroppedRegularCourses, Subjects, NotRegistered
-from .home import is_Superintendent
+    RegistrationStatus,StudentRegistrations_Staging, StudentBacklogs, StudentMakeups, DroppedRegularCourses, NotRegistered
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
-# from datetime import date
+from SupExamDBRegistrations.user_access_test import roll_list_access
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def generateRollList(request):
     if request.method == 'POST':
         if 'Regulation_change' in request.POST:
@@ -226,7 +220,7 @@ def generateRollList(request):
     return  render(request, 'SupExamDBRegistrations/generateRollList.html',{'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def first_year_rollLists_cycle_handler(request):
     not_prom_regs = request.session.get('not_promoted_regno')
     (ayear,asem,byear,bsem,regulation)=request.session.get('ayasbybsr')
@@ -332,7 +326,7 @@ def first_year_rollLists_cycle_handler(request):
 #         return render(request, 'SupexamDBRegistrations/RollListStatus.html', {'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def UploadSectionInfo(request):
     if(request.method=='POST'):
         form=UploadSectionInfoForm( request.POST,request.FILES)
@@ -369,7 +363,7 @@ def UploadSectionInfo(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def UploadSectionInfoErrorHandler(request):
     SectionInfoRows = request.session.get('SecInfoErrRows')
     for row in SectionInfoRows:
@@ -389,7 +383,7 @@ def UploadSectionInfoErrorHandler(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def RollList_Status(request):
     if request.method == 'POST':
         form = RollListStatusForm(request.POST)
@@ -427,7 +421,7 @@ def RollList_Status(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def RollListFeeUpload(request):
     if(request.method=='POST'):
         form=RollListFeeUploadForm( request.POST,request.FILES)
@@ -459,7 +453,7 @@ def RollListFeeUpload(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def NotRegisteredStatus(request):
     if request.method == 'POST':
         form = NotRegisteredStatusForm(request.POST)
@@ -474,7 +468,7 @@ def NotRegisteredStatus(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def rolllist_finalize(request):
     if request.method == 'POST':
         form = RollListFinalizeForm(request.POST)

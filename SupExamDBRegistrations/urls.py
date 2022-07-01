@@ -17,6 +17,7 @@ urlpatterns = [
     path('SupBTBranchChangeHome', home.branch_change_home, name='SupBTBranchChangeHome'),
     path('SupBTRegistrationHome', home.registration_home, name = 'SupBTRegistrationHome'),
     path('SupBTRollListHome', home.rolllist_home, name='SupBTRollListHome'),
+    path('SupBTSubjectHome', subjects.subject_home, name = 'SupBTSubjectHome'),
     path('SupBTGradesHome', home.grades_home, name="SupBTGradesHome"),
     path('SupBTNotPromotedHome', home.not_promoted_home, name="SupBTNotPromotedHome"),
     path('SupBTFacultyHome', home.faculty_home, name='SupBTFacultyHome'),
@@ -41,13 +42,13 @@ urlpatterns = [
     path('SupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'SupBTRegistrationsFinalize'),
     # path('SupBTRegistrationUploadErrorHandler', regular_registrations.btech_regular_registration_upload_error_handler, name = 'SupBTRegistrationUploadErrorHandler'),
     
-    path('MakeupRegistrationInfo', backlog_registrations.makeup_registration_info, name='MakeupRegistrationInfo'),
+    # path('MakeupRegistrationInfo', backlog_registrations.makeup_registration_info, name='MakeupRegistrationInfo'),
     #path('DeptYearRegistrationStatus/<int:year>/<int:dept>/', regular_registrations.btech_makeup_registration_status, name='DeptYearRegistrationStatus'),
     #path('DeptYearRegistrationStatus/<int:year>/<int:dept>/', regular_registrations.btech_makeup_registration_status, name='DeptYearRegistrationStatus'),
-    path('getBTBacklogRegNos/<int:dept>/<int:byear>/',regular_registrations.get_btbacklog_regnos,name='getBTBacklogRegNos'),
-    path('getBTRegisteredSubjects/<int:regNo>/',regular_registrations.get_btregistered_subjects,name='getBTRegisteredSubjects'),
+    # path('getBTBacklogRegNos/<int:dept>/<int:byear>/',regular_registrations.get_btbacklog_regnos,name='getBTBacklogRegNos'),
+    # path('getBTRegisteredSubjects/<int:regNo>/',regular_registrations.get_btregistered_subjects,name='getBTRegisteredSubjects'),
     
-    path('SupBTBacklogRegistrations', backlog_registrations.btech_backlog_registration, name = 'SupBTBacklogRegistrations'),
+    # path('SupBTBacklogRegistrations', backlog_registrations.btech_backlog_registration, name = 'SupBTBacklogRegistrations'),
     #Registration Status
     path('SupBTBacklogRegistrationStatus', status.btech_backlog_registration_status, name = 'SupBTBacklogRegistrationStatus'),
     path('SupBTRegistrationStatusHome', status.btech_registration_status_home, name = 'SupBTRegistrationStatusHome'),
@@ -56,13 +57,12 @@ urlpatterns = [
     
 
     path('ManageRegistrations', manage.manage_registrations,name='ManageRegistrations'),
-    path('BTTest',regular_registrations.test_page, name='BTTest'),
-    path('SupBTFirstYearBacklogRegistrations', first_backlog_registrations.btech_first_year_backlog_Registrations ,name = 'SupBTFirstYearBacklogRegistrations'),
+    # path('BTTest',regular_registrations.test_page, name='BTTest'),
+    # path('SupBTFirstYearBacklogRegistrations', first_backlog_registrations.btech_first_year_backlog_Registrations ,name = 'SupBTFirstYearBacklogRegistrations'),
     path('SupBTCancellationHome',cancellations.cancellation_home,name='SupBTCancellationHome'),
     path('SupBTSeatCancellation',cancellations.seat_cancellation,name='SupBTSeatCancellation'),
     path('SupBTSemesterCancellation',cancellations.semester_cancellation,name='SupBTSemesterCancellation'),
 
-    path('SupBTSubjectHome', subjects.subject_home, name = 'SupBTSubjectHome'),
     path('SupBTSubjectUpload', subjects.subject_upload, name = 'SupBTSubjectUpload'),
     path('SupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'SupBTSubjectsUploadErrorHandler'),
     path('SupBTSubjectUploadStatus', subjects.subject_upload_status, name = 'SupBTSubjectUploadStatus'),

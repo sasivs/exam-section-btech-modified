@@ -1,21 +1,15 @@
-from unicodedata import name
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from SupExamDBRegistrations.forms import BacklogRegistrationForm, GradesUploadForm, RegistrationsEventForm, \
-    SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, GradesUpdateForm,\
-         GradesFinalizeForm, GradeChallengeForm
-from SupExamDBRegistrations.models import RegistrationStatus, Regulation, StudentBacklogs, StudentGrades, StudentInfo, \
-    StudentMakeupBacklogsVsRegistrations, StudentRegistrations, Subjects, Subjects_Staging, \
-        DroppedRegularCourses, StudentGrades_Staging
+from SupExamDBRegistrations.forms import GradesUploadForm, GradesFinalizeForm, GradeChallengeForm, GradesUpdateForm
+from SupExamDBRegistrations.models import RegistrationStatus, StudentGrades,StudentGrades_Staging, StudentRegistrations, Subjects
 from SupExamDBRegistrations.resources import StudentGrades_StagingResource, GradeChallengeResource
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 import psycopg2
+from SupExamDBRegistrations.user_access_test import grades_finalize_access
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
@@ -141,7 +135,7 @@ def grades_upload_error_handler(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(grades_finalize_access)
 def grades_finalize(request):
     if request.method == 'POST':
         form = GradesFinalizeForm(request.POST)

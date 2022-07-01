@@ -1,20 +1,11 @@
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
-from django.urls import reverse
-from SupExamDBRegistrations.forms import BacklogRegistrationForm, RegistrationsEventForm, \
-    SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, DroppedRegularRegistrationsForm,\
-        MakeupRegistrationsForm
-from SupExamDBRegistrations.models import RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, \
-   Subjects, Subjects_Staging, DroppedRegularCourses, StudentRegistrations_Staging
-from .home import is_Superintendent
+from SupExamDBRegistrations.forms import MakeupRegistrationsForm
+from SupExamDBRegistrations.models import RegistrationStatus, StudentRegistrations_Staging
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
-from tablib import Dataset
-from import_export.formats.base_formats import XLSX
+from SupExamDBRegistrations.user_access_test import registration_access
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_access)
 def makeup_registrations(request):
     if request.method == 'POST' and request.POST['RegEvent'] != '-- Select Registration Event --':
         regId = request.POST['RegEvent']

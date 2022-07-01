@@ -1,48 +1,31 @@
-from typing import Set
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.shortcuts import redirect
-from django.urls import reverse
-
-import SupExamDBRegistrations
-from ..forms import BacklogRegistrationForm, DBYBSAYASSelectionForm, FirstYearBacklogRegistrationForm,\
-     RegistrationForm1, StudentCancellationForm, StudentRegistrationUpdateForm,RegistrationsUploadForm, TestForm,\
-          RegistrationsFinalizeEventForm, OpenElectiveRegistrationsForm
-from ..models import CurrentAcademicYear, RegistrationStatus, StudentBacklogs, StudentCancellation, \
-    StudentGrades, StudentInfo, StudentMakeupBacklogsVsRegistrations,\
-     StudentRegistrations,  ProgrammeModel, Subjects_Staging, \
-         RollLists, Subjects, StudentRegistrations_Staging
-from tablib import Dataset
+from ..forms import OpenElectiveRegistrationsForm
+from ..models import RegistrationStatus, Subjects, StudentRegistrations_Staging
 from import_export.formats.base_formats import XLSX
-from SupExamDB.forms import DeptYearSelectionForm
-from django.db.models import F, Q
-from .home import is_Superintendent
+from SupExamDBRegistrations.user_access_test import registration_access
+
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_access)
 def dept_elective_regs_upload(request):
     necessary_field_msg = False
     subjects=[]
     if(request.method == "POST"):
-        print(request.POST)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
         rom2int = {'I':1,'II':2,'III':3,'IV':4}
         regId = request.POST['regID']
         subId = request.POST['subId']
-        print(subId)
         data = {'regID':regId, 'subId':subId}
         form = OpenElectiveRegistrationsForm(subjects,data)
         if 'file' not in request.POST.keys():
             file = request.FILES['file']   
-            print(file)
         else:
             file = request.POST['file']
         if regId != '--Choose Event--' and subId != '--Select Subject--' and file != '':
-            print(subId)
             strs = regId.split(':')
             dept = deptDict[strs[0]]
             ayear = int(strs[3])
@@ -77,22 +60,7 @@ def dept_elective_regs_upload(request):
             currentRegEventId = currentRegEventId[0].id
             subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
-            print(subjects)
             form = OpenElectiveRegistrationsForm(subjects,data)
     else:
         form = OpenElectiveRegistrationsForm()
     return render(request, 'SupExamDBRegistrations/Dec_Registrations_upload.html',{'form':form,'msg':necessary_field_msg})
-
-# def open_elective_regs_finalize(request):
-#     subId = request.session.get('sub_id')
-#     ayasbym = request.session.get('ayasbym')
-#     ayear = ayasbym[0]
-#     asem = ayasbym[1]
-#     byear = ayasbym[2]
-#     mode = ayasbym[3]
-#     if request.method == 'POST':
-#         return
-#     else:
-#         regs = StudentRegistrations_Staging.objects.filter(AYear=ayear,ASem=asem,BYear=byear,Mode=mode,sub_id=subId).values()
-#         form = OpenElectiveRegsFinalizeForm(regs)
-#     return render(request, 'SupExamDBRegistrations/OecFinalize.html',{'form':form})

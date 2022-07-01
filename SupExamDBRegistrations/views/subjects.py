@@ -1,25 +1,25 @@
 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from SupExamDBRegistrations.forms import BacklogRegistrationForm, RegistrationsEventForm, \
+from SupExamDB.views import is_Co_ordinator
+from SupExamDBRegistrations.forms import RegistrationsEventForm, \
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm
-from SupExamDBRegistrations.models import RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging
+from SupExamDBRegistrations.models import RegistrationStatus, Subjects, Subjects_Staging
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from SupExamDBRegistrations.resources import SubjectStagingResource
+from SupExamDBRegistrations.user_access_test import subject_access
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def subject_home(request):
     return render(request, 'SupExamDBRegistrations/subjecthome.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def subject_upload(request):
     if(request.method=='POST'):
         regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
@@ -104,7 +104,7 @@ def subject_upload(request):
     return (render(request, 'SupExamDBRegistrations/BTSubjectsUpload.html', {'form':form}))
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def subject_upload_error_handler(request):
     subjectRows = request.session.get('subErrRows')
     currentRegEventId = request.session.get('currentRegEventId')
@@ -123,7 +123,7 @@ def subject_upload_error_handler(request):
     return(render(request, 'SupExamDBRegistrations/BTSubjectsUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def subject_upload_status(request):
     if(request.method=='POST'):
         form = RegistrationsEventForm(request.POST)
@@ -165,7 +165,7 @@ def subject_upload_status(request):
     return render(request, 'SupExamDBRegistrations/BTSubjectsUploadStatus.html',{'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def subject_delete(request):
     if(request.method=='POST'):
         form = SubjectDeletionForm(request.POST)
@@ -215,7 +215,7 @@ def subject_delete(request):
         form = SubjectDeletionForm()
     return render(request, 'SupExamDBRegistrations/BTSubjectsDelete.html',{'form':form})
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Co_ordinator)
 def subject_delete_handler(request,event):
     if(request.method=='POST'):
         form = SubjectDeletionForm(request.POST)
@@ -234,7 +234,7 @@ def subject_delete_success(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def subject_finalize(request):
     if(request.method=='POST'):
         form = SubjectFinalizeEventForm(request.POST)
@@ -270,7 +270,7 @@ def subject_finalize(request):
     return render(request, 'SupExamDBRegistrations/BTSubjectFinalize.html',{'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(subject_access)
 def open_subject_upload(request):
     if(request.method=='POST'):
         regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')

@@ -1,43 +1,23 @@
-from typing import Set
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.shortcuts import redirect
-from django.urls import reverse
-
-import SupExamDBRegistrations
-from ..forms import BacklogRegistrationForm, DBYBSAYASSelectionForm, DeptElectiveRegsForm, FirstYearBacklogRegistrationForm,\
-     RegistrationForm1, StudentCancellationForm, StudentRegistrationUpdateForm,RegistrationsUploadForm, TestForm,\
-          RegistrationsFinalizeEventForm, OpenElectiveRegistrationsForm
-from ..models import CurrentAcademicYear, RegistrationStatus, RollLists_Staging, StudentBacklogs, StudentCancellation, \
-    StudentGrades, StudentInfo, StudentMakeupBacklogsVsRegistrations,\
-     StudentRegistrations,  ProgrammeModel, Subjects_Staging, \
-         RollLists, Subjects, StudentRegistrations_Staging
-from tablib import Dataset
-from import_export.formats.base_formats import XLSX
-from SupExamDB.forms import DeptYearSelectionForm
-from django.db.models import F, Q
-from .home import is_Superintendent
+from django.contrib.auth.decorators import login_required, user_passes_test
+from ..forms import DeptElectiveRegsForm
+from ..models import RegistrationStatus, RollLists_Staging, Subjects, StudentRegistrations_Staging
+from SupExamDBRegistrations.user_access_test import registration_access
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_access)
 def dept_elective_regs_all(request):
-    necessary_field_msg = False
     subjects=[]
     if(request.method == "POST"):
-        print(request.POST)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
         rom2int = {'I':1,'II':2,'III':3,'IV':4}
         regId = request.POST['regID']
         subId = request.POST['subId']
-        print(subId)
         data = {'regID':regId, 'subId':subId}
         form = DeptElectiveRegsForm(subjects,data)
         if regId != '--Choose Event--' and subId != '--Select Subject--':
-            print(subId)
             strs = regId.split(':')
             dept = deptDict[strs[0]]
             ayear = int(strs[3])

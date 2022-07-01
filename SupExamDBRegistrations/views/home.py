@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
 from django.urls import reverse
+
+from SupExamDB.views import is_Co_ordinator
+from SupExamDBRegistrations.user_access_test import roll_list_access
  
 
 def is_Superintendent(user):
@@ -36,7 +39,7 @@ def branch_change_home(request):
     return render(request, 'SupExamDBRegistrations/branchChange_home.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(roll_list_access)
 def rolllist_home(request):
     return render(request, 'SupExamDBRegistrations/rollList_home.html')
 
