@@ -456,6 +456,52 @@ class NotRegistered(models.Model):
         db_table = 'NotRegistered'
         managed = True
 
+class SeatCancellationInfo(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    RegNo = models.IntegerField()
+    RollNo = models.IntegerField()
+    Name = models.CharField(max_length=70)
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    AdmissionYear = models.IntegerField()
+    Gender = models.CharField(max_length=10)
+    Category = models.CharField(max_length=20)
+    GuardianName = models.CharField(max_length=50)
+    Phone = models.IntegerField()
+    email = models.CharField(max_length=50)
+    Address1 = models.CharField(max_length=150)
+    Address2 = models.CharField(max_length=100, null=True)
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    cancelled_on = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        db_table = 'SeatCancellationInfo'
+        managed = True
+
+class CancelledSeatRegistrations(models.Model):
+    RegNo = models.IntegerField()
+    RegEventId = models.IntegerField()
+    Mode = models.IntegerField()
+    sub_id = models.IntegerField()
+    class Meta:
+        db_table = 'CancelledSeatRegistrations'
+        unique_together=('RegNo', 'RegEventId', 'sub_id')
+        managed = True
+
+class CancelledSeatGrades(models.Model):
+    RegId= models.IntegerField()
+    RegEventId = models.IntegerField()
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    AttGrade = models.CharField(max_length=2)
+    class Meta:
+        db_table = 'CancelledSeatGrades'
+        unique_together=('RegId', 'Grade')
+        managed = True
+
+
 # class PartialSeatCancellation(models.Model):
 #     CYCLE_CHOICES = (
 #         (10,'PHYSICS'),
