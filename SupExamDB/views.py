@@ -23,6 +23,8 @@ from django.shortcuts import redirect
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 import pandas as pd 
+
+from .templatetags import user_check_tag
 # Create your views here.
 def is_Superintendent(user):
     return user.groups.filter(name='Superintendent').exists()

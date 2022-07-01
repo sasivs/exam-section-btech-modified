@@ -1,21 +1,17 @@
-
-from unicodedata import name
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from SupExamDB.forms import DeptYearSelectionForm
 from SupExamDB.models import ProgrammeModel
-from SupExamDBRegistrations.forms import BacklogRegistrationForm, BranchChangeForm, BranchChangeStausForm
-from SupExamDBRegistrations.models import BranchChanges, StudentBacklogs, StudentInfo, StudentRegistrations, RegistrationStatus,\
+from SupExamDBRegistrations.forms import BacklogRegistrationForm
+from SupExamDBRegistrations.models import StudentInfo, RegistrationStatus,\
     DroppedRegularCourses, Subjects, StudentRegistrations_Staging
-from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
+from SupExamDBRegistrations.user_access_test import registration_access
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_access)
 def btech_backlog_registration(request):
     studentInfo = []
     if(request.method == 'POST'):
@@ -124,19 +120,4 @@ def btech_backlog_registration(request):
         context['Name'] = studentInfo[0].Name  
     return render(request, 'SupExamDBRegistrations/BTBacklogRegistration.html',context)
 
-@login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
-def makeup_registration_info(request):
-    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
-    yearList = [1,2,3,4]
-    
-    if(request.method=='POST'):
-        form = DeptYearSelectionForm(request.POST)
-        if(form.is_valid()):
-            print(form.cleaned_data['deptBox'])
-            print(form.cleaned_data['yearBox'])
-            return HttpResponseRedirect(reverse('DeptYearRegistrationStatus',args=(form.cleaned_data['yearBox'],form.cleaned_data['deptBox'],)))
-    else:
-        form = DeptYearSelectionForm()
-    return render(request,'SupExamDBRegistrations/MakeupRegistrationInfo.html',{'programmeList': programmeList, 'yearList': yearList, 'form':form })
 

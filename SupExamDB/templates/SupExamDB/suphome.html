@@ -12,6 +12,7 @@
 
     <title>Superintendent Dash Board </title>
 </head>
+{% load user_check_tag %}
 
 <body>
     <div class="container">
@@ -28,15 +29,7 @@
             <div class="collapse navbar-collapse mx-auto" id="navbarNav">
                 <div class="container">
                     <ul class="navbar-nav mx-auto">
-                        {% if user.is_Co_ordinator %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Faculty
-          </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
-                                <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
-                            </ul>
-                        </li>
+                        {% if user|has_group:"Co-ordinator" %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Registration
@@ -47,36 +40,24 @@
                                 <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
                             </ul>
                         </li>
-                        {% endif %} {% if user.is_Faculty %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Pre-Registration
+                            <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Faculty
           </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PreRegistrationDropDown">
-                                <li><a class="dropdown-item" href="{% url 'SupBTPreRegistrationHome' %}">Pre Registration</a></li>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
                             </ul>
                         </li>
-                        {% endif %} {% if user.is_Superintendent %}
+                        {% elif user|has_group:"Faculty" %} {% elif user|has_group:"HOD" %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Printing
+                            <a class="nav-link dropdown-toggle" href="#" id="GradesDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Grades
           </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PrintingDropDown">
-                                <li><a class="dropdown-item" href="{% url 'SupBTPrinting' %} ">B.Tech.</a></li>
-                                <li><a class="dropdown-item" href="#">M.Tech.</a></li>
-                                <li><a class="dropdown-item" href="#">Ph.D.</a></li>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="GradesDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTGradesHome' %}">Grades</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Pre-Registration
-          </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PreRegistrationDropDown">
-                                <li><a class="dropdown-item" href="{% url 'SupBTPreRegistrationHome' %}">Pre Registration</a></li>
-                                <li><a class="dropdown-item" href="{% url 'SupBTBranchChangeHome' %}">Branch Change</a></li>
-
-                            </ul>
-                        </li>
+                        {% elif user|has_group:"Superintendent" %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Printing

@@ -2,12 +2,13 @@
 
 
 {% block content %}
+{% load user_check_tag %}
 <div class="container">
     <div class="row">
         <div class="col-md-2">
 
             <ul class="nav flex-column">
-
+                {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradePointsUpload' %}">Upload Grade Points</a>
                 </li> 
@@ -16,10 +17,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradeChallenge' %}">Grade Challenge</a>
-                </li> 
+                </li>
+                {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesFinalize' %}">Finalize Grades</a>
                 </li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-10">
