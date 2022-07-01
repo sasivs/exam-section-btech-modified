@@ -34,7 +34,7 @@ class StudentInfo(models.Model):
 
     class Meta:
         db_table = 'StudentInfo'
-        managed = True
+        managed = False
 
 
         
@@ -63,7 +63,7 @@ class RollLists(models.Model):
     class Meta:
         db_table = 'RollLists'
         unique_together = ('student', 'RegEventId')
-        managed = True
+        managed = False
     
 class RollLists_Staging(models.Model):
     CYCLE_CHOICES = (
@@ -77,7 +77,7 @@ class RollLists_Staging(models.Model):
     class Meta:
         db_table = 'RollLists_Staging'
         unique_together = ('student', 'RegEventId')
-        managed = True
+        managed = False
         
 # Create your models here.
 class StudentRegistrations(models.Model):
@@ -189,7 +189,7 @@ class FacultyInfo(models.Model):
     Email = models.CharField(max_length=50)
     class Meta:
         db_table = 'FacultyInfo'
-        managed = True
+        managed = False
 
 
 
@@ -211,7 +211,7 @@ class Subjects_Staging(models.Model):
     class Meta:
         db_table = 'Subjects_Staging'
         unique_together = ('SubCode', 'RegEventId')
-        managed = True
+        managed = False
 
 
 class Subjects(models.Model):
@@ -232,7 +232,7 @@ class Subjects(models.Model):
     class Meta:
         db_table = 'Subjects'
         unique_together = ('SubCode', 'RegEventId')
-        managed = True
+        managed = False
 
 #         # import_id_fields = ('id',)
 #         # RegEventId = fields.Field(
@@ -248,7 +248,7 @@ class FacultyAssignment(models.Model):
 
     class Meta:
         db_table = 'FacultyAssignment'
-        managed = True
+        managed = False
 
 
 class NotPromoted(models.Model):
@@ -260,7 +260,7 @@ class NotPromoted(models.Model):
     class Meta:
         db_table = 'NotPromoted'
         unique_together=('AYear', 'BYear', 'Regulation', 'student')
-        managed = True
+        managed = False
 
 
 
@@ -276,7 +276,7 @@ class StudentCancellation(models.Model):
     AttGrade = models.CharField(max_length=2,null=True)
     class Meta:
         db_table = 'StudentCancellation'
-        managed = True
+        managed = False
 
 class CancelledStudentInfo(models.Model):
     RegNo = models.IntegerField()
@@ -293,7 +293,7 @@ class CancelledStudentInfo(models.Model):
     Address2 = models.CharField(max_length=100,null=True)
     class Meta:
         db_table = 'CancelledStudentInfo'
-        managed = True
+        managed = False
 
 class StudentGrades(models.Model):
     RegId= models.IntegerField()
@@ -350,7 +350,7 @@ class BranchChanges(models.Model):
     AYear = models.IntegerField()
     class Meta:
         db_table = 'BranchChanges'
-        managed = True
+        managed = False
 
 class RegularRegistrationSummary(models.Model):
     RegNo = models.IntegerField()
@@ -404,14 +404,14 @@ class Regulation(models.Model):
     Regulation = models.IntegerField()
     class Meta:
         db_table = 'Regulation'
-        # managed = False
+        managed = False
 
 class DroppedRegularCourses(models.Model):
     student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
     class Meta:
         db_table = 'DroppedRegularCourses'
-        managed = True
+        managed = False
     
 class MandatoryCredits(models.Model):
     Regulation = models.IntegerField()
@@ -437,7 +437,7 @@ class GradeChallenge(models.Model):
     UpdatedGrade = models.CharField(max_length=2)
     class Meta:
         db_table = 'GradeChallenge'
-        managed = True
+        managed = False
 
 
 class RegulationChange(models.Model):
@@ -454,7 +454,7 @@ class NotRegistered(models.Model):
     student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
     class Meta:
         db_table = 'NotRegistered'
-        managed = True
+        managed = False
 
 class SeatCancellationInfo(models.Model):
     CYCLE_CHOICES = (
@@ -478,7 +478,7 @@ class SeatCancellationInfo(models.Model):
     cancelled_on = models.DateTimeField(auto_now_add=True)
     class Meta:
         db_table = 'SeatCancellationInfo'
-        managed = True
+        managed = False
 
 class CancelledSeatRegistrations(models.Model):
     RegNo = models.IntegerField()
@@ -488,7 +488,7 @@ class CancelledSeatRegistrations(models.Model):
     class Meta:
         db_table = 'CancelledSeatRegistrations'
         unique_together=('RegNo', 'RegEventId', 'sub_id')
-        managed = True
+        managed = False
 
 class CancelledSeatGrades(models.Model):
     RegId= models.IntegerField()
@@ -499,7 +499,7 @@ class CancelledSeatGrades(models.Model):
     class Meta:
         db_table = 'CancelledSeatGrades'
         unique_together=('RegId', 'Grade')
-        managed = True
+        managed = False
 
 
 # class PartialSeatCancellation(models.Model):
@@ -524,7 +524,7 @@ class CancelledSeatGrades(models.Model):
 #     cancelled_on = models.DateTimeField(auto_now_add=True)
 #     class Meta:
 #         db_table = 'PartialSeatCancellation'
-#         managed = True
+#         managed = False
 
 # class PermanantSeatCancellation(models.Model):
 #     CYCLE_CHOICES = (
@@ -548,7 +548,7 @@ class CancelledSeatGrades(models.Model):
 #     cancelled_on = models.DateTimeField(auto_now_add=True)
 #     class Meta:
 #         db_table = 'PartialSeatCancellation'
-#         managed = True
+#         managed = False
 
 # class PartialSeatCancelledRegistrations(models.Model):
 
