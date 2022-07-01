@@ -26,6 +26,16 @@
     <div class="collapse navbar-collapse mx-auto" id="navbarNav">
       <div class="container">
       <ul class="navbar-nav mx-auto" >
+        {% if request.user.groups.filter(name='Co-ordinator').exists() %}
+        <li class="nav-item dropdown" >
+          <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Faculty
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
+            <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+          </ul>
+        </li>
+        {% endif %}
         <li class="nav-item dropdown" >
           <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Printing
