@@ -37,7 +37,26 @@
                                 <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
                             </ul>
                         </li>
-                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Registration
+          </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRollListHome' %}">Roll List</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
+                            </ul>
+                        </li>
+                        {% endif %} {% if request.user.groups.filter(name='Faculty').exists() %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Pre-Registration
+          </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PreRegistrationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTPreRegistrationHome' %}">Pre Registration</a></li>
+                            </ul>
+                        </li>
+                        {% endif %} {% if request.user.groups.filter(name='Superintendent').exists() %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Printing
@@ -48,7 +67,6 @@
                                 <li><a class="dropdown-item" href="#">Ph.D.</a></li>
                             </ul>
                         </li>
-                        {% if request.user.groups.filter(name='Faculty').exists() %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Pre-Registration
@@ -59,7 +77,16 @@
 
                             </ul>
                         </li>
-                        {% endif %} {% if request.user.groups.filter(name='Faculty').exists() %} {% if request.user.groups.filter(name='Faculty').exists() %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Printing
+          </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PrintingDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTPrinting' %} ">B.Tech.</a></li>
+                                <li><a class="dropdown-item" href="#">M.Tech.</a></li>
+                                <li><a class="dropdown-item" href="#">Ph.D.</a></li>
+                            </ul>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Pre-Registration
@@ -70,7 +97,6 @@
 
                             </ul>
                         </li>
-                        {% endif %} {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Registration
@@ -112,6 +138,7 @@
 
                             <a class="nav-link" href="#">UserManagement</a>
                         </li>
+                        {% endif %}
                         <!-- <li class="nav-item">
           <a class="nav-link" href="#">GradesProcessing</a>
         </li>  -->
