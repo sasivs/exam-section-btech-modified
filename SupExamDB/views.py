@@ -33,7 +33,7 @@ def logout_request(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+# @user_passes_test(is_Superintendent)
 
 def sup_home(request):
     return render(request,'SupExamDB/suphome.html')
