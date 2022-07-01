@@ -26,6 +26,14 @@ import pandas as pd
 # Create your views here.
 def is_Superintendent(user):
     return user.groups.filter(name='Superintendent').exists()
+def is_Hod(user):
+    return user.groups.filter(name='HOD').exists()
+def is_Faculty(user):
+    return user.groups.filter(name='Faculty').exists()
+def is_Co_ordinator(user):
+    return user.groups.filter(name='Co-ordinator').exists()
+
+
 
 def logout_request(request):
     logout(request)
