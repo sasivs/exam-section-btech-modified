@@ -28,7 +28,7 @@
             <div class="collapse navbar-collapse mx-auto" id="navbarNav">
                 <div class="container">
                     <ul class="navbar-nav mx-auto">
-                        {% if request.user.groups.filter(name='Co-ordinator').exists() %}
+                        {% if user.is_Co_ordinator %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Faculty
@@ -47,7 +47,7 @@
                                 <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
                             </ul>
                         </li>
-                        {% endif %} {% if request.user.groups.filter(name='Faculty').exists() %}
+                        {% endif %} {% if user.is_Faculty %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Pre-Registration
@@ -56,7 +56,7 @@
                                 <li><a class="dropdown-item" href="{% url 'SupBTPreRegistrationHome' %}">Pre Registration</a></li>
                             </ul>
                         </li>
-                        {% endif %} {% if request.user.groups.filter(name='Superintendent').exists() %}
+                        {% endif %} {% if user.is_Superintendent %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Printing
