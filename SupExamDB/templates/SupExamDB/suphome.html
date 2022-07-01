@@ -36,6 +36,7 @@
             <li><a class="dropdown-item" href="#">Ph.D.</a></li>
           </ul>
         </li>
+        {% if request.user.groups.filter(name='Faculty').exists() %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Pre-Registration
@@ -46,6 +47,7 @@
 
           </ul>
         </li>
+        {% endif %}
         <li class="nav-item dropdown" >
           <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Registration
