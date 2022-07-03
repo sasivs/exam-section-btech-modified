@@ -1,22 +1,17 @@
-{% extends 'SupExamDBRegistrations/subjecthome.html' %}
+{% extends 'SupExamDBRegistrations/subjecthome.html' %} {% load static %} {% block sub %}
 
-{% load static %}
-
-{% block sub %}
- 
 
 
 
 <div class="container">
     <div class="row">
         <strong>Choose the event to get the details of the subjects uploaded so far,corresponding to the particular event</strong>
-        <form action="" method="post" >
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" value="submit">Status</button> 
+        <form action="" method="post">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" value="submit">Status</button>
         </form>
     </div>
-    <div class = "row">
+    <div class="row">
         <table>
             <th>
                 <tr>
@@ -24,12 +19,13 @@
                     <td style="border: 1px solid black;">SubName</td>
                     <td style="border: 1px solid black;">Creditable</td>
                     <td style="border: 1px solid black;">Credits</td>
+                    <td style="border: 1px solid black;">OfferedBy</td>
                     <!-- <td style="border: 1px solid black;">Regulation</td> -->
                     <td style="border: 1px solid black;">Type</td>
                     <td style="border: 1px solid black;">Category</td>
                 </tr>
             </th>
-            {% for sub  in subjects %}
+            {% for sub in subjects %}
             <tr>
                 <td style="border: 1px solid black;">
                     {{ sub.SubCode }}
@@ -42,6 +38,9 @@
                 </td>
                 <td style="border: 1px solid black;">
                     {{ sub.Credits }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ sub.OfferedBy }}
                 </td>
                 <!-- <td style="border: 1px solid black;">
                     {{ sub.Regulation}}

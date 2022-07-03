@@ -203,6 +203,7 @@ class Subjects_Staging(models.Model):
     # Regulation = models.IntegerField()
     Creditable = models.IntegerField()
     Credits = models.IntegerField()
+    OfferedBy=models.IntegerField()
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     # RegEventId = models.IntegerField()
@@ -224,6 +225,7 @@ class Subjects(models.Model):
     # Regulation = models.IntegerField()
     Creditable = models.IntegerField()
     Credits = models.IntegerField()
+    OfferedBy=models.IntegerField()
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     # RegEventId = models.IntegerField()
@@ -500,6 +502,16 @@ class CancelledSeatGrades(models.Model):
         db_table = 'CancelledSeatGrades'
         unique_together=('RegId', 'Grade')
         managed = False
+
+class Faculty_user(models.Model):
+    UserId= models.IntegerField()
+    Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
+    AssignDate = models.DateField(auto_now_add=True)
+    RevokeDate = models.DateField()
+    class Meta:
+        db_table = 'Faculty_user'
+        unique_together=('UserId', 'Faculty','AssignDate')
+        managed = True
 
 
 # class PartialSeatCancellation(models.Model):
