@@ -38,20 +38,32 @@ def subject_upload(request):
                 newDataset= Dataset()
                 errorDataset = Dataset()#To store subjects rows which are not related to present registration event
                 errorDataset.headers = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
+<<<<<<< HEAD
+                    'Creditable', 'Credits','Type','Category', 'OfferedBy']
+                newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy']
+=======
                     'Creditable', 'Credits','Type','Category','OfferedBy']
                 newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits','OfferedBy', 'Type', 'Category', 'RegEventId']
+>>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
                 currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
                 currentRegEventId = currentRegEventId[0].id
                 for i in range(len(dataset)):
                     row = dataset[i]
                     if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation)):
+<<<<<<< HEAD
+                        newRow = (row[0],row[1],row[10],row[2],row[7],row[8],currentRegEventId, row[11])
+                        newDataset.append(newRow)
+                    else:
+                        newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8], row[11])
+=======
                         print("in if",row[0])
                         newRow = (row[0],row[1],row[10],row[2],row[11],row[7],row[8],currentRegEventId)
                         newDataset.append(newRow)
                     else:
                         print("in else",row[0])
                         newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8],row[11])
+>>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
                         errorDataset.append(newRow)
                 Subject_resource = SubjectStagingResource()
                 result = Subject_resource.import_data(newDataset, dry_run=True)
@@ -61,7 +73,11 @@ def subject_upload(request):
                     if(len(errorDataset)!=0):
                         subErrRows = [ (errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3],\
                             errorDataset[i][4],errorDataset[i][5],errorDataset[i][6],errorDataset[i][7],errorDataset[i][8],\
+<<<<<<< HEAD
+                            errorDataset[i][9], errorDataset[i][10], errorDataset[i][11] ) for i in range(len(errorDataset))]
+=======
                             errorDataset[i][9], errorDataset[i][10],errorDataset[i][11] ) for i in range(len(errorDataset))]
+>>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
                         request.session['subErrRows'] = subErrRows
                         request.session['currentRegEventId'] = currentRegEventId 
                         return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler' ))
@@ -85,13 +101,21 @@ def subject_upload(request):
                     errorData = Dataset()
                     for i in list(errorIndices):
                         newRow = (newDataset[i][0],newDataset[i][1],byear,bsem,dept,ayear,regulation,newDataset[i][2],\
+<<<<<<< HEAD
+                            newDataset[i][3],newDataset[i][4],newDataset[i][5],newDataset[i][6])
+=======
                             newDataset[i][3],newDataset[i][5],newDataset[i][6],newDataset[i][4])
+>>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
                         errorData.append(newRow)
                     for i in errorDataset:
                         errorData.append(i)
                     subErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],\
                     errorData[i][4],errorData[i][5],errorData[i][6],errorData[i][7],errorData[i][8],\
+<<<<<<< HEAD
+                        errorData[i][9], errorData[i][10], errorData[i][11] ) for i in range(len(errorData))]
+=======
                         errorData[i][9], errorData[i][10],errorData[i][11] ) for i in range(len(errorData))]
+>>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
                     request.session['subErrRows'] = subErrRows
                     request.session['currentRegEventId'] = currentRegEventId                
                     return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
@@ -120,7 +144,11 @@ def subject_upload_error_handler(request):
             for cIndex, fRow in enumerate(subjectRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     Subjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
+<<<<<<< HEAD
+                        Credits=fRow[8],Creditable=fRow[7],Type=fRow[9],Category=fRow[10], OfferedBy=fRow[11])
+=======
                         Credits=fRow[8],Creditable=fRow[7],Type=fRow[9],Category=fRow[10],OfferedBy=fRow[11])
+>>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
             return render(request, 'SupExamDBRegistrations/BTSubjectsUploadSuccess.html')
     else:
         form = StudentRegistrationUpdateForm(Options=subjectRows)
