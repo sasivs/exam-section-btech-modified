@@ -27,6 +27,7 @@
                     <!-- <td style="border: 1px solid black;">Regulation</td> -->
                     <td style="border: 1px solid black;">Type</td>
                     <td style="border: 1px solid black;">Category</td>
+                    <td style="border: 1px solid black;">OfferedBy</td>
                 </tr>
             </th>
             {% for sub  in subjects %}
@@ -51,6 +52,9 @@
                 </td>
                 <td style="border: 1px solid black;">
                     {{ sub.Category }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ sub.OfferedBy }}
                 </td>
             </tr>
             {% endfor %}

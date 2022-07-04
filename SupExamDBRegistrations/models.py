@@ -205,6 +205,7 @@ class Subjects_Staging(models.Model):
     Credits = models.IntegerField()
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
+    OfferedBy = models.IntegerField()
     # RegEventId = models.IntegerField()
     RegEventId = models.ForeignKey('SupExamDBRegistrations.RegistrationStatus', on_delete=models.CASCADE)
 
@@ -226,6 +227,7 @@ class Subjects(models.Model):
     Credits = models.IntegerField()
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
+    # OfferedBy = models.IntegerField()
     # RegEventId = models.IntegerField()
     RegEventId = models.ForeignKey('SupExamDBRegistrations.RegistrationStatus', on_delete=models.CASCADE)
     
