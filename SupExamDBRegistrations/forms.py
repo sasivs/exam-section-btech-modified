@@ -377,7 +377,7 @@ class SubjectDeletionForm(forms.Form):
                 self.fields['Check' + sub.SubCode] = forms.BooleanField(required=False, widget=CheckboxInput())
                 if('Check'+sub.SubCode in self.data.keys() and self.data['Check'+sub.SubCode]==True):
                     self.fields['Check' + sub.SubCode].initial = True
-                self.myFields.append((sub.SubCode,sub.SubName,sub.Creditable,sub.Credits,regulation,sub.Type,sub.Category,self['Check'+sub.SubCode]))
+                self.myFields.append((sub.SubCode,sub.SubName,sub.Creditable,sub.Credits,sub.OfferedBy,regulation,sub.Type,sub.Category,self['Check'+sub.SubCode]))
  
 class BranchChangeForm(forms.Form):
     def __init__(self,  *args,**kwargs):
