@@ -3,7 +3,7 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from SupExamDBRegistrations.views import backlog_registrations, cancellations, first_backlog_registrations, grades, \
+from SupExamDBRegistrations.views import faculty_user_assignment, backlog_registrations, cancellations, first_backlog_registrations, grades, \
     home, manage, open_elective_registrations, grades,\
     regular_registrations, status, subjects, StudInfo, RollList, branch_change, add_regulation, \
         Dec_upload_file,Dec_register_all, dropped_regular_regs, makeupReg, not_promoted, mandatory_credits, grade_points, FacultyAssignment
@@ -29,6 +29,8 @@ urlpatterns = [
     path('FacultyAssignment', FacultyAssignment.faculty_assignment, name = 'FacultyAssignment'),
     path('FacultyAssignmentStatus', FacultyAssignment.faculty_assignment_status, name = 'FacultyAssignmentStatus'),
     path('FacultyAssignemntDetail/<int:pk>', FacultyAssignment.faculty_assignment_detail, name='FacultyAssignmentDetail'),
+    path('FacultyUserAssignment', faculty_user_assignment.faculty_user, name = 'FacultyUserAssignment'),
+    path('FacultyUserDetail/<int:pk>', faculty_user_assignment.faculty_user_detail, name='FacultyUserDetail'),
 
 
     path('AddRegulation', add_regulation.addRegulation, name = 'AddRegulation'),

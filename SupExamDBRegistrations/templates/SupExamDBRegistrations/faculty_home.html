@@ -1,8 +1,4 @@
-{% extends 'SupExamDB/suphome.html' %}
-
-
-{% block content %}
-{% load user_check_tag %}
+{% extends 'SupExamDB/suphome.html' %} {% block content %} {% load user_check_tag %}
 <div class="container">
     <div class="row">
         <div class="col-md-2">
@@ -23,6 +19,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyUserAssignment' %}">Faculty User Assignment</a>
+                </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultyAssignment' %}">Faculty Assignment</a>
@@ -30,12 +29,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
+
                 {% endif %}
             </ul>
         </div>
         <div class="col-md-10">
-            {% block sub %}
-            {% endblock %}
+            {% block sub %} {% endblock %}
         </div>
     </div>
 </div>

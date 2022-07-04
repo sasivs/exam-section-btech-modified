@@ -1,142 +1,141 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" text = 'html/css' href="{% static 'gradeSheetPrinting/css/table-styles.css' %}" />
+    <link rel="stylesheet" text='html/css' href="{% static 'gradeSheetPrinting/css/table-styles.css' %}" />
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title>Superintendent Dash Board </title>
-  </head>
-  {% load user_check_tag %}
-  <body>
+</head>
+{% load user_check_tag %}
+
+<body>
     <div class="container">
-      {% if user.is_authenticated %}
-      <p class="text-center">Logged in as <strong>{{ user.username }}</strong></p>
-      {% endif %} 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{% url 'home' %}">
-       <img src="{% static 'gradeSheetPrinting/images/nit-logo.png' %}" alt="" width="80" height="80">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        {% if user.is_authenticated %}
+        <p class="text-center">Logged in as <strong>{{ user.username }}</strong></p>
+        {% endif %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'gradeSheetPrinting/images/nit-logo.png' %}" alt="" width="80" height="80">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse mx-auto" id="navbarNav">
-      <div class="container">
-      <ul class="navbar-nav mx-auto" >
-        {% if user|has_group:"Co-ordinator" %} 
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="collapse navbar-collapse mx-auto" id="navbarNav">
+                <div class="container">
+                    <ul class="navbar-nav mx-auto">
+                        {% if user|has_group:"Co-ordinator" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Registration
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
-            <li><a class="dropdown-item" href="{% url 'SupBTRollListHome' %}">Roll List</a></li>
-            <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRollListHome' %}">Roll List</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Faculty
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
-          </ul>
-        </li>
-        {% elif user|has_group:"Faculty" %}
-      
-        {% elif user|has_group:"HOD" %}
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="GradesDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+                            </ul>
+                        </li>
+                        {% elif user|has_group:"Faculty" %} {% elif user|has_group:"HOD" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="GradesDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Grades
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="GradesDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTGradesHome' %}">Grades</a></li>
-          </ul>
-        </li>
-        {% elif user|has_group:"Superintendent" %}
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="GradesDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTGradesHome' %}">Grades</a></li>
+                            </ul>
+                        </li>
+                        {% elif user|has_group:"Superintendent" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Printing
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PrintingDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTPrinting' %} ">B.Tech.</a></li>
-            <li><a class="dropdown-item" href="#">M.Tech.</a></li>
-            <li><a class="dropdown-item" href="#">Ph.D.</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PrintingDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTPrinting' %} ">B.Tech.</a></li>
+                                <li><a class="dropdown-item" href="#">M.Tech.</a></li>
+                                <li><a class="dropdown-item" href="#">Ph.D.</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Pre-Registration
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PreRegistrationDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTPreRegistrationHome' %}">Pre Registration</a></li>
-            <li><a class="dropdown-item" href="{% url 'SupBTBranchChangeHome' %}">Branch Change</a></li>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="PreRegistrationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTPreRegistrationHome' %}">Pre Registration</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTBranchChangeHome' %}">Branch Change</a></li>
 
-          </ul>
-        </li>
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Registration
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTRollListHome' %}">Roll List</a></li>
-            <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
-            <li><a class="dropdown-item" href="{% url 'SupBTRegistrationStatusHome' %}">Registration Status</a></li>
-            <!-- <li><a class="dropdown-item" href="{% url 'ManageRegistrations' %}">ManageRegistrations</a></li> -->
-            <li><a class="dropdown-item" href="{% url 'SupBTCancellationHome' %}">Student Cancellation</a></li>
-            <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="GradesDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTRollListHome' %}">Roll List</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRegistrationStatusHome' %}">Registration Status</a></li>
+                                <!-- <li><a class="dropdown-item" href="{% url 'ManageRegistrations' %}">ManageRegistrations</a></li> -->
+                                <li><a class="dropdown-item" href="{% url 'SupBTCancellationHome' %}">Student Cancellation</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="GradesDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Grades
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="GradesDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTGradesHome' %}">Grades</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="NotPromotedDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="GradesDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTGradesHome' %}">Grades</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="NotPromotedDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Not Promoted
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="NotPromotedDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTNotPromotedHome' %}">Not Promoted</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="NotPromotedDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTNotPromotedHome' %}">Not Promoted</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Faculty
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
-            <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
 
-          <a class="nav-link" href="#">UserManagement</a>
-        </li>
-        {% endif %}
-         <!-- <li class="nav-item">
+                            <a class="nav-link" href="#">UserManagement</a>
+                        </li>
+                        {% endif %}
+                        <!-- <li class="nav-item">
           <a class="nav-link" href="#">GradesProcessing</a>
         </li>  -->
-        
-        <ul class="nav navbar-nav navbar-right navbar-text" float='right'>
-            <a style="display: inline; float: right;" href="{% url 'logout' %}">Log out</a>
-        </ul>
-          
-        
-      </ul>
-    </div>
-      </div>
-  </div>
-</nav>
 
-     {% block content %}
-     {% endblock %}
+                        <ul class="nav navbar-nav navbar-right navbar-text" float='right'>
+                            <a style="display: inline; float: right;" href="{% url 'logout' %}">Log out</a>
+                        </ul>
+
+
+                    </ul>
+                </div>
+            </div>
+    </div>
+    </nav>
+
+    {% block content %} {% endblock %}
 
     <!-- Optional JavaScript; choose one of the two! -->
 
@@ -150,6 +149,6 @@
     -->
 
 
-  </body>
-</html>
+</body>
 
+</html>
