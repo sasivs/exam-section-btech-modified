@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'SupExamDBRegistrationStatus',
     'CoordinatorDB',
     'import_export',
+    'faculty',
+    'hod',
+    'co_ordinator', 
+    'superintendent',
 ]
 
 MIDDLEWARE = [
@@ -90,7 +94,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': '',
         'USER':'postgres',
-        'PASSWORD': 'adithyaisgodst',
+        'PASSWORD': '',
         'HOST':'localhost',
         'PORT': '5432',
     }
