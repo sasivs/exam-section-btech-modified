@@ -3,8 +3,8 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from SupExamDBRegistrations.views import faculty_user_assignment, backlog_registrations, cancellations, first_backlog_registrations, grades, \
-    home, manage, open_elective_registrations, grades,\
+from SupExamDBRegistrations.views import  faculty_user_assignment, backlog_registrations, cancellations, first_backlog_registrations, grades, \
+    home, manage, open_elective_registrations, grades,attendance_shortage,\
     regular_registrations, status, subjects, StudInfo, RollList, branch_change, add_regulation, \
         Dec_upload_file,Dec_register_all, dropped_regular_regs, makeupReg, not_promoted, mandatory_credits, grade_points, FacultyAssignment
 from SupExamDB import views as supviews
@@ -31,6 +31,12 @@ urlpatterns = [
     path('FacultyAssignemntDetail/<int:pk>', FacultyAssignment.faculty_assignment_detail, name='FacultyAssignmentDetail'),
     path('FacultyUserAssignment', faculty_user_assignment.faculty_user, name = 'FacultyUserAssignment'),
     path('FacultyUserDetail/<int:pk>', faculty_user_assignment.faculty_user_detail, name='FacultyUserDetail'),
+    path('FacultyUserRevoke/<int:pk>', faculty_user_assignment.faculty_user_revoke, name='FacultyUserRevoke'),
+
+    path('FacultyCoordinatorAssignment', faculty_user_assignment.faculty_Coordinator, name = 'FacultyCoordinatorAssignment'),
+    path('FacultyCoordinatorDetail/<int:pk>', faculty_user_assignment.faculty_Coordinator_detail, name='FacultyCoordinatorDetail'),
+    path('FacultyCoordinatorRevoke/<int:pk>', faculty_user_assignment.faculty_Coordinator_revoke, name='FacultyCoordinatorRevoke'),
+    
 
 
     path('AddRegulation', add_regulation.addRegulation, name = 'AddRegulation'),
@@ -113,6 +119,10 @@ urlpatterns = [
     path('GradePointsUploadErrorHandler', grade_points.grade_points_upload_error_handler, name='GradePointsUploadErrorHandler'),
 
     path('GradeChallenge', grades.grade_challenge, name='GradeChallenge'),
+
+    path('AttendanceShoratgeUpload',attendance_shortage.attendance_shortage_upload,name='AttendanceShoratgeUpload'),
+    path('AttendanceShoratgeStatus',attendance_shortage.attendance_shortage_status,name='AttendanceShoratgeStatus'),
+    path('AttendanceShoratgeDelete/<int:pk>',attendance_shortage.attendance_shortage_delete,name='AttendanceShoratgeDelete'),
 
 
 ]

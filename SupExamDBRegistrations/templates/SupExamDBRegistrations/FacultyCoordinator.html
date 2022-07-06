@@ -3,7 +3,6 @@
 <div class="container">
     <div class="row">
 
-
     </div>
 
     <div class="row">
@@ -22,16 +21,16 @@
                 </tr>
             </thead>
             {% for fac in faculty %}
-            <tr data-row-href="{% url 'FacultyUserDetail' fac.id %}">
+            <tr data-row-href="{% url 'FacultyCoordinatorDetail' fac.id %}">
                 <td style="border: 1px solid black;">{{fac.id}}</td>
                 <td style="border: 1px solid black;">{{fac.FacultyId}}</td>
                 <td style="border: 1px solid black;">{{fac.Name}}</td>
                 <td style="border: 1px solid black;">{{fac.Phone}}</td>
                 <td style="border: 1px solid black;">{{fac.Email}}</td>
                 <td style="border: 1px solid black;">
-                    <a href="{% url 'FacultyUserDetail' fac.id %}">Assign</a>
+                    <a href="{% url 'FacultyCoordinatorDetail' fac.id %}">Assign</a>
                 </td>
-                <td style="border: 1px solid black;"> <a href="{% url 'FacultyUserRevoke' fac.id %}">Revoke</a></td>
+                <td style="border: 1px solid black;"> <a href="{% url 'FacultyCoordinatorRevoke' fac.id %}">Revoke</a></td>
 
                 </td>
             </tr>

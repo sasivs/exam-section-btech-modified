@@ -1614,20 +1614,62 @@ class FacultyAssignmentStatusForm(forms.Form):
 
 
 
-class FacultyUserForm(forms.Form):
-    def __init__(self, *args,**kwargs):
-        super(FacultyUserForm, self).__init__(*args, **kwargs)
+# class FacultyUserForm(forms.Form):
+#     def __init__(self, *args,**kwargs):
+#         super(FacultyUserForm, self).__init__(*args, **kwargs)
+#         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+#         years = {1:'I',2:'II',3:'III',4:'IV'}
+#         sems = {1:'I',2:'II'}
+#         self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+#         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+#         myChoices = [(option[7], depts[option[4]-1]+':'+ \
+#                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+#                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+#         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+#         #attrs={'onchange':"submit();"}
+#         self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
+#         widget=forms.Select(choices=myChoices))
+
+class FacultyUserDeletionForm(forms.Form):
+    def __init__(self,Option=None , *args,**kwargs):
+        super(FacultyUserDeletionForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        for i in range(len(Option)):
+            self.fields['Check' + str(Option[i].FacultyId)] = forms.BooleanField(required=False, widget=CheckboxInput())
+            self.myFields.append((self['Check'+str(Option[i].FacultyId)]))
+
+
+        
+
+class AttendanceShoratgeUploadForm(forms.Form):
+    def __init__(self,Option=None , *args,**kwargs):
+        super(AttendanceShoratgeUploadForm, self).__init__(*args, **kwargs)
+        self.myFields=[]
+        self.fields['file'] = forms.FileField()
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        #attrs={'onchange':"submit();"}
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
-        widget=forms.Select(choices=myChoices))
+        self.fields['RegEvent'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))
 
-
+class AttendanceShoratgeStatusForm(forms.Form):
+    def __init__(self,Option=None , *args,**kwargs):
+        super(AttendanceShoratgeStatusForm, self).__init__(*args, **kwargs)
+        self.myFields=[]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = RegistrationStatus.objects.filter(Status=1)
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        myChoices = [(option[7], depts[option[4]-1]+':'+ \
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
+                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        self.fields['RegEvent'] = forms.CharField(label='Choose Registration ID', \
+            max_length=26, widget=forms.Select(choices=myChoices))

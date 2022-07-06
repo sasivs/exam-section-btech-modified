@@ -505,16 +505,39 @@ class CancelledSeatGrades(models.Model):
         unique_together=('RegId', 'Grade')
         managed = False
 
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
 class Faculty_user(models.Model):
-    UserId= models.IntegerField()
+    User= models.ForeignKey(User, on_delete=models.CASCADE)
     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
     AssignDate = models.DateField(auto_now_add=True)
-    RevokeDate = models.DateField()
+    RevokeDate = models.DateField(null=True)
     class Meta:
         db_table = 'Faculty_user'
-        unique_together=('UserId', 'Faculty','AssignDate')
         managed = True
 
+
+class Faculty_Coordinator(models.Model):
+    User= models.ForeignKey(User, on_delete=models.CASCADE
+    )
+    Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
+    AssignDate = models.DateField(auto_now_add=True)
+    RevokeDate = models.DateField(null=True)
+    class Meta:
+        db_table = 'Faculty_Coordinator'
+        
+        managed = True
+
+
+class Attendance_Shortage(models.Model):
+    Student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    RegEventId =models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    Subject = models.ForeignKey(Subjects,on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'Attendance_Shortage'
+        managed = True
 
 # class PartialSeatCancellation(models.Model):
 #     CYCLE_CHOICES = (

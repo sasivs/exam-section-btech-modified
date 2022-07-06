@@ -29,3 +29,4 @@ class GradeChallengeResource(resources.ModelResource):
 class NotPromotedResource(resources.ModelResource):
     class Meta:
         model = NotPromoted
+

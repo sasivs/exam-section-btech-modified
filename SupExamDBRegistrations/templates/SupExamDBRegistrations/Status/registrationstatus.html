@@ -1,28 +1,30 @@
-{% extends 'SupExamDB/suphome.html' %}
-
-
-{% block content %}
+{% extends 'SupExamDB/suphome.html' %} {% block content %}
 
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                
-                  <li class="nav-item">
+
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
-                  </li>
-                
-              </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'AttendanceShoratgeUpload' %}">Attendance Shoratge Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shoratge Status</a>
+                </li>
+
+            </ul>
         </div>
         <div class="col-md-10">
-            {% block sub %}
-            {% endblock %}
+            {% block sub %} {% endblock %}
         </div>
-       </div>
-{% endblock %}
+    </div>
+    {% endblock %}

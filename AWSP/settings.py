@@ -10,10 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
 import os
 from pathlib import Path
 
@@ -94,11 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'public',
         'USER':'postgres',
-<<<<<<< HEAD
-        'PASSWORD': 'postgresql',
-=======
         'PASSWORD': 'adithyaisgodst',
->>>>>>> bb4eb65c9548507a07b509b2eeac77cc204dff60
         'HOST':'localhost',
         'PORT': '5432',
     }
