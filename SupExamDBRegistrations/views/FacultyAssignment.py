@@ -28,17 +28,17 @@ def faculty_upload(request):
                 dataset = XLSX().create_dataset(data)
                 newDataset= Dataset()
                 errorDataset = Dataset()#To store subjects rows which are not related to present registration event
-                errorDataset.headers = ['FacultyId','Name','Phone','Email']
-                newDataset.headers = ['FacultyId','Name','Phone','Email']
+                errorDataset.headers = ['FacultyId','Name','Phone','Email','Dept','Working']
+                newDataset.headers = ['FacultyId','Name','Phone','Email','Dept','Working']
                 fac_id =  FacultyInfo.objects.all()
                 fac_id = [row.FacultyId for row in fac_id]
                 for i in range(len(dataset)):
                     row = dataset[i]
                     if(row[0] not in fac_id):
-                        newRow = (row[0],row[1],row[2],row[3])
+                        newRow = (row[0],row[1],row[2],row[3],row[4],True)
                         newDataset.append(newRow)
                     else:
-                        newRow = (row[0],row[1],row[2],row[3])
+                        newRow = (row[0],row[1],row[2],row[3],row[4],True)
                         errorDataset.append(newRow)
                 Faculty_resource = FacultyInfoResource()
                 result = Faculty_resource.import_data(newDataset, dry_run=True)
@@ -49,7 +49,7 @@ def faculty_upload(request):
                     if(len(errorDataset) != 0):
                         for i in errorDataset:
                             errorData.append(i)
-                        FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3] ) for i in range(len(errorData))]
+                        FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],errorData[i][4],errorData[i][5] ) for i in range(len(errorData))]
                         request.session['FacInfoErrRows'] = FacInfoErrRows
                         return HttpResponseRedirect(reverse('FacultyInfoUploadErrorHandler'))
                     # return(render(request,'SupExamDBRegistrations/FacultyInfoUploadSuccess.html'))
@@ -72,12 +72,12 @@ def faculty_upload(request):
                     errorData = Dataset()
                     for i in list(errorIndices):
                         newRow1 = (newDataset[i][0],newDataset[i][1],newDataset[i][2],\
-                            newDataset[i][3])
+                            newDataset[i][3],newDataset[i][4],newDataset[i][5])
                         errorData.append(newRow1)
                     print('errordata: ',errorData)
                     for i in errorDataset:
                         errorData.append(i)
-                    FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3] ) for i in range(len(errorData))]
+                    FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3] ,errorData[i][4],errorData[i][5]) for i in range(len(errorData))]
                     request.session['FacInfoErrRows'] = FacInfoErrRows
                     return HttpResponseRedirect(reverse('FacultyInfoUploadErrorHandler'))
                 return(render(request,'SupExamDBRegistrations/FacultyInfoUploadSuccess.html'))
@@ -100,7 +100,7 @@ def FacultyInfo_upload_error_handler(request):
             for cIndex, fRow in enumerate(FacultyInfoRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     FacultyInfo.objects.filter(FacultyId=fRow[0]).update(\
-                        Name=fRow[1],Phone=fRow[2],Email=fRow[3])
+                        Name=fRow[1],Phone=fRow[2],Email=fRow[3],Dept=fRow[4],Working=fRow[5])
             return render(request, 'SupExamDBRegistrations/FacultyInfoUploadSuccess.html')
     else:
         form = FacultyInfoUpdateForm(Options=FacultyInfoRows)
@@ -115,15 +115,15 @@ def FacultyInfo_upload_status(request):
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
 def Faculty_delete(request):
-    fac_info = FacultyInfo.objects.all()
-    fac_info = [(row.FacultyId,row.Name,row.Phone,row.Email) for row in fac_info]
+    fac_info = FacultyInfo.objects.filter(Working =True)
+    fac_info = [(row.FacultyId,row.Name,row.Phone,row.Email,row.Dept,row.Working) for row in fac_info]
     if(request.method=='POST'):
         form = FacultyDeletionForm(fac_info,request.POST)
         if(form.is_valid()):
             for cIndex, fRow in enumerate(fac_info):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     fac =FacultyInfo.objects.filter(FacultyId=fRow[0])
-                    fac.delete()
+                    fac.update(Working = False)
             return render(request, 'SupExamDBRegistrations/FacultyInfoDeletionSuccess.html')
                 
     else:

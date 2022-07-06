@@ -14,7 +14,8 @@
                     <td style="border: 1px solid black;">Name</td>
                     <td style="border: 1px solid black;">Phone</td>
                     <td style="border: 1px solid black;">Email</td>
-
+                    <td style="border: 1px solid black;">Dept</td>
+                    <td style="border: 1px solid black;">Working</td>
                 </tr>
             </th>
             {% for facinfo in fac_info %}
@@ -30,6 +31,12 @@
                 </td>
                 <td style="border: 1px solid black;">
                     {{ facinfo.Email }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ facinfo.Dept }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ facinfo.Working }}
                 </td>
 
             </tr>
