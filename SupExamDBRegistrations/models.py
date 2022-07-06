@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from SupExamDBRegistrations.constants import DEPARTMENTS, SEMS, YEARS
 
 
 class ProgrammeModel(models.Model):
@@ -50,6 +51,11 @@ class RegistrationStatus(models.Model):
     class Meta:
         db_table = 'Registration_Status'
         managed = False
+
+    def __str__(self):
+        name =  str(DEPARTMENTS[self.Dept-1]) + ':' + str(YEARS[self.BYear]) + ':' + str(SEMS[self.BSem]) + ':' + \
+            str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
+        return name
 
 class RollLists(models.Model):
     CYCLE_CHOICES = (
@@ -244,15 +250,15 @@ class Subjects(models.Model):
 #         #     attribute='id',
 #         #     widget=ForeignKeyWidget(RegistrationStatus, 'id')
 #         # )
-class FacultyAssignment(models.Model):
-    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
-    Section = models.CharField(max_length=2, default='NA')
-    faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
-    co_ordinator = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
+# class FacultyAssignment(models.Model):
+#     subject = models.ForeignKey(Subjects, on_delete=models.CASCADE, default=1)
+#     Section = models.CharField(max_length=2, default='NA')
+#     faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
+#     co_ordinator = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
 
-    class Meta:
-        db_table = 'FacultyAssignment'
-        managed = False
+#     class Meta:
+#         db_table = 'FacultyAssignment'
+#         managed = True
 
 
 class NotPromoted(models.Model):
@@ -509,13 +515,13 @@ class CancelledSeatGrades(models.Model):
 from django.contrib.auth import get_user_model
 User = get_user_model()
 class Faculty_user(models.Model):
-    User= models.ForeignKey(User, on_delete=models.CASCADE)
+    User= models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
     AssignDate = models.DateField(auto_now_add=True)
     RevokeDate = models.DateField(null=True)
     class Meta:
         db_table = 'Faculty_user'
-        managed = True
+        managed = False
 
 
 class Faculty_Coordinator(models.Model):
