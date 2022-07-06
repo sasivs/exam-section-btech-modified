@@ -2,9 +2,9 @@ from asyncio.windows_events import NULL
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from SupExamDBRegistrations.forms import FacultyUserDeletionForm,FacultyAssignmentForm,FacultyDeletionForm,FacultyInfoUpdateForm,BacklogRegistrationForm, RegistrationsEventForm,FacultyUploadForm, \
+from SupExamDBRegistrations.forms import FacultyAssignmentForm,FacultyDeletionForm,FacultyInfoUpdateForm,BacklogRegistrationForm, RegistrationsEventForm,FacultyUploadForm, \
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, FacultyAssignmentStatusForm
-from SupExamDBRegistrations.models import Faculty_Coordinator, Faculty_user, FacultyInfo, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging,\
+from SupExamDBRegistrations.models import  FacultyInfo, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging,\
     RollLists, FacultyAssignment
 from SupExamDBRegistrations.resources import FacultyInfoResource
 from .home import is_Superintendent

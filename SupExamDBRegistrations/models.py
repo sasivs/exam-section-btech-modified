@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from SupExamDBRegistrations.constants import DEPARTMENTS, SEMS, YEARS 
 
 
 class ProgrammeModel(models.Model):
@@ -50,6 +51,11 @@ class RegistrationStatus(models.Model):
     class Meta:
         db_table = 'Registration_Status'
         managed = False
+
+    def __str__(self):
+        name =  str(DEPARTMENTS[self.Dept-1]) + ':' + str(YEARS[self.BYear]) + ':' + str(SEMS[self.BSem]) + ':' + \
+            str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
+        return name
 
 class RollLists(models.Model):
     CYCLE_CHOICES = (
@@ -187,6 +193,8 @@ class FacultyInfo(models.Model):
     Name = models.CharField(max_length=100)
     Phone = models.IntegerField()
     Email = models.CharField(max_length=50)
+    Dept = models.IntegerField()
+    Working = models.BooleanField()
     class Meta:
         db_table = 'FacultyInfo'
         managed = False
@@ -506,38 +514,38 @@ class CancelledSeatGrades(models.Model):
         managed = False
 
 
-from django.contrib.auth import get_user_model
-User = get_user_model()
-class Faculty_user(models.Model):
-    User= models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
-    AssignDate = models.DateField(auto_now_add=True)
-    RevokeDate = models.DateField(null=True)
-    class Meta:
-        db_table = 'Faculty_user'
-        managed = True
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
+# class Faculty_user(models.Model):
+#     User= models.ForeignKey(User, on_delete=models.CASCADE)
+#     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
+#     AssignDate = models.DateField(auto_now_add=True)
+#     RevokeDate = models.DateField(null=True)
+#     class Meta:
+#         db_table = 'Faculty_user'
+#         managed = True
 
 
-class Faculty_Coordinator(models.Model):
-    User= models.ForeignKey(User, on_delete=models.CASCADE
-    )
-    Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
-    AssignDate = models.DateField(auto_now_add=True)
-    RevokeDate = models.DateField(null=True)
-    class Meta:
-        db_table = 'Faculty_Coordinator'
+# class Faculty_Coordinator(models.Model):
+#     User= models.ForeignKey(User, on_delete=models.CASCADE
+#     )
+#     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
+#     AssignDate = models.DateField(auto_now_add=True)
+#     RevokeDate = models.DateField(null=True)
+#     class Meta:
+#         db_table = 'Faculty_Coordinator'
         
-        managed = True
+#         managed = True
 
 
-class Attendance_Shortage(models.Model):
-    Student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
-    RegEventId =models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
-    Subject = models.ForeignKey(Subjects,on_delete=models.CASCADE)
+# class Attendance_Shortage(models.Model):
+#     Student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+#     RegEventId =models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+#     Subject = models.ForeignKey(Subjects,on_delete=models.CASCADE)
 
-    class Meta:
-        db_table = 'Attendance_Shortage'
-        managed = True
+#     class Meta:
+#         db_table = 'Attendance_Shortage'
+#         managed = True
 
 # class PartialSeatCancellation(models.Model):
 #     CYCLE_CHOICES = (
