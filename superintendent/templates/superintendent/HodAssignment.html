@@ -1,0 +1,13 @@
+{% extends 'SupExamDBRegistrations/faculty_home.html' %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name='submit' value="submit">Submit</button>
+        </form>
+    </div>
+</div>

@@ -252,15 +252,15 @@ class Subjects(models.Model):
 #         #     attribute='id',
 #         #     widget=ForeignKeyWidget(RegistrationStatus, 'id')
 #         # )
-class FacultyAssignment(models.Model):
-    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
-    Section = models.CharField(max_length=2, default='NA')
-    faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
-    co_ordinator = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
+# class FacultyAssignment(models.Model):
+#     subject = models.ForeignKey(Subjects, on_delete=models.CASCADE, default=1)
+#     Section = models.CharField(max_length=2, default='NA')
+#     faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
+#     co_ordinator = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
 
-    class Meta:
-        db_table = 'FacultyAssignment'
-        managed = False
+#     class Meta:
+#         db_table = 'FacultyAssignment'
+#         managed = True
 
 
 class NotPromoted(models.Model):

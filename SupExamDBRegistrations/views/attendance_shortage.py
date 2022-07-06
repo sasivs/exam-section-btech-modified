@@ -4,8 +4,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from SupExamDBRegistrations.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm,FacultyUserDeletionForm,FacultyAssignmentForm,FacultyDeletionForm,FacultyInfoUpdateForm,BacklogRegistrationForm, RegistrationsEventForm,FacultyUploadForm, \
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, FacultyAssignmentStatusForm
-from SupExamDBRegistrations.models import Attendance_Shortage, FacultyInfo, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging,\
-    RollLists, FacultyAssignment
+from SupExamDBRegistrations.models import Attendance_Shortage, Faculty_Coordinator, Faculty_user, FacultyInfo, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging,\
+    RollLists
 from SupExamDBRegistrations.resources import FacultyInfoResource
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
