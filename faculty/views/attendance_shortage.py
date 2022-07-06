@@ -2,12 +2,12 @@ from asyncio.windows_events import NULL
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from SupExamDBRegistrations.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm,FacultyUserDeletionForm,FacultyAssignmentForm,FacultyDeletionForm,FacultyInfoUpdateForm,BacklogRegistrationForm, RegistrationsEventForm,FacultyUploadForm, \
-    SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, FacultyAssignmentStatusForm
-from SupExamDBRegistrations.models import Attendance_Shortage, FacultyInfo, RegistrationStatus, Regulation, StudentBacklogs, StudentInfo, StudentRegistrations, Subjects, Subjects_Staging,\
-    RollLists, FacultyAssignment
+from SupExamDBRegistrations.models import FacultyAssignment
+from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
+from faculty.models import Attendance_Shortage, RegistrationStatus
+from SupExamDBRegistrations.models import StudentInfo
 from SupExamDBRegistrations.resources import FacultyInfoResource
-from .home import is_Superintendent
+from SupExamDB.views import is_Faculty
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.contrib.auth import logout 
 from django.db.models import F
@@ -16,13 +16,19 @@ from import_export.formats.base_formats import XLSX
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from hod.models import Faculty_user
+
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Faculty)
 def attendance_shortage_upload(request):
+    user = request.user
+    faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
+    subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
     if(request.method == 'POST'):
-            form = AttendanceShoratgeUploadForm(request.POST)
+            form = AttendanceShoratgeUploadForm(subjects,request.POST)
         # if(form.is_valid()):
-            regId = request.POST['RegEvent']
+            sub = request.POST['Subjects'].split(':')[0]
+            regEvent = request.POST['Subjects'].split(':')[1]
             
             file = request.FILES['file']
             
@@ -33,9 +39,9 @@ def attendance_shortage_upload(request):
             for i in range(len(dataset)):
                 regno = dataset[i][0]
                 student = StudentInfo.objects.get(RegNo =regno)
-                att_short = Attendance_Shortage.objects.filter(Student=student,RegEventId__id=regId)
+                att_short = Attendance_Shortage.objects.filter(Student=student,RegEventId__id=regEvent,Subject__id=sub)
                 if len(att_short) == 0 :
-                    att_short = Attendance_Shortage(Student=student,RegEventId_id=regId)
+                    att_short = Attendance_Shortage(Student=student,RegEventId_id=regEvent,Subject__id=sub)
                     att_short.save()
             return render(request, 'SupExamDBRegistrations/AttendanceShoratgeUploadSuccess.html')
             
@@ -43,26 +49,35 @@ def attendance_shortage_upload(request):
         #     print(form.errors)
         #     for row in form.fields.values(): print(row)
     else:
-        form = AttendanceShoratgeUploadForm()
+        
+        form = AttendanceShoratgeUploadForm(subjects)
         return render(request, 'SupExamDBRegistrations/AttendanceShoratgeUpload.html',{'form':form})
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Faculty)
 def attendance_shortage_status(request):
+    user = request.user
+    faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
+    subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
+    form = AttendanceShoratgeStatusForm(subjects)
     if(request.method == 'POST'):
-            form = AttendanceShoratgeStatusForm(request.POST)
+            form = AttendanceShoratgeStatusForm(subjects,request.POST)
 
-            regId = request.POST['RegEvent']
-            request.session['regId'] = regId
+            sub = request.POST['Subjects'].split(':')[0]
+            regEvent = request.POST['Subjects'].split(':')[1]
+            request.session['regId'] = regEvent
             
-            att_short = Attendance_Shortage.objects.filter(RegEventId__id=regId)
+            att_short = Attendance_Shortage.objects.filter(RegEventId__id=regEvent,Subject__id=sub)
             return render(request, 'SupExamDBRegistrations/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
 
             
 
     else:
-        form = AttendanceShoratgeStatusForm()
+        user = request.user
+        faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
+        subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
+        form = AttendanceShoratgeStatusForm(subjects)
         return render(request, 'SupExamDBRegistrations/AttendanceShoratgeStatus.html',{'form':form})
 
 
@@ -71,9 +86,9 @@ def attendance_shortage_status(request):
         
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Faculty)
 def attendance_shortage_delete(request,pk):
     regID = request.session.get('regId')
-    att_short = Attendance_Shortage.objects.filter(RegEventId__id=regID,Student__id =pk)
+    att_short = Attendance_Shortage.objects.filter(id =pk)
     if len(att_short) != 0:
         att_short.delete()

@@ -26,26 +26,32 @@
                             <td style="border: 1px solid black;">Name</td>
                             <td style="border: 1px solid black;">Regulation</td>
                             <td style="border: 1px solid black;">Dept</td>
+                            <td style="border: 1px solid black;">Subject</td>
+
                             <td style="border: 1px solid black;">Delete</td>
                         </tr>
                     </th>
-                    {% for field in att_short.Student %}
+                    {% for field in att_short %}
                     <tr>
                         <td style="border: 1px solid black;">
-                            {{ field.0 }}
+                            {{ field.Student.RegNo }}
                         </td>
                         <td style="border: 1px solid black;">
-                            {{ field.1 }}
+                            {{ field.Student.RollNo }}
                         </td>
                         <td style="border: 1px solid black;">
-                            {{ field.2 }}
+                            {{ field.Student.Name }}
                         </td>
                         <td style="border: 1px solid black;">
-                            {{ field.3 }}
+                            {{ field.Student.Regulation }}
                         </td>
                         <td style="border: 1px solid black;">
-                            {{ field.4 }}
+                            {{ field.Student.Dept }}
                         </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.Subject.SubCode }}
+                        </td>
+
                         <td style="border: 1px solid black;">
 
                             <a href="{% url 'AttendanceShoratgeDelete' field.id %}">Assign</a>
