@@ -20,5 +20,5 @@ class GradesThreshold(models.Model):
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
         db_table = 'GradesThreshold'
-        unique_together = ('Grade', 'subject', 'RegEventId', 'Section')
+        unique_together = ('Grade', 'Subject', 'RegEventId', 'Section')
         managed = True
