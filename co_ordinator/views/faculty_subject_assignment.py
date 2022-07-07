@@ -1,10 +1,13 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from SupExamDBRegistrations.views.home import is_Superintendent
 from SupExamDBRegistrations.models import RegistrationStatus, StudentRegistrations, Subjects, FacultyInfo, RollLists
 from SupExamDBRegistrations.constants import DEPT_DICT, ROMAN_TO_INT
-from co_ordinator.forms import FacultySubjectAssignmentForm
+from co_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from co_ordinator.models import FacultyAssignment
+from hod.models import Coordinator
+from superintendent.models import HOD
 
 
 @login_required(login_url="/login/")
@@ -72,3 +75,24 @@ def faculty_subject_assignment_detail(request, pk):
         return redirect('FacultySubjectAssignment')
     return render(request, 'co_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
         'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_section})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def faculty_assignment_status(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co_ordinator' in groups:
+        faculty = Coordinator.objects.filter(User=user, RevokeDate__isnull=True)
+    elif 'HOD' in groups:
+        faculty = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+    else:
+        raise Http404("You are not authorized to view this page")
+    if(request.method =='POST'):
+        form = FacultyAssignmentStatusForm(faculty, request.POST)
+        if(form.is_valid()):
+            regeventid=form.cleaned_data['regID']
+            faculty = FacultyAssignment.objects.filter(subject__RegEventId__id=regeventid)
+            return render(request, 'SupExamDBRegistrations/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
+    else:
+        form = FacultyAssignmentStatusForm(faculty=faculty)
+    return render(request, 'SupExamDBRegistrations/FacultyAssignmentStatus.html',{'form':form})

@@ -16,3 +16,11 @@ class FacultySubjectAssignmentForm(forms.Form):
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
         widget=forms.Select(choices=myChoices))
+
+class FacultyAssignmentStatusForm(forms.Form):
+    def __init__(self, faculty, *args,**kwargs):
+        super(FacultyAssignmentStatusForm,self).__init__(*args, **kwargs)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=faculty.Dept, BYear=faculty.BYear)
+        regEventIDKVs = [(reg.id,reg.__str__) for reg in regIDs]
+        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        self.fields['regID'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs))
