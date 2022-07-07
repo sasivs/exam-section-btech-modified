@@ -1,0 +1,38 @@
+{% extends 'SupExamDBRegistrations/faculty_home.html' %}
+
+{% load static %}
+
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <table >
+            <thead>
+              <tr>
+                <td style="border: 1px solid black;">id</td>
+                <td style="border: 1px solid black;">SubCode</td>
+                <td style="border: 1px solid black;">SubName</td>
+                <td style="border: 1px solid black;">Creditable</td>
+                <td style="border: 1px solid black;">Credits</td>
+                <td style="border: 1px solid black;">Type</td>
+                <td style="border: 1px solid black;">Category</td>
+                <td style="border: 1px solid black;">OfferedTo</td>
+                <td style="border: 1px solid black;">Reg Event</td>
+              </tr>
+            </thead>
+            {% for sub in subjects %}
+            <tr>
+              <td style="border: 1px solid black;">{{sub.Subject.id}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.SubCode}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.SubName}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.Creditable}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.Credits}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.Type}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.Category}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.RegEventId.Dept}}</td>
+              <td style="border: 1px solid black;">{{sub.RegEventId.__str__}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+    </div>
+</div>
+{% endblock %}
