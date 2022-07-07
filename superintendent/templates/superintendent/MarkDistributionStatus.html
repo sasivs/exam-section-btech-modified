@@ -1,0 +1,36 @@
+{% extends 'SupExamDBRegistrations/grades_home.html' %}
+
+{% load static %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Id</td>
+                    <td style="border: 1px solid black;">Distribution Fields</td>
+                    <td style="border: 1px solid black;">Districution</td>
+                    <td style="border: 1px solid black;">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dis in distributions %}
+                <tr>
+                    <td style="border: 1px solid black;">dis.id</td>
+                    <td style="border: 1px solid black;">dis.Distribution</td>
+                    <td style="border: 1px solid black;">dis.DistributionNames</td>
+                    <td style="border: 1px solid black;">
+                        <form action="" method="POST">
+                            <button type="submit" name="delete" value="{{dis.id}}" onclick="return confirm('Are you sure you want to delete distribution {{dis.id}}?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

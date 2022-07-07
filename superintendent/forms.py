@@ -30,5 +30,10 @@ class HODAssignmentForm(forms.Form):
                 self.fields['user'].initial = initial_hod.User.id
 
 
+class MarksDistributionForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(MarksDistributionForm, self).__init__(*args, **kwargs)
+        self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':5, 'cols':10}))
+        self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':5, 'cols':10}))
 
 
