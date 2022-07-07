@@ -43,7 +43,7 @@ def attendance_shortage_upload(request):
                 if len(att_short) == 0 :
                     att_short = Attendance_Shortage(Student=student,RegEventId_id=regEvent,Subject__id=sub)
                     att_short.save()
-            return render(request, 'SupExamDBRegistrations/AttendanceShoratgeUploadSuccess.html')
+            return render(request, 'faculty/AttendanceShoratgeUploadSuccess.html')
             
         # else:
         #     print(form.errors)
@@ -63,13 +63,11 @@ def attendance_shortage_status(request):
     form = AttendanceShoratgeStatusForm(subjects)
     if(request.method == 'POST'):
             form = AttendanceShoratgeStatusForm(subjects,request.POST)
-
             sub = request.POST['Subjects'].split(':')[0]
             regEvent = request.POST['Subjects'].split(':')[1]
             request.session['regId'] = regEvent
-            
             att_short = Attendance_Shortage.objects.filter(RegEventId__id=regEvent,Subject__id=sub)
-            return render(request, 'SupExamDBRegistrations/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
+            return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
 
             
 
@@ -78,7 +76,7 @@ def attendance_shortage_status(request):
         faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
         subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
         form = AttendanceShoratgeStatusForm(subjects)
-        return render(request, 'SupExamDBRegistrations/AttendanceShoratgeStatus.html',{'form':form})
+        return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form})
 
 
 
@@ -92,3 +90,4 @@ def attendance_shortage_delete(request,pk):
     att_short = Attendance_Shortage.objects.filter(id =pk)
     if len(att_short) != 0:
         att_short.delete()
+    return render(request, 'faculty/AttendanceDeleteSuccess.html')

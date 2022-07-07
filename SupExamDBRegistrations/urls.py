@@ -29,13 +29,13 @@ urlpatterns = [
     path('FacultyAssignment', FacultyAssignment.faculty_assignment, name = 'FacultyAssignment'),
     path('FacultyAssignmentStatus', FacultyAssignment.faculty_assignment_status, name = 'FacultyAssignmentStatus'),
     path('FacultyAssignemntDetail/<int:pk>', FacultyAssignment.faculty_assignment_detail, name='FacultyAssignmentDetail'),
-    path('FacultyUserAssignment', faculty_user_assignment.faculty_user, name = 'FacultyUserAssignment'),
-    path('FacultyUserDetail/<int:pk>', faculty_user_assignment.faculty_user_detail, name='FacultyUserDetail'),
-    path('FacultyUserRevoke/<int:pk>', faculty_user_assignment.faculty_user_revoke, name='FacultyUserRevoke'),
+    # path('FacultyUserAssignment', faculty_user_assignment.faculty_user, name = 'FacultyUserAssignment'),
+    # path('FacultyUserDetail/<int:pk>', faculty_user_assignment.faculty_user_detail, name='FacultyUserDetail'),
+    # path('FacultyUserRevoke/<int:pk>', faculty_user_assignment.faculty_user_revoke, name='FacultyUserRevoke'),
 
-    path('FacultyCoordinatorAssignment', faculty_user_assignment.faculty_Coordinator, name = 'FacultyCoordinatorAssignment'),
-    path('FacultyCoordinatorDetail/<int:pk>', faculty_user_assignment.faculty_Coordinator_detail, name='FacultyCoordinatorDetail'),
-    path('FacultyCoordinatorRevoke/<int:pk>', faculty_user_assignment.faculty_Coordinator_revoke, name='FacultyCoordinatorRevoke'),
+    # path('FacultyCoordinatorAssignment', faculty_user_assignment.faculty_Coordinator, name = 'FacultyCoordinatorAssignment'),
+    # path('FacultyCoordinatorDetail/<int:pk>', faculty_user_assignment.faculty_Coordinator_detail, name='FacultyCoordinatorDetail'),
+    # path('FacultyCoordinatorRevoke/<int:pk>', faculty_user_assignment.faculty_Coordinator_revoke, name='FacultyCoordinatorRevoke'),
     
 
 
@@ -120,9 +120,9 @@ urlpatterns = [
 
     path('GradeChallenge', grades.grade_challenge, name='GradeChallenge'),
 
-    path('AttendanceShoratgeUpload',attendance_shortage.attendance_shortage_upload,name='AttendanceShoratgeUpload'),
-    path('AttendanceShoratgeStatus',attendance_shortage.attendance_shortage_status,name='AttendanceShoratgeStatus'),
-    path('AttendanceShoratgeDelete/<int:pk>',attendance_shortage.attendance_shortage_delete,name='AttendanceShoratgeDelete'),
+    # path('AttendanceShoratgeUpload',attendance_shortage.attendance_shortage_upload,name='AttendanceShoratgeUpload'),
+    # path('AttendanceShoratgeStatus',attendance_shortage.attendance_shortage_status,name='AttendanceShoratgeStatus'),
+    # path('AttendanceShoratgeDelete/<int:pk>',attendance_shortage.attendance_shortage_delete,name='AttendanceShoratgeDelete'),
 
 
 ]

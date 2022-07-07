@@ -23,7 +23,7 @@ def hod_assignment(request):
                     new_hod = HOD(Faculty_id=form.cleaned_data.get('hod'), User_id=form.cleaned_data.get('user'), Dept=form.cleaned_data.get('dept'))
                     new_hod.save()
                 msg = 'Hod assignment is done successfully'
-        return render(request, 'superintendent/HodAssignment.html', {'form':form, 'msg':msg})
+                return render(request, 'superintendent/HodAssignment.html', {'form':form, 'msg':msg})
     else:
         form = HODAssignmentForm()
     return render(request, 'superintendent/HodAssignment.html', {'form':form})
