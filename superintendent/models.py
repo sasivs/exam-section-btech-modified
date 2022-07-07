@@ -35,6 +35,8 @@ class MarksDistribution(models.Model):
     class Meta:
         db_table = 'MarksDistribution'
         unique_together = ('Distribution', 'DistributionNames')
+        managed = True
+
 class IXGradeStudents(models.Model):
     GRADE_CHOICES = (
         ('I', 'I'),

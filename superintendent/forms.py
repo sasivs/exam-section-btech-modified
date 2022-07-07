@@ -60,6 +60,13 @@ class IXGradeStudentsAddition(forms.Form):
         return regd_no
 
 
+class IXGradeStudentsStatus(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(IXGradeStudentsStatus, self).__init__(*args, **kwargs) 
+        regs = RegistrationStatus.objects.filter(Status=1)
+        REG_CHOICES = [(reg.id, reg.__str__()) for reg in regs]
+        REG_CHOICES = [('', 'Choose Registration Event')] + REG_CHOICES
+        self.fields['regId'] = forms.CharField(label='Choose Registration Event', widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':"submit()"}))
 
 
 

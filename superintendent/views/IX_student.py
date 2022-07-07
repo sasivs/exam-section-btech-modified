@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from SupExamDBRegistrations.views.home import is_Superintendent
 from SupExamDBRegistrations.models import StudentRegistrations
-from superintendent.forms import IXGradeStudentsAddition
+from superintendent.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from superintendent.models import IXGradeStudents
 
 @login_required(login_url="/login/")
@@ -21,5 +21,25 @@ def ix_student_assignment(request):
                 ix_row.save()
                 msg = 'Student Grade Added Successfully.'
                 return render(request, 'superintendent/IXStudentAddition.html', {'form':form, 'msg':msg})
-    form = IXGradeStudentsAddition()
+    else:
+        form = IXGradeStudentsAddition()
     return render(request, 'superintendent/IXStudentAddition.html', {'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def ix_student_status(request):
+    msg = ''
+    if request.method == 'POST':
+        form = IXGradeStudentsStatus(request.POST)
+        if request.POST.get('submit'):
+            regEvent = request.POST.get('regId')
+            students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+        elif request.POST.get('delete'):
+            IXGradeStudents.objects.filter(id=request.POST.get('delete')).delete()
+            regEvent = request.POST.get('regId')
+            students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+            msg = 'Record Deleted Successfully.'
+    else:
+        form = IXGradeStudentsStatus()
+    return render(request, 'superintendent/IXGradeStudentsStatus.html', {'form':form, 'students':students, 'msg':msg})
+
