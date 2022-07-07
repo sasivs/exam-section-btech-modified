@@ -1,7 +1,7 @@
 from enum import unique
 from django.db import models
 from django.contrib.auth import get_user_model
-from SupExamDBRegistrations.models import FacultyInfo
+from SupExamDBRegistrations.models import FacultyInfo, StudentRegistrations
 
 # Create your models here.
 
@@ -27,4 +27,17 @@ class Departments(models.Model):
     class Meta:
         db_table = 'Departments'
         unique_together = ('Dept', 'Name', 'Dept_Code')
+        managed = True
+
+class IXGradeStudents(models.Model):
+    GRADE_CHOICES = (
+        ('I', 'I'),
+        ('X', 'X')
+    )
+    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+
+    class Meta:
+        db_table = 'IXGradeStudents'
+        unique_together = ('Registration', 'Grade')
         managed = True
