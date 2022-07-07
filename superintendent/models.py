@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from django.contrib.auth import get_user_model
 from SupExamDBRegistrations.models import FacultyInfo
@@ -16,4 +17,14 @@ class HOD(models.Model):
     class Meta:
         db_table = 'HOD'
         unique_together = ('Faculty', 'Dept', 'AssignedDate')
+        managed = True
+
+class Departments(models.Model):
+    Dept = models.IntegerField()
+    Name = models.CharField(max_length=255)
+    Dept_Code = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'Departments'
+        unique_together = ('Dept', 'Name', 'Dept_Code')
         managed = True

@@ -10,7 +10,7 @@ class ProgrammeModel(models.Model):
     Specialization = models.CharField(max_length=100)
     Dept = models.IntegerField()
     class Meta:
-        db_table = 'Departments'
+        db_table = 'ProgrammeModel'
         managed = False
 
 class StudentInfo(models.Model):

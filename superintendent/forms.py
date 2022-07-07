@@ -1,12 +1,13 @@
 from django import forms
 from django.contrib.auth.models import Group
 from superintendent.models import HOD
-from SupExamDBRegistrations.models import ProgrammeModel, FacultyInfo
+from SupExamDBRegistrations.models import FacultyInfo
+from superintendent.models import Departments
 
 class HODAssignmentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(HODAssignmentForm, self).__init__(*args, **kwargs)
-        departments = ProgrammeModel.objects.filter(ProgrammeName='BTech', ProgrammeType='UG')
+        departments = Departments.objects.filter(ProgrammeName='BTech', ProgrammeType='UG')
         DEPT_CHOICES = [('', '--------')]
         HOD_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]

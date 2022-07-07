@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required, user_passes_test
-from SupExamDBRegistrations.models import ProgrammeModel, FacultyInfo
 from SupExamDBRegistrations.views.home import is_Superintendent
 from superintendent.models import HOD
 from superintendent.forms import HODAssignmentForm
