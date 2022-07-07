@@ -6,6 +6,7 @@ from SupExamDB.views import is_Co_ordinator
 from SupExamDBRegistrations.forms import RegistrationsEventForm, \
     SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm
 from SupExamDBRegistrations.models import RegistrationStatus, Subjects, Subjects_Staging
+from superintendent.models import MarksDistribution
 from .home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from tablib import Dataset
@@ -23,47 +24,52 @@ def subject_home(request):
 def subject_upload(request):
     if(request.method=='POST'):
         regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        regIDs1 = RegistrationStatus.objects.filter(Status=1,Mode='D')#For Dropped regular courses, upload subjects 
+        # regIDs1 = RegistrationStatus.objects.filter(Status=1,Mode='D')#For Dropped regular courses, upload subjects 
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
-        regIDs += [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs1]
+        # regIDs += [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs1]
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
-            if(form.cleaned_data['regID']!='--Choose Event--'):
-                (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(form.cleaned_data['regID'])]
-                file = form.cleaned_data['file']
-                data = bytes()
-                for chunk in file.chunks():
-                    data += chunk
-                dataset = XLSX().create_dataset(data)
-                newDataset= Dataset()
-                errorDataset = Dataset()#To store subjects rows which are not related to present registration event
-                errorDataset.headers = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
-                    'Creditable', 'Credits','Type','Category', 'OfferedBy']
-                newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy']
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-                currentRegEventId = currentRegEventId[0].id
-                for i in range(len(dataset)):
-                    row = dataset[i]
-                    if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation)):
-                        newRow = (row[0],row[1],row[10],row[2],row[7],row[8],currentRegEventId, row[11])
-                        newDataset.append(newRow)
-                    else:
-                        newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8], row[11])
-                        errorDataset.append(newRow)
+            if request.POST.get('upload_file_submit'):
+                if(form.cleaned_data['regID']!='--Choose Event--'):
+                    (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(form.cleaned_data['regID'])]
+                    file = form.cleaned_data['file']
+                    data = bytes()
+                    for chunk in file.chunks():
+                        data += chunk
+                    dataset = XLSX().create_dataset(data)
+                    newDataset= Dataset()
+                    errorDataset = Dataset()#To store subjects rows which are not related to present registration event
+                    errorDataset.headers = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
+                        'Creditable', 'Credits','Type','Category', 'OfferedBy', 'DistributionRatio']
+                    newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy', \
+                        'DistributionRatio', 'MarkDistribution']
+                    currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                        Dept=dept,Mode=mode,Regulation=regulation)
+                    currentRegEventId = currentRegEventId[0].id
+                    # marks_distribution = MarksDistribution.objects.all()
+                    marks_distribution =[]
+                    for i in range(len(dataset)):
+                        row = dataset[i]
+                        if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation)):
+                            newRow = (row[0],row[1],row[7],row[8],row[9],row[10],currentRegEventId, row[11], row[12], '')
+                            newDataset.append(newRow)
+                        else:
+                            newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8], row[11], row[12])
+                            errorDataset.append(newRow)
+                    # mark_dis_form = SubjectMarkDistributionSelectForm(rows=newDataset)
+                    request.session['newDataset'] = newDataset
+                    request.session['dataset'] = dataset
+                return render(request, 'SupExamDBRegistrations/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
+                    'validRows':newDataset, 'marks_distribution':marks_distribution})
+            elif request.POST.get('mark_dis_submit'):
+                newDataset = request.session.get('newDataset')
+                for row in newDataset:
+                    row[9] = form.cleaned_data.get('mark_distribution_'+str(row[0]))
                 Subject_resource = SubjectStagingResource()
                 result = Subject_resource.import_data(newDataset, dry_run=True)
                 if not result.has_errors():
                     print('hiiiii   ')
                     Subject_resource.import_data(newDataset, dry_run=False)
-                    if(len(errorDataset)!=0):
-                        subErrRows = [ (errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3],\
-                            errorDataset[i][4],errorDataset[i][5],errorDataset[i][6],errorDataset[i][7],errorDataset[i][8],\
-                            errorDataset[i][9], errorDataset[i][10], errorDataset[i][11] ) for i in range(len(errorDataset))]
-                        request.session['subErrRows'] = subErrRows
-                        request.session['currentRegEventId'] = currentRegEventId 
-                        return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler' ))
-                    return(render(request,'SupExamDBRegistrations/BTSubjectsUploadSuccess.html'))
                 else:
                     errors = result.row_errors()
                     print("errors - ",errors[0][1][0].error)
@@ -82,18 +88,14 @@ def subject_upload(request):
                         print('Something went wrong in plain import')
                     errorData = Dataset()
                     for i in list(errorIndices):
-                        newRow = (newDataset[i][0],newDataset[i][1],byear,bsem,dept,ayear,regulation,newDataset[i][2],\
-                            newDataset[i][3],newDataset[i][4],newDataset[i][5],newDataset[i][6])
+                        newRow = (newDataset[i][0],newDataset[i][1],newDataset[i][2],\
+                            newDataset[i][3],newDataset[i][4],newDataset[i][5],newDataset[i][6], newDataset[i][7], newDataset[i][8], newDataset[i][9])
                         errorData.append(newRow)
-                    for i in errorDataset:
-                        errorData.append(i)
                     subErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],\
-                    errorData[i][4],errorData[i][5],errorData[i][6],errorData[i][7],errorData[i][8],\
-                        errorData[i][9], errorData[i][10], errorData[i][11] ) for i in range(len(errorData))]
+                    errorData[i][4],errorData[i][5],errorData[i][6],errorData[i][7], errorData[i][8], errorData[i][9]) for i in range(len(errorData))]
                     request.session['subErrRows'] = subErrRows
-                    request.session['currentRegEventId'] = currentRegEventId                
+                    request.session['currentRegEventId'] = currentRegEventId              
                     return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
-
         else:
             print(form.errors)
             for row in form.fields.values(): print(row)
@@ -118,7 +120,8 @@ def subject_upload_error_handler(request):
             for cIndex, fRow in enumerate(subjectRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     Subjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
-                        Credits=fRow[8],Creditable=fRow[7],Type=fRow[9],Category=fRow[10], OfferedBy=fRow[11])
+                        Creditable=fRow[2],Credits=fRow[3],Type=fRow[4],Category=fRow[5],OfferedBy=fRow[7],\
+                             DistributionRatio=fRow[8], MarkDistribution=fRow[9])
             return render(request, 'SupExamDBRegistrations/BTSubjectsUploadSuccess.html')
     else:
         form = StudentRegistrationUpdateForm(Options=subjectRows)
@@ -156,12 +159,7 @@ def subject_upload_status(request):
                     subjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
                 else:
                     subjects = Subjects.objects.filter(RegEventId=currentRegEventId)
-                return render(request, 'SupExamDBRegistrations/BTSubjectsUploadStatus.html',{'subjects':subjects.values(),'form':form})
-            return render(request, 'SupExamDBRegistrations/BTSubjectsUploadStatus.html',{'form':form})
-            
-            
-        else:
-            print('Invalid')
+                return render(request, 'SupExamDBRegistrations/BTSubjectsUploadStatus.html',{'subjects':subjects,'form':form})
     else:
         form = RegistrationsEventForm()
     return render(request, 'SupExamDBRegistrations/BTSubjectsUploadStatus.html',{'form':form})
@@ -262,7 +260,8 @@ def subject_finalize(request):
                 subjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
                 for sub in subjects:
                    s=Subjects(SubCode=sub.SubCode,SubName=sub.SubName,Creditable=sub.Creditable,Credits=sub.Credits,\
-                           OfferedBy=sub.OfferedBy,Type=sub.Type,Category=sub.Category,RegEventId=sub.RegEventId)
+                           OfferedBy=sub.OfferedBy,Type=sub.Type,Category=sub.Category,RegEventId=sub.RegEventId, \
+                            DistributionRatio=sub.DistributionRatio, MarkDistribution=sub.MarkDistribution)
                    s.save() 
                 return render(request, 'SupExamDBRegistrations/BTSubjectFinalizeSuccess.html')
         else:
@@ -276,54 +275,57 @@ def subject_finalize(request):
 def open_subject_upload(request):
     if(request.method=='POST'):
         regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        regIDs1 = RegistrationStatus.objects.filter(Status=1,Mode='D')#For Dropped regular courses, upload subjects 
+        # regIDs1 = RegistrationStatus.objects.filter(Status=1,Mode='D')#For Dropped regular courses, upload subjects 
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
-        regIDs += [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs1]
+        # regIDs += [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs1]
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
-            print(form.cleaned_data['regID'])
-            if(form.cleaned_data['regID']!='--Choose Event--'):
-                (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(form.cleaned_data['regID'])]
-                file = form.cleaned_data['file']
-                data = bytes()
-                for chunk in file.chunks():
-                    data += chunk
-                dataset = XLSX().create_dataset(data)
-                # mode = 1 # hard-coded to study mode as these are regular registrations
-                newDataset= Dataset()
-                errorDataset = Dataset()#To store subjects rows which are not related to present registration event
-                errorDataset.headers = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
-                    'Creditable', 'Credits','Type','Category','OfferedBy']
-                newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'OfferedBy','Type', 'Category', 'RegEventId']
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-                currentRegEventId = currentRegEventId[0].id
-                for i in range(len(dataset)):
-                    row = dataset[i]
-                    if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation) and row[8]=='OEC'):
-                        newRow = (row[0],row[1],row[10],row[2],row[11],row[7],row[8],currentRegEventId)
-                        newDataset.append(newRow)
-                    else:
-                        newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8],row[11])
-                        errorDataset.append(newRow)
+            if request.POST.get('upload_file_submit'):
+                if(form.cleaned_data['regID']!='--Choose Event--'):
+                    (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(form.cleaned_data['regID'])]
+                    file = form.cleaned_data['file']
+                    data = bytes()
+                    for chunk in file.chunks():
+                        data += chunk
+                    dataset = XLSX().create_dataset(data)
+                    newDataset= Dataset()
+                    errorDataset = Dataset()#To store subjects rows which are not related to present registration event
+                    errorDataset.headers = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
+                        'Creditable', 'Credits','Type','Category', 'OfferedBy', 'DistributionRatio']
+                    newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy', \
+                        'DistributionRatio', 'MarkDistribution']
+                    currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                        Dept=dept,Mode=mode,Regulation=regulation)
+                    currentRegEventId = currentRegEventId[0].id
+                    # marks_distribution = MarksDistribution.objects.all()
+                    marks_distribution =[]
+                    for i in range(len(dataset)):
+                        row = dataset[i]
+                        if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation) and row[10]=='OEC'):
+                            newRow = (row[0],row[1],row[7],row[8],row[9],row[10],currentRegEventId, row[11], row[12], '')
+                            newDataset.append(newRow)
+                        else:
+                            newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8], row[11], row[12])
+                            errorDataset.append(newRow)
+                    # mark_dis_form = SubjectMarkDistributionSelectForm(rows=newDataset)
+                    request.session['newDataset'] = newDataset
+                    request.session['dataset'] = dataset
+                return render(request, 'SupExamDBRegistrations/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
+                    'validRows':newDataset, 'marks_distribution':marks_distribution})
+            elif request.POST.get('mark_dis_submit'):
+                newDataset = request.session.get('newDataset')
+                for row in newDataset:
+                    row[9] = form.cleaned_data.get('mark_distribution_'+str(row[0]))
                 Subject_resource = SubjectStagingResource()
                 result = Subject_resource.import_data(newDataset, dry_run=True)
                 if not result.has_errors():
+                    print('hiiiii   ')
                     Subject_resource.import_data(newDataset, dry_run=False)
-                    if(errorDataset!=None):
-                        subErrRows = [ (errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3],\
-                            errorDataset[i][4],errorDataset[i][5],errorDataset[i][6],errorDataset[i][7],errorDataset[i][8],\
-                            errorDataset[i][9], errorDataset[i][10], errorDataset[i][11] ) for i in range(len(errorDataset))]
-                        request.session['subErrRows'] = subErrRows
-                        request.session['currentRegEventId'] = currentRegEventId 
-                        return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler' ))
-                    return(render(request,'SupExamDBRegistrations/BTSubjectsUploadSuccess.html'))
                 else:
                     errors = result.row_errors()
-                    print(errors[0][1][0].error)
+                    print("errors - ",errors[0][1][0].error)
                     indices = set([i for i in range(len(newDataset))])    
                     errorIndices = set([i[0]-1 for i in errors])
-                    print(errors[0][0])
                     cleanIndices = indices.difference(errorIndices)
                     cleanDataset = Dataset()
                     for i in list(cleanIndices):
@@ -337,18 +339,14 @@ def open_subject_upload(request):
                         print('Something went wrong in plain import')
                     errorData = Dataset()
                     for i in list(errorIndices):
-                        newRow = (newDataset[i][0],newDataset[i][1],byear,bsem,dept,ayear,regulation,newDataset[i][2],\
-                            newDataset[i][3],newDataset[i][5],newDataset[i][6],newDataset[i][4])
+                        newRow = (newDataset[i][0],newDataset[i][1],newDataset[i][2],\
+                            newDataset[i][3],newDataset[i][4],newDataset[i][5],newDataset[i][6], newDataset[i][7], newDataset[i][8], newDataset[i][9])
                         errorData.append(newRow)
-                    for i in errorDataset:
-                        errorData.append(i)
                     subErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],\
-                    errorData[i][4],errorData[i][5],errorData[i][6],errorData[i][7],errorData[i][8],\
-                        errorData[i][9], errorData[i][10],errorData[i][11] ) for i in range(len(errorData))]
+                    errorData[i][4],errorData[i][5],errorData[i][6],errorData[i][7], errorData[i][8], errorData[i][9]) for i in range(len(errorData))]
                     request.session['subErrRows'] = subErrRows
-                    request.session['currentRegEventId'] = currentRegEventId                
-                    return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler' ))
-
+                    request.session['currentRegEventId'] = currentRegEventId              
+                    return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
         else:
             print(form.errors)
             for row in form.fields.values(): print(row)

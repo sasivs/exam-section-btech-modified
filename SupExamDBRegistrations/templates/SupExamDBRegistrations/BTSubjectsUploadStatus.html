@@ -1,8 +1,4 @@
 {% extends 'SupExamDBRegistrations/subjecthome.html' %} {% load static %} {% block sub %}
-
-
-
-
 <div class="container">
     <div class="row">
         <strong>Choose the event to get the details of the subjects uploaded so far,corresponding to the particular event</strong>
@@ -20,10 +16,11 @@
                     <td style="border: 1px solid black;">Creditable</td>
                     <td style="border: 1px solid black;">Credits</td>
                     <td style="border: 1px solid black;">OfferedBy</td>
-                    <!-- <td style="border: 1px solid black;">Regulation</td> -->
                     <td style="border: 1px solid black;">Type</td>
                     <td style="border: 1px solid black;">Category</td>
                     <td style="border: 1px solid black;">OfferedBy</td>
+                    <td style="border: 1px solid black;">DistributionRatio</td>
+                    <td style="border: 1px solid black;">MarkDistribution</td>
                 </tr>
             </th>
             {% for sub in subjects %}
@@ -43,9 +40,6 @@
                 <td style="border: 1px solid black;">
                     {{ sub.OfferedBy }}
                 </td>
-                <!-- <td style="border: 1px solid black;">
-                    {{ sub.Regulation}}
-                </td> -->
                 <td style="border: 1px solid black;">
                     {{ sub.Type }}
                 </td>
@@ -54,6 +48,12 @@
                 </td>
                 <td style="border: 1px solid black;">
                     {{ sub.OfferedBy }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ sub.DistributionRatio }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ sub.MarkDistribution }}
                 </td>
             </tr>
             {% endfor %}

@@ -128,10 +128,10 @@ class StudentRegistrationUpdateForm(forms.Form):
         self.checkFields = []
         for fi in range(len(Options)):
             self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.fields['Check'+str(Options[fi][0])].initial = False
             self.checkFields.append(self['Check' + str(Options[fi][0])])
             self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5],\
-                Options[fi][6],Options[fi][7],Options[fi][8],Options[fi][9],Options[fi][10],Options[fi][11], self['Check' + str(Options[fi][0])]))
+                Options[fi][6],Options[fi][7],Options[fi][8],Options[fi][9], self['Check' + str(Options[fi][0])]))
 class StudentInfoUpdateForm(forms.Form):
     def __init__(self, Options = None, *args, **kwargs):
         super(StudentInfoUpdateForm, self).__init__(*args, **kwargs)
@@ -1664,3 +1664,18 @@ class FacultyAssignmentStatusForm(forms.Form):
 #         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
 #         self.fields['RegEvent'] = forms.CharField(label='Choose Registration ID', \
 #             max_length=26, widget=forms.Select(choices=myChoices))
+
+
+# class SubjectMarkDistributionSelectForm(forms.Form):
+#     def __init__(self, rows, *args,**kwargs):
+#         super(SubjectMarkDistributionSelectForm, self).__init__(*args, **kwargs)
+#         self.subFields = []
+#         self.selectField = []
+#         marks_distribution = []
+#         # marks_distribution = MarksDistribution.objects.all()
+#         DIS_CHOICES = [('', '---------')]
+#         DIS_CHOICES += [(dis.id, dis.Distribution) for dis in marks_distribution]
+#         for row in rows:
+#             self.fields['mark_distribution_'+str(row[0])]=forms.ChoiceField(widget=forms.Select(choices=DIS_CHOICES))
+#             self.subFields.append((row[0], row[1], row[2], row[3], row[4], \
+#                 row[5], row[6], row[7], self.fields['mark_distribution_'+str(row[0])]))
