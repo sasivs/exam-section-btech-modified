@@ -29,8 +29,8 @@ class Departments(models.Model):
         managed = True
 
 class MarksDistribution(models.Model):
-    Distribution = models.CharField()
-    DistributionNames=models.CharField()
+    Distribution = models.TextField()
+    DistributionNames=models.TextField()
 
     class Meta:
         db_table = 'MarksDistribution'
