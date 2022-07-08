@@ -50,19 +50,20 @@ def subject_upload(request):
                     marks_distribution =[]
                     for i in range(len(dataset)):
                         row = dataset[i]
-                        if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation)):
+                        if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation)):
                             newRow = (row[0],row[1],row[7],row[8],row[9],row[10],currentRegEventId, row[11], row[12], '')
                             newDataset.append(newRow)
                         else:
-                            newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8], row[11], row[12])
+                            newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10], row[11], row[12])
                             errorDataset.append(newRow)
-                    # mark_dis_form = SubjectMarkDistributionSelectForm(rows=newDataset)
-                    request.session['newDataset'] = newDataset
-                    request.session['dataset'] = dataset
+                    request.session['newDataset'] = list(newDataset)
+                    request.session['dataset'] = list(dataset) 
                 return render(request, 'SupExamDBRegistrations/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
                     'validRows':newDataset, 'marks_distribution':marks_distribution})
             elif request.POST.get('mark_dis_submit'):
-                newDataset = request.session.get('newDataset')
+                newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy', \
+                        'DistributionRatio', 'MarkDistribution']
+                newDataset = Dataset(request.session.get('newDataset'))
                 for row in newDataset:
                     row[9] = form.cleaned_data.get('mark_distribution_'+str(row[0]))
                 Subject_resource = SubjectStagingResource()
@@ -301,19 +302,20 @@ def open_subject_upload(request):
                     marks_distribution =[]
                     for i in range(len(dataset)):
                         row = dataset[i]
-                        if((row[3],row[4],row[5],row[6],row[9])==(byear,bsem,dept,ayear,regulation) and row[10]=='OEC'):
+                        if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation) and row[10]=='OEC'):
                             newRow = (row[0],row[1],row[7],row[8],row[9],row[10],currentRegEventId, row[11], row[12], '')
                             newDataset.append(newRow)
                         else:
-                            newRow = (row[0],row[1],row[3],row[4],row[5],row[6],row[9],row[10],row[2],row[7],row[8], row[11], row[12])
+                            newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10], row[11], row[12])
                             errorDataset.append(newRow)
-                    # mark_dis_form = SubjectMarkDistributionSelectForm(rows=newDataset)
-                    request.session['newDataset'] = newDataset
-                    request.session['dataset'] = dataset
+                    request.session['newDataset'] = list(newDataset)
+                    request.session['dataset'] = list(dataset) 
                 return render(request, 'SupExamDBRegistrations/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
                     'validRows':newDataset, 'marks_distribution':marks_distribution})
             elif request.POST.get('mark_dis_submit'):
-                newDataset = request.session.get('newDataset')
+                newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy', \
+                        'DistributionRatio', 'MarkDistribution']
+                newDataset = Dataset(request.session.get('newDataset'))
                 for row in newDataset:
                     row[9] = form.cleaned_data.get('mark_distribution_'+str(row[0]))
                 Subject_resource = SubjectStagingResource()

@@ -44,10 +44,6 @@ def attendance_shortage_upload(request):
                     att_short = Attendance_Shortage(Student=student,RegEventId_id=regEvent,Subject__id=sub)
                     att_short.save()
             return render(request, 'faculty/AttendanceShoratgeUploadSuccess.html')
-            
-        # else:
-        #     print(form.errors)
-        #     for row in form.fields.values(): print(row)
     else:
         
         form = AttendanceShoratgeUploadForm(subjects)

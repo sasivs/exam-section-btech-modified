@@ -45,6 +45,7 @@
             <td style="border: 1px solid black">{{row.5}}</td>
             <td style="border: 1px solid black">{{row.6}}</td>
             <td style="border: 1px solid black">{{row.7}}</td>
+            <td style="border: 1px solid black">{{row.8}}</td>
             <td style="border: 1px solid black">
               <select name="mark_distribution_{{row.0}}" id="mark_distribution_{{row.0}}" required>
                 <option value="">------------</option>
@@ -62,7 +63,7 @@
     <button type="submit" name="mark_dis_submit" value="mark_dis_submit">Submit</button>
     {% endif %}
   </form>
-  {% if errRows %}
+  {% if errorRows %}
   <div class="row">
     <strong>These subjects are not in respect to the selected event.</strong>
     <table>
@@ -72,23 +73,23 @@
           <td style="border: 1px solid black">SubName</td>
           <td style="border: 1px solid black">BYear</td>
           <td style="border: 1px solid black">BSem</td>
-          <td style="border: 1px solid black">OfferedYear</td>
           <td style="border: 1px solid black">Dept</td>
+          <td style="border: 1px solid black">OfferedYear</td>
           <td style="border: 1px solid black">Regulation</td>
         </tr>
       </thead>
       <tbody>
+        {% for row in errorRows %}
         <tr>
-          {% for row in errRows %}
-          <td style="border: 1px solid black">row.0</td>
-          <td style="border: 1px solid black">row.1</td>
-          <td style="border: 1px solid black">row.3</td>
-          <td style="border: 1px solid black">row.4</td>
-          <td style="border: 1px solid black">row.5</td>
-          <td style="border: 1px solid black">row.6</td>
-          <td style="border: 1px solid black">row.9</td>
-          {% endfor %}
+          <td style="border: 1px solid black">{{row.0}}</td>
+          <td style="border: 1px solid black">{{row.1}}</td>
+          <td style="border: 1px solid black">{{row.2}}</td>
+          <td style="border: 1px solid black">{{row.3}}</td>
+          <td style="border: 1px solid black">{{row.4}}</td>
+          <td style="border: 1px solid black">{{row.5}}</td>
+          <td style="border: 1px solid black">{{row.6}}</td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
