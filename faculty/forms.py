@@ -1,5 +1,5 @@
 from django import forms 
-from SupExamDBRegistrations.models import GradePoints, StudentRegistrations, RollLists
+from SupExamDBRegistrations.models import GradePoints, StudentRegistrations, RollLists, Subjects
 from faculty.models import GradesThreshold
 
 
@@ -93,5 +93,50 @@ class GradeThresholdStatusForm(forms.Form):
         for sub in subjects:
             subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode))]
 
-        subject_Choices = [('--Select Subject--','--Select Subject--')] + subject_Choices
+        subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
+
+class MarksUploadForm(forms.Form):
+    def __init__(self, subjects, *args,**kwargs):
+        super(MarksUploadForm, self).__init__(*args, **kwargs)
+        subject_Choices=[]
+        for sub in subjects:
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode))]
+        subject_Choices = [('','--Select Subject--')] + subject_Choices
+        EXAM_CHOICES = ['', '----------']
+        self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()"}))
+        self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, widget=forms.Select(choices=EXAM_CHOICES))
+        if self.data.get('subject'):
+            subject = self.data.get('subject').split(':')[0]
+            subject = Subjects.objects.get(id=subject)
+            EXAM_CHOICES += subject.MarkDistribution.distributions()
+            self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, widget=forms.Select(choices=EXAM_CHOICES))
+            self.fields['file'] = forms.FileField()
+
+class MarksStatusForm(forms.Form):
+    def __init__(self, subjects, *args,**kwargs):
+        super(MarksStatusForm, self).__init__(*args, **kwargs)
+        subject_Choices=[]
+        for sub in subjects:
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode))]
+        subject_Choices = [('','--Select Subject--')] + subject_Choices
+        self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
+
+class MarksUpdateForm(forms.Form):
+    def __init__(self, mark, *args,**kwargs):
+        super(MarksUpdateForm, self).__init__(*args, **kwargs)
+        subject = Subjects.objects.get(id=mark.Registration.sub_id)
+        EXAM_CHOICES += subject.MarkDistribution.distributions()
+        self.subject = subject
+        self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, widget=forms.Select(choices=EXAM_CHOICES))
+        self.fields['mark'] = forms.CharField(label='Update Mark', widget=forms.TextInput(attrs={'type':'number'}))
+    
+    def clean_mark(self):
+        mark = self.cleaned_data.get('mark')
+        exam_type = self.cleaned_data.get('exam-type')
+        exam_inner_index = exam_type.split(',')[1]
+        exam_outer_index = exam_type.split(',')[0]
+        mark_dis_limit = self.subject.MarkDistribution.get_mark_limit(exam_outer_index, exam_inner_index)
+        if mark > mark_dis_limit:
+            raise forms.ValidationError('Entered mark is greater than the maximum marks.')
+        return mark

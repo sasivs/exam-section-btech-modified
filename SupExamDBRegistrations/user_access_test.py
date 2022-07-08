@@ -30,3 +30,9 @@ def grades_threshold_access(user):
         return True
     return False 
 
+def marks_upload_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'Faculty' in groups:
+        return True
+    return False
+

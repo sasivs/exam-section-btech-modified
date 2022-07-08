@@ -1,0 +1,63 @@
+{% extends 'SupExamDBRegistrations/grades_home.html' %}
+
+{% load static %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="">Submit</button> 
+          </form>
+    </div>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    {% if invalidRegNo %}
+    <div class="row">
+        <strong>These rows do not have corresponding marks rows.</strong>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in invalidRegNo %}
+                <tr>
+                    <td style="border: 1px solid black;">row.0</td>
+                    <td style="border: 1px solid black;">row.1</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if invalidMarks %}
+    <div class="row">
+        <strong>These rows have marks greater than total marks for that exam type.</strong>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in invalidMarks %}
+                <tr>
+                    <td style="border: 1px solid black;">row.0</td>
+                    <td style="border: 1px solid black;">row.1</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
