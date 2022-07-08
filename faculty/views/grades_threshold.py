@@ -88,7 +88,7 @@ def grades_threshold_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    if not faculty.Faculty.Coordinator:
+    if not faculty.Faculty:
         raise Http404('You are not allowed to view threshold marks')
     subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)  
     if request.method == 'POST':
