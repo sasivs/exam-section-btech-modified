@@ -8,7 +8,8 @@ class AttendanceShoratgeUploadForm(forms.Form):
         super(AttendanceShoratgeUploadForm, self).__init__(*args, **kwargs)
         myChoices=[]
         for sub in Option:
-            myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+','+str(sub.Subject.SubCode))]
+            myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
+                str(sub.Subject.SubCode)+', '+str(sub.Section))]
 
         myChoices = [('--Select Subject--','--Select Subject--')]+myChoices
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
@@ -19,7 +20,8 @@ class AttendanceShoratgeStatusForm(forms.Form):
         super(AttendanceShoratgeStatusForm, self).__init__(*args, **kwargs)
         myChoices=[]
         for sub in Option:
-            myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+','+str(sub.Subject.SubCode))]
+            myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
+                str(sub.Subject.SubCode)+', '+str(sub.Section))]
         myChoices = [('--Select Subject--','--Select Subject--')]+myChoices
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
             max_length=26, widget=forms.Select(choices=myChoices))
@@ -101,7 +103,7 @@ class MarksUploadForm(forms.Form):
         super(MarksUploadForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
         for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode))]
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode)+', '+str(sub.Section))]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         EXAM_CHOICES = ['', '----------']
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()"}))
@@ -118,7 +120,8 @@ class MarksStatusForm(forms.Form):
         super(MarksStatusForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
         for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode))]
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
+                str(sub.Subject.SubCode)+', '+str(sub.Section))]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 

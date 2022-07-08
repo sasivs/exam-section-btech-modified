@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from SupExamDBRegistrations.user_access_test import marks_upload_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from SupExamDBRegistrations.models import RegistrationStatus, Subjects, StudentRegistrations, StudentInfo
+from SupExamDBRegistrations.models import RegistrationStatus, RollLists, Subjects, StudentRegistrations, StudentInfo
 from hod.models import Faculty_user
 from co_ordinator.models import FacultyAssignment
 from faculty.models import Marks
@@ -25,10 +25,13 @@ def marks_upload(request):
             if request.POST.get('submit'):
                 subject = form.cleaned_data.get('subject').split(':')[0]
                 regEvent = form.cleaned_data.get('subject').split(':')[1]
+                section = form.cleaned_data.get('subject').split(':')[2]
                 exam_outer_index = form.cleaned_data.get('exam-type').split(',')[0]
                 exam_inner_index = form.cleaned_data.get('exam-type').split(',')[1]
                 file = form.cleaned_data.get('file')
-                marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject)
+                roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+                marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
+                    Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
                 mark_distribution = Subjects.objects.get(id=subject).MarkDistribution
                 mark_dis_limit = mark_distribution.get_mark_limit(exam_outer_index, exam_inner_index)
                 data = bytes()
@@ -77,7 +80,10 @@ def marks_upload_status(request):
         if form.is_valid():
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
-            marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject)
+            section = form.cleaned_data.get('subject').split(':')[2]
+            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+            marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
+                Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects})
     else:
         form = MarksStatusForm(subjects=subjects)
@@ -126,9 +132,12 @@ def download_sample_excel_sheet(request):
         if form.is_valid():
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
+            section = form.cleaned_data.get('subject').split(':')[2]
+            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
             subject = Subjects.objects.get(id=subject)
             regEvent = RegistrationStatus.objects.get(id=regEvent)
-            student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject.id)
+            student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject.id, \
+                RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             students = StudentInfo.objects.filter(RegNo__in=student_registrations.values_list('RegNo', flat=True))
             
             from faculty.utils import SampleMarksUploadExcelSheetGenerator

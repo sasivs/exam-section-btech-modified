@@ -5,7 +5,7 @@ from django.urls import reverse
 from SupExamDBRegistrations.models import FacultyAssignment
 from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
 from faculty.models import Attendance_Shortage, RegistrationStatus
-from SupExamDBRegistrations.models import StudentInfo
+from SupExamDBRegistrations.models import StudentInfo, RollLists
 from SupExamDBRegistrations.resources import FacultyInfoResource
 from SupExamDB.views import is_Faculty
 from django.contrib.auth.decorators import login_required, user_passes_test 
@@ -29,6 +29,7 @@ def attendance_shortage_upload(request):
         # if(form.is_valid()):
             sub = request.POST['Subjects'].split(':')[0]
             regEvent = request.POST['Subjects'].split(':')[1]
+            section = request.POST['Subjects'].split(':')[2]
             
             file = request.FILES['file']
             
@@ -56,33 +57,23 @@ def attendance_shortage_status(request):
     user = request.user
     faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
     subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
-    form = AttendanceShoratgeStatusForm(subjects)
     if(request.method == 'POST'):
-            form = AttendanceShoratgeStatusForm(subjects,request.POST)
-            sub = request.POST['Subjects'].split(':')[0]
-            regEvent = request.POST['Subjects'].split(':')[1]
-            request.session['regId'] = regEvent
-            att_short = Attendance_Shortage.objects.filter(RegEventId__id=regEvent,Subject__id=sub)
-            return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
-
-            
+        form = AttendanceShoratgeStatusForm(subjects,request.POST)
+        sub = request.POST['Subjects'].split(':')[0]
+        regEvent = request.POST['Subjects'].split(':')[1]
+        section = request.POST['Subjects'].split(':')[2]
+        roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+        att_short = Attendance_Shortage.objects.filter(RegEventId__id=regEvent,Subject__id=sub, student__in=roll_list.values_list('Student', flat=True))
+        return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
 
     else:
-        user = request.user
-        faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-        subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
         form = AttendanceShoratgeStatusForm(subjects)
-        return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form})
+    return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form})
 
-
-
-
-        
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Faculty)
 def attendance_shortage_delete(request,pk):
-    regID = request.session.get('regId')
     att_short = Attendance_Shortage.objects.filter(id =pk)
     if len(att_short) != 0:
         att_short.delete()
