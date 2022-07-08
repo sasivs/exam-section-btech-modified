@@ -1,0 +1,40 @@
+{% extends 'SupExamDBRegistrations/grades_home.html' %}
+
+{% load static %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="">Submit</button> 
+          </form>
+    </div>
+    {% if grades %}
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">RegEvent</td>
+                    <td style="border: 1px solid black;">Grade</td>
+                    <td style="border: 1px solid black;">AttGrade</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                <tr>
+                    <td style="border: 1px solid black;">{{grade.RegNo}}</td>
+                    <td style="border: 1px solid black;">{{grade.regEvent}}</td>
+                    <td style="border: 1px solid black;">{{grade.Grade}}</td>
+                    <td style="border: 1px solid black;">{{grade.AttGrade}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

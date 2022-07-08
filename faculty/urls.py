@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from faculty.views import attendance_shortage, grades_threshold, courses, marks_upload
+from faculty.views import attendance_shortage, grades_threshold, courses, marks_upload, grades_generate
 
 urlpatterns =[
     path('AttendanceShoratgeUpload',attendance_shortage.attendance_shortage_upload,name='AttendanceShoratgeUpload'),
@@ -14,6 +14,8 @@ urlpatterns =[
     path('MarksUploadStatus', marks_upload.marks_upload_status, name='MarksUploadStatus'),
     path('MarksUpdate/<int:pk>', marks_upload.marks_update, name='MarksUpdate'),
     path('SampleMarksExcelSheetDownload', marks_upload.download_sample_excel_sheet, name='SampleMarksExcelSheetDownload'),
+    path('GradesGenerate', grades_generate.grades_generate, name='GradesGenerate'),
+    path('GradesStatus', grades_generate.grades_generate, name='GardesStatus'),
 ]
 
 
