@@ -644,7 +644,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
             self.checkFields.append(self['Check' + str(SubjectDetails.id)])
             self.radioFields.append(self['RadioMode' + str(SubjectDetails.id)])
             if SubjectDetails.id in Selection.keys():
-                dropped_reg = registeredDroppedCourses.objects.filter(RegNo=self.data['RegNo'], sub_id=SubjectDetails.id)
+                dropped_reg = registeredDroppedCourses.filter(RegNo=self.data['RegNo'], sub_id=SubjectDetails.id)
                 self.myFields.append((SubjectDetails.SubCode, SubjectDetails.SubName, SubjectDetails.Credits, self['Check' + str(SubjectDetails.id)], 
                                 self['RadioMode' + str(SubjectDetails.id)],True,'D',regEvent.AYear, regEvent.Regulation,\
                                      SubjectDetails.id, dropped_reg[0].id))

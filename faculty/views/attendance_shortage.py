@@ -2,10 +2,10 @@ from asyncio.windows_events import NULL
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from SupExamDBRegistrations.models import FacultyAssignment
+from co_ordinator.models import FacultyAssignment
 from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
 from faculty.models import Attendance_Shortage, RegistrationStatus
-from SupExamDBRegistrations.models import StudentInfo, RollLists
+from SupExamDBRegistrations.models import StudentInfo, RollLists, StudentRegistrations
 from SupExamDBRegistrations.resources import FacultyInfoResource
 from SupExamDB.views import is_Faculty
 from django.contrib.auth.decorators import login_required, user_passes_test 
@@ -37,14 +37,21 @@ def attendance_shortage_upload(request):
             for chunk in file.chunks():
                 data+=chunk
             dataset = XLSX().create_dataset(data)
+
+            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section).values_list('student__RegNo', flat=True)
+            errorRegNo = []
             for i in range(len(dataset)):
                 regno = dataset[i][0]
-                student = StudentInfo.objects.get(RegNo =regno)
-                att_short = Attendance_Shortage.objects.filter(Student=student,RegEventId__id=regEvent,Subject__id=sub)
+                if regno not in roll_list:
+                    errorRegNo.append(regno)
+                    continue 
+                student_registration = StudentRegistrations.objects.filter(RegNo=regno, RegEventId=regEvent, sub_id=sub)
+                att_short = Attendance_Shortage.objects.filter(Registration=student_registration.first())
                 if len(att_short) == 0 :
-                    att_short = Attendance_Shortage(Student=student,RegEventId_id=regEvent,Subject__id=sub)
+                    att_short = Attendance_Shortage(Registration=student_registration.first())
                     att_short.save()
-            return render(request, 'faculty/AttendanceShoratgeUploadSuccess.html')
+                msg = 'Attendance Shortage Updated successfully.'
+            return render(request, 'faculty/AttendanceShoratgeUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
     else:
         
         form = AttendanceShoratgeUploadForm(subjects)
@@ -63,7 +70,7 @@ def attendance_shortage_status(request):
         regEvent = request.POST['Subjects'].split(':')[1]
         section = request.POST['Subjects'].split(':')[2]
         roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-        att_short = Attendance_Shortage.objects.filter(RegEventId__id=regEvent,Subject__id=sub, student__in=roll_list.values_list('Student', flat=True))
+        att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('Student__RegNo', flat=True))
         return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
 
     else:

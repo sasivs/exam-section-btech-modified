@@ -4,7 +4,7 @@ from SupExamDBRegistrations.user_access_test import grades_threshold_access
 from SupExamDBRegistrations.models import RegistrationStatus, RollLists, StudentGrades_Staging, StudentRegistrations
 from hod.models import Faculty_user
 from co_ordinator.models import FacultyAssignment
-from faculty.models import Attendance_Shortage, GradesThreshold, Marks
+from faculty.models import Attendance_Shortage, GradesThreshold, Marks_Staging
 from superintendent.models import IXGradeStudents
 from faculty.forms import MarksStatusForm
 
@@ -33,16 +33,16 @@ def grades_generate(request):
 
             roll_list = RollLists.objects.filter(RegEventId=regEvent, Section=section)
 
-            marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent.id, Registration__sub_id=subject, \
+            marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent.id, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
 
-            attendance_shortage = Attendance_Shortage.objects.filter(RegEventId_id=regEvent.id, Subject_id=subject, Student__in=roll_list.values_list('student', flat=True))
+            attendance_shortage = Attendance_Shortage.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
             
             for att in attendance_shortage:
-                mark_obj = marks_objects.filter(Registration__RegNo=att.Student.RegNo).first()
-                grade = StudentGrades_Staging(RegId=mark_obj.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                grade = StudentGrades_Staging(RegId=att.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
                     Grade='R', AttGrade='X') 
                 grade.save()
+                mark_obj = marks_objects.filter(Registration__RegNo=att.Student.RegNo).first()
                 marks_objects = marks_objects.exclude(mark_obj)
             
             ix_grades = IXGradeStudents.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
