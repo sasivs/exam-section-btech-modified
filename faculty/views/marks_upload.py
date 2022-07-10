@@ -6,7 +6,7 @@ from import_export.formats.base_formats import XLSX
 from SupExamDBRegistrations.models import RegistrationStatus, RollLists, Subjects, StudentRegistrations, StudentInfo
 from hod.models import Faculty_user
 from co_ordinator.models import FacultyAssignment
-from faculty.models import Marks
+from faculty.models import Marks_Staging
 from faculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm
 
 
@@ -30,7 +30,7 @@ def marks_upload(request):
                 exam_inner_index = form.cleaned_data.get('exam-type').split(',')[1]
                 file = form.cleaned_data.get('file')
                 roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-                marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
+                marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                     Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
                 mark_distribution = Subjects.objects.get(id=subject).MarkDistribution
                 mark_dis_limit = mark_distribution.get_mark_limit(exam_outer_index, exam_inner_index)
@@ -82,7 +82,7 @@ def marks_upload_status(request):
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
             roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-            marks_objects = Marks.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
+            marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects})
     else:
@@ -92,7 +92,7 @@ def marks_upload_status(request):
 @login_required(login_url="/login/")
 @user_passes_test(marks_upload_access)
 def marks_update(request, pk):
-    mark_obj = Marks.objects.get(id=pk)
+    mark_obj = Marks_Staging.objects.get(id=pk)
     if request.method == 'POST':
         form = MarksUpdateForm(mark_obj, request.POST)
         if form.is_valid():
