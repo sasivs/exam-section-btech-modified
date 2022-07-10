@@ -1,0 +1,51 @@
+{% extends 'SupExamDBRegistrations/grades_home.html' %} {% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="submit" value="submit">Submit</button>
+    </div>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    {% if grade_challenge %}
+    <br>
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">Previous Marks </td>
+                    <td style="border: 1px solid black;">Updated Marks</td>
+                    <td style="border: 1px solid black;">Previous Grade  </td>
+                    <td style="border: 1px solid black;">Updated Grade</td>
+                    <td style="border: 1px solid black;">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grade_challenge %}
+                <tr>
+                    <td style="border: 1px solid black;">{{grade.Registration.RegNo}} </td>
+                    <td style="border: 1px solid black;">{{grade.prev_marks}} </td>
+                    <td style="border: 1px solid black;">{{grade.updated_marks}} </td>
+                    <td style="border: 1px solid black;">{{grade.prev_grade}} </td>
+                    <td style="border: 1px solid black;">{{grade.updated_grade}} </td>
+                    <td style="border: 1px solid black;">
+                        <button type="submit" name="delete" value="delete-{{grade.id}}" \
+                        onclick="return confirm('Are you sure you want ot delete grade challenge {{grade.id}} object?')">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    </form>
+</div>
+{% endblock %}

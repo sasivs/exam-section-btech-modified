@@ -1,0 +1,38 @@
+{% extends 'SupExamDBRegistrations/grades_home.html' %} {% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="submit" value="submit">Submit</button>
+        </form>
+    </div>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    {% if mark %}
+    <br>
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">Marks</td>
+                    <td style="border: 1px solid black;">Total Marks</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid black;">mark.Registration.RegNo</td>
+                    <td style="border: 1px solid black;">mark.Marks</td>
+                    <td style="border: 1px solid black;">mark.TotalMarks</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
