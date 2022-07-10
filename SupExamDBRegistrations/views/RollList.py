@@ -441,7 +441,7 @@ def RollListFeeUpload(request):
                 rolls = rolls.values_list('student__RegNo', flat=True)
                 error_regd_no = set(paid_regd_no).difference(set(rolls))
                 for regd_no in unpaid_regd_no:
-                    not_registered = NotRegistered(student=regd_no.student, RegEventId_id=regeventid)
+                    not_registered = NotRegistered(student=regd_no.student, RegEventId_id=regeventid, Registered=False)
                     not_registered.save()
                 unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
                 StudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()

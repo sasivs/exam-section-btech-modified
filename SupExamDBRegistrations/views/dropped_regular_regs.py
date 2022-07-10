@@ -78,10 +78,10 @@ def dropped_regular_registrations(request):
                         regular_sub = Subjects.objects.get(id=sub[9])
                         if(form.cleaned_data['Check'+str(sub[9])] == False):
                             #delete regular_record from the registration table
-                            reg = StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId,\
+                            reg = StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
                                  sub_id = sub[9], id=sub[10])
                             if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId,\
+                                StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
                                      sub_id = sub[9], id=sub[10]).delete()
                                 new_dropped_course = DroppedRegularCourses(RegNo=request.POST['RegNo'], sub_id=sub[9])
                                 new_dropped_course.save()
