@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from SupExamDB.views import is_Co_ordinator
-from SupExamDBRegistrations.user_access_test import roll_list_access
+from superintendent.user_access_test import roll_list_access
  
 
 def is_Superintendent(user):
@@ -53,3 +53,8 @@ def not_promoted_home(request):
 @user_passes_test(is_Superintendent)
 def faculty_home(request):
     return render(request, 'SupExamDBRegistrations/faculty_home.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def marks_home(request):
+    return render(request, 'SupExamDBRegistrations/marks_home.html')

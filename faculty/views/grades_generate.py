@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
-from SupExamDBRegistrations.user_access_test import grades_threshold_access
-from SupExamDBRegistrations.models import RegistrationStatus, RollLists, StudentGrades_Staging, StudentRegistrations
+from superintendent.user_access_test import grades_threshold_access
+from superintendent.models import RegistrationStatus
 from hod.models import Faculty_user
-from co_ordinator.models import FacultyAssignment
-from faculty.models import Attendance_Shortage, GradesThreshold, Marks_Staging
-from superintendent.models import IXGradeStudents
+from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
+from faculty.models import Attendance_Shortage, GradesThreshold, Marks_Staging, StudentGrades_Staging
+from ExamStaffDB.models import IXGradeStudents
 from faculty.forms import MarksStatusForm
 
 

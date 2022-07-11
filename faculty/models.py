@@ -1,5 +1,6 @@
 from django.db import models
-from SupExamDBRegistrations.models import StudentInfo, RegistrationStatus, Subjects, GradePoints, StudentRegistrations
+from superintendent.models import RegistrationStatus, GradePoints
+from co_ordinator.models import Subjects, StudentRegistrations
 # Create your models here.
 
 class Attendance_Shortage(models.Model):
@@ -81,3 +82,26 @@ class Marks(models.Model):
                 sub_total += int(mark)
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
+
+
+class StudentGrades(models.Model):
+    RegId= models.IntegerField()
+    RegEventId = models.IntegerField()
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    AttGrade = models.CharField(max_length=2)
+    class Meta:
+        db_table = 'StudentGrades'
+        managed = True
+
+
+
+class StudentGrades_Staging(models.Model):
+    RegId = models.IntegerField()
+    RegEventId = models.IntegerField()
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    AttGrade = models.CharField(max_length=2)
+    class Meta:
+        db_table = 'StudentGrades_Staging'
+        managed = True

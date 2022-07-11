@@ -1,10 +1,63 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from SupExamDBRegistrations.models import FacultyInfo, StudentRegistrations
+from SupExamDBRegistrations.models import FacultyInfo
+from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 
 # Create your models here.
 
 User = get_user_model()
+
+
+class Regulation(models.Model):
+    AdmissionYear = models.IntegerField()
+    AYear = models.IntegerField()
+    BYear = models.IntegerField()
+    Regulation = models.IntegerField()
+    class Meta:
+        db_table = 'Regulation'
+        managed = True
+
+class ProgrammeModel(models.Model):
+    PID = models.IntegerField(primary_key=True)
+    ProgrammeName = models.CharField(max_length=20)
+    ProgrammeType = models.CharField(max_length=10)
+    Specialization = models.CharField(max_length=100)
+    Dept = models.IntegerField()
+    class Meta:
+        db_table = 'ProgrammeModel'
+        managed = True
+
+class RegistrationStatus(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    Mode = models.CharField(max_length=1) # R for Regular B for Backlog
+    Status = models.IntegerField()
+    RegistrationStatus = models.IntegerField()
+    MarksStatus = models.IntegerField()
+    GradeStatus = models.IntegerField()
+    class Meta:
+        db_table = 'Registration_Status'
+        managed = True
+
+    def __str__(self):
+        name =  str(DEPARTMENTS[self.Dept-1]) + ':' + str(YEARS[self.BYear]) + ':' + str(SEMS[self.BSem]) + ':' + \
+            str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
+        return name
+
+
+class MandatoryCredits(models.Model):
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    BYear = models.IntegerField()
+    Credits = models.IntegerField()
+    class Meta:
+        db_table = 'MandatoryCredits'
+        managed = True
+
 
 class HOD(models.Model):
     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
@@ -75,15 +128,11 @@ class MarksDistribution(models.Model):
         index += inner
         return index
 
-class IXGradeStudents(models.Model):
-    GRADE_CHOICES = (
-        ('I', 'I'),
-        ('X', 'X')
-    )
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
-    Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
 
+class GradePoints(models.Model):
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    Points = models.IntegerField()
     class Meta:
-        db_table = 'IXGradeStudents'
-        unique_together = ('Registration', 'Grade')
+        db_table = 'GradePoints'
         managed = True

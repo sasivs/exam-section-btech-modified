@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from SupExamDBRegistrations.user_access_test import grades_threshold_access
+from superintendent.user_access_test import grades_threshold_access
 from faculty.models import GradesThreshold
 from hod.models import Faculty_user
-from co_ordinator.models import FacultyAssignment
-from SupExamDBRegistrations.models import GradePoints, RollLists, StudentRegistrations
+from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
+from superintendent.models import GradePoints
 from faculty.forms import GradeThresholdForm, GradeThresholdStatusForm
 
 

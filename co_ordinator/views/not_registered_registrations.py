@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from SupExamDBRegistrations.views.home import is_Superintendent
 from django.shortcuts import render
 from hod.models import Coordinator
-from SupExamDBRegistrations.models import RegistrationStatus, StudentInfo, Subjects, StudentRegistrations_Staging, DroppedRegularCourses
+from ExamStaffDB.models import StudentInfo
+from co_ordinator.models import Subjects, StudentRegistrations_Staging, DroppedRegularCourses
 from co_ordinator.forms import NotRegisteredRegistrationsForm
 
 @login_required(login_url="/login/")

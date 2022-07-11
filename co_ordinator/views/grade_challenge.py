@@ -1,12 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from SupExamDBRegistrations.views.home import is_Superintendent
 from django.shortcuts import render
-from SupExamDBRegistrations.models import RollLists, StudentGrades_Staging
-from co_ordinator.models import FacultyAssignment, GradeChallenge 
+from co_ordinator.models import FacultyAssignment, GradeChallenge, RollLists 
 from hod.models import Coordinator
-from faculty.models import Marks_Staging, Attendance_Shortage
+from faculty.models import Marks_Staging, Attendance_Shortage, StudentGrades_Staging
 from co_ordinator.forms import GradeChallengeForm, GradeChallengeStatusForm
-from superintendent.models import IXGradeStudents
+from ExamStaffDB.models import IXGradeStudents
 from faculty.models import GradesThreshold
 
 

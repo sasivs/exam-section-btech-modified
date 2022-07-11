@@ -8,19 +8,25 @@
         <div class="col-md-2">
             <ul class="nav flex-column">
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTSubjectUpload' %}">Subjects Upload</a>
+                    <a class="nav-link" href="{% url 'co_ordinator:SupBTSubjectUpload' %}">Subjects Upload</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+                    <a class="nav-link" href="{% url 'co_ordinator:SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTSubjectDelete' %}">Subjects Delete</a>
+                    <a class="nav-link" href="{% url 'co_ordinator:SupBTSubjectDelete' %}">Subjects Delete</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTSubjectFinalize' %}">Finalize Subjects</a>
+                    <a class="nav-link" href="{% url 'co_ordinator:SupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
+                    <a class="nav-link" href="{% url 'co_ordinator:SupBTSubjectFinalize' %}">Finalize Subjects</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'superintendent:AddMarkDistribution' %}">Add Mark Distribution</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'superintendent:MarkDistributionStatus' %}">Mark Distribution Status</a>
                   </li>
               </ul>
         </div>

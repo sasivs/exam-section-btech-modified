@@ -1,21 +1,10 @@
-from asyncio.windows_events import NULL
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import redirect, render
-from django.urls import reverse
-from co_ordinator.models import FacultyAssignment
-from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
-from faculty.models import Attendance_Shortage, RegistrationStatus
-from SupExamDBRegistrations.models import StudentInfo, RollLists, StudentRegistrations
-from SupExamDBRegistrations.resources import FacultyInfoResource
-from SupExamDB.views import is_Faculty
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
-from tablib import Dataset
+from django.shortcuts import render
+from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
+from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
+from faculty.models import Attendance_Shortage
+from SupExamDB.views import is_Faculty
 from import_export.formats.base_formats import XLSX
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-
 from hod.models import Faculty_user
 
 @login_required(login_url="/login/")

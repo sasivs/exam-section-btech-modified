@@ -1,6 +1,6 @@
-from django.shortcuts import get_object_or_404, render
-from SupExamDBRegistrations.views.home import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
+from SupExamDBRegistrations.views.home import is_Superintendent
+from django.shortcuts import render
 from superintendent.forms import MarksDistributionForm
 from superintendent.models import MarksDistribution
 

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from SupExamDBRegistrations.views.home import is_Superintendent
 from SupExamDBRegistrations.models import RegistrationStatus, StudentRegistrations, Subjects, FacultyInfo, RollLists
-from SupExamDBRegistrations.constants import DEPT_DICT, ROMAN_TO_INT
+from superintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from co_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from co_ordinator.models import FacultyAssignment
 from hod.models import Coordinator

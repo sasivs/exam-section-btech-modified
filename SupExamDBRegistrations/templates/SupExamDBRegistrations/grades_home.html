@@ -16,13 +16,34 @@
                     <a class="nav-link" href="{% url 'GradesUpload' %}">Upload Grades</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'GradeChallenge' %}">Grade Challenge</a>
+                    <a class="nav-link" href="{% url 'co_ordinator:GradeChallengeUpdate' %}">Grade Challenge</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'co_ordinator:GradeChallengeStatus' %}">Grade Challenge Status</a>
                 </li>
                 {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesFinalize' %}">Finalize Grades</a>
                 </li>
                 {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:GradesThreshold' %}">Grades Threshold</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:GradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:AttendanceShoratgeUpload' %}">Upload Attendance Shortage</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:AttendanceShoratgeStatus %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:GradesGenerate' %}">Generate Grades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:GradesStatus' %}">Grades Status</a>
+                </li>
             </ul>
         </div>
         <div class="col-md-10">

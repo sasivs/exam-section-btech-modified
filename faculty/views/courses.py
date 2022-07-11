@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from co_ordinator.models import FacultyAssignment
 from hod.models import Faculty_user 
-from SupExamDBRegistrations.user_access_test import grades_threshold_access
+from superintendent.user_access_test import grades_threshold_access
 
 
 @login_required(login_url="/login/")

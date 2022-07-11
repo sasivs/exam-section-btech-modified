@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse 
-from SupExamDBRegistrations.user_access_test import marks_upload_access
+from superintendent.user_access_test import marks_upload_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from SupExamDBRegistrations.models import RegistrationStatus, RollLists, Subjects, StudentRegistrations, StudentInfo
+from superintendent.models import RegistrationStatus
+from ExamStaffDB.models import StudentInfo
+from co_ordinator.models import RollLists, Subjects, StudentRegistrations
 from hod.models import Faculty_user
 from co_ordinator.models import FacultyAssignment
 from faculty.models import Marks_Staging

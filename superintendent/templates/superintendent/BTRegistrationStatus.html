@@ -1,0 +1,42 @@
+{% extends 'SupExamDBRegistrations/preRegistrations_home.html' %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong>Enable/Disable(Activate/Deactivate) the events based on the requirement </strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Update Status</button> 
+        </form>
+    </div>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    var dropdown = document.getElementById('id_aSem');
+    dropdown.addEventListener('change', function(){
+        var val = dropdown.value;
+        if (val == 3){
+            document.getElementById('id_mode_0').disabled = true;
+            document.getElementById('id_mode_1').disabled = true;
+            document.getElementById('id_mode_2').disabled = true;
+            document.getElementById('id_mode_3').disabled = false;
+            document.getElementById('id_mode_3').checked = true;
+        }
+        else{
+            document.getElementById('id_mode_0').disabled = false;
+            document.getElementById('id_mode_1').disabled = false;
+            document.getElementById('id_mode_2').disabled = false;
+            document.getElementById('id_mode_3').disabled = true;
+            document.getElementById('id_mode_3').checked = false;
+        }
+    });
+</script>
+{% endblock %}

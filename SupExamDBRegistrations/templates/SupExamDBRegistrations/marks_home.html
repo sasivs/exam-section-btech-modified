@@ -1,0 +1,23 @@
+{% extends 'SupExamDB/suphome.html' %} {% block content %} {% load user_check_tag %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:MarksUpload' %}">Marks Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:MarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty:SampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
