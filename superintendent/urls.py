@@ -1,7 +1,5 @@
 from django.urls import path
-from ExamStaffDB.views import IX_student
-from superintendent.views import HOD_assignment, Marks_Distribution, add_regulation, create_registration_event, grade_points,\
-    mandatory_credits
+from superintendent.views import HOD_assignment, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change
 
 
 
@@ -12,11 +10,12 @@ urlpatterns = [
     path('ManageRegistrations', create_registration_event.manage_registrations,name='ManageRegistrations'),
 
 
-    path('MandatoryCredits',mandatory_credits.mandatory_credits_upload, name='MandatoryCredits'),
-
-
     path('GradePointsUpload', grade_points.grade_points_upload, name='GradePointsUpload'),
     path('GradePointsUploadErrorHandler', grade_points.grade_points_upload_error_handler, name='GradePointsUploadErrorHandler'),
+
+
+    path('SupBTBranchChange',branch_change.branch_change, name='SupBTBranchChange'),
+    path('SupBTBranchChangeStatus',branch_change.branch_change_status, name='SupBTBranchChangeStatus'),
 
     path('HodAssignment', HOD_assignment.hod_assignment, name='HodAssignment'),
     path('AddMarkDistribution', Marks_Distribution.mark_distribution_add, name='AddMarkDistribution'),

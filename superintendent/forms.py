@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import Group
+from django.db.models import Q
 from superintendent.models import HOD
-from SupExamDBRegistrations.models import FacultyInfo
+from hod.models import FacultyInfo
 from superintendent.models import ProgrammeModel, Departments, Regulation, RegistrationStatus
 from co_ordinator.models import StudentBacklogs
 import datetime
@@ -87,21 +88,26 @@ class GradePointsUpdateForm(forms.Form):
             self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2], self['Check' + str(Options[fi][0])]))
 
 
-class MandatoryCreditsForm(forms.Form):
-    def __init__(self, *args,**kwargs):
-        super(MandatoryCreditsForm, self).__init__(*args, **kwargs)
-        regulation = Regulation.objects.all()
-        regulation = [(row.Regulation, row.Regulation) for row in regulation]
-        regulation = list(set(regulation))
-        reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+
+class BranchChangeForm(forms.Form):
+    def __init__(self,  *args,**kwargs):
+        super(BranchChangeForm, self).__init__(*args, **kwargs)
+        self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
+        departments = ProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        deptChoices = [('--Select Dept--','--Select Dept--')] + deptChoices
-        bYearChoices = [('--Select Dept--','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
-        self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
-        self.fields['BYear'] = forms.CharField(label='BYear', widget = forms.Select(choices=bYearChoices))
-        self.fields['Dept'] = forms.CharField(label='Deptatment', widget = forms.Select(choices=deptChoices))
-        self.fields['Credits'] = forms.CharField(label='Credits',max_length= 6)
+        deptChoices = [(0,'--Select Dept--')] + deptChoices
+        self.fields['CurrentDept'] = forms.CharField(label='CurrentDept',widget=forms.Select(choices=deptChoices))
+        aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        self.fields['AYear'] = forms.CharField(label='AYear',widget = forms.Select(choices=aYearChoices))
+        self.fields['NewDept'] = forms.CharField(label='NewDept',widget = forms.Select(choices=deptChoices))
+
+class BranchChangeStausForm(forms.Form):
+    def __init__(self,  *args,**kwargs):
+        super(BranchChangeStausForm, self).__init__(*args, **kwargs)
+        self.aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        self.fields['AYear'] = forms.CharField(label='AYear',\
+            widget = forms.Select(choices=self.aYearChoices, attrs={'onchange':'submit();'}))
+
 
 class HODAssignmentForm(forms.Form):
     def __init__(self, *args, **kwargs):

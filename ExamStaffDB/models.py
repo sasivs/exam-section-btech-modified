@@ -25,7 +25,17 @@ class StudentInfo(models.Model):
 
     class Meta:
         db_table = 'StudentInfo'
-        managed = False
+        managed = True
+
+
+class MandatoryCredits(models.Model):
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    BYear = models.IntegerField()
+    Credits = models.IntegerField()
+    class Meta:
+        db_table = 'MandatoryCredits'
+        managed = True
 
 
 class IXGradeStudents(models.Model):

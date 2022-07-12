@@ -378,24 +378,24 @@ class StudentSemesterCancellationForm(forms.Form):
 #                     self.fields['Check' + sub.SubCode].initial = True
 #                 self.myFields.append((sub.SubCode,sub.SubName,sub.Creditable,sub.Credits,sub.OfferedBy,regulation,sub.Type,sub.Category,self['Check'+sub.SubCode]))
  
-class BranchChangeForm(forms.Form):
-    def __init__(self,  *args,**kwargs):
-        super(BranchChangeForm, self).__init__(*args, **kwargs)
-        self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
-        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        deptChoices = [(0,'--Select Dept--')] + deptChoices
-        self.fields['CurrentDept'] = forms.CharField(label='CurrentDept',widget=forms.Select(choices=deptChoices))
-        aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
-        self.fields['AYear'] = forms.CharField(label='AYear',widget = forms.Select(choices=aYearChoices))
-        self.fields['NewDept'] = forms.CharField(label='NewDept',widget = forms.Select(choices=deptChoices))
+# class BranchChangeForm(forms.Form):
+#     def __init__(self,  *args,**kwargs):
+#         super(BranchChangeForm, self).__init__(*args, **kwargs)
+#         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
+#         departments = ProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
+#         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
+#         deptChoices = [(0,'--Select Dept--')] + deptChoices
+#         self.fields['CurrentDept'] = forms.CharField(label='CurrentDept',widget=forms.Select(choices=deptChoices))
+#         aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+#         self.fields['AYear'] = forms.CharField(label='AYear',widget = forms.Select(choices=aYearChoices))
+#         self.fields['NewDept'] = forms.CharField(label='NewDept',widget = forms.Select(choices=deptChoices))
 
-class BranchChangeStausForm(forms.Form):
-    def __init__(self,  *args,**kwargs):
-        super(BranchChangeStausForm, self).__init__(*args, **kwargs)
-        self.aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
-        self.fields['AYear'] = forms.CharField(label='AYear',\
-            widget = forms.Select(choices=self.aYearChoices, attrs={'onchange':'submit();'}))
+# class BranchChangeStausForm(forms.Form):
+#     def __init__(self,  *args,**kwargs):
+#         super(BranchChangeStausForm, self).__init__(*args, **kwargs)
+#         self.aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+#         self.fields['AYear'] = forms.CharField(label='AYear',\
+#             widget = forms.Select(choices=self.aYearChoices, attrs={'onchange':'submit();'}))
 
 #class RollNo
 # class GenerateRollListForm(forms.Form):

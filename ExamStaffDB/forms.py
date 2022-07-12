@@ -1,5 +1,5 @@
 from django import forms
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, Regulation, ProgrammeModel
 from co_ordinator.models import StudentRegistrations, Subjects
 
 
@@ -26,6 +26,25 @@ class UpdateRollNumberForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(UpdateRollNumberForm, self).__init__(*args, **kwargs)
         self.fields['file'] = forms.FileField(label='Upload File')
+
+
+
+class MandatoryCreditsForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(MandatoryCreditsForm, self).__init__(*args, **kwargs)
+        regulation = Regulation.objects.all()
+        regulation = [(row.Regulation, row.Regulation) for row in regulation]
+        regulation = list(set(regulation))
+        reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
+        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
+        deptChoices = [('--Select Dept--','--Select Dept--')] + deptChoices
+        bYearChoices = [('--Select Dept--','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
+        self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
+        self.fields['BYear'] = forms.CharField(label='BYear', widget = forms.Select(choices=bYearChoices))
+        self.fields['Dept'] = forms.CharField(label='Deptatment', widget = forms.Select(choices=deptChoices))
+        self.fields['Credits'] = forms.CharField(label='Credits',max_length= 6)
+
 
 
 class IXGradeStudentsAddition(forms.Form):

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from SupExamDBRegistrations.models import FacultyInfo
+from hod.models import FacultyInfo
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 
 # Create your models here.
@@ -48,14 +48,14 @@ class RegistrationStatus(models.Model):
             str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
         return name
 
-
-class MandatoryCredits(models.Model):
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    BYear = models.IntegerField()
-    Credits = models.IntegerField()
+class BranchChanges(models.Model):
+    RegNo = models.IntegerField()
+    RollNo = models.IntegerField()
+    CurrentDept = models.IntegerField()
+    NewDept = models.IntegerField()
+    AYear = models.IntegerField()
     class Meta:
-        db_table = 'MandatoryCredits'
+        db_table = 'BranchChanges'
         managed = True
 
 
