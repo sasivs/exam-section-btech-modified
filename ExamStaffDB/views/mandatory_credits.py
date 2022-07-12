@@ -24,10 +24,10 @@ def mandatory_credits_upload(request):
                 else:
                     mancred = MandatoryCredits(Regulation = regulation,BYear = byear, Dept= dept,Credits=credits)
                     mancred.save()
-                return render(request, 'superintendent/MandatoryCreditsUploadSuccess.html')
+                return render(request, 'ExamStaffDB/MandatoryCreditsUploadSuccess.html')
         else:
                 form = MandatoryCreditsForm(request.POST)
-                return render(request, 'superintendent/MandatoryCreditsUpload.html',{'form':form})
+                return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html',{'form':form})
     else:
         form = MandatoryCreditsForm()
-    return render(request, 'superintendent/MandatoryCreditsUpload.html',{'form':form})
+    return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html',{'form':form})
