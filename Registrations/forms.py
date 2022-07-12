@@ -1,6 +1,6 @@
 from django.db.models.enums import Choices
 from django.forms.widgets import CheckboxInput, RadioSelect
-from Registrations.models import StudentMakeupBacklogs
+from co_ordinator.models import StudentMakeups
 from django import forms 
 from django.forms import models 
 from django.forms.fields import MultipleChoiceField
@@ -57,10 +57,10 @@ class CustomModelChoiceField(models.ModelMultipleChoiceField):
 
 class RegistrationsInsertionForm(forms.ModelForm):
     checkBoxes = CustomModelChoiceField( widget = forms.CheckboxSelectMultiple, 
-                                        queryset = StudentMakeupBacklogs.objects.all() )
+                                        queryset = StudentMakeups.objects.all() )
     
     def __init__(self,*args,**kwargs):
-        self.cleaned_data['checkBoxes'].queryset = StudentMakeupBacklogs.objects.filter(RegNo=kwargs.pop('RegNo'))
+        self.cleaned_data['checkBoxes'].queryset = StudentMakeups.objects.filter(RegNo=kwargs.pop('RegNo'))
         super(RegistrationsInsertionForm,self).__init__(*args,**kwargs)
         
 class RegistrationForm(forms.Form):

@@ -9,7 +9,7 @@ class Attendance_Shortage(models.Model):
     class Meta:
         db_table = 'Attendance_Shortage'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_Attendance_shortage_registration')
         ]
         managed = True
 
@@ -33,7 +33,7 @@ class Marks_Staging(models.Model):
     class Meta:
         db_table = 'Marks_Staging'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_Marks_Staging_registration')
         ]
         managed = True
 
@@ -60,9 +60,9 @@ class Marks(models.Model):
     TotalMarks = models.IntegerField()
 
     class Meta:
-        db_table = 'Marks_Staging'
+        db_table = 'Marks'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_marks_registration')
         ]
         managed = True
 

@@ -1,19 +1,9 @@
-from asyncio.windows_events import NULL
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse
-from SupExamDBRegistrations.forms import FacultyAssignmentForm,FacultyDeletionForm,FacultyInfoUpdateForm,BacklogRegistrationForm, RegistrationsEventForm,FacultyUploadForm, \
-    SubjectsUploadForm, StudentRegistrationUpdateForm, SubjectDeletionForm, SubjectFinalizeEventForm, FacultyAssignmentStatusForm
 from hod.forms import CoordinatorAssignmentForm
 from hod.models import  FacultyInfo,Faculty_user,Coordinator
-from SupExamDBRegistrations.resources import FacultyInfoResource
-from SupExamDB.views import is_Superintendent,is_Hod,is_Faculty,is_Co_ordinator
+from SupExamDB.views import is_Hod
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
 from superintendent.models import HOD
-from tablib import Dataset
-from import_export.formats.base_formats import XLSX
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils import timezone

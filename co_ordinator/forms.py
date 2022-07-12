@@ -1,6 +1,6 @@
 from django import forms 
 from django.db.models import Q 
-from SupExamDBRegistrations.models import StudentRegistrations, StudentRegistrations_Staging
+from co_ordinator.models import StudentRegistrations, StudentRegistrations_Staging
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 from co_ordinator.models import FacultyAssignment, NotRegistered, Subjects_Staging, Subjects, StudentBacklogs, RollLists,\
     DroppedRegularCourses, StudentMakeups, RegularRegistrationSummary, BacklogRegistrationSummary, MakeupRegistrationSummary

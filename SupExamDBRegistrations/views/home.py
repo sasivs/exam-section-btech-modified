@@ -1,12 +1,9 @@
 
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
-from django.urls import reverse
 
-from SupExamDB.views import is_Co_ordinator
 from superintendent.user_access_test import roll_list_access
  
 

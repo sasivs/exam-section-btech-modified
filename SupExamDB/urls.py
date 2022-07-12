@@ -14,6 +14,6 @@ urlpatterns = [
     path('SupMTechPrinting', views.mtech_printing, name='SupMTechPrinting'),
     path('SupPhDPrinting', views.phd_printing, name='SupPhDPrinting'),
     #path('SupBTGradeProcessing', views.btech_makeup_summary_info, name ='SupBTGradeProcessing'),
-    path('FacultyInfo', views.ca_import,name='FacultyInfo'),
-    path('FacultyInfoUploadErrorHandler', views.ca_fi_upload_error_handler, name='FacultyInfoUploadErrorHandler'),
+    # path('FacultyInfo', views.ca_import,name='FacultyInfo'),
+    # path('FacultyInfoUploadErrorHandler', views.ca_fi_upload_error_handler, name='FacultyInfoUploadErrorHandler'),
 ]

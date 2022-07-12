@@ -1,8 +1,5 @@
-from django.http.response import HttpResponse, HttpResponseRedirect
-from Registrations.models import CoordinatorMakeupRegNos, StudentMakeupBacklogs, StudentMakeupBacklogsVsRegistrations, StudentRegistrations,CurrentAcademicYear,CoordinatorInfo
+from django.http.response import HttpResponseRedirect
 from django.urls import reverse 
-from Registrations.forms  import RegistrationsInsertionForm, SimpleForm, StudentIDForm, RegistrationForm
-from django.shortcuts import render
 
 
 def home(request):

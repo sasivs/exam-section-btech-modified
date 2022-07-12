@@ -1,5 +1,6 @@
 from django import forms 
-from SupExamDBRegistrations.models import GradePoints, StudentRegistrations, RollLists, Subjects
+from co_ordinator.models import StudentRegistrations, RollLists, Subjects
+from superintendent.models import GradePoints
 from faculty.models import GradesThreshold
 
 

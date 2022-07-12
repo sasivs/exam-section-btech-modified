@@ -2,12 +2,12 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from SupExamDBRegistrations.views.home import is_Superintendent
-from SupExamDBRegistrations.models import RegistrationStatus, StudentRegistrations, Subjects, FacultyInfo, RollLists
+from hod.models import FacultyInfo
 from superintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from co_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
-from co_ordinator.models import FacultyAssignment
+from co_ordinator.models import FacultyAssignment, StudentRegistrations, Subjects, RollLists
 from hod.models import Coordinator
-from superintendent.models import HOD
+from superintendent.models import HOD, RegistrationStatus
 
 
 @login_required(login_url="/login/")

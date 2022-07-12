@@ -1,39 +1,39 @@
 from django.db import models
 from django.db.models import manager
 # Create your models here.
-class StudentMakeupBacklogs(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    # Name = models.CharField(max_length=70)
-    SubCode = models.CharField(max_length=10)
-    SubName = models.CharField(max_length=50)
-    OfferedYear = models.IntegerField()
-    Dept = models.IntegerField()
-    Credits = models.IntegerField()
-    BYear = models.IntegerField()
-    BSem = models.IntegerField()
-    Grade = models.CharField(max_length=2)
-    Regulation = models.IntegerField()
-    AYASBYBS = models.IntegerField()
+# class StudentMakeupBacklogs(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     # Name = models.CharField(max_length=70)
+#     SubCode = models.CharField(max_length=10)
+#     SubName = models.CharField(max_length=50)
+#     OfferedYear = models.IntegerField()
+#     Dept = models.IntegerField()
+#     Credits = models.IntegerField()
+#     BYear = models.IntegerField()
+#     BSem = models.IntegerField()
+#     Grade = models.CharField(max_length=2)
+#     Regulation = models.IntegerField()
+#     AYASBYBS = models.IntegerField()
     
-    class Meta:
-        db_table = 'StudentMakeupBacklogsMV'
-        managed = False 
-    def __str__(self):        
-        return f'{self.SubName} ({self.SubCode})'
-class StudentRegistrations(models.Model):
-    RegNo = models.IntegerField()
-    SubCode = models.CharField(max_length=10)
-    AYear = models.IntegerField()
-    ASem = models.IntegerField()
-    OfferedYear = models.IntegerField()
-    Dept = models.IntegerField()
-    BYear = models.IntegerField()
-    Regulation = models.IntegerField()
-    BSem = models.IntegerField()
-    Mode = models.IntegerField() # 0 is exam mode and 1 is study mode
-    class Meta:
-        db_table = 'StudentRegistrations'
+#     class Meta:
+#         db_table = 'StudentMakeupBacklogsMV'
+#         managed = False 
+#     def __str__(self):        
+#         return f'{self.SubName} ({self.SubCode})'
+# class StudentRegistrations(models.Model):
+#     RegNo = models.IntegerField()
+#     SubCode = models.CharField(max_length=10)
+#     AYear = models.IntegerField()
+#     ASem = models.IntegerField()
+#     OfferedYear = models.IntegerField()
+#     Dept = models.IntegerField()
+#     BYear = models.IntegerField()
+#     Regulation = models.IntegerField()
+#     BSem = models.IntegerField()
+#     Mode = models.IntegerField() # 0 is exam mode and 1 is study mode
+#     class Meta:
+#         db_table = 'StudentRegistrations'
 
 class CurrentAcademicYear(models.Model):
     AcademicYear=models.IntegerField()
@@ -136,23 +136,23 @@ class Coordinator1Info(models.Model):
         db_table = 'Coordinator1Info'
         managed = False 
 
-class StudentBacklogs(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    # Name = models.CharField(max_length=70)
-    SubCode = models.CharField(max_length=10)
-    SubName = models.CharField(max_length=50)
-    OfferedYear = models.IntegerField()
-    Dept = models.IntegerField()
-    Credits = models.IntegerField()
-    BYear = models.IntegerField()
-    BSem = models.IntegerField()
-    Grade = models.CharField(max_length=2)
-    Regulation = models.IntegerField()
-    AYASBYBS = models.IntegerField()
+# class StudentBacklogs(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     # Name = models.CharField(max_length=70)
+#     SubCode = models.CharField(max_length=10)
+#     SubName = models.CharField(max_length=50)
+#     OfferedYear = models.IntegerField()
+#     Dept = models.IntegerField()
+#     Credits = models.IntegerField()
+#     BYear = models.IntegerField()
+#     BSem = models.IntegerField()
+#     Grade = models.CharField(max_length=2)
+#     Regulation = models.IntegerField()
+#     AYASBYBS = models.IntegerField()
     
-    class Meta:
-        db_table = 'StudentBacklogsMV'
-        managed = False 
-    def __str__(self):        
-        return f'{self.SubName} ({self.SubCode})'
+#     class Meta:
+#         db_table = 'StudentBacklogsMV'
+#         managed = False 
+#     def __str__(self):        
+#         return f'{self.SubName} ({self.SubCode})'

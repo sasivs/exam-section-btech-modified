@@ -11,8 +11,7 @@ from co_ordinator.forms import RollListStatusForm, RollListRegulationDifferenceF
 from co_ordinator.models import RollLists_Staging, RollLists, RollLists_Staging, RegulationChange, StudentBacklogs, NotRegistered
 from superintendent.models import RegistrationStatus
 from ExamStaffDB.models import StudentInfo 
-from SupExamDBRegistrations.models import NotPromoted, \
-    RegistrationStatus,StudentRegistrations_Staging,  StudentMakeups, DroppedRegularCourses
+from co_ordinator.models import NotPromoted, StudentRegistrations_Staging,  StudentMakeups, DroppedRegularCourses
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from superintendent.user_access_test import roll_list_access

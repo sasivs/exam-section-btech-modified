@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from ...SupExamDBRegistrations.views.home import is_Superintendent
+from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from co_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
 from co_ordinator.models import StudentGradePoints, NotPromoted, RollLists, StudentBacklogs, DroppedRegularCourses, \
     Subjects, StudentRegistrations
-from superintendent.models import MandatoryCredits, RegistrationStatus
+from superintendent.models import RegistrationStatus
+from ExamStaffDB.models import MandatoryCredits
 from co_ordinator.resources import NotPromotedResource
 from django.db.models import Q
 from tablib import Dataset

@@ -1,28 +1,26 @@
 
 
-from django.db.models.aggregates import Count
 from django.shortcuts import render
 
 # Create your views here.
 
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.forms import forms
-from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
-from Registrations.models import CoordinatorMakeupRegNos, StudentMakeupBacklogs, StudentMakeupBacklogsVsRegistrations, StudentMakeupMarks, StudentRegistrations,CurrentAcademicYear,CoordinatorInfo
+from django.http.response import HttpResponseRedirect, JsonResponse
 from django.urls import reverse 
-from Registrations.forms  import RegistrationsInsertionForm, SimpleForm, StudentIDForm, RegistrationForm
-from django.shortcuts import render
-from SupExamDB.models import ProgrammeModel, StudentCGPAs, StudentInfo, DepartmentExamEvents, DeptExamEventStudents, StudentGradePoints, StudentCGPAs, HeldIn, StudentExamEvents, StudentAdmissionYearDetails, FacultyResource,FacultyInfo
-from SupExamDB.forms import DeptYearSelectionForm, FacultyUpdateForm, UploadFileForm
-from Registrations.models import StudentBacklogs
-
+from superintendent.models import ProgrammeModel
+from co_ordinator.models import StudentGradePoints
+from ExamStaffDB.models import StudentInfo
+from Transcripts.models import StudentExamEvents, DepartmentExamEvents, DeptExamEventStudents, StudentAdmissionYearDetails,\
+     StudentCGPAs, HeldIn
+from hod.models import FacultyInfo
+from SupExamDB.forms import UploadFileForm, FacultyUpdateForm
+from hod.resources import FacultyInfoResource
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
-import pandas as pd 
 
 from .templatetags import user_check_tag
 # Create your views here.
@@ -326,7 +324,7 @@ def ca_import(request):
             dataset = XLSX().create_dataset(data)
             print('IS VALID')
             print(dataset)
-            faculty_resource = FacultyResource()
+            faculty_resource = FacultyInfoResource()
             result = faculty_resource.import_data(dataset, dry_run=True)
             #df = pd.read_excel(file)
 

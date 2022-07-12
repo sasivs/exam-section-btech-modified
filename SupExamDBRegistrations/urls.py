@@ -2,15 +2,14 @@ from unicodedata import name
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from ExamStaffDB.views import StudInfo
+from ExamStaffDB.views import StudInfo, mandatory_credits
 
-from SupExamDBRegistrations.views import  faculty_user_assignment, cancellations, first_backlog_registrations, grades, \
-    home, grades,attendance_shortage,\
-    branch_change, Dec_upload_file,Dec_register_all
+from SupExamDBRegistrations.views import cancellations, grades, \
+    home, grades
 from SupExamDB import views as supviews
 from co_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, open_elective_registrations, regular_registrations, status, subjects
 from hod.views import FacultyInfo
-from superintendent.views import add_regulation, create_registration_event, grade_points, mandatory_credits
+from superintendent.views import add_regulation, branch_change, create_registration_event, grade_points
 # from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
     path('sindex',supviews.sup_home, name='sindex'),
@@ -71,9 +70,9 @@ urlpatterns = [
     # path('ManageRegistrations', create_registration_event.manage_registrations,name='ManageRegistrations'),
     # path('BTTest',regular_registrations.test_page, name='BTTest'),
     # path('SupBTFirstYearBacklogRegistrations', first_backlog_registrations.btech_first_year_backlog_Registrations ,name = 'SupBTFirstYearBacklogRegistrations'),
-    path('SupBTCancellationHome',cancellations.cancellation_home,name='SupBTCancellationHome'),
-    path('SupBTSeatCancellation',cancellations.seat_cancellation,name='SupBTSeatCancellation'),
-    path('SupBTSemesterCancellation',cancellations.semester_cancellation,name='SupBTSemesterCancellation'),
+    # path('SupBTCancellationHome',cancellations.cancellation_home,name='SupBTCancellationHome'),
+    # path('SupBTSeatCancellation',cancellations.seat_cancellation,name='SupBTSeatCancellation'),
+    # path('SupBTSemesterCancellation',cancellations.semester_cancellation,name='SupBTSemesterCancellation'),
 
     # path('SupBTSubjectUpload', subjects.subject_upload, name = 'SupBTSubjectUpload'),
     # path('SupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'SupBTSubjectsUploadErrorHandler'),
@@ -83,8 +82,8 @@ urlpatterns = [
     #path('SupBTSubjectDeleteSuccess', subjects.subject_delete_success, name = 'SupBTSubjectDeleteSuccess'),
     #path('SupBTSubjectDeleteHandler/<str:event>/', subjects.subject_delete_handler, name = 'SupBTSubjectDeleteHandler'),
 
-    path('SupBTBranchChange',branch_change.branch_change, name='SupBTBranchChange'),
-    path('SupBTBranchChangeStatus',branch_change.branch_change_status, name='SupBTBranchChangeStatus'),
+    # path('SupBTBranchChange',branch_change.branch_change, name='SupBTBranchChange'),
+    # path('SupBTBranchChangeStatus',branch_change.branch_change_status, name='SupBTBranchChangeStatus'),
     # path('GenerateRollList',RollList.generateRollList,name='GenerateRollList'),
     # path('RollListSectionUpload',RollList.UploadSectionInfo,name='RollListSectionUpload'),
     # path('RollListFeeUpload',RollList.RollListFeeUpload,name='RollListFeeUpload'),
@@ -102,8 +101,8 @@ urlpatterns = [
 
     # path('DroppedRegularRegistrations', dropped_regular_regs.dropped_regular_registrations, name='DroppedRegularRegistrations'),
 
-    path('GradesUpload', grades.upload_grades, name='GradesUpload'),
-    path('GradesUploadErrorHandler', grades.grades_upload_error_handler, name='GradesUploadErrorHandler'),
+    # path('GradesUpload', grades.upload_grades, name='GradesUpload'),
+    # path('GradesUploadErrorHandler', grades.grades_upload_error_handler, name='GradesUploadErrorHandler'),
     # path('GradesFinalize', grades.grades_finalize, name='GradesFinalize'),
 
     # path('MakeupRegistrations', makeupReg.makeup_registrations, name='MakeupRegistrations'),

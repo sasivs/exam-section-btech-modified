@@ -110,31 +110,31 @@ from superintendent.models import MarksDistribution
 
 
 
-class MakeupSummaryStats(models.Model):
-    SubName = models.CharField(max_length=100)
-    SubCode = models.CharField(max_length=10)
-    Dept = models.IntegerField()
-    Regulation = models.IntegerField()
-    BYear = models.IntegerField()
-    Passed = models.IntegerField()
-    Failed = models.IntegerField()
-    Total = models.IntegerField()
-    class Meta:
-        db_table = 'MakeupSummaryStatsV'
-        managed = False
+# class MakeupSummaryStats(models.Model):
+#     SubName = models.CharField(max_length=100)
+#     SubCode = models.CharField(max_length=10)
+#     Dept = models.IntegerField()
+#     Regulation = models.IntegerField()
+#     BYear = models.IntegerField()
+#     Passed = models.IntegerField()
+#     Failed = models.IntegerField()
+#     Total = models.IntegerField()
+#     class Meta:
+#         db_table = 'MakeupSummaryStatsV'
+#         managed = False
 
-class StudentMakeupBacklogsVsRegistrations(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    Name = models.CharField(max_length=70)
-    BYear = models.IntegerField()
-    BSem = models.IntegerField()
-    Dept = models.IntegerField()
-    MakeupSubjects = models.CharField(max_length=300)
-    RegisteredSubjects = models.CharField(max_length=300)
-    class Meta:
-        db_table = 'StudentMakeupBacklogsVsRegistrationsV'
-        managed = False 
+# class StudentMakeupBacklogsVsRegistrations(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     BYear = models.IntegerField()
+#     BSem = models.IntegerField()
+#     Dept = models.IntegerField()
+#     MakeupSubjects = models.CharField(max_length=300)
+#     RegisteredSubjects = models.CharField(max_length=300)
+#     class Meta:
+#         db_table = 'StudentMakeupBacklogsVsRegistrationsV'
+#         managed = False 
 
 # class StudentBacklogs(models.Model):
 #     RegNo = models.IntegerField()
@@ -176,11 +176,11 @@ class StudentMakeupBacklogsVsRegistrations(models.Model):
 #         db_table = 'StudentMakeupBacklogsMV'
 #         managed = False
 
-class CurrentAcademicYear(models.Model):
-    AcademicYear=models.IntegerField()
-    class Meta:
-        db_table='CurrentAcademicYear'
-        managed=False
+# class CurrentAcademicYear(models.Model):
+#     AcademicYear=models.IntegerField()
+#     class Meta:
+#         db_table='CurrentAcademicYear'
+#         managed=False
 
 # class SubjectFacultyInfo(models.Model):
 #     SubId = models.IntegerField()
@@ -282,36 +282,36 @@ class CurrentAcademicYear(models.Model):
 
 
 
-class StudentCancellation(models.Model):
-    RegNo = models.IntegerField()
-    AYear = models.IntegerField()
-    ASem = models.IntegerField()
-    SubCode = models.CharField(max_length=10)
-    OfferedYear = models.IntegerField()
-    Dept = models.IntegerField()
-    Regulation = models.IntegerField()
-    Grade = models.CharField(max_length=2)
-    AttGrade = models.CharField(max_length=2,null=True)
-    class Meta:
-        db_table = 'StudentCancellation'
-        managed = False
+# class StudentCancellation(models.Model):
+#     RegNo = models.IntegerField()
+#     AYear = models.IntegerField()
+#     ASem = models.IntegerField()
+#     SubCode = models.CharField(max_length=10)
+#     OfferedYear = models.IntegerField()
+#     Dept = models.IntegerField()
+#     Regulation = models.IntegerField()
+#     Grade = models.CharField(max_length=2)
+#     AttGrade = models.CharField(max_length=2,null=True)
+#     class Meta:
+#         db_table = 'StudentCancellation'
+#         managed = False
 
-class CancelledStudentInfo(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    Name = models.CharField(max_length=70)
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    Gender = models.CharField(max_length=10)
-    Category = models.CharField(max_length=20)
-    GaurdianName = models.CharField(max_length=50)
-    Phone = models.IntegerField()
-    email = models.CharField(max_length=50)
-    Address1 = models.CharField(max_length=150)
-    Address2 = models.CharField(max_length=100,null=True)
-    class Meta:
-        db_table = 'CancelledStudentInfo'
-        managed = False
+# class CancelledStudentInfo(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     Regulation = models.IntegerField()
+#     Dept = models.IntegerField()
+#     Gender = models.CharField(max_length=10)
+#     Category = models.CharField(max_length=20)
+#     GaurdianName = models.CharField(max_length=50)
+#     Phone = models.IntegerField()
+#     email = models.CharField(max_length=50)
+#     Address1 = models.CharField(max_length=150)
+#     Address2 = models.CharField(max_length=100,null=True)
+#     class Meta:
+#         db_table = 'CancelledStudentInfo'
+#         managed = False
 
 # class StudentGrades(models.Model):
 #     RegId= models.IntegerField()
@@ -360,15 +360,15 @@ class CancelledStudentInfo(models.Model):
 #         db_table = 'StudentGradePointsMV'
 #         managed = False
 
-class BranchChanges(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    CurrentDept = models.IntegerField()
-    NewDept = models.IntegerField()
-    AYear = models.IntegerField()
-    class Meta:
-        db_table = 'BranchChanges'
-        managed = False
+# class BranchChanges(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     CurrentDept = models.IntegerField()
+#     NewDept = models.IntegerField()
+#     AYear = models.IntegerField()
+#     class Meta:
+#         db_table = 'BranchChanges'
+#         managed = False
 
 # class RegularRegistrationSummary(models.Model):
 #     RegNo = models.IntegerField()
@@ -474,50 +474,50 @@ class BranchChanges(models.Model):
 #         db_table = 'NotRegistered'
 #         managed = False
 
-class SeatCancellationInfo(models.Model):
-    CYCLE_CHOICES = (
-        (10,'PHYSICS'),
-        (9,'CHEMISTRY')
-    )
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    Name = models.CharField(max_length=70)
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    AdmissionYear = models.IntegerField()
-    Gender = models.CharField(max_length=10)
-    Category = models.CharField(max_length=20)
-    GuardianName = models.CharField(max_length=50)
-    Phone = models.IntegerField()
-    email = models.CharField(max_length=50)
-    Address1 = models.CharField(max_length=150)
-    Address2 = models.CharField(max_length=100, null=True)
-    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
-    cancelled_on = models.DateTimeField(auto_now_add=True)
-    class Meta:
-        db_table = 'SeatCancellationInfo'
-        managed = False
+# class SeatCancellationInfo(models.Model):
+#     CYCLE_CHOICES = (
+#         (10,'PHYSICS'),
+#         (9,'CHEMISTRY')
+#     )
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     Regulation = models.IntegerField()
+#     Dept = models.IntegerField()
+#     AdmissionYear = models.IntegerField()
+#     Gender = models.CharField(max_length=10)
+#     Category = models.CharField(max_length=20)
+#     GuardianName = models.CharField(max_length=50)
+#     Phone = models.IntegerField()
+#     email = models.CharField(max_length=50)
+#     Address1 = models.CharField(max_length=150)
+#     Address2 = models.CharField(max_length=100, null=True)
+#     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+#     cancelled_on = models.DateTimeField(auto_now_add=True)
+#     class Meta:
+#         db_table = 'SeatCancellationInfo'
+#         managed = False
 
-class CancelledSeatRegistrations(models.Model):
-    RegNo = models.IntegerField()
-    RegEventId = models.IntegerField()
-    Mode = models.IntegerField()
-    sub_id = models.IntegerField()
-    class Meta:
-        db_table = 'CancelledSeatRegistrations'
-        unique_together=('RegNo', 'RegEventId', 'sub_id')
-        managed = False
+# class CancelledSeatRegistrations(models.Model):
+#     RegNo = models.IntegerField()
+#     RegEventId = models.IntegerField()
+#     Mode = models.IntegerField()
+#     sub_id = models.IntegerField()
+#     class Meta:
+#         db_table = 'CancelledSeatRegistrations'
+#         unique_together=('RegNo', 'RegEventId', 'sub_id')
+#         managed = False
 
-class CancelledSeatGrades(models.Model):
-    RegId= models.IntegerField()
-    RegEventId = models.IntegerField()
-    Regulation = models.IntegerField()
-    Grade = models.CharField(max_length=2)
-    AttGrade = models.CharField(max_length=2)
-    class Meta:
-        db_table = 'CancelledSeatGrades'
-        unique_together=('RegId', 'Grade')
-        managed = False
+# class CancelledSeatGrades(models.Model):
+#     RegId= models.IntegerField()
+#     RegEventId = models.IntegerField()
+#     Regulation = models.IntegerField()
+#     Grade = models.CharField(max_length=2)
+#     AttGrade = models.CharField(max_length=2)
+#     class Meta:
+#         db_table = 'CancelledSeatGrades'
+#         unique_together=('RegId', 'Grade')
+#         managed = False
 
 
 # from django.contrib.auth import get_user_model
