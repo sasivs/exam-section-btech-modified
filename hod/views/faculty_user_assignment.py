@@ -82,7 +82,7 @@ def faculty_Coordinator(request):
             if form.cleaned_data.get('BYear') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and form.cleaned_data.get('submit'):
                 initial_coodinator = Coordinator.objects.filter(RevokeDate__isnull=True, Dept=hod.Dept).first()
                 if initial_coodinator:
-                    if (initial_coodinator.Faculty.id != form.cleaned_data.get('hod')) or (initial_coodinator.User.id != form.cleaned_data.get('user')):
+                    if (initial_coodinator.Faculty.id != int(form.cleaned_data.get('hod'))) or (initial_coodinator.User.id != int(form.cleaned_data.get('user'))):
                         initial_coodinator.RevokeDate = timezone.now()
                         initial_coodinator.save()
                         new_coordinator = Coordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), BYear=form.cleaned_data.get('BYear'),Dept =hod.Dept)
@@ -97,3 +97,16 @@ def faculty_Coordinator(request):
         
     return render(request, 'hod/CoordinatorAssignment.html',{'faculty':faculty})
 
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Hod)
+def faculty_Coordinator_Status(request):
+    if(request.user.groups.filter(name='Superintendent').exists()):
+        user = request.user
+        Coordinators = Coordinator.objects.all()
+    elif(request.user.groups.filter(name='hod').exists()):
+        user = request.user
+        hod = HOD.objects.filter(RevokeDate__isnull=True,User=user)
+        Coordinators = Coordinator.objects.filter(Dept=hod.Dept)
+    return render(request, 'hod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
+        
