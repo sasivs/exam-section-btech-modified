@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
-from superintendent.models import HOD
+from superintendent.models import HOD, CycleCoordinator
 from ExamStaffDB.models import FacultyInfo
-from superintendent.models import ProgrammeModel, Departments, Regulation, RegistrationStatus
+from superintendent.models import ProgrammeModel, Departments, Regulation
 from co_ordinator.models import StudentBacklogs
 import datetime
 
@@ -133,7 +133,7 @@ class HODAssignmentForm(forms.Form):
         USER_CHOICES = [('', '--------')]
         DEPT_CHOICES += [(dept.Dept, dept.Name) for dept in departments]
         self.fields['dept'] = forms.CharField(label='Department', required=False, widget=forms.Select(choices=DEPT_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
-        self.fields['hod'] = forms.CharField(label='HOD', required=False, widget=forms.Select(choices=HOD_CHOICES, attrs={'required':'True'}))
+        self.fields['hod'] = forms.CharField(label='HOD', required=False, widget=forms.Select(choices=HOD_CHOICES,  attrs={'required':'True'}))
         self.fields['user'] = forms.CharField(label='User', required=False, widget=forms.Select(choices=USER_CHOICES, attrs={'required':'True'}))
         if self.data.get('dept'):
             faculty= FacultyInfo.objects.filter(Working=True, Dept=self.data.get('dept'))
@@ -148,6 +148,25 @@ class HODAssignmentForm(forms.Form):
             if initial_hod:
                 self.fields['hod'].initial = initial_hod.Faculty.id
                 self.fields['user'].initial = initial_hod.User.id
+
+class CycleCoordinatorAssignmentForm(forms.Form):
+    def __init__(self, Option=None, *args,**kwargs):
+        super(CycleCoordinatorAssignmentForm, self).__init__(*args, **kwargs)
+        COORDINATOR_CHOICES = [('', '--------')]
+        assigned_faculty = CycleCoordinator.objects.filter(RevokeDate__isnull=True)
+        faculty= FacultyInfo.objects.filter(Working=True).exclude(id__in=assigned_faculty.values_list('Faculty_id', flat=True)) #here1
+        COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
+        USER_CHOICES = [('', '--------')]
+        group = Group.objects.filter(name='Cycle-Co-ordinator').first()
+        assigned_users = CycleCoordinator.objects.filter(RevokeDate__isnull=True)
+        users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
+        USER_CHOICES += [(user.id, user.username) for user in users]
+        CYCLE_CHOICES =  [('', '--------'), (9, 'Chemistry'), (10,'Physics')]
+        self.fields['cycle'] = forms.CharField(label='BYear',  required=False, widget=forms.Select(choices=CYCLE_CHOICES, attrs={'required':'True', 'onchange':"submit();"}))
+        self.fields['coordinator'] = forms.CharField(label='HOD',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
+        self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
+        # if self.data.get('cycle'):
+        #     cycle_cord = CycleCoordinator.objects.filter(Cycle=self.data.get('cycle'), RevokeDate__isnull=True)
 
 
 class MarksDistributionForm(forms.Form):

@@ -75,6 +75,22 @@ class HOD(models.Model):
         unique_together = ('Faculty', 'Dept', 'AssignedDate')
         managed = True
 
+class CycleCoordinator(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    User= models.ForeignKey(User, on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE)
+    AssignDate = models.DateTimeField(auto_now_add=True)
+    RevokeDate = models.DateTimeField(null=True)
+    Cycle = models.IntegerField()
+
+    class Meta:
+        db_table = 'CycleCoordinator'
+        unique_together = ('User', 'Faculty','AssignDate','RevokeDate')
+        managed = True
+
 class Departments(models.Model):
     Dept = models.IntegerField()
     Name = models.CharField(max_length=255)

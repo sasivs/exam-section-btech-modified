@@ -1,0 +1,24 @@
+{% extends 'SupExamDBRegistrations/userassignment_home.html' %} {% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name='submit-form' value="submit">Submit</button>
+        </form>
+    </div>
+    {%if msg %}
+    <div class="row">
+        <strong>
+            {{msg}}
+        </strong>
+    </div>
+    {%endif%}
+</div>
+{% if initial_cord and initial_user %}
+<script>
+    document.getElementById('id_coordinator').value = {{initial_cord}};
+    document.getElementById('id_user').value = {{initial_user}};
+</script>
+{% endif %}
+{% endblock %}
