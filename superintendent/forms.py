@@ -150,21 +150,24 @@ class HODAssignmentForm(forms.Form):
                 self.fields['user'].initial = initial_hod.User.id
 
 class CycleCoordinatorAssignmentForm(forms.Form):
-    def __init__(self, Option=None, *args,**kwargs):
+    def __init__(self, *args,**kwargs):
         super(CycleCoordinatorAssignmentForm, self).__init__(*args, **kwargs)
-        COORDINATOR_CHOICES = [('', '--------')]
-        assigned_faculty = CycleCoordinator.objects.filter(RevokeDate__isnull=True)
-        faculty= FacultyInfo.objects.filter(Working=True).exclude(id__in=assigned_faculty.values_list('Faculty_id', flat=True)) #here1
-        COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
-        USER_CHOICES = [('', '--------')]
-        group = Group.objects.filter(name='Cycle-Co-ordinator').first()
-        assigned_users = CycleCoordinator.objects.filter(RevokeDate__isnull=True)
-        users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
-        USER_CHOICES += [(user.id, user.username) for user in users]
         CYCLE_CHOICES =  [('', '--------'), (9, 'Chemistry'), (10,'Physics')]
-        self.fields['cycle'] = forms.CharField(label='BYear',  required=False, widget=forms.Select(choices=CYCLE_CHOICES, attrs={'required':'True', 'onchange':"submit();"}))
-        self.fields['coordinator'] = forms.CharField(label='HOD',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
+        COORDINATOR_CHOICES = [('', '--------')]
+        USER_CHOICES = [('', '--------')]
+        self.fields['cycle'] = forms.CharField(label='Cycle',  required=False, widget=forms.Select(choices=CYCLE_CHOICES, attrs={'required':'True', 'onchange':"submit();"}))
+        self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
         self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
+        if self.data.get('cycle'):
+            assigned_faculty = CycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
+            faculty= FacultyInfo.objects.filter(Working=True).exclude(id__in=assigned_faculty.values_list('Faculty_id', flat=True)) #here1
+            COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
+            group = Group.objects.filter(name='Cycle-Co-ordinator').first()
+            assigned_users = CycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
+            users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
+            USER_CHOICES += [(user.id, user.username) for user in users]
+            self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
+            self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
         # if self.data.get('cycle'):
         #     cycle_cord = CycleCoordinator.objects.filter(Cycle=self.data.get('cycle'), RevokeDate__isnull=True)
 

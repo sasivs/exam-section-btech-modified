@@ -12,8 +12,10 @@ def cycle_coordinator_assignment(request):
     if request.method == 'POST':
         form = CycleCoordinatorAssignmentForm(request.POST)
         assigned_coordinator = None
+        print(request.POST)
         if 'cycle' in request.POST.keys():
             assigned_coordinator = CycleCoordinator.objects.filter(Cycle=request.POST.get('cycle'), RevokeDate__isnull=True).first()
+            print(assigned_coordinator)
         if form.is_valid():
             if form.cleaned_data.get('cycle') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and 'submit-form' in request.POST.keys():
                 if assigned_coordinator:
@@ -35,4 +37,11 @@ def cycle_coordinator_assignment(request):
                     return render(request, 'superintendent/CycleCoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
     else:
         form = CycleCoordinatorAssignmentForm()
+    print('here')
     return render(request, 'superintendent/CycleCoordinatorAssignment.html', {'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def cycle_coordinator_assignment_status(request):
+    cords = CycleCoordinator.objects.all()
+    return render(request, 'superintendent/CycleCoordinatorAssignmentStatus.html', {'cord':cords})

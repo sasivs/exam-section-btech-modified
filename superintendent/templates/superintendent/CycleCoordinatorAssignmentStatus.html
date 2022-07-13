@@ -1,0 +1,31 @@
+{% extends 'SupExamDBRegistrations/userassignment_home.html' %} {% block sub %}
+
+<div class="container">
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Id</td>
+                    <td style="border: 1px solid black;">Cycle</td>
+                    <td style="border: 1px solid black;">Faculty Name</td>
+                    <td style="border: 1px solid black;">Assign Date</td>
+                    <td style="border: 1px solid black;">Revoke Date</td>
+                    <td style="border: 1px solid black;">user</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in cord %}
+                <tr>
+                    <td style="border: 1px solid black;">{{h.id}}</td>
+                    <td style="border: 1px solid black;">{{h.Cycle}}</td>
+                    <td style="border: 1px solid black;">{{h.Faculty.Name}}</td>
+                    <td style="border: 1px solid black;">{{h.AssignDate}}</td>
+                    <td style="border: 1px solid black;">{{h.RevokeDate}}</td>
+                    <td style="border: 1px solid black;">{{h.User.username}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -23,6 +23,8 @@ urlpatterns = [
     path('HodAssignmentStatus', HOD_assignment.hod_assignment_status, name='HodAssignmentStatus'),
 
     path('CycleCoordinatorAssignment', cycle_coordinator_assignment.cycle_coordinator_assignment, name='CycleCoordinatorAssignment'),
+    path('CycleCoordinatorAssignmentStatus', cycle_coordinator_assignment.cycle_coordinator_assignment_status, name='CycleCoordinatorAssignmentStatus'),
+
 
     path('AddMarkDistribution', Marks_Distribution.mark_distribution_add, name='AddMarkDistribution'),
     path('MarkDistributionStatus', Marks_Distribution.mark_distribution_status, name='MarkDistributionStatus'),
