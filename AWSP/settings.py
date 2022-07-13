@@ -47,10 +47,11 @@ INSTALLED_APPS = [
     'SupExamDBRegistrationStatus',
     'CoordinatorDB',
     'import_export',
-    'faculty',
     'hod',
-    'co_ordinator', 
     'superintendent',
+    'co_ordinator',
+    'ExamStaffDB', 
+    'faculty',
 ]
 
 MIDDLEWARE = [
@@ -124,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
