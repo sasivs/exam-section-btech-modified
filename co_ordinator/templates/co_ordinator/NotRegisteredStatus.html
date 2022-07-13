@@ -2,6 +2,7 @@
 
 <div class="container">
     <div class="row">
+        <strong>Choose the required registration event to view the details of not_registered students.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Generate</button>

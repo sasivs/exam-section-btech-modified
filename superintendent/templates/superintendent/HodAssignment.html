@@ -2,6 +2,7 @@
 
 <div class="container">
     <div class="row">
+        <strong>Select the Department to assign HOD and their user email id's respectively.  </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit" name='submit-form' value="submit">Submit</button>
@@ -15,4 +16,10 @@
     </div>
     {%endif%}
 </div>
+{% if initial_hod and initial_user %}
+<script>
+    document.getElementById('id_hod').value = {{initial_hod}};
+    document.getElementById('id_user').value = {{initial_user}};
+</script>
+{% endif %}
 {% endblock %}

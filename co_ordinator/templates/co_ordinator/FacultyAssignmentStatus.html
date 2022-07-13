@@ -2,6 +2,7 @@
 
 <div class="container">
     <div class="row">
+        <strong>Select the registration event to get the details of assigned faculty , course co-ordinator of all the subjects .</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Submit</button>

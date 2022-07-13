@@ -2,6 +2,7 @@
 
 <div class="container">
     <div class="row">
+        <strong>Choose the required registration event to view the status of the Roll Lists.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Status</button>
