@@ -2,8 +2,8 @@ from django.shortcuts import redirect, render
 from hod.forms import CoordinatorAssignmentForm
 from hod.models import  Faculty_user,Coordinator
 from ExamStaffDB.models import FacultyInfo
-from SupExamDB.views import is_Hod
-from django.contrib.auth.decorators import login_required, user_passes_test 
+from superintendent.user_access_test import is_Hod, co_ordinator_assignment_access
+from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.models import HOD
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -59,8 +59,6 @@ def faculty_user_detail(request,pk):
 login_required(login_url="/login/")
 @user_passes_test(is_Hod)
 def faculty_user_revoke(request,pk):
-    faculty = FacultyInfo.objects.get(id=pk)
-    User = get_user_model()
     fac = Faculty_user.objects.filter(Faculty_id=pk,RevokeDate__isnull=True)
     if fac:
         fac.update(RevokeDate =timezone.now())
@@ -75,14 +73,13 @@ def faculty_user_revoke(request,pk):
 def faculty_Coordinator(request):
     user = request.user
     hod = HOD.objects.filter(RevokeDate__isnull=True,User=user)
-    faculty = FacultyInfo.objects.filter(Dept = hod.Dept,Working=True)
     if(request.method == 'POST'):
         CoordinatorAssignmentForm(hod.Dept,request.POST)
         if form.is_valid():
-            if form.cleaned_data.get('BYear') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and form.cleaned_data.get('submit'):
+            if form.cleaned_data.get('BYear') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and 'submit-form' in request.POST.keys():
                 initial_coodinator = Coordinator.objects.filter(RevokeDate__isnull=True, Dept=hod.Dept).first()
                 if initial_coodinator:
-                    if (initial_coodinator.Faculty.id != form.cleaned_data.get('hod')) or (initial_coodinator.User.id != form.cleaned_data.get('user')):
+                    if (initial_coodinator.Faculty.id != int(form.cleaned_data.get('hod'))) or (initial_coodinator.User.id != int(form.cleaned_data.get('user'))):
                         initial_coodinator.RevokeDate = timezone.now()
                         initial_coodinator.save()
                         new_coordinator = Coordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), BYear=form.cleaned_data.get('BYear'),Dept =hod.Dept)
@@ -95,5 +92,5 @@ def faculty_Coordinator(request):
     else:
         form = CoordinatorAssignmentForm(hod.Dept)
         
-    return render(request, 'hod/CoordinatorAssignment.html',{'faculty':faculty})
+    return render(request, 'hod/CoordinatorAssignment.html',{'form':form})
 
