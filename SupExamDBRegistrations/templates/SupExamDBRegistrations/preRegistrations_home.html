@@ -2,28 +2,30 @@
 
 
 {% block content %}
+{% load user_check_tag %}
+
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'AddRegulation' %}">Add Regulation</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'MandatoryCredits' %}">Mandatory Credits</a>
-                  </li> 
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ManageRegistrations' %}">Manage Registrations</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'StudentInfoFileUpload' %}">Upload Student Info</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'UpdateRollNumber' %}">Update Roll Number</a>
-                  </li> 
-                  <!-- <li class="nav-item">
-                    <a class="nav-link" href="{% url 'UpdateNonFirstYearSection' %}">Update Non First Year Section</a>
-                  </li>  -->
+              {% if user|has_group:"Superintendent" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'AddRegulation' %}">Add Regulation</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'ManageRegistrations' %}">Manage Registrations</a>
+              </li>
+              {% elif user|has_group:"ExamStaff" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'StudentInfoFileUpload' %}">Upload Student Info</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'UpdateRollNumber' %}">Update Roll Number</a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'MandatoryCredits' %}">Mandatory Credits</a>
+              </li>  
+              {% endif %}
             </ul>
         </div>
         <div class="col-md-10">

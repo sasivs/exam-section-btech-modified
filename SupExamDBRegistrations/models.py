@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
-from django.db import models
-from pkg_resources import Distribution
-from superintendent.constants import DEPARTMENTS, SEMS, YEARS
-from superintendent.models import MarksDistribution 
+# from django.contrib.auth.models import User
+# from django.db import models
+# from pkg_resources import Distribution
+# from superintendent.constants import DEPARTMENTS, SEMS, YEARS
+# from superintendent.models import MarksDistribution 
 
 
 # class ProgrammeModel(models.Model):

@@ -42,7 +42,7 @@ class MandatoryCreditsForm(forms.Form):
         bYearChoices = [('--Select Dept--','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
         self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
         self.fields['BYear'] = forms.CharField(label='BYear', widget = forms.Select(choices=bYearChoices))
-        self.fields['Dept'] = forms.CharField(label='Deptatment', widget = forms.Select(choices=deptChoices))
+        self.fields['Dept'] = forms.CharField(label='Department', widget = forms.Select(choices=deptChoices))
         self.fields['Credits'] = forms.CharField(label='Credits',max_length= 6)
 
 
@@ -50,40 +50,71 @@ class MandatoryCreditsForm(forms.Form):
 class IXGradeStudentsAddition(forms.Form):
     def __init__(self, *args, **kwargs):
         super(IXGradeStudentsAddition, self).__init__(*args, **kwargs) 
+        print('hi')
         GRADE_CHOICES = (
             ('', 'Choose Grade'),
             ('I', 'I'),
             ('X', 'X')
         )   
         regs = RegistrationStatus.objects.filter(Status=1)
-        REG_CHOICES = [(reg.id, reg.__str__()) for reg in regs]
-        REG_CHOICES = [('', 'Choose Registration Event')] + REG_CHOICES
-        self.fields['regId'] = forms.CharField(label='Choose Registration Event', widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':"submit()"}))
+        REG_CHOICES = [(reg.id,  reg.__str__()) for reg in regs]
+        REG_CHOICES = [(0, 'Choose Registration Event')] + REG_CHOICES
+        self.fields['regId'] = forms.CharField(label='Choose Registration Event', max_length=30, widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':'submit();', 'required':'True'}))
         if self.data.get('regId'):
             registrations = StudentRegistrations.objects.filter(RegEventId=self.data.get('regId'))
             subjects = Subjects.objects.filter(id__in=registrations.values_list('sub_id', flat=True))
             SUBJECT_CHOICES = [(sub.id, sub.SubCode) for sub in subjects]
             SUBJECT_CHOICES = [('', 'Select Subject')] + SUBJECT_CHOICES
-            self.fields['subject'] = forms.ChoiceField(label='Select Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
-            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, widget=forms.TextInput(attrs={'size':10, 'type':'number'}))
-            self.fields['grade'] = forms.ChoiceField(label='Select Grade', widget=forms.Select(choices=GRADE_CHOICES))
+            self.fields['subject'] = forms.CharField(label='Select Subject', max_length=30, required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
+            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True'}))
+            self.fields['grade'] = forms.CharField(label='Select Grade', required=False, max_length=30, widget=forms.Select(choices=GRADE_CHOICES, attrs={'required':'True'}))
 
     
     def clean_regd_no(self):
         regId = self.cleaned_data.get('regId')
         subject = self.cleaned_data.get('subject')
         regd_no = self.cleaned_data.get('regd_no')
-        if not StudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, RegNo=regd_no):
-            raise forms.ValidationError('Invalid Registration Number')
+        if subject and regd_no:
+            if not StudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, RegNo=regd_no):
+                raise forms.ValidationError('Invalid Registration Number')
         return regd_no
 
 
 class IXGradeStudentsStatus(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, regs, *args, **kwargs):
         super(IXGradeStudentsStatus, self).__init__(*args, **kwargs) 
-        regs = RegistrationStatus.objects.filter(Status=1)
         REG_CHOICES = [(reg.id, reg.__str__()) for reg in regs]
         REG_CHOICES = [('', 'Choose Registration Event')] + REG_CHOICES
         self.fields['regId'] = forms.CharField(label='Choose Registration Event', widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':"submit()"}))
+
+
+class FacultyUploadForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(FacultyUploadForm, self).__init__(*args, **kwargs)
+        self.fields['file'] = forms.FileField()
+
+
+class FacultyInfoUpdateForm(forms.Form):
+    def __init__(self, Options=None, *args,**kwargs):
+        super(FacultyInfoUpdateForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.checkFields = []
+        for fi in range(len(Options)):
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.checkFields.append(self['Check' + str(Options[fi][0])])
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5], self['Check' + str(Options[fi][0])]))
+
+
+class FacultyDeletionForm(forms.Form):
+    def __init__(self, Options=None, *args,**kwargs):
+        super(FacultyDeletionForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.checkFields = []
+        for fi in range(len(Options)):
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.checkFields.append(self['Check' + str(Options[fi][0])])
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5], self['Check' + str(Options[fi][0])]))
 
 

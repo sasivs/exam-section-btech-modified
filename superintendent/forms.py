@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from superintendent.models import HOD
-from hod.models import FacultyInfo
+from ExamStaffDB.models import FacultyInfo
 from superintendent.models import ProgrammeModel, Departments, Regulation, RegistrationStatus
 from co_ordinator.models import StudentBacklogs
 import datetime
@@ -34,15 +34,18 @@ class DBYBSAYASSelectionForm(forms.Form):
         bSemChoices = [(0,'--Select BSem--'),(1,1),(2,2)]
         aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
         aSemChoices = [(0,'--Select ASem--')] + [(1,1),(2,2),(3,3)]
-        aYearBox = forms.IntegerField(label='Select AYear', widget=forms.Select(choices=aYearChoices,attrs={'onchange':'submit();'}))
-        aSemBox = forms.IntegerField(label='Select ASem', widget=forms.Select(choices=aSemChoices))
-        bYearBox = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=bYearChoices,attrs={'onchange':'submit();'}))
-        bSemBox = forms.IntegerField(label='Select BSem', widget=forms.Select(choices=bSemChoices))
-        deptBox = forms.CharField(label='Select Department', widget=forms.Select(choices=deptChoices))
+        aYearBox = forms.IntegerField(label='Select AYear', required=False, widget=forms.Select(choices=aYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
+        aSemBox = forms.IntegerField(label='Select ASem', required=False, widget=forms.Select(choices=aSemChoices, attrs={'required':'True'}))
+        bYearBox = forms.IntegerField(label='Select BYear', required=False, widget=forms.Select(choices=bYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
+        bSemBox = forms.IntegerField(label='Select BSem', required=False, widget=forms.Select(choices=bSemChoices, attrs={'required':'True'}))
+        deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
         rChoices = [(0,'--Select Regulation--')]
-        statusBox = forms.ChoiceField(label='Enable/Disable', widget=forms.RadioSelect(), choices=[(0, 'Disable'), (1, 'Enable')])
-        modeBox = forms.ChoiceField(label='Select Mode',widget=forms.RadioSelect(),choices = [('R', 'Regular'),('B','Backlog'),('D','DroppedRegular'),('M','Makeup')])
-        regulationBox = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=rChoices))
+        statusBox = forms.ChoiceField(label='Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
+        regBox = forms.ChoiceField(label='Registration Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
+        marksBox = forms.ChoiceField(label='Marks Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
+        gradesBox = forms.ChoiceField(label='Grades Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
+        modeBox = forms.ChoiceField(label='Select Mode', required=False, widget=forms.RadioSelect(attrs={'required':'True'}),choices = [('R', 'Regular'),('B','Backlog'),('D','DroppedRegular'),('M','Makeup')])
+        regulationBox = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
         self.fields['aYear'] = aYearBox
         self.fields['aSem'] = aSemBox
         self.fields['bYear'] = bYearBox
@@ -50,6 +53,9 @@ class DBYBSAYASSelectionForm(forms.Form):
         self.fields['dept'] = deptBox
         self.fields['regulation'] = regulationBox
         self.fields['status'] = statusBox
+        self.fields['reg-status'] = regBox
+        self.fields['marks-status'] = marksBox
+        self.fields['grades-status'] = gradesBox
         self.fields['mode'] = modeBox
         if 'aYear' in self.data and 'bYear' in self.data and self.data['aYear']!='' and \
             self.data['bYear']!='' and self.data['aYear']!='0' and \
@@ -63,7 +69,7 @@ class DBYBSAYASSelectionForm(forms.Form):
             regulations +=  dropped_course_regulations + backlog_course_regulations
             regulations = list(set(regulations))
             rChoices += regulations
-            self.fields['regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=rChoices))
+            self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
         
 
 class GradePointsUploadForm(forms.Form):
@@ -75,6 +81,15 @@ class GradePointsUploadForm(forms.Form):
         reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
         self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
         self.fields['file'] =forms.FileField(label='upload grade points file')
+
+class GradePointsStatusForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        super(GradePointsStatusForm, self).__init__(*args, **kwargs)
+        regulation = Regulation.objects.all()
+        regulation = [(row.Regulation, row.Regulation) for row in regulation]
+        regulation = list(set(regulation))
+        reguChoices = [('','-- Select Regulation --')] +regulation
+        self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
 
 class GradePointsUpdateForm(forms.Form):
     def __init__(self, Options=None, *args,**kwargs):
@@ -112,23 +127,23 @@ class BranchChangeStausForm(forms.Form):
 class HODAssignmentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(HODAssignmentForm, self).__init__(*args, **kwargs)
-        departments = Departments.objects.filter(ProgrammeName='BTech', ProgrammeType='UG')
+        departments = Departments.objects.all()
         DEPT_CHOICES = [('', '--------')]
         HOD_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]
-        DEPT_CHOICES += [(dept.Dept, dept.Specilaization) for dept in departments.values_list('Dept', flat=True)]
-        self.fields['dept'] = forms.CharField(label='Department', widget=forms.Select(choices=DEPT_CHOICES, attrs={'onchange':"submit()"}))
-        self.fields['hod'] = forms.CharField(label='HOD', widget=forms.Select(choices=HOD_CHOICES))
-        self.fields['user'] = forms.CharField(label='User', widget=forms.Select(choices=USER_CHOICES))
+        DEPT_CHOICES += [(dept.Dept, dept.Name) for dept in departments]
+        self.fields['dept'] = forms.CharField(label='Department', required=False, widget=forms.Select(choices=DEPT_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
+        self.fields['hod'] = forms.CharField(label='HOD', required=False, widget=forms.Select(choices=HOD_CHOICES, attrs={'required':'True'}))
+        self.fields['user'] = forms.CharField(label='User', required=False, widget=forms.Select(choices=USER_CHOICES, attrs={'required':'True'}))
         if self.data.get('dept'):
-            faculty= FacultyInfo.objects.filter(working=True, Dept=self.data.get('dept'))
+            faculty= FacultyInfo.objects.filter(Working=True, Dept=self.data.get('dept'))
             HOD_CHOICES += [(fac.id, fac.Name) for fac in faculty]
-            self.fields['hod'] = forms.CharField(label='HOD', widget=forms.Select(choices=HOD_CHOICES))
+            self.fields['hod'] = forms.CharField(label='HOD', required=False, widget=forms.Select(choices=HOD_CHOICES, attrs={'required':'True'}))
             group = Group.objects.filter(name='HOD').first()
             assigned_users = HOD.objects.filter(RevokeDate__isnull=True).exclude(Dept=self.data.get('dept'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
-            self.fields['user'] = forms.CharField(label='User', widget=forms.Select(choices=USER_CHOICES))
             USER_CHOICES += [(user.id, user.username) for user in users]
+            self.fields['user'] = forms.CharField(label='User', required=False, widget=forms.Select(choices=USER_CHOICES, attrs={'required':'True'}))
             initial_hod = HOD.objects.filter(Dept=self.data.get('dept'), RevokeDate__isnull=True).first()
             if initial_hod:
                 self.fields['hod'].initial = initial_hod.Faculty.id
@@ -138,7 +153,7 @@ class HODAssignmentForm(forms.Form):
 class MarksDistributionForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(MarksDistributionForm, self).__init__(*args, **kwargs)
-        self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':5, 'cols':10}))
-        self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':5, 'cols':10}))
+        self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
+        self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
 
 

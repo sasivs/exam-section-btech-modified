@@ -25,6 +25,10 @@ class StudentInfo(models.Model):
 
     class Meta:
         db_table = 'StudentInfo'
+        constraints = [
+            models.UniqueConstraint(fields=['RegNo'], name='unique_StudentInfo_RegNo'),
+            models.UniqueConstraint(fields=['RollNo'], name='unique_StudentInfo_RollNo'),
+        ]
         managed = True
 
 
@@ -49,4 +53,19 @@ class IXGradeStudents(models.Model):
     class Meta:
         db_table = 'IXGradeStudents'
         unique_together = ('Registration', 'Grade')
+        managed = True
+
+
+class FacultyInfo(models.Model):
+    FacultyId = models.IntegerField(default=100)
+    Name = models.CharField(max_length=100)
+    Phone = models.IntegerField()
+    Email = models.CharField(max_length=50)
+    Dept = models.IntegerField()
+    Working = models.BooleanField()
+    class Meta:
+        db_table = 'FacultyInfo'
+        constraints = [
+            models.UniqueConstraint(fields=['FacultyId'], name='unique_facultyinfo_facultyid')
+        ]
         managed = True

@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from SupExamDBRegistrations.views.home import is_Superintendent
+from superintendent.user_access_test import is_Superintendent
 from superintendent.models import Regulation
 from superintendent.forms import AddRegulationForm
 

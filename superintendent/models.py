@@ -1,6 +1,7 @@
+from enum import unique
 from django.db import models
 from django.contrib.auth import get_user_model
-from hod.models import FacultyInfo
+# from ExamStaffDB.models import FacultyInfo
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 
 # Create your models here.
@@ -15,6 +16,9 @@ class Regulation(models.Model):
     Regulation = models.IntegerField()
     class Meta:
         db_table = 'Regulation'
+        constraints = [
+            models.UniqueConstraint(fields=['AdmissionYear', 'AYear', 'BYear'], name='unique_Regulation')
+        ]
         managed = True
 
 class ProgrammeModel(models.Model):
@@ -60,10 +64,10 @@ class BranchChanges(models.Model):
 
 
 class HOD(models.Model):
-    Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()
     AssignedDate = models.DateTimeField(auto_now_add=True)
-    RevokedDate = models.DateTimeField(null=True)
+    RevokeDate = models.DateTimeField(null=True)
     User = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -135,4 +139,5 @@ class GradePoints(models.Model):
     Points = models.IntegerField()
     class Meta:
         db_table = 'GradePoints'
+        unique_together = ('Regulation', 'Grade', 'Points')
         managed = True

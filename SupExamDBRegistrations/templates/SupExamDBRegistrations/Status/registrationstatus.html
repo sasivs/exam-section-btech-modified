@@ -1,10 +1,25 @@
 {% extends 'SupExamDB/suphome.html' %} {% block content %}
+{% load user_check_tag %}
+
 
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-
+                {% if user|has_group:'Superintendent' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shoratge Status</a>
+                </li>
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
@@ -20,7 +35,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shoratge Status</a>
                 </li>
-
+                
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-10">

@@ -9,36 +9,29 @@
             <button type="submit">Generate</button>
         </form>
     </div>
-</div>
-
-
-<div class="container">
+    {% if att_short %}
+    <strong> List of Attendance Shortade Students</strong>
     <div class="row">
-        <strong> List of Attendance Shortade Students</strong>
-        <form action="?" method="post">
-            {% csrf_token %}
-            <div class="container">
-                <table>
-                    <th>
-                        <tr>
-                            <td style="border: 1px solid black;">RegNo </td>
-
-                            <td style="border: 1px solid black;">Delete</td>
-                        </tr>
-                    </th>
-                    {% for field in att_short %}
-                    <tr>
-                        <td style="border: 1px solid black;">
-                            {{ field.Registration.RegNo }}
-                        </td>
-                        <td style="border: 1px solid black;">
-                            <a href="{% url 'AttendanceShoratgeDelete' field.id %}">Assign</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </form>
+        <br>
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">Delete</td>
+                </tr>
+            </th>
+            {% for field in att_short %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ field.Registration.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    <a href="{% url 'AttendanceShoratgeDelete' field.id %}">Assign</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -11,6 +11,7 @@ urlpatterns = [
 
 
     path('GradePointsUpload', grade_points.grade_points_upload, name='GradePointsUpload'),
+    path('GradePointsStatus', grade_points.grade_points_status, name='GradePointsStatus'),
     path('GradePointsUploadErrorHandler', grade_points.grade_points_upload_error_handler, name='GradePointsUploadErrorHandler'),
 
 

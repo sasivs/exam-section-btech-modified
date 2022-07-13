@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from SupExamDBRegistrations.views.home import is_Superintendent
-from hod.models import FacultyInfo
+from ExamStaffDB.models import FacultyInfo
 from superintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from co_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from co_ordinator.models import FacultyAssignment, StudentRegistrations, Subjects, RollLists
@@ -85,6 +85,8 @@ def faculty_assignment_status(request):
         faculty = Coordinator.objects.filter(User=user, RevokeDate__isnull=True)
     elif 'HOD' in groups:
         faculty = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+    elif 'Superintendent' in groups:
+        faculty = 'Superintendent'
     else:
         raise Http404("You are not authorized to view this page")
     if(request.method =='POST'):
@@ -92,7 +94,7 @@ def faculty_assignment_status(request):
         if(form.is_valid()):
             regeventid=form.cleaned_data['regID']
             faculty = FacultyAssignment.objects.filter(subject__RegEventId__id=regeventid)
-            return render(request, 'SupExamDBRegistrations/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
+            return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
     else:
         form = FacultyAssignmentStatusForm(faculty=faculty)
-    return render(request, 'SupExamDBRegistrations/FacultyAssignmentStatus.html',{'form':form})
+    return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form})

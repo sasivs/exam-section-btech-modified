@@ -1,16 +1,18 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
-from superintendent.user_access_test import is_Superintendent
-from hod.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
-from hod.models import FacultyInfo
-from hod.resources import FacultyInfoResource
+from superintendent.user_access_test import is_ExamStaff, faculty_info_status_access
+from ExamStaffDB.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
+from hod.models import  Coordinator
+from ExamStaffDB.models import FacultyInfo
+from superintendent.models import HOD
+from ExamStaffDB.resources import FacultyInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def faculty_upload(request):
     if(request.method=='POST'):
         form = FacultyUploadForm( request.POST,request.FILES)
@@ -39,14 +41,15 @@ def faculty_upload(request):
                 if not result.has_errors():
                     Faculty_resource.import_data(newDataset, dry_run=False)
                     errorData = Dataset()
-                    print('errordata: ',errorData)
                     if(len(errorDataset) != 0):
                         for i in errorDataset:
                             errorData.append(i)
-                        FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],errorData[i][4],errorData[i][5] ) for i in range(len(errorData))]
+                        FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],errorData[i][4],\
+                            errorData[i][5] ) for i in range(len(errorData))]
                         request.session['FacInfoErrRows'] = FacInfoErrRows
                         return redirect('FacultyInfoUploadErrorHandler')
-                    # return(render(request,'hod/FacultyInfoUploadSuccess.html'))
+                    msg = 'Faculty Info Uploaded Successfully'
+                    return(render(request,'ExamStaffDB/FacultyUpload.html', {'form':form, 'msg':msg}))
                 else:
                     errors = result.row_errors()
                     # print(errors)
@@ -68,26 +71,20 @@ def faculty_upload(request):
                         newRow1 = (newDataset[i][0],newDataset[i][1],newDataset[i][2],\
                             newDataset[i][3],newDataset[i][4],newDataset[i][5])
                         errorData.append(newRow1)
-                    print('errordata: ',errorData)
                     for i in errorDataset:
                         errorData.append(i)
-                    FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3] ,errorData[i][4],errorData[i][5]) for i in range(len(errorData))]
+                    FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3] ,errorData[i][4],\
+                        errorData[i][5]) for i in range(len(errorData))]
                     request.session['FacInfoErrRows'] = FacInfoErrRows
                     return redirect('FacultyInfoUploadErrorHandler')
-                return(render(request,'hod/FacultyInfoUploadSuccess.html'))
-        else:
-            print(form.errors)
-            for row in form.fields.values(): print(row)
     else:
         form = FacultyUploadForm()
-    return (render(request, 'hod/FacultyUpload.html', {'form':form}))
+    return (render(request, 'ExamStaffDB/FacultyUpload.html', {'form':form}))
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def FacultyInfo_upload_error_handler(request):
     FacultyInfoRows = request.session.get('FacInfoErrRows')
-    for row in FacultyInfoRows:
-        print(row[0])
     if(request.method=='POST'):
         form = FacultyInfoUpdateForm(FacultyInfoRows,request.POST)
         if(form.is_valid()):
@@ -95,19 +92,28 @@ def FacultyInfo_upload_error_handler(request):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     FacultyInfo.objects.filter(FacultyId=fRow[0]).update(\
                         Name=fRow[1],Phone=fRow[2],Email=fRow[3],Dept=fRow[4],Working=fRow[5])
-            return render(request, 'hod/FacultyInfoUploadSuccess.html')
+            return render(request, 'ExamStaffDB/FacultyInfoUploadSuccess.html')
     else:
         form = FacultyInfoUpdateForm(Options=FacultyInfoRows)
-    return(render(request, 'hod/FacultyInfoUploadErrorHandler.html',{'form':form}))
+    return(render(request, 'ExamStaffDB/FacultyInfoUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(faculty_info_status_access)
 def FacultyInfo_upload_status(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'ExamStaff' in groups:
         fac_info = FacultyInfo.objects.all()
-        return render(request, 'hod/FacultyInfoStatus.html',{'fac_info': fac_info})
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        fac_info = FacultyInfo.objects.filter(Dept=hod.Dept)
+    elif 'Co-ordinator' in groups:
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        fac_info = FacultyInfo.objects.filter(Dept=co_ordinator.Dept)
+    return render(request, 'ExamStaffDB/FacultyInfoStatus.html',{'fac_info': fac_info})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def Faculty_delete(request):
     fac_info = FacultyInfo.objects.filter(Working =True)
     fac_info = [(row.FacultyId,row.Name,row.Phone,row.Email,row.Dept,row.Working) for row in fac_info]
@@ -118,11 +124,11 @@ def Faculty_delete(request):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     fac =FacultyInfo.objects.filter(FacultyId=fRow[0])
                     fac.update(Working = False)
-            return render(request, 'hod/FacultyInfoDeletionSuccess.html')
+            return render(request, 'ExamStaffDB/FacultyInfoDeletionSuccess.html')
                 
     else:
         form = FacultyDeletionForm(Options=fac_info)
-    return render(request, 'hod/FacultyInfoDeletion.html',{'form':form})
+    return render(request, 'ExamStaffDB/FacultyInfoDeletion.html',{'form':form})
 
 
 

@@ -12,5 +12,11 @@
             <button type="submit">Upload</button>
         </form>
     </div>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

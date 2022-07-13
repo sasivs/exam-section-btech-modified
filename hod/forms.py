@@ -1,18 +1,18 @@
 from django import forms 
 from django.contrib.auth.models import Group
 from superintendent.models import RegistrationStatus
-from hod.models import Coordinator, FacultyInfo
+from hod.models import Coordinator
+from ExamStaffDB.models import FacultyInfo
 
 
 
 class GradesFinalizeForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(GradesFinalizeForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
@@ -20,36 +20,6 @@ class GradesFinalizeForm(forms.Form):
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=30, widget=forms.Select(choices=myChoices))
-
-
-class FacultyUploadForm(forms.Form):
-    def __init__(self, *args,**kwargs):
-        super(FacultyUploadForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField()
-
-
-class FacultyInfoUpdateForm(forms.Form):
-    def __init__(self, Options=None, *args,**kwargs):
-        super(FacultyInfoUpdateForm, self).__init__(*args, **kwargs)
-        self.myFields = []
-        self.checkFields = []
-        for fi in range(len(Options)):
-            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-            self.fields['Check'+str(Options[fi][0])].initial = False  
-            self.checkFields.append(self['Check' + str(Options[fi][0])])
-            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5], self['Check' + str(Options[fi][0])]))
-
-
-class FacultyDeletionForm(forms.Form):
-    def __init__(self, Options=None, *args,**kwargs):
-        super(FacultyDeletionForm, self).__init__(*args, **kwargs)
-        self.myFields = []
-        self.checkFields = []
-        for fi in range(len(Options)):
-            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-            self.fields['Check'+str(Options[fi][0])].initial = False  
-            self.checkFields.append(self['Check' + str(Options[fi][0])])
-            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5], self['Check' + str(Options[fi][0])]))
 
 
 

@@ -5,11 +5,6 @@
 <div class="container">
     <div class="row">
         <strong>Enable/Disable(Activate/Deactivate) the events based on the requirement </strong>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Update Status</button> 
-        </form>
     </div>
     {% if msg %}
     <br>
@@ -17,6 +12,14 @@
         <strong>{{msg}}</strong>
     </div>
     {% endif %}
+    <div class="row">
+        <br>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Update Status</button> 
+        </form>
+    </div>
 </div>
 
 <script>

@@ -13,9 +13,9 @@ from co_ordinator.models import StudentGradePoints
 from ExamStaffDB.models import StudentInfo
 from Transcripts.models import StudentExamEvents, DepartmentExamEvents, DeptExamEventStudents, StudentAdmissionYearDetails,\
      StudentCGPAs, HeldIn
-from hod.models import FacultyInfo
+from ExamStaffDB.models import FacultyInfo
 from SupExamDB.forms import UploadFileForm, FacultyUpdateForm
-from hod.resources import FacultyInfoResource
+from ExamStaffDB.resources import FacultyInfoResource
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -32,6 +32,8 @@ def is_Faculty(user):
     return user.groups.filter(name='Faculty').exists()
 def is_Co_ordinator(user):
     return user.groups.filter(name='Co-ordinator').exists()
+def is_ExamStaff(user):
+    return user.groups.filter(name='ExamStaff').exists()
 
 
 
@@ -41,8 +43,6 @@ def logout_request(request):
 
 
 @login_required(login_url="/login/")
-# @user_passes_test(is_Superintendent)
-
 def sup_home(request):
     return render(request,'SupExamDB/suphome.html')
 

@@ -11,7 +11,7 @@ def hod_assignment(request):
     if request.method == 'POST':
         form = HODAssignmentForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data.get('dept') and form.cleaned_data.get('hod') and form.cleaned_data.get('user') and form.cleaned_data.get('submit'):
+            if form.cleaned_data.get('dept') and form.cleaned_data.get('hod') and form.cleaned_data.get('user') and request.POST['submit-form']:
                 initial_hod = HOD.objects.filter(RevokeDate__isnull=True, Dept=form.cleaned_data.get('dept')).first()
                 if initial_hod:
                     if (initial_hod.Faculty.id != form.cleaned_data.get('hod')) or (initial_hod.User.id != form.cleaned_data.get('user')):
@@ -24,6 +24,13 @@ def hod_assignment(request):
                     new_hod.save()
                 msg = 'Hod assignment is done successfully'
                 return render(request, 'superintendent/HodAssignment.html', {'form':form, 'msg':msg})
+        else:
+            if request.POST['dept']:
+                initial_hod = HOD.objects.filter(Dept=request.POST.get('dept'), RevokeDate__isnull=True).first()
+                if initial_hod:
+                    initial_hod_obj = initial_hod.Faculty.id
+                    initial_user_obj = initial_hod.User.id
+                return render(request, 'superintendent/HodAssignment.html', {'form':form, 'hod':initial_hod_obj, 'user':initial_user_obj})
     else:
         form = HODAssignmentForm()
     return render(request, 'superintendent/HodAssignment.html', {'form':form})

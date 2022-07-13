@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ExamStaffDB.views import StudInfo, IX_student, mandatory_credits
+from ExamStaffDB.views import StudInfo, IX_student, mandatory_credits, FacultyInfo
 
 urlpatterns = [
 
@@ -12,5 +12,11 @@ urlpatterns = [
 
     path('IXGradeStudentsAdd', IX_student.ix_student_assignment, name='IXGradeStudentsAdd'),
     path('IXGradeStudentsStatus', IX_student.ix_student_status, name='IXGradeStudentsStatus'),
+
+
+    path('FacultyInfoUpload', FacultyInfo.faculty_upload, name = 'FacultyInfoUpload'),
+    path('FacultyInfoUploadErrorHandler', FacultyInfo.FacultyInfo_upload_error_handler, name = 'FacultyInfoUploadErrorHandler'),
+    path('FacultyInfoStatus', FacultyInfo.FacultyInfo_upload_status, name = 'FacultyInfoStatus'),
+    path('FacultyInfoDeletion', FacultyInfo.Faculty_delete, name = 'FacultyInfoDeletion'),
 
 ]

@@ -1,18 +1,14 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from hod.views import faculty_user_assignment, grades_finalize, FacultyInfo
+from ExamStaffDB.views import FacultyInfo
+from hod.views import faculty_user_assignment, grades_finalize
 
 
 urlpatterns =[  
 
     path('GradesFinalize', grades_finalize.grades_finalize, name='GradesFinalize'),
 
-
-    path('FacultyInfoUpload', FacultyInfo.faculty_upload, name = 'FacultyInfoUpload'),
-    path('FacultyInfoUploadErrorHandler', FacultyInfo.FacultyInfo_upload_error_handler, name = 'FacultyInfoUploadErrorHandler'),
-    path('FacultyInfoStatus', FacultyInfo.FacultyInfo_upload_status, name = 'FacultyInfoStatus'),
-    path('FacultyInfoDeletion', FacultyInfo.Faculty_delete, name = 'FacultyInfoDeletion'),
 
     path('FacultyUserAssignment', faculty_user_assignment.faculty_user, name = 'FacultyUserAssignment'),
     path('FacultyUserDetail/<int:pk>', faculty_user_assignment.faculty_user_detail, name='FacultyUserDetail'),

@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
 from superintendent.user_access_test import is_Superintendent
-from superintendent.forms import GradePointsUploadForm, GradePointsUpdateForm
+from superintendent.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
 from superintendent.models import GradePoints
 from superintendent.resources import GradePointsResource
 from tablib import Dataset
@@ -12,8 +12,6 @@ from import_export.formats.base_formats import XLSX
 @user_passes_test(is_Superintendent)
 def grade_points_upload(request):
     if request.method == 'POST':
-        print(request.POST)
-        print(request.FILES)
         form = GradePointsUploadForm(request.POST, request.FILES)
         if form.is_valid():
             if form.cleaned_data['Regulation'] != '-- Select Regulation --':
@@ -44,7 +42,8 @@ def grade_points_upload(request):
                         request.session['errRows'] = errRows
                         # request.session['currentRegEventId'] = currentRegEventId
                         return redirect('GradePointsUploadErrorHandler' )
-                    return(render(request,'superintendent/GradePointsUploadSuccess.html')) 
+                    msg = 'The data for grade points is uploaded succesfully.'
+                    return(render(request,'superintendent/GradePointsUpload.html', {'form':form, 'msg':msg}))
                 else:
                     errors = result.row_errors()
                     indices = set([i for i in range(len(newDataset))])    
@@ -90,4 +89,17 @@ def grade_points_upload_error_handler(request):
     else:
         form = GradePointsUpdateForm(Options=errRows)
     return(render(request, 'superintendent/GradePointsUploadErrorHandler.html',{'form':form}))
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def grade_points_status(request):
+    if request.method == 'POST':
+        form = GradePointsStatusForm(request.POST)
+        if form.is_valid():
+            regulation = form.cleaned_data.get('Regulation')
+            grade_points_obj = GradePoints.objects.filter(Regulation=regulation)
+            return render(request, 'superintendent/GradePointsStatus.html', {'form':form, 'grade_points':grade_points_obj})
+    form = GradePointsStatusForm()
+    return render(request, 'superintendent/GradePointsStatus.html', {'form':form})
 

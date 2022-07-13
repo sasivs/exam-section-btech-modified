@@ -8,7 +8,7 @@ from SupExamDBRegistrations.views import cancellations, grades, \
     home, grades
 from SupExamDB import views as supviews
 from co_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, open_elective_registrations, regular_registrations, status, subjects
-from hod.views import FacultyInfo
+from ExamStaffDB.views import FacultyInfo
 from superintendent.views import add_regulation, branch_change, create_registration_event, grade_points
 # from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
@@ -24,6 +24,8 @@ urlpatterns = [
     path('SupBTNotPromotedHome', home.not_promoted_home, name="SupBTNotPromotedHome"),
     path('SupBTFacultyHome', home.faculty_home, name='SupBTFacultyHome'),
     path('SupBTMarksHome', home.marks_home, name='SupBTMarksHome'),
+    path('SupBTUserManagementHome', home.userassignment_home, name='SupBTUserManagementHome'),
+
 
     # path('FacultyInfoUpload', FacultyInfo.faculty_upload, name = 'FacultyInfoUpload'),
     # path('FacultyInfoUploadErrorHandler', FacultyInfo.FacultyInfo_upload_error_handler, name = 'FacultyInfoUploadErrorHandler'),

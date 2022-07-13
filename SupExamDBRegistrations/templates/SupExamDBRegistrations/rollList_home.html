@@ -1,29 +1,39 @@
 {% extends 'SupExamDB/suphome.html' %}
 
+{% load user_check_tag %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
+                {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:GenerateRollList' %}">Generate Roll List</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:RollListStatus' %}">RollList Status</a>
+                    <a class="nav-link" href="{% url 'RollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:RollListSectionUpload' %}">RollList Section Upload</a>
+                    <a class="nav-link" href="{% url 'NotRegisteredStatus' %}">NotRegistered Status</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GenerateRollList' %}">Generate Roll List</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:RollListFeeUpload' %}">RollList Fee Upload</a>
+                    <a class="nav-link" href="{% url 'RollListSectionUpload' %}">RollList Section Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'co_ordinator:FinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
+                    <a class="nav-link" href="{% url 'RollListFeeUpload' %}">RollList Fee Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:NotRegisteredStatus' %}">NotRegistered Status</a>
+                    <a class="nav-link" href="{% url 'RollListStatus' %}">RollList Status</a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'FinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'NotRegisteredStatus' %}">NotRegistered Status</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-10">

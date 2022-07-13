@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from hod.forms import CoordinatorAssignmentForm
-from hod.models import  FacultyInfo,Faculty_user,Coordinator
+from hod.models import  Faculty_user,Coordinator
+from ExamStaffDB.models import FacultyInfo
 from SupExamDB.views import is_Hod
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from superintendent.models import HOD

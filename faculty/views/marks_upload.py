@@ -3,10 +3,10 @@ from django.http import HttpResponse
 from superintendent.user_access_test import marks_upload_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, HOD
 from ExamStaffDB.models import StudentInfo
 from co_ordinator.models import RollLists, Subjects, StudentRegistrations
-from hod.models import Faculty_user
+from hod.models import Faculty_user, Coordinator
 from co_ordinator.models import FacultyAssignment
 from faculty.models import Marks_Staging
 from faculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm
@@ -74,9 +74,18 @@ def marks_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     faculty = None
+    subjects = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(Faculty=faculty, RegEventId__Status=1)
+    elif 'Superintendent' in groups:
+        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
+    elif 'Co-ordinator' in groups:
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = FacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1)
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
     if request.method == 'POST':
         form = MarksStatusForm(request.POST, subjects)
         if form.is_valid():

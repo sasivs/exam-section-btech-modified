@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
-from superintendent.user_access_test import grades_threshold_access
-from superintendent.models import RegistrationStatus
-from hod.models import Faculty_user
+from superintendent.user_access_test import grades_threshold_access, grades_status_access
+from superintendent.models import RegistrationStatus, HOD
+from hod.models import Faculty_user, Coordinator
 from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
 from faculty.models import Attendance_Shortage, GradesThreshold, Marks_Staging, StudentGrades_Staging
 from ExamStaffDB.models import IXGradeStudents
@@ -73,7 +73,7 @@ def grades_generate(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(grades_threshold_access)
+@user_passes_test(grades_status_access)
 def grades_status(request):
     
     '''
@@ -83,9 +83,18 @@ def grades_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     faculty = None
+    subjects = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(Faculty=faculty, RevokeDate__isnull=True)
+    elif 'Superintendent' in groups:
+        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
+    elif 'Co-ordinator' in groups:
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = FacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1)
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
         subject = form.cleaned_data.get('subject').split(':')[0]

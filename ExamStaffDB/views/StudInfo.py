@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required, user_passes_test 
-from superintendent.user_access_test import is_Superintendent
+from django.contrib.auth.decorators import login_required, user_passes_test
+from superintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from django.shortcuts import redirect
 
@@ -12,7 +12,7 @@ from import_export.formats.base_formats import XLSX
 
 # Create your views here.
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def StudInfoFileUpload(request):
     if(request.method=='POST'):
         form = StudentInfoFileUpload(request.POST,request.FILES)
@@ -34,7 +34,8 @@ def StudInfoFileUpload(request):
             result = StudInfo_resource.import_data(newDataset,dry_run=True)
             if(not result.has_errors()):
                 StudInfo_resource.import_data(newDataset,dry_run=False)
-                return render(request, 'ExamStaffDB/BTStudentInfoUploadSuccess.html')
+                msg = 'Student Info updated successfully.'
+                return render(request, 'ExamStaffDB/BTStudentInfoUpload.html',{'form':form, 'msg':msg})
             else:
                 errors = result.row_errors()
                 indices = set([i for i in range(len(newDataset))])
@@ -68,7 +69,7 @@ def StudInfoFileUpload(request):
     return  render(request, 'ExamStaffDB/BTStudentInfoUpload.html',{'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def student_info_error_handler(request):
     studInfoErrRows = request.session.get('studInfoErrRows')
     if(request.method == 'POST'):
@@ -86,7 +87,7 @@ def student_info_error_handler(request):
     return(render(request, 'ExamStaffDB/BTStudentInfoUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def update_rollno(request):
     if request.method == 'POST':
         form = UpdateRollNumberForm(request.POST, request.FILES)
@@ -97,6 +98,7 @@ def update_rollno(request):
                 data+=chunk
             dataset = XLSX().create_dataset(data)
             errorStudentInfoRolls = []
+            msg=''
             for i in range(len(dataset)):
                 row = dataset[i]
                 if StudentInfo.objects.filter(RegNo=row[0]).exists():
@@ -105,7 +107,9 @@ def update_rollno(request):
                     studentRow.save()
                 else:
                     errorStudentInfoRolls.append(row)
-        return render(request, 'ExamStaffDB/UpdateRollNumberSuccess.html', {'form':form, 'errorStudentInfoRolls':errorStudentInfoRolls})
+            if not errorStudentInfoRolls:
+                msg = 'Updated Roll Numbers successfully'
+        return render(request, 'ExamStaffDB/UpdateRollNumber.html', {'form':form, 'msg':msg, 'errorStudentInfoRolls':errorStudentInfoRolls})
     else:
         form = UpdateRollNumberForm()
     return render(request, 'ExamStaffDB/UpdateRollNumber.html', {'form':form})

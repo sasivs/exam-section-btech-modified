@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from superintendent.user_access_test import grades_finalize_access
 from hod.forms import GradesFinalizeForm
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, HOD
 from faculty.models import StudentGrades_Staging, StudentGrades
 
 import psycopg2
@@ -11,8 +11,14 @@ import psycopg2
 @login_required(login_url="/login/")
 @user_passes_test(grades_finalize_access)
 def grades_finalize(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        regIDs = RegistrationStatus.objects.filter(Status=1, GradeStatus=1, Dept=hod.Dept)
     if request.method == 'POST':
-        form = GradesFinalizeForm(request.POST)
+        form = GradesFinalizeForm(regIDs, request.POST)
         if form.is_valid():
             depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
             years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -29,15 +35,16 @@ def grades_finalize(request):
                 mode = strs[6]
                 currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
-                currentRegEventId = currentRegEventId[0].id
-                grades = StudentGrades_Staging.objects.filter(RegEventId=currentRegEventId)
+                grades = StudentGrades_Staging.objects.filter(RegEventId=currentRegEventId[0].id)
                 for g in grades:
                     gr = StudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
                     gr.save()
+                currentRegEventId[0].GradeStatus = 0
+                currentRegEventId[0].save()
                 RefreshMaterializedViews()
                 return render(request, 'SupExamDBRegistrations/GradesFinalizeSuccess.html')
     else:
-        form = GradesFinalizeForm()
+        form = GradesFinalizeForm(regIDs)
     return render(request, 'SupExamDBRegistrations/GradesFinalize.html', {'form':form})
 
 def RefreshMaterializedViews():

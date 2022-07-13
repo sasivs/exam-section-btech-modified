@@ -5,35 +5,46 @@
             <ul class="nav flex-column">
                 {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hod:FacultyInfoUpload' %}">Faculty Info Upload</a>
+                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hod:FacultyInfoStatus' %}">Faculty Info Status</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hod:FacultyInfoDeletion' %}">Faculty Info Deletion</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hod:FacultyUserAssignment' %}">Faculty User Assignment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hod:FacultyCoordinatorAssignment' %}">Faculty Coordinator Assignment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'faculty:CoursesAssigned' %}">Courses Assigned</a>
+                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
+                    <a class="nav-link" href="{% url 'FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'co_ordinator:FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                </li>
+                {% elif user|has_group:'ExamStaff' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyInfoUpload' %}">Faculty Info Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyInfoDeletion' %}">Faculty Info Deletion</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyUserAssignment' %}">Faculty User Assignment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyCoordinatorAssignment' %}">Faculty Coordinator Assignment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'CoursesAssigned' %}">Courses Assigned</a>
                 </li>
 
                 {% endif %}

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
 
-from superintendent.user_access_test import roll_list_access
+from superintendent.user_access_test import roll_list_access, pre_registrations_home_access, grades_home_access, faculty_home_access
  
 
 def is_Superintendent(user):
@@ -21,12 +21,12 @@ def registration_home(request):
     return render(request,'SupExamDBRegistrations/BTRegistrationHome.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(grades_home_access)
 def grades_home(request):
     return render(request, 'SupExamDBRegistrations/grades_home.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(pre_registrations_home_access)
 def pre_registrations_home(request):
     return render(request, 'SupExamDBRegistrations/preRegistrations_home.html')
 
@@ -47,7 +47,7 @@ def not_promoted_home(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(faculty_home_access)
 def faculty_home(request):
     return render(request, 'SupExamDBRegistrations/faculty_home.html')
 
@@ -55,3 +55,8 @@ def faculty_home(request):
 @user_passes_test(is_Superintendent)
 def marks_home(request):
     return render(request, 'SupExamDBRegistrations/marks_home.html')
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def userassignment_home(request):
+    return render(request, 'SupExamDBRegistrations/userassignment_home.html')

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
 from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
 from faculty.models import Attendance_Shortage
-from SupExamDB.views import is_Faculty
+from superintendent.user_access_test import is_Faculty, attendance_shortage_status_access
 from import_export.formats.base_formats import XLSX
 from hod.models import Faculty_user
 
@@ -48,7 +48,7 @@ def attendance_shortage_upload(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Faculty)
+@user_passes_test(attendance_shortage_status_access)
 def attendance_shortage_status(request):
     user = request.user
     faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()

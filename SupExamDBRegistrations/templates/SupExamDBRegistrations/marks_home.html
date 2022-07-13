@@ -3,15 +3,21 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
+                {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'faculty:MarksUpload' %}">Marks Upload</a>
+                    <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MarksUpload' %}">Marks Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'faculty:MarksUploadStatus' %}">Marks Upload Status</a>
+                    <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'faculty:SampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
+                    <a class="nav-link" href="{% url 'SampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
                 </li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-10">

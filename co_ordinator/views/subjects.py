@@ -9,7 +9,8 @@ from co_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, Stude
     SubjectDeletionForm, SubjectFinalizeEventForm
 from co_ordinator.models import Subjects_Staging, Subjects
 from co_ordinator.resources import SubjectStagingResource
-from superintendent.models import RegistrationStatus, MarksDistribution
+from superintendent.models import RegistrationStatus, HOD
+from hod.models import Coordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from superintendent.user_access_test import subject_access
@@ -131,18 +132,24 @@ def subject_upload_error_handler(request):
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
 def subject_upload_status(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Superintendent' in groups:
+        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
+    elif 'Co-ordinator' in groups:
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, Mode='R')
     if(request.method=='POST'):
-        form = RegistrationsEventForm(request.POST)
-        print(request.POST)
-        print(form.errors)
-        print(form.non_field_errors)
+        form = RegistrationsEventForm(regIDs, request.POST)
         if(form.is_valid()):
-            print('valid form')
             depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
             years = {1:'I',2:'II',3:'III',4:'IV'}
             deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
             rom2int = {'I':1,'II':2,'III':3,'IV':4}
-            print(form.cleaned_data['regID'])
             if(form.cleaned_data['regID']!='--Choose Event--'):
                 strs = form.cleaned_data['regID'].split(':')
                 dept = deptDict[strs[0]]
@@ -162,7 +169,7 @@ def subject_upload_status(request):
                     subjects = Subjects.objects.filter(RegEventId=currentRegEventId)
                 return render(request, 'co_ordinator/BTSubjectsUploadStatus.html',{'subjects':subjects,'form':form})
     else:
-        form = RegistrationsEventForm()
+        form = RegistrationsEventForm(regIDs)
     return render(request, 'co_ordinator/BTSubjectsUploadStatus.html',{'form':form})
 
 @login_required(login_url="/login/")
@@ -171,13 +178,10 @@ def subject_delete(request):
     if(request.method=='POST'):
         form = SubjectDeletionForm(request.POST)
         if('regID' in request.POST.keys()):
-            print(request.POST)
             if(form.is_valid()):
-                print('Valid')
                 depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
                 years = {1:'I',2:'II',3:'III',4:'IV'}
                 deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
-                print(deptDict)
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
                 strs = form.cleaned_data['regID'].split(':')
                 dept = deptDict[strs[0]]
@@ -208,10 +212,6 @@ def subject_delete(request):
                             msg = msg + dsub + ',' 
                         msg = msg  + ' are the deleted subject ids. </p>'
                         return(render(request,'co_ordinator/BTSubjectsDeleteSuccess.html',{'msg': msg}))
-            else:
-                print('Invalid')
-                print(form.errors)
-                
     else:
         form = SubjectDeletionForm()
     return render(request, 'co_ordinator/BTSubjectsDelete.html',{'form':form})

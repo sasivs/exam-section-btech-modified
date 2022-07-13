@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from superintendent.user_access_test import is_Superintendent
+from superintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from ExamStaffDB.forms import MandatoryCreditsForm
 from ExamStaffDB.models import MandatoryCredits
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_ExamStaff)
 def mandatory_credits_upload(request):
     if(request.method == 'POST'):
         form = MandatoryCreditsForm(request.POST)
@@ -24,10 +24,8 @@ def mandatory_credits_upload(request):
                 else:
                     mancred = MandatoryCredits(Regulation = regulation,BYear = byear, Dept= dept,Credits=credits)
                     mancred.save()
-                return render(request, 'ExamStaffDB/MandatoryCreditsUploadSuccess.html')
-        else:
-                form = MandatoryCreditsForm(request.POST)
-                return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html',{'form':form})
+                msg = 'The data for Mandatory Credits is uploaded succesfully'
+                return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html', {'form':form, 'msg':msg})
     else:
         form = MandatoryCreditsForm()
     return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html',{'form':form})

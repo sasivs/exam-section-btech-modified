@@ -9,12 +9,13 @@ from co_ordinator.forms import RollListStatusForm, RollListRegulationDifferenceF
      RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
 from co_ordinator.models import RollLists_Staging, RollLists, RollLists_Staging, RegulationChange, StudentBacklogs, NotRegistered
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, HOD
 from ExamStaffDB.models import StudentInfo 
+from hod.models import Coordinator
 from co_ordinator.models import NotPromoted, StudentRegistrations_Staging,  StudentMakeups, DroppedRegularCourses
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
-from superintendent.user_access_test import roll_list_access
+from superintendent.user_access_test import roll_list_access, roll_list_status_access
 
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
@@ -385,10 +386,21 @@ def UploadSectionInfoErrorHandler(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(roll_list_access)
+@user_passes_test(roll_list_status_access)
 def RollList_Status(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Superintendent' in groups:
+        regIDs = RegistrationStatus.objects.filter(Status=1)
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
+    elif 'Co-ordinator' in groups:
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
     if request.method == 'POST':
-        form = RollListStatusForm(request.POST)
+        form = RollListStatusForm(regIDs, request.POST)
         if(form.is_valid()):
             if request.POST['regID'] != '--Choose Event--':
                 regEvent = form.cleaned_data['regID']
@@ -418,8 +430,8 @@ def RollList_Status(request):
                     return response
 
                 return (render(request, 'co_ordinator/RollListStatus.html',{'form':form,'rolls': rollListStatus}))            
-    form = RollListStatusForm()
-    return render(request, 'SupexamDBRegistrations/RollListStatus.html', {'form':form})
+    form = RollListStatusForm(regIDs)
+    return render(request, 'co_ordinator/RollListStatus.html', {'form':form})
 
 
 @login_required(login_url="/login/")
@@ -457,15 +469,26 @@ def RollListFeeUpload(request):
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
 def NotRegisteredStatus(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Superintendent' in groups:
+        regIDs = RegistrationStatus.objects.filter(Status=1)
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
+    elif 'Co-ordinator' in groups:
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
     if request.method == 'POST':
-        form = NotRegisteredStatusForm(request.POST)
+        form = NotRegisteredStatusForm(regIDs, request.POST)
         if(form.is_valid):
             regEventId=request.POST.get('regID')
             not_regd_status=NotRegistered.objects.filter(RegEventId_id=regEventId) 
             return (render(request, 'co_ordinator/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
     else:
-        form = NotRegisteredStatusForm()
-        return render(request, 'SupexamDBRegistrations/NotRegisteredStatus.html', {'form':form})
+        form = NotRegisteredStatusForm(regIDs)
+    return render(request, 'co_ordinator/NotRegisteredStatus.html', {'form':form})
 
 
 
