@@ -3,6 +3,7 @@
 
 <div class="container">
     <div class="row">
+        <strong>Choose the registration event to view the list of I and X grade students.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit" name='submit' value="submit">Submit</button>

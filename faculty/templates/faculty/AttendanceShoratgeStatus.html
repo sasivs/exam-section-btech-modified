@@ -3,7 +3,7 @@
 
 <div class="container">
     <div class="row">
-
+ <strong>Choose the subject corresponding to required registration event to view the list of attendance shortage students.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Generate</button>
