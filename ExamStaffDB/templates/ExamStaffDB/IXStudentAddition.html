@@ -2,6 +2,7 @@
 
 <div class="container">
     <div class="row">
+        <strong>Select the required registration event. Once the registration event has been selected, subjects corresponding to selected event will be displayed. <br>After selecting the required subject, enter the registration number of the student to assign I/X grade. </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit" name='submit-form' value="submit">Submit</button>

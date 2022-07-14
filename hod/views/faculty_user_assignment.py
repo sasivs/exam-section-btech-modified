@@ -83,3 +83,16 @@ def faculty_Coordinator(request):
         
     return render(request, 'hod/CoordinatorAssignment.html',{'form':form})
 
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Hod)
+def faculty_Coordinator_Status(request):
+    if(request.user.groups.filter(name='Superintendent').exists()):
+        user = request.user
+        Coordinators = Coordinator.objects.all()
+    elif(request.user.groups.filter(name='hod').exists()):
+        user = request.user
+        hod = HOD.objects.filter(RevokeDate__isnull=True,User=user)
+        Coordinators = Coordinator.objects.filter(Dept=hod.Dept)
+    return render(request, 'hod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
+        
