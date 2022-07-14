@@ -57,13 +57,11 @@
                         <select name="faculty-{{sec}}" id="faculty">
                             <option value="0" selected>Select Faculty</option>
                             {% for fac in faculty %}
-                            {% for key, value in faculty_section.items %}
-                            {% if key == sec and fac.id == value %}
+                            {% if fac.Section and sec in fac.Section %}
                             <option value="{{fac.id}}" selected>{{ fac.Name }}</option>
                             {% else %}
                             <option value="{{fac.id}}">{{ fac.Name }}</option>
                             {% endif %}
-                            {% endfor %}
                             {% endfor %}
                         </select>
                     </td>

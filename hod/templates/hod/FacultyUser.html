@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/faculty_home.html' %} {% block sub %}
+{% extends 'SupExamDBRegistrations/userassignment_home.html' %} {% block sub %}
 
 <div class="container">
     <div class="row">
@@ -29,9 +29,13 @@
                 <td style="border: 1px solid black;">{{fac.Phone}}</td>
                 <td style="border: 1px solid black;">{{fac.Email}}</td>
                 <td style="border: 1px solid black;">
-                    <a href="{% url 'FacultyUserDetail' fac.id %}">Assign</a>
+                    <a href="{% url 'FacultyUserDetail' fac.id %}"><button>Assign</button></a>
                 </td>
-                <td style="border: 1px solid black;"> <a href="{% url 'FacultyUserRevoke' fac.id %}">Revoke</a></td>
+                <td style="border: 1px solid black;"> 
+                    <a href="{% url 'FacultyUserRevoke' fac.id %}">
+                        <button>Revoke</button>
+                    </a>
+                </td>
 
                 </td>
             </tr>

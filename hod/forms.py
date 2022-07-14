@@ -28,12 +28,12 @@ class CoordinatorAssignmentForm(forms.Form):
         super(CoordinatorAssignmentForm, self).__init__(*args, **kwargs)
         COORDINATOR_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]
-        BYEAR_CHOICES =  [('', '--------'),(1,1), (2, 2),(3, 3),(4, 4)]
+        BYEAR_CHOICES =  [('', '--------'),(2, 2),(3, 3),(4, 4)]
         self.fields['BYear'] = forms.CharField(label='BYear',  required=False, widget=forms.Select(choices=BYEAR_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
-        self.fields['coordinator'] = forms.CharField(label='HOD',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
+        self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
         self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
         if self.data.get('BYear'):
-            faculty= FacultyInfo.objects.filter(working=True, Dept=Option) #here1
+            faculty= FacultyInfo.objects.filter(Working=True, Dept=Option) #here1
             COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
             self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
             group = Group.objects.filter(name='Co-ordinator').first()

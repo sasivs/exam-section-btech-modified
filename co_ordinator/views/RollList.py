@@ -9,7 +9,7 @@ from co_ordinator.forms import RollListStatusForm, RollListRegulationDifferenceF
      RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
 from co_ordinator.models import RollLists_Staging, RollLists, RollLists_Staging, RegulationChange, StudentBacklogs, NotRegistered
-from superintendent.models import RegistrationStatus, HOD
+from superintendent.models import CycleCoordinator, RegistrationStatus, HOD
 from ExamStaffDB.models import StudentInfo 
 from hod.models import Coordinator
 from co_ordinator.models import NotPromoted, StudentRegistrations_Staging,  StudentMakeups, DroppedRegularCourses
@@ -20,10 +20,17 @@ from superintendent.user_access_test import roll_list_access, roll_list_status_a
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
 def generateRollList(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         if 'Regulation_change' in request.POST:
             (ayear,asem,byear,bsem,regulation)=request.session.get('ayasbybsr')
-            print(ayear,asem,byear,bsem,regulation)
             if(byear ==1):
                 not_promoted_regno = request.session.get('not_promoted_regno_firstyear')  
             else:
@@ -37,7 +44,6 @@ def generateRollList(request):
             if(form.is_valid()):
         
                 for cIndex, sReg in enumerate(not_promoted_regno):
-                    print(cIndex,sReg)
                     if(form.cleaned_data.get('RadioMode'+str(sReg))):
                         choice = form.cleaned_data.get('RadioMode'+str(sReg))
                         
@@ -69,7 +75,7 @@ def generateRollList(request):
                 return (render(request, 'co_ordinator/RollListGenerateSuccess.html')) 
             
         else:
-            form = GenerateRollListForm(request.POST)
+            form = GenerateRollListForm(regIDs, request.POST)
             if(form.is_valid()):
                 depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
                 years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -219,7 +225,7 @@ def generateRollList(request):
                     return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
 
     else:
-        form = GenerateRollListForm()
+        form = GenerateRollListForm(regIDs)
     return  render(request, 'co_ordinator/generateRollList.html',{'form':form})
 
 @login_required(login_url="/login/")
@@ -331,8 +337,16 @@ def first_year_rollLists_cycle_handler(request):
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
 def UploadSectionInfo(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if(request.method=='POST'):
-        form=UploadSectionInfoForm( request.POST,request.FILES)
+        form=UploadSectionInfoForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
             file = form.cleaned_data['file']
             data = bytes()
@@ -361,7 +375,7 @@ def UploadSectionInfo(request):
                 return (render(request, 'co_ordinator/SectionInfoUploadSuccess.html'))
                   
     else:
-        form = UploadSectionInfoForm()
+        form = UploadSectionInfoForm(regIDs)
     return  render(request, 'co_ordinator/SectionUpload.html',{'form':form})
 
 
@@ -394,11 +408,14 @@ def RollList_Status(request):
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, BYear=hod.BYear)
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=co_ordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         form = RollListStatusForm(regIDs, request.POST)
         if(form.is_valid()):
@@ -419,7 +436,7 @@ def RollList_Status(request):
                 currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                         Dept=dept,Mode=mode,Regulation=regulation)
                 currentRegEventId = currentRegEventId[0].id
-                rollListStatus=RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
+                rollListStatus=RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).order_by('student__RegNo')
                 if request.POST.get('download'):
                     from SupExamDBRegistrations.utils import RollListBookGenerator
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
@@ -437,8 +454,16 @@ def RollList_Status(request):
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
 def RollListFeeUpload(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if(request.method=='POST'):
-        form=RollListFeeUploadForm( request.POST,request.FILES)
+        form=RollListFeeUploadForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
             file = form.cleaned_data['file']
             data = bytes()
@@ -462,7 +487,7 @@ def RollListFeeUpload(request):
                 RollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=regeventid).delete() 
                 return render(request, 'co_ordinator/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
     else:
-        form = RollListFeeUploadForm()
+        form = RollListFeeUploadForm(regIDs)
     return  render(request, 'co_ordinator/RollListFeeUpload.html',{'form':form})
 
 
@@ -480,6 +505,9 @@ def NotRegisteredStatus(request):
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         form = NotRegisteredStatusForm(regIDs, request.POST)
         if(form.is_valid):
@@ -495,8 +523,16 @@ def NotRegisteredStatus(request):
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
 def rolllist_finalize(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
-        form = RollListFinalizeForm(request.POST)
+        form = RollListFinalizeForm(regIDs, request.POST)
         if form.is_valid():
             regEvent = form.cleaned_data['regID']
             rolls = RollLists_Staging.objects.filter(RegEventId_id=regEvent)
@@ -504,7 +540,8 @@ def rolllist_finalize(request):
                 finalized_roll = RollLists(student=roll.student, RegEventId=roll.RegEventId, Section=roll.Section, Cycle=roll.Cycle)
                 finalized_roll.save()
             return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
-    form = RollListFinalizeForm()
+    else:
+        form = RollListFinalizeForm(regIDs)
     return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form})
 
 

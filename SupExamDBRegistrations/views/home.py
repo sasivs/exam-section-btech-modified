@@ -4,11 +4,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
 
-from superintendent.user_access_test import roll_list_access, pre_registrations_home_access, grades_home_access, faculty_home_access
- 
-
-def is_Superintendent(user):
-    return user.groups.filter(name='Superintendent').exists()
+from superintendent.user_access_test import roll_list_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
+    user_management_home_access, is_Superintendent
 
 def logout_request(request):
     logout(request)
@@ -57,6 +54,6 @@ def marks_home(request):
     return render(request, 'SupExamDBRegistrations/marks_home.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(user_management_home_access)
 def userassignment_home(request):
     return render(request, 'SupExamDBRegistrations/userassignment_home.html')

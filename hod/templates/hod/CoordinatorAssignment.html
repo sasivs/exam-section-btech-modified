@@ -4,7 +4,7 @@
     <div class="row">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
-            <button type="submit" name='submit' value="submit">Submit</button>
+            <button type="submit" name='submit-form' value="submit">Submit</button>
         </form>
     </div>
     {%if msg %}
@@ -15,3 +15,4 @@
     </div>
     {%endif%}
 </div>
+{% endblock %}

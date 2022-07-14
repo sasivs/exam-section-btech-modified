@@ -53,6 +53,28 @@
                                 <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
                             </ul>
                         </li>
+                        {% elif user|has_group:"Cycle-Co-ordinator" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Registration
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="RegistrationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTSubjectHome' %}">Subjects</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRollListHome' %}">Roll List</a></li>
+                                <li><a class="dropdown-item" href="{% url 'SupBTRegistrationHome' %}">Registration</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Faculty
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+                            </ul>
+                        </li>
                         {% elif user|has_group:"HOD" %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="RegistrationDropDown" role="button"

@@ -3,27 +3,32 @@
 {% load static %}
 
 {% block sub %}
- 
+
 
 
 
 <div class="container">
-    <div class="row">
-      <strong>
-        NOTE:
-**Finalize the subjects only after uploading all the regular,open elective ,department elective courses**
-<br>
+  <div class="row">
+    <strong>
+      NOTE:
+      **Finalize the subjects only after uploading all the regular,open elective ,department elective courses**
+      <br>
 
-Subjects upload status option would be helpful for verifying the uploaded list
-<br>
-**Subjects once finalized cannot be modified for that particular event**
+      Subjects upload status option would be helpful for verifying the uploaded list
+      <br>
+      **Subjects once finalized cannot be modified for that particular event**
 
     </strong>
-        <form action="" method="post" >
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" value="submit">Finalize</button> 
-        </form>
-    </div>
+    <form action="" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" value="submit">Finalize</button>
+    </form>
+  </div>
+  {% if msg %}
+  <div class="row">
+    <strong>{{msg}}</strong>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

@@ -24,10 +24,10 @@
                         <td style="border: 1px solid black;">SubName</td>
                         <td style="border: 1px solid black;">Creditable</td>
                         <td style="border: 1px solid black;">Credits</td>
-                        <td style="border: 1px solid black;">OfferedBy</td>
-                        <td style="border: 1px solid black;">Regulation</td>
                         <td style="border: 1px solid black;">Type</td>
                         <td style="border: 1px solid black;">Category</td>
+                        <td style="border: 1px solid black;">OfferedBy</td>
+                        <td style="border: 1px solid black;">Regulation</td>
                         <td style="border: 1px solid black;">DistributionRatio</td>
                         <td style="border: 1px solid black;">MarkDistribution</td>
                         <td style="border: 1px solid black;">Delete Y/N</td>
@@ -72,5 +72,10 @@
                 {% endfor %}
         </div>
     </form>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

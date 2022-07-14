@@ -12,18 +12,16 @@
                 <table>
                     <th>
                         <tr>
-                            <td style="border: 1px solid black;">SubCode </td>
-                            <td style="border: 1px solid black;">SubName</td>
-                            <td style="border: 1px solid black;">BYear</td>
-                            <td style="border: 1px solid black;">BSem</td>
-                            <td style="border: 1px solid black;">Dept</td>
-                            <td style="border: 1px solid black;">OfferedYear</td>
-                            <td style="border: 1px solid black;">Regulation</td>
-                            <td style="border: 1px solid black;">Creditable</td>
-                            <td style="border: 1px solid black;">Credits</td>
-                            <td style="border: 1px solid black;">Type</td>
-                            <td style="border: 1px solid black;">Category</td>
-                            <td style="border: 1px solid black;">OfferedBy</td>
+                            <td style="border: 1px solid black">SubCode</td>
+                            <td style="border: 1px solid black">SubName</td>
+                            <td style="border: 1px solid black">Creditable</td>
+                            <td style="border: 1px solid black">Credits</td>
+                            <td style="border: 1px solid black">Type</td>
+                            <td style="border: 1px solid black">Category</td>
+                            <td style="border: 1px solid black">RegEventId</td>
+                            <td style="border: 1px solid black">OfferedBy</td>
+                            <td style="border: 1px solid black">DistributionRatio</td>
+                            <td style="border: 1px solid black">MarkDistribution</td>
                             <td style="border: 1px solid black;">Do you want to update(Y/N)</td>
                         </tr>
                     </th>
@@ -62,15 +60,6 @@
                         <td style="border: 1px solid black;">
                             {{ field.10 }}
                         </td>
-                        <td style="border: 1px solid black;">
-                            {{ field.11 }}
-                        </td>
-                        <td style="border: 1px solid black;">
-                            {{ field.12 }}
-                        </td>
-                        <td style="border: 1px solid black;">
-                            {{ field.13 }}
-                        </td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -78,10 +67,45 @@
             </div>
         </form>
     </div>
-
-    <!-- <p id="CGPA">
-
-    </p> -->
+    {% if errorRows %}
+    <div class="row">
+        <strong>These rows have dissimilar marks distribution and distribution ratio</strong>
+      </div>
+      <div class="row">
+        <table>
+          <thead>
+            <tr>
+              <td style="border: 1px solid black">SubCode</td>
+              <td style="border: 1px solid black">SubName</td>
+              <td style="border: 1px solid black">Creditable</td>
+              <td style="border: 1px solid black">Credits</td>
+              <td style="border: 1px solid black">Type</td>
+              <td style="border: 1px solid black">Category</td>
+              <td style="border: 1px solid black">RegEventId</td>
+              <td style="border: 1px solid black">OfferedBy</td>
+              <td style="border: 1px solid black">DistributionRatio</td>
+              <td style="border: 1px solid black">MarkDistribution</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in errorRows %}
+            <tr>
+              <td style="border: 1px solid black">{{row.0}}</td>
+              <td style="border: 1px solid black">{{row.1}}</td>
+              <td style="border: 1px solid black">{{row.2}}</td>
+              <td style="border: 1px solid black">{{row.3}}</td>
+              <td style="border: 1px solid black">{{row.4}}</td>
+              <td style="border: 1px solid black">{{row.5}}</td>
+              <td style="border: 1px solid black">{{row.6}}</td>
+              <td style="border: 1px solid black">{{row.7}}</td>
+              <td style="border: 1px solid black">{{row.8}}</td>
+              <td style="border: 1px solid black">{{row.9}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
 
 </div>
 {% endblock %}

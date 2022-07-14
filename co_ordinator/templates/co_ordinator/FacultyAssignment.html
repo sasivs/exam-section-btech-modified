@@ -28,7 +28,7 @@
           </tr>
         </thead>
         {% for sub in subjects %}
-        <tr data-row-href="{% url 'FacultyAssignmentDetail' sub.id %}">
+        <tr data-row-href="{% url 'FacultySubjectAssignmentDetail' sub.id %}">
           <td style="border: 1px solid black;">{{sub.id}}</td>
           <td style="border: 1px solid black;">{{sub.SubCode}}</td>
           <td style="border: 1px solid black;">{{sub.SubName}}</td>

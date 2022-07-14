@@ -1,5 +1,8 @@
 
 
+from numpy import flatiter
+
+
 def is_Superintendent(user):
     return user.groups.filter(name='Superintendent').exists()
 def is_Hod(user):
@@ -11,22 +14,26 @@ def is_Co_ordinator(user):
 def is_ExamStaff(user):
     return user.groups.filter(name='ExamStaff').exists()
 
-
+def user_management_home_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'HOD' in groups:
+        return True
+    return False
 def roll_list_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co_ordinator' in groups:
+    if 'Co_ordinator' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return  False
 
 def roll_list_status_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co_ordinator' in groups or 'HOD' in groups:
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return  False
 
 def subject_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co_ordinator' in groups:
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return False
 
@@ -87,7 +94,8 @@ def grades_status_access(user):
 
 def faculty_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co_ordinator' in groups or 'HOD' in groups or 'faculty' in groups or 'ExamStaff' in groups:
+    if 'Superintendent' in groups or 'Co_ordinator' in groups or 'HOD' in groups or 'faculty' in groups or 'ExamStaff' in groups\
+        or 'Cycle-Co-ordinator' in groups:
         return True
     return  False
 
@@ -101,5 +109,17 @@ def faculty_info_status_access(user):
 def co_ordinator_assignment_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'HOD' in groups:
+        return True
+    return  False
+
+def faculty_subject_assignment_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co_ordinator' in groups or 'HOD' in groups:
+        return True
+    return  False
+
+def faculty_assignment_status_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'Co_ordinator' in groups or 'HOD' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return  False

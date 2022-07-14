@@ -30,14 +30,15 @@ class RegistrationsEventForm(forms.Form):
 class SubjectsUploadForm(forms.Form):
     def __init__(self, Options=None, *args,**kwargs):
         super(SubjectsUploadForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField()
+        self.fields['file'] = forms.FileField(required=False)
+        self.fields['file'].widget.attrs.update({'required':'True'})
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
         myChoices = [(oIndex, depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ \
             ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) for oIndex, option in enumerate(Options)]
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=26, widget=forms.Select(choices=myChoices))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False, max_length=26, widget=forms.Select(choices=myChoices, attrs={'required':'True'}))
 
 class SubjectDeletionForm(forms.Form):
     def __init__(self,  *args,**kwargs):
@@ -77,17 +78,17 @@ class SubjectDeletionForm(forms.Form):
                 self.fields['Check' + sub.SubCode] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
                 if('Check'+sub.SubCode in self.data.keys() and self.data['Check'+sub.SubCode]==True):
                     self.fields['Check' + sub.SubCode].initial = True
-                self.myFields.append((sub.SubCode,sub.SubName,sub.Creditable,sub.Credits,sub.OfferedBy,regulation,sub.Type,sub.Category,self['Check'+sub.SubCode]))
+                self.myFields.append((sub.SubCode,sub.SubName,sub.Creditable,sub.Credits,sub.Type,sub.Category,sub.OfferedBy,regulation, sub.DistributionRatio, sub.MarkDistribution.Distribution,self['Check'+sub.SubCode]))
  
 
 class SubjectFinalizeEventForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, options, *args,**kwargs):
         super(SubjectFinalizeEventForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        print(options)
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in options]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
@@ -140,13 +141,12 @@ class RollListRegulationDifferenceForm(forms.Form):
             self.myFields.append((Options[0][row],Options[1],stud_info.Regulation,self['RadioMode' + str(Options[0][row])]))
 
 class RollListFinalizeForm(forms.Form):
-    def __init__(self,  *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(RollListFinalizeForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in regIDs]
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
@@ -155,21 +155,19 @@ class RollListFinalizeForm(forms.Form):
             max_length=26, widget=forms.Select(choices=myChoices))
 
 class GenerateRollListForm(forms.Form):
-    def __init__(self,  *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(GenerateRollListForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        #attrs={'onchange':"submit();"}
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
-            max_length=26, widget=forms.Select(choices=myChoices))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
+            max_length=26, widget=forms.Select(choices=myChoices, attrs={'required':'True'}))
 
 
 class RollListsCycleHandlerForm(forms.Form):
@@ -214,14 +212,13 @@ class UpdateSectionInfoForm(forms.Form):
 
 
 class UploadSectionInfoForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(UploadSectionInfoForm, self).__init__(*args, **kwargs)
         self.fields['file'] = forms.FileField()
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
@@ -232,14 +229,13 @@ class UploadSectionInfoForm(forms.Form):
 
 
 class RollListFeeUploadForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs,*args,**kwargs):
         super(RollListFeeUploadForm, self).__init__(*args, **kwargs)
         self.fields['file'] = forms.FileField()
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in self.regIDs]
+        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in regIDs]
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
@@ -888,10 +884,11 @@ class MakeupRegistrationSummaryForm(forms.Form):
 
 
 class FacultySubjectAssignmentForm(forms.Form):
-    def __init__(self, current_user, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(FacultySubjectAssignmentForm, self).__init__(*args, **kwargs)
-        self.regIDs = RegistrationStatus.objects.filter(Status=1, BYear=current_user.Dept)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = []
+        if regIDs:
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         myChoices = [(DEPARTMENTS[option[4]-1]+':'+ YEARS[option[2]]+':'+ SEMS[option[3]]+':'+ str(option[0])+ ':'+\
             str(option[1])+':'+str(option[6])+':'+str(option[5]), DEPARTMENTS[option[4]-1]+':'+ \
                 YEARS[option[2]]+':'+ SEMS[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
@@ -901,15 +898,11 @@ class FacultySubjectAssignmentForm(forms.Form):
         widget=forms.Select(choices=myChoices))
 
 class FacultyAssignmentStatusForm(forms.Form):
-    def __init__(self, faculty, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(FacultyAssignmentStatusForm,self).__init__(*args, **kwargs)
-        if faculty != 'Superintendent':
-            regIDs = RegistrationStatus.objects.filter(Status=1, Dept=faculty.Dept, BYear=faculty.BYear)
-        else:
-            regIDs = RegistrationStatus.objects.filter(Status=1)
         regEventIDKVs = [(reg.id,reg.__str__()) for reg in regIDs]
         regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
-        self.fields['regID'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs))
+        self.fields['regID'] = forms.CharField(label='Registration Event', required=False, widget = forms.Select(choices=regEventIDKVs, attrs={'required':'True'}))
 
 class GradeChallengeForm(forms.Form):
     def __init__(self, co_ordinator, *args, **kwargs):

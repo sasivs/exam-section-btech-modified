@@ -14,27 +14,27 @@
                 <tr>
                     <td style="border: 1px solid black;">SubCode </td>
                     <td style="border: 1px solid black;">SubName </td>
-                    <td style="border: 1px solid black;">Course Co-Ordinator Info</td>
+                    <td style="border: 1px solid black;">Course Co-Ordinator Name</td>
                     <td style="border: 1px solid black;">Section  </td>
-                    <td style="border: 1px solid black;">Faculty Info</td>
+                    <td style="border: 1px solid black;">Faculty Name</td>
                 </tr>
             </th>
             {% for field in faculty %}
             <tr>
                 <td style="border: 1px solid black;">
-                    {{ field.subject.SubCode }}
+                    {{ field.Subject.SubCode }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ field.subject.SubName }}
+                    {{ field.Subject.SubName }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ field.co_ordinator.Name }}
+                    {{ field.Coordinator.Name }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ field.Section }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ field.faculty.Name }}
+                    {{ field.Faculty.Name }}
                 </td>
             </tr>
             {% endfor %}

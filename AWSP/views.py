@@ -17,3 +17,5 @@ def home(request):
         return HttpResponseRedirect(reverse('sindex'))
     elif request.user.groups.filter(name='ExamStaff').exists():
         return HttpResponseRedirect(reverse('sindex'))
+    elif request.user.groups.filter(name='Cycle-Co-ordinator').exists():
+        return HttpResponseRedirect(reverse('sindex'))

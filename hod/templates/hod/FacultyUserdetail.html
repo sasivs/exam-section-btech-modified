@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/faculty_home.html' %} {% block sub %}
+{% extends 'SupExamDBRegistrations/userassignment_home.html' %} {% block sub %}
 
 <div class="container">
     <div class="row">
@@ -30,17 +30,14 @@
                     <th>User</th>
                     <td>
                         <select name="fac_user" id="fac_user">
-                            <option value="0" selected>Select User</option>
+                            <option value="" selected>Select User</option>
                             {% for userr in Users %}
-                            {% if assigned_user == userr.id %}
-                            {{userr.id}}
+                            {{assigned_user}}
+                            {% if assigned_user.User.id == userr.id %}
                             <option value="{{userr.id}}" selected>{{ userr.username }}</option>
                             {% else %}
                             <option value="{{userr.id}}">{{ userr.username }}</option>
-
                             {% endif %}
-                            
-
                             {% endfor %}
                         </select>
                     </td>

@@ -275,7 +275,7 @@ class FacultyAssignment(models.Model):
     class Meta:
         db_table = 'FacultyAssignment'
         unique_together = (
-            ('Subject', 'RegEventId', 'Coordinator'), 
+            # ('Subject', 'RegEventId', 'Coordinator', 'Section'), 
             ('Subject', 'RegEventId', 'Faculty', 'Section')
         )
         managed = True
