@@ -275,13 +275,14 @@ class RegistrationsUploadForm(forms.Form):
 
 
 class RegistrationsFinalizeEventForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(RegistrationsFinalizeEventForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = []
+        if regIDs:
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
@@ -768,59 +769,53 @@ class NotPromotedStatusForm(forms.Form):
 
 
 class RegularRegistrationsStatusForm(forms.Form):
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, regIDs, *args, **kwargs):
         super(RegularRegistrationsStatusForm, self).__init__(*args, **kwargs)
-        groups = user.groups.all().values_list('name', flat=True)
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
-        if 'Superintendent' in groups:
-            deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        elif 'Co-ordinator' in groups:
-            coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-            departments = departments.filter(Dept=coordinator.Dept)
-            deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        elif 'Cycle-Co-ordinator' in groups:
-            cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-            departments = departments.filter(Dept=cycle_cord.Dept)
-            deptChoices = [(rec.Dept, rec.Specialization) for rec in departments]
-        aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
-        aSemChoices = [(0,'--Select ASem--')] + [(1,1),(2,2)]
-        regNoChoices = [(0,'--Select RegNo--')]
-        deptChoices = [(0,'--Select Dept--')] + deptChoices
-        # bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
-        # bSemChoices = [(0,'--Select BSem--'),(1,1),(2,2)]
-        aYearBox = forms.IntegerField(label='Select AYear', widget=forms.Select(choices=aYearChoices,attrs={'onchange':'submit();'}))
-        aSemBox = forms.IntegerField(label='Select ASem', widget=forms.Select(choices=aSemChoices, attrs={'onchange':'submit()'}),\
-             required=False)
-        deptBox = forms.IntegerField(label='Select Department', widget=forms.Select(choices=deptChoices, attrs={'onchange':'submit();'}), \
-            required=False)
-        regNoBox = forms.IntegerField(label='Select RegNo', widget=forms.Select(choices=regNoChoices,attrs={'onchange':'submit();'})\
-            , required=False)
-        self.fields['aYear'] = aYearBox
-        self.fields['aSem'] = aSemBox
-        self.fields['dept'] = deptBox
-        self.fields['regNo'] = regNoBox
-        if 'aYear' in self.data.keys() and self.data['aYear']!='0':
-            regNo = RegularRegistrationSummary.objects.filter(AYear=int(self.data['aYear']))
-            if 'aSem' in self.data.keys() and self.data['aSem']!='0':
-                regNo = regNo.filter(ASem=int(self.data['aSem']))
-            if 'dept' in self.data.keys() and self.data['dept']!='0':
-                regNo = regNo.filter(Dept=int(self.data['dept']))
-            regNo = regNo.values('RegNo').distinct()
-            regNo = list(regNo)
-            regNoChoices = [(i['RegNo'],i['RegNo']) for i in regNo]
-            regNoChoices = [(0,'--Select RegNo--')]+regNoChoices
-            regNoBox = forms.IntegerField(label='Select RegNo', widget=forms.Select(choices=regNoChoices,\
-                    attrs={'onchange':'submit();'}), required=False)
-            self.fields['regNo'] = regNoBox
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs=[]
+        if regIDs:
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
+        myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
+            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ years[option[2]]+':'+\
+                 sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
+                     for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        self.fields['regId'] = forms.CharField(label='Choose Registration ID', max_length=30, \
+            widget=forms.Select(choices=myChoices,attrs={'onchange':"submit();"}))
+        regNoChoices = [(0,'--Choose RegNo--')]
+        self.fields['RegNo'] = forms.IntegerField(label='Choose RegNo', widget=forms.Select(choices=regNoChoices, \
+            attrs={'onchange':"submit()"}), required=False)
+        if 'regId' in self.data.keys() and self.data['regId']!='--Choose Event--':
+            depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+            years = {1:'I', 2:'II', 3:'III', 4:'IV'}
+            deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
+            rom2int = {'I':1,'II':2,'III':3,'IV':4}
+            strs = self.data['regId'].split(':')
+            dept = deptDict[strs[0]]
+            ayear = int(strs[3])
+            asem = int(strs[4])
+            byear = rom2int[strs[1]]
+            bsem = rom2int[strs[2]]
+            regulation = int(strs[5])
+            mode = strs[6]
+            regNoChoices = RegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                    ASem = asem, BYear=byear, BSem=bsem, Dept=dept).values('RegNo').distinct()
+            regNoChoices = [(i['RegNo'], i['RegNo']) for i in regNoChoices]
+            regNoChoices = [(0,'--Choose RegNo--')] + regNoChoices
+            self.fields['RegNo'] = forms.IntegerField(label='Choose RegNo', widget=forms.Select(choices=regNoChoices, \
+            attrs={'onchange':"submit()"}), required=False)
 
 class BacklogRegistrationSummaryForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(BacklogRegistrationSummaryForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='B')
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = []
+        if regIDs:
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ years[option[2]]+':'+\
                  sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
@@ -852,13 +847,14 @@ class BacklogRegistrationSummaryForm(forms.Form):
             attrs={'onchange':"submit()"}), required=False)
 
 class MakeupRegistrationSummaryForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(MakeupRegistrationSummaryForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II', 3:'III'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='M')
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = []
+        if regIDs:
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
         self.regIDs = list(set(self.regIDs))
         myChoices = [(depts[option[3]-1]+':'+ years[option[2]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[5])+':'+str(option[4]), depts[option[3]-1]+':'+ years[option[2]]\

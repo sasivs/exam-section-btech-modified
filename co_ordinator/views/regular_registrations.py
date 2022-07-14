@@ -74,8 +74,16 @@ def btech_regular_registration(request):
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def registrations_finalize(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if(request.method=='POST'):
-        form = RegistrationsFinalizeEventForm(request.POST)
+        form = RegistrationsFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
             depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
             years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -101,9 +109,7 @@ def registrations_finalize(request):
                     s=StudentRegistrations(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
                     s.save() 
                 return render(request, 'co_ordinator/BTRegistrationsFinalizeSuccess.html')
-        else:
-            print('Invalid')
     else:
-        form = RegistrationsFinalizeEventForm()
+        form = RegistrationsFinalizeEventForm(regIDs)
     return render(request, 'co_ordinator/BTRegistrationsFinalize.html',{'form':form})
     

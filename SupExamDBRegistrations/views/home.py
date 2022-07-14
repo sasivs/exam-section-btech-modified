@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
 
-from superintendent.user_access_test import registration_access, roll_list_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
-    user_management_home_access, is_Superintendent
+from superintendent.user_access_test import registration_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
+    user_management_home_access, is_Superintendent, roll_list_status_access
 
 def logout_request(request):
     logout(request)
@@ -33,7 +33,7 @@ def branch_change_home(request):
     return render(request, 'SupExamDBRegistrations/branchChange_home.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(roll_list_access)
+@user_passes_test(roll_list_status_access)
 def rolllist_home(request):
     return render(request, 'SupExamDBRegistrations/rollList_home.html')
 

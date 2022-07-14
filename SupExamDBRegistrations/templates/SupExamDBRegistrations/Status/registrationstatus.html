@@ -16,10 +16,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shoratge Status</a>
-                </li>
-                {% else %}
+                {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
@@ -29,13 +26,26 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
                 </li>
+                {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'AttendanceShoratgeUpload' %}">Attendance Shoratge Upload</a>
+                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shoratge Status</a>
+                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
                 </li>
-                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                </li>
+                {% elif user|has_group:'Cycle-Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                </li>
                 {% endif %}
             </ul>
         </div>
