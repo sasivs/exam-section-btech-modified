@@ -12,6 +12,11 @@
           {{ form.as_p }}
           <button type="submit">Submit</button> 
         </form>
-       </div>
+      </div>
+      {% if msg %}
+      <div class="row">
+        <strong>{{msg}}</strong>
+      </div>
+      {% endif %}
 </div>
 {% endblock %}

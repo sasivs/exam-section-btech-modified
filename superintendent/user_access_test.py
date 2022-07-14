@@ -39,7 +39,13 @@ def subject_access(user):
 
 def registration_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co_ordinator' in groups:
+    if 'Co_ordinator' in groups or 'Cycle-Co-ordinator' in groups:
+        return True
+    return False 
+
+def registration_status_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co_ordinator' in groups or 'Cycle-Co-ordinator' in groups or 'Superintendent' in groups or 'HOD' in groups:
         return True
     return False 
 

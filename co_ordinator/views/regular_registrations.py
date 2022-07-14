@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from co_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, CycleCoordinator
 from co_ordinator.models import RollLists_Staging, StudentRegistrations_Staging, StudentRegistrations, Subjects
+from hod.models import Coordinator
 from django.db.models import Q
 from superintendent.user_access_test import registration_access
 
@@ -10,9 +11,17 @@ from superintendent.user_access_test import registration_access
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def btech_regular_registration(request):
-    if(request.method=='POST'):
-        regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+    if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
+    if(request.method=='POST'):
         form = RegistrationsUploadForm(regIDs, request.POST)
         if(form.is_valid()):
             if(form.cleaned_data['regID']!='--Choose Event--'):
@@ -25,11 +34,11 @@ def btech_regular_registration(request):
                     rolls = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                     subs = Subjects.objects.filter(~Q(Category='OEC'),RegEventId=currentRegEventId).filter(~Q(Category='DEC'))
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                     initial_registrations = StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
@@ -38,16 +47,16 @@ def btech_regular_registration(request):
                                 regRow.save()
                     StudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
-                    return render(request, 'co_ordinator/BTRegistrationUploadSuccess.html', {'msg':msg})
+                    return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                 else:
                     rolls = RollLists_Staging.objects.filter(RegEvent_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'co_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
                     subs = Subjects.objects.filter(~Q(Category='OEC'),RegEventId=currentRegEventId).filter(~Q(Category='DEC'))
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'co_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
                     initial_registrations = StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
@@ -56,10 +65,8 @@ def btech_regular_registration(request):
                                 regRow.save()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     StudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
-                    return render(request, 'co_ordinator/BTRegistrationUploadSuccess.html', {'msg':msg})
+                    return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
     else:
-        regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         form = RegistrationsUploadForm(Options=regIDs)
     return(render(request, 'co_ordinator/BTRegularRegistrationUpload.html',{'form':form }))
 

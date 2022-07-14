@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from superintendent.user_access_test import is_Superintendent
+from superintendent.user_access_test import is_Superintendent, registration_status_access
 from co_ordinator.forms import RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
 from co_ordinator.models import BacklogRegistrationSummary, RegularRegistrationSummary, MakeupRegistrationSummary
 from superintendent.models import ProgrammeModel
@@ -22,17 +22,18 @@ from superintendent.models import ProgrammeModel
 #                     { 'studentMakeupBacklogsVsRegistrations':studentMakeupBacklogsVsRegistrations }  )
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_status_access)
 def btech_registration_status_home(request):
     return render(request, 'SupExamDBRegistrations/Status/registrationstatus.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_status_access)
 def btech_regular_registration_status(request):
+    user = request.user
     heading = ''
     studentRegistrations = []
     if(request.method=='POST'):
-        form = RegularRegistrationsStatusForm(request.POST)
+        form = RegularRegistrationsStatusForm(user, request.POST)
         if(form.is_valid()):
             studentRegistrations = []
             ayear = form.cleaned_data['aYear'] 
@@ -49,12 +50,12 @@ def btech_regular_registration_status(request):
                     studentRegistrations = studentRegistrations.filter(RegNo=int(regNo))
                 studentRegistrations = list(studentRegistrations.values())
     else:
-        form = RegularRegistrationsStatusForm()
+        form = RegularRegistrationsStatusForm(user)
     return render(request, 'co_ordinator/BTRegularRegistrationStatus.html',
                     { 'studentRegistrations':studentRegistrations ,'form':form}  )
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_status_access)
 def btech_backlog_registration_status(request):
     heading = ''
     studentRegistrations = []
@@ -90,7 +91,7 @@ def btech_backlog_registration_status(request):
                     { 'studentRegistrations':studentRegistrations ,'form':form, 'heading' :heading }  )
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_status_access)
 def btech_makeup_registration_status(request):
     heading = ''
     studentRegistrations = []

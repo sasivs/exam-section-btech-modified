@@ -1,10 +1,11 @@
 from django import forms 
 from django.db.models import Q 
 from co_ordinator.models import StudentRegistrations, StudentRegistrations_Staging
+from hod.models import Coordinator
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 from co_ordinator.models import FacultyAssignment, NotRegistered, Subjects_Staging, Subjects, StudentBacklogs, RollLists,\
     DroppedRegularCourses, StudentMakeups, RegularRegistrationSummary, BacklogRegistrationSummary, MakeupRegistrationSummary
-from superintendent.models import RegistrationStatus, ProgrammeModel
+from superintendent.models import CycleCoordinator, RegistrationStatus, ProgrammeModel
 from ExamStaffDB.models import StudentInfo
 from faculty.models import Marks_Staging
 import datetime
@@ -267,10 +268,8 @@ class RegistrationsUploadForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        print(str(Options[0][4])+str(Options[0][3])+str(Options[0][2]))
         myChoices = [(oIndex, depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) for oIndex, option in enumerate(Options)]
-        print(myChoices)
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=26, widget=forms.Select(choices=myChoices))
 
@@ -769,13 +768,23 @@ class NotPromotedStatusForm(forms.Form):
 
 
 class RegularRegistrationsStatusForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(RegularRegistrationsStatusForm, self).__init__(*args, **kwargs)
+        groups = user.groups.all().values_list('name', flat=True)
+        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+        if 'Superintendent' in groups:
+            deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
+        elif 'Co-ordinator' in groups:
+            coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+            departments = departments.filter(Dept=coordinator.Dept)
+            deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
+        elif 'Cycle-Co-ordinator' in groups:
+            cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+            departments = departments.filter(Dept=cycle_cord.Dept)
+            deptChoices = [(rec.Dept, rec.Specialization) for rec in departments]
         aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
         aSemChoices = [(0,'--Select ASem--')] + [(1,1),(2,2)]
         regNoChoices = [(0,'--Select RegNo--')]
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
-        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
         deptChoices = [(0,'--Select Dept--')] + deptChoices
         # bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
         # bSemChoices = [(0,'--Select BSem--'),(1,1),(2,2)]

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout 
 from django.shortcuts import redirect
 
-from superintendent.user_access_test import roll_list_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
+from superintendent.user_access_test import registration_access, roll_list_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
     user_management_home_access, is_Superintendent
 
 def logout_request(request):
@@ -13,7 +13,7 @@ def logout_request(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(registration_access)
 def registration_home(request):
     return render(request,'SupExamDBRegistrations/BTRegistrationHome.html')
 

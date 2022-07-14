@@ -85,12 +85,12 @@ def faculty_Coordinator(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Hod)
+@user_passes_test(co_ordinator_assignment_access)
 def faculty_Coordinator_Status(request):
     if(request.user.groups.filter(name='Superintendent').exists()):
         user = request.user
         Coordinators = Coordinator.objects.all()
-    elif(request.user.groups.filter(name='hod').exists()):
+    elif(request.user.groups.filter(name='HOD').exists()):
         user = request.user
         hod = HOD.objects.filter(RevokeDate__isnull=True,User=user)
         Coordinators = Coordinator.objects.filter(Dept=hod.Dept)
