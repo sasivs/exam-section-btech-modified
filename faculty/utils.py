@@ -20,9 +20,12 @@ class SampleMarksUploadExcelSheetGenerator:
         file += '__'+str(self.subject.SubCode)
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
         marks_distribution = self.subject.MarkDistribution
-        marks_distribution_names = marks_distribution.split(',')
-        marks_distribution_names = [name.split('+') for name in marks_distribution_names]
-        marks_distribution_names = ['RegNo', 'Name'] + marks_distribution_names
+        distribution_names = marks_distribution.DistributionNames.split(',')
+        distribution_names = [name.split('+') for name in distribution_names]
+        marks_distribution_names = ['RegNo', 'Name'] 
+        for dis_name in distribution_names:
+            marks_distribution_names.extend(dis_name)
+        
         row_num = 1
         for col_num, column_title in enumerate(marks_distribution_names,1):
             cell = worksheet.cell(row=row_num, column=col_num)

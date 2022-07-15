@@ -22,7 +22,7 @@ def grades_generate(request):
     faculty = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty, RevokeDate__isnull=True)
+    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1, RegEventId__GradeStatus=1)
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
         if form.is_valid():
@@ -37,33 +37,49 @@ def grades_generate(request):
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
 
             attendance_shortage = Attendance_Shortage.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
+            grades_objects = StudentGrades_Staging.objects.filter(RegId__in=marks_objects.values_list('Registration', flat=True))
             
             for att in attendance_shortage:
-                grade = StudentGrades_Staging(RegId=att.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
-                    Grade='R', AttGrade='X') 
-                grade.save()
+                if grades_objects.filter(RegId=att.Registration.id):
+                    grades_objects.filter(RegId=att.Registration.id).update(Grade='R', AttGrade='X')
+                else:
+                    grade = StudentGrades_Staging(RegId=att.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                        Grade='R', AttGrade='X') 
+                    grade.save()
                 mark_obj = marks_objects.filter(Registration__RegNo=att.Student.RegNo).first()
                 marks_objects = marks_objects.exclude(mark_obj)
             
             ix_grades = IXGradeStudents.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
 
             for ix_grade in ix_grades:
-                grade = StudentGrades_Staging(RegId=ix_grade.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
-                    Grade=ix_grade.Grade, AttGrade='P')
-                grade.save()
+                if grades_objects.filter(RegId=ix_grade.Registration.id):
+                    grades_objects.filter(RegId=ix_grade.Registration.id).update(Grade=ix_grade.Grade, AttGrade='P')
+                else:
+                    grade = StudentGrades_Staging(RegId=ix_grade.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                        Grade=ix_grade.Grade, AttGrade='P')
+                    grade.save()
                 marks_objects = marks_objects.exclude(Registration=ix_grade.Registration)
             
             if GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=True).exists():
-                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=True).order_by('-ThresholdMark')
+                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=True).order_by('-Threshold_Mark')
             else:
-                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, unifrom_grading=False, Section=section).order_by('-ThresholdMark')
+                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=False, Section=section).order_by('-Threshold_Mark')
+
+            if not thresholds:
+                msg = 'Grade Threshold is not updated for this subject.'
+                return render(request, 'faculty/GradesGenerate.html', {'form':form, 'msg':msg})
 
             for mark in marks_objects:
                 for threshold in thresholds:
-                    if mark.TotalMarks >= threshold.ThresholdMark:
-                        grade = StudentGrades_Staging(RegId=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
-                            Grade=threshold.Grade, AttGrade='P')
-                        grade.save()
+                    if mark.TotalMarks >= threshold.Threshold_Mark:
+                        if grades_objects.filter(RegId=mark.Registration.id):
+                            grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
+                            break
+                        else:
+                            grade = StudentGrades_Staging(RegId=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                Grade=threshold.Grade.Grade, AttGrade='P')
+                            grade.save()
+                            break
             
             msg = 'Grades generated successfully.'
             return render(request, 'faculty/GradesGenerate.html', {'form':form, 'msg':msg})
@@ -86,29 +102,33 @@ def grades_status(request):
     subjects = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(Faculty=faculty, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
     elif 'Superintendent' in groups:
         subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = FacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1)
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = FacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
-        subject = form.cleaned_data.get('subject').split(':')[0]
-        regEvent = form.cleaned_data.get('subject').split(':')[1]
-        regEvent = RegistrationStatus.objects.get(id=regEvent)
-        section = form.cleaned_data.get('subject').split(':')[2]
-        roll_list = RollLists.objects.filter(RegEventId=regEvent, Section=section)
-        student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject, \
-            RegNo__in=roll_list.values_list('student__RegNo', flat=True))
-        grades = StudentGrades_Staging.objects.filter(RegEventId=regEvent.id, RegId__in=student_registrations.values_list('id',flat=True))
-        for grade in grades:
-            grade.RegNo = student_registrations.filter(id=grade.RegId).first().RegNo
-            grade.regEvent = regEvent.__str__()
-        return render(request, 'faculty/GradesStatus.html', {'form':form, 'grades':grades})
+        if form.is_valid():
+            subject = form.cleaned_data.get('subject').split(':')[0]
+            regEvent = form.cleaned_data.get('subject').split(':')[1]
+            regEvent = RegistrationStatus.objects.get(id=regEvent)
+            section = form.cleaned_data.get('subject').split(':')[2]
+            roll_list = RollLists.objects.filter(RegEventId=regEvent, Section=section)
+            student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject, \
+                RegNo__in=roll_list.values_list('student__RegNo', flat=True))
+            grades = StudentGrades_Staging.objects.filter(RegEventId=regEvent.id, RegId__in=student_registrations.values_list('id',flat=True))
+            grades = list(grades)
+            for grade in grades:
+                grade.RegNo = student_registrations.filter(id=grade.RegId).first().RegNo
+                grade.regEvent = regEvent.__str__()
+            import operator
+            grades = sorted(grades, key=operator.attrgetter('RegNo'))
+            return render(request, 'faculty/GradesStatus.html', {'form':form, 'grades':grades})
     else:
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'faculty/GradesStatus.html', {'form':form})

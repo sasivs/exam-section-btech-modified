@@ -45,12 +45,31 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="MarksDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Marks
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="MarksDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTMarksHome' %}">Marks</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 Faculty
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
                                 <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="NotPromotedDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Not Promoted
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="NotPromotedDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTNotPromotedHome' %}">Not Promoted</a>
+                                </li>
                             </ul>
                         </li>
                         {% elif user|has_group:"Cycle-Co-ordinator" %}
@@ -68,12 +87,31 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="MarksDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Marks
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="MarksDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTMarksHome' %}">Marks</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="FacultyDropDown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 Faculty
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
                                 <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="NotPromotedDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Not Promoted
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="NotPromotedDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTNotPromotedHome' %}">Not Promoted</a>
+                                </li>
                             </ul>
                         </li>
                         {% elif user|has_group:"HOD" %}
@@ -284,6 +322,25 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="FacultyDropDown">
                                 <li><a class="dropdown-item" href="{% url 'SupBTFacultyHome' %}">Faculty</a></li>
+                            </ul>
+                        </li>
+                        {% elif user|has_group:"Faculty" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="MarksDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Marks
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="MarksDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTMarksHome' %}">Marks</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="GradesDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Grades
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="GradesDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTGradesHome' %}">Grades</a></li>
                             </ul>
                         </li>
                         {% endif %}

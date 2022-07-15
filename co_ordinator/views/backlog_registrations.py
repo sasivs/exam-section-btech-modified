@@ -3,13 +3,23 @@ from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import BacklogRegistrationForm
 from co_ordinator.models import Subjects, StudentRegistrations_Staging, DroppedRegularCourses
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, CycleCoordinator
+from hod.models import Coordinator
 from ExamStaffDB.models import StudentInfo
 
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def btech_backlog_registration(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='B')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='B')
     studentInfo = []
     if(request.method == 'POST'):
         regId = request.POST['RegEvent']
@@ -34,7 +44,7 @@ def btech_backlog_registration(request):
             con['RegEvent']=request.POST['RegEvent']
             if 'RegNo' in request.POST.keys():
                 con['RegNo']=request.POST['RegNo']
-            form = BacklogRegistrationForm(con)
+            form = BacklogRegistrationForm(regIDs,con)
         elif 'RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST:
             form = BacklogRegistrationForm(request.POST)
         if not 'RegNo' in request.POST.keys():
@@ -110,7 +120,7 @@ def btech_backlog_registration(request):
             print("form validation failed")   
             print(form.errors.as_data())          
     else:
-        form = BacklogRegistrationForm()
+        form = BacklogRegistrationForm(regIDs)
     context = {'form':form, 'msg':0}
     if(len(studentInfo)!=0):
         context['RollNo'] = studentInfo[0].RollNo

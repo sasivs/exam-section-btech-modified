@@ -13,12 +13,13 @@ from superintendent.user_access_test import registration_access
 def btech_regular_registration(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
     if 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='B')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):

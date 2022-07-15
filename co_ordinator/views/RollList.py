@@ -492,7 +492,7 @@ def RollListFeeUpload(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(roll_list_access)
+@user_passes_test(roll_list_status_access)
 def NotRegisteredStatus(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
@@ -500,7 +500,7 @@ def NotRegisteredStatus(request):
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

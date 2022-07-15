@@ -16,12 +16,18 @@
                     <a class="nav-link" href="{% url 'GradePointsStatus' %}">Grade Points Status</a>
                 </li> 
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'IXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesStatus' %}">Grades Status</a>
                 </li>
                 {% elif user|has_group:'HOD' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesFinalize' %}">Finalize Grades</a>
                 </li>
@@ -38,7 +44,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'IXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
-                {% else %}
+                {% elif user|has_group:'Faculty' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesThreshold' %}">Grades Threshold</a>
                 </li>
@@ -56,6 +62,35 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'IXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|has_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'IXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|has_group:'Cycle-Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'GradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'IXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
                 {% endif %}
             </ul>

@@ -1,0 +1,1 @@
+default_app_config = 'co_ordinator.apps.CoOrdinatorConfig'

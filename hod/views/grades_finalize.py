@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
+from co_ordinator.models import FacultyAssignment, StudentRegistrations, Subjects
 from superintendent.user_access_test import grades_finalize_access
 from hod.forms import GradesFinalizeForm
 from superintendent.models import RegistrationStatus, HOD
@@ -15,43 +16,30 @@ def grades_finalize(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
-        regIDs = RegistrationStatus.objects.filter(Status=1, GradeStatus=1, Dept=hod.Dept)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Subject__OfferedBy=hod.Dept).distinct('Subject')
     if request.method == 'POST':
-        form = GradesFinalizeForm(regIDs, request.POST)
+        form = GradesFinalizeForm(subjects, request.POST)
         if form.is_valid():
-            depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-            years = {1:'I',2:'II',3:'III',4:'IV'}
-            deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
-            rom2int = {'I':1,'II':2,'III':3,'IV':4}
-            if(form.cleaned_data['regID']!='--Choose Event--'):
-                strs = form.cleaned_data['regID'].split(':')
-                dept = deptDict[strs[0]]
-                ayear = int(strs[3])
-                asem = int(strs[4])
-                byear = rom2int[strs[1]]
-                bsem = rom2int[strs[2]]
-                regulation = int(strs[5])
-                mode = strs[6]
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-                grades = StudentGrades_Staging.objects.filter(RegEventId=currentRegEventId[0].id)
+            if form.cleaned_data['subject']:
+                subject = form.cleaned_data['subject'].split(':')[0]
+                regEvent = form.cleaned_data['subject'].split(':')[1]
+                student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject)
+                grades = StudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True))
                 for g in grades:
                     gr = StudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
                     gr.save()
-                currentRegEventId[0].GradeStatus = 0
-                currentRegEventId[0].save()
                 RefreshMaterializedViews()
-                return render(request, 'SupExamDBRegistrations/GradesFinalizeSuccess.html')
+                msg = 'Grades have been finalized.'
+                return render(request, 'SupExamDBRegistrations/GradesFinalize.html', {'form':form, 'msg':msg})
     else:
-        form = GradesFinalizeForm(regIDs)
+        form = GradesFinalizeForm(subjects)
     return render(request, 'SupExamDBRegistrations/GradesFinalize.html', {'form':form})
 
 def RefreshMaterializedViews():
     conn = psycopg2.connect(
     host="localhost",
     database="public",
-    # name="public",
     user="postgres",
     password="postgresql")
     cursor = conn.cursor()
