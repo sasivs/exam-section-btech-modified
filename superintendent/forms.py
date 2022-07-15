@@ -132,18 +132,18 @@ class HODAssignmentForm(forms.Form):
         HOD_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]
         DEPT_CHOICES += [(dept.Dept, dept.Name) for dept in departments]
-        self.fields['dept'] = forms.CharField(label='Department', required=False, widget=forms.Select(choices=DEPT_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
-        self.fields['hod'] = forms.CharField(label='HOD', required=False, widget=forms.Select(choices=HOD_CHOICES,  attrs={'required':'True'}))
-        self.fields['user'] = forms.CharField(label='User', required=False, widget=forms.Select(choices=USER_CHOICES, attrs={'required':'True'}))
+        self.fields['dept'] = forms.ChoiceField(label='Department', required=False, choices=DEPT_CHOICES, widget=forms.Select(attrs={'onchange':"submit()", 'required':'True'}))
+        self.fields['hod'] = forms.ChoiceField(label='HOD', required=False, choices=HOD_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         if self.data.get('dept'):
             faculty= FacultyInfo.objects.filter(Working=True, Dept=self.data.get('dept'))
             HOD_CHOICES += [(fac.id, fac.Name) for fac in faculty]
-            self.fields['hod'] = forms.CharField(label='HOD', required=False, widget=forms.Select(choices=HOD_CHOICES, attrs={'required':'True'}))
+            self.fields['hod'] = forms.ChoiceField(label='HOD', required=False, choices=HOD_CHOICES, widget=forms.Select(attrs={'required':'True'}))
             group = Group.objects.filter(name='HOD').first()
             assigned_users = HOD.objects.filter(RevokeDate__isnull=True).exclude(Dept=self.data.get('dept'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
             USER_CHOICES += [(user.id, user.username) for user in users]
-            self.fields['user'] = forms.CharField(label='User', required=False, widget=forms.Select(choices=USER_CHOICES, attrs={'required':'True'}))
+            self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
             initial_hod = HOD.objects.filter(Dept=self.data.get('dept'), RevokeDate__isnull=True).first()
             if initial_hod:
                 self.fields['hod'].initial = initial_hod.Faculty.id

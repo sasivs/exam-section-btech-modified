@@ -165,7 +165,6 @@ def generateRollList(request):
 
                         initial_roll_list = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
-                        RollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=backlog_rolls).delete()
                         if byear == 1:
 
                             backlog_rolls = StudentBacklogs.objects.filter(BYear=byear, Dept=dept).values_list('RegNo', flat=True)
@@ -188,6 +187,7 @@ def generateRollList(request):
                                 if not initial_roll_list.filter(student=student).exists():
                                     roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                                     roll.save()
+                        RollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=backlog_rolls).delete()
                     elif mode == 'M':
                         makeup_rolls = list(StudentMakeups.objects.filter(Dept=dept, BYear=byear, BSem=bsem).values_list('RegNo', flat=True).distinct())
                         makeup_rolls.sort()
