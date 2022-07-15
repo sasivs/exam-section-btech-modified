@@ -3,14 +3,26 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import OpenElectiveRegistrationsForm
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus,CycleCoordinator
 from co_ordinator.models import Subjects, StudentRegistrations_Staging
 from import_export.formats.base_formats import XLSX
+from hod.models import Coordinator
 
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def dept_elective_regs_upload(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs =None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='R')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1,Mode='R')
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     necessary_field_msg = False
     subjects=[]
     if(request.method == "POST"):
@@ -21,7 +33,7 @@ def dept_elective_regs_upload(request):
         regId = request.POST['regID']
         subId = request.POST['subId']
         data = {'regID':regId, 'subId':subId}
-        form = OpenElectiveRegistrationsForm(subjects,data)
+        form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
         if 'file' not in request.POST.keys():
             file = request.FILES['file']   
         else:
@@ -61,7 +73,7 @@ def dept_elective_regs_upload(request):
             currentRegEventId = currentRegEventId[0].id
             subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
-            form = OpenElectiveRegistrationsForm(subjects,data)
+            form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:
-        form = OpenElectiveRegistrationsForm()
+        form = OpenElectiveRegistrationsForm(regIDs)
     return render(request, 'co_ordinator/Dec_Registrations_upload.html',{'form':form,'msg':necessary_field_msg})

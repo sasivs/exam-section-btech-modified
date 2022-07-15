@@ -466,13 +466,12 @@ class BacklogRegistrationForm(forms.Form):
  
 
 class OpenElectiveRegistrationsForm(forms.Form):
-    def __init__(self, subjects=None, *args,**kwargs):
+    def __init__(self,regIDs, subjects=None, *args,**kwargs):
         super(OpenElectiveRegistrationsForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = regIDs
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
@@ -489,13 +488,12 @@ class OpenElectiveRegistrationsForm(forms.Form):
 
 
 class DeptElectiveRegsForm(forms.Form):
-    def __init__(self, subjects=None, *args,**kwargs):
+    def __init__(self, regIDs,subjects=None, *args,**kwargs):
         super(DeptElectiveRegsForm, self).__init__(*args, **kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1,Mode='R')
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+        self.regIDs = regIDs
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
@@ -511,12 +509,10 @@ class DeptElectiveRegsForm(forms.Form):
 
 
 class DroppedRegularRegistrationsForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self,regIDs, *args,**kwargs):
         super(DroppedRegularRegistrationsForm, self).__init__(*args, **kwargs)
         print(*args)
         print(**kwargs)
-        regIDs = RegistrationStatus.objects.filter(Status=1,Mode='D')
-        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}

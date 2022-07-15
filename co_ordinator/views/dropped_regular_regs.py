@@ -3,12 +3,24 @@ from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import DroppedRegularRegistrationsForm
 from co_ordinator.models import Subjects, DroppedRegularCourses, StudentRegistrations_Staging
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus,CycleCoordinator
 from ExamStaffDB.models import StudentInfo
+from hod.models import Coordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def dropped_regular_registrations(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs =None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='D')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='D')
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     studentInfo = []
     if(request.method == 'POST'):
         regId = request.POST['RegEvent']
@@ -45,7 +57,7 @@ def dropped_regular_registrations(request):
                     if row.sub_id == entry. sub_id:
                         con[str('RadioMode'+row.sub_id)] = list(str(entry.Mode))
 
-        form = DroppedRegularRegistrationsForm(con)
+        form = DroppedRegularRegistrationsForm(regIDs,con)
         if not 'RegNo' in request.POST.keys():
             pass 
         elif not 'Submit' in request.POST.keys():
@@ -66,7 +78,7 @@ def dropped_regular_registrations(request):
                         else:
                             examModeCredits += sub[2]
                     else:
-                        form = DroppedRegularRegistrationsForm(request.POST)
+                        form = DroppedRegularRegistrationsForm(regIDs,request.POST)
                         context = {'form':form, 'msg': 2}  
                         if(len(studentInfo)!=0):
                             context['RollNo'] = studentInfo[0].RollNo
@@ -108,7 +120,7 @@ def dropped_regular_registrations(request):
                             StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).delete()  
                 return(render(request,'co_ordinator/DroppedRegularRegSuccess.html'))
             else:
-                form = DroppedRegularRegistrationsForm(request.POST)
+                form = DroppedRegularRegistrationsForm(regIDs,request.POST)
                 context = {'form':form, 'msg':1}
                 context['study']=studyModeCredits
                 context['exam']=examModeCredits
@@ -119,7 +131,7 @@ def dropped_regular_registrations(request):
         else:
             print("form validation failed")             
     else:
-        form = DroppedRegularRegistrationsForm()
+        form = DroppedRegularRegistrationsForm(regIDs)
     context = {'form':form}
     if(len(studentInfo)!=0):
         context['RollNo'] = studentInfo[0].RollNo

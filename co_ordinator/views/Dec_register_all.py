@@ -3,11 +3,24 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import DeptElectiveRegsForm
 from co_ordinator.models import RollLists_Staging, Subjects, StudentRegistrations_Staging
-from superintendent.models import RegistrationStatus
+from superintendent.models import RegistrationStatus, CycleCoordinator
+from hod.models import Coordinator
+
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def dept_elective_regs_all(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs =None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='R')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1,Mode='R')
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     subjects=[]
     if(request.method == "POST"):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
@@ -17,7 +30,7 @@ def dept_elective_regs_all(request):
         regId = request.POST['regID']
         subId = request.POST['subId']
         data = {'regID':regId, 'subId':subId}
-        form = DeptElectiveRegsForm(subjects,data)
+        form = DeptElectiveRegsForm(regIDs,subjects,data)
         if regId != '--Choose Event--' and subId != '--Select Subject--':
             strs = regId.split(':')
             dept = deptDict[strs[0]]
@@ -53,7 +66,7 @@ def dept_elective_regs_all(request):
             currentRegEventId = currentRegEventId[0].id
             subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
-            form = DeptElectiveRegsForm(subjects,data)
+            form = DeptElectiveRegsForm(regIDs,subjects,data)
     else:
-        form = DeptElectiveRegsForm()
+        form = DeptElectiveRegsForm(regIDs)
     return render(request, 'co_ordinator/Dec_register_all.html',{'form':form})

@@ -5,12 +5,24 @@ from hod.models import Coordinator
 from ExamStaffDB.models import StudentInfo
 from co_ordinator.models import Subjects, StudentRegistrations_Staging, DroppedRegularCourses
 from co_ordinator.forms import NotRegisteredRegistrationsForm
+from superintendent.models import RegistrationStatus, CycleCoordinator
+
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
 def not_registered_registrations(request):
     user = request.user
-    co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True)
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs =None
+    coordinator = None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='R')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1,Mode='R')
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     studentInfo = []
     if(request.method == 'POST'):
         currentRegEventId = request.POST.get('regEvent')
@@ -31,7 +43,7 @@ def not_registered_registrations(request):
         #             if row.sub_id == entry. sub_id:
         #                 con[str('RadioMode'+row.sub_id)] = list(str(entry.Mode))
 
-        form = NotRegisteredRegistrationsForm(co_ordinator, request.POST)
+        form = NotRegisteredRegistrationsForm(regIDs,coordinator, request.POST)
         if not request.POST.get('regd_no'):
             pass 
         elif not 'submit' in request.POST.keys():
@@ -52,7 +64,7 @@ def not_registered_registrations(request):
                         else:
                             examModeCredits += sub[2]
                     else:
-                        form = NotRegisteredRegistrationsForm(co_ordinator, request.POST)
+                        form = NotRegisteredRegistrationsForm(regIDs,coordinator, request.POST)
                         context = {'form':form, 'msg': 2}  
                         if(len(studentInfo)!=0):
                             context['RollNo'] = studentInfo[0].RollNo
@@ -104,7 +116,7 @@ def not_registered_registrations(request):
                     msg = 'Registrations done successfully'
                 return render(request,'co_ordinator/NotRegisteredRegistrations.html', {'form':form, 'msg':msg})
             else:
-                form = NotRegisteredRegistrationsForm(co_ordinator, request.POST)
+                form = NotRegisteredRegistrationsForm(regIDs,coordinator, request.POST)
                 context = {'form':form, 'msg':1}
                 context['study']=studyModeCredits
                 context['exam']=examModeCredits
@@ -115,7 +127,7 @@ def not_registered_registrations(request):
         else:
             print("form validation failed")             
     else:
-        form = NotRegisteredRegistrationsForm(co_ordinator)
+        form = NotRegisteredRegistrationsForm(regIDs,coordinator)
     context = {'form':form}
     if(len(studentInfo)!=0):
         context['RollNo'] = studentInfo[0].RollNo
