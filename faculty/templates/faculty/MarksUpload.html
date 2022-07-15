@@ -9,8 +9,8 @@
         <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" name="">Submit</button> 
-          </form>
+            <button type="submit" name="submit-form" value="submit">Submit</button> 
+        </form>
     </div>
     {% if msg %}
     <div class="row">
@@ -30,8 +30,8 @@
             <tbody>
                 {% for row in invalidRegNo %}
                 <tr>
-                    <td style="border: 1px solid black;">row.0</td>
-                    <td style="border: 1px solid black;">row.1</td>
+                    <td style="border: 1px solid black;">{{row.0}}</td>
+                    <td style="border: 1px solid black;">{{row.1}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -51,8 +51,8 @@
             <tbody>
                 {% for row in invalidMarks %}
                 <tr>
-                    <td style="border: 1px solid black;">row.0</td>
-                    <td style="border: 1px solid black;">row.1</td>
+                    <td style="border: 1px solid black;">{{row.0}}</td>
+                    <td style="border: 1px solid black;">{{row.1}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

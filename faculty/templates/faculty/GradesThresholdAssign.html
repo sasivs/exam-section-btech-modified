@@ -9,12 +9,18 @@
             <tr>
                 <th>SubCode</th>
                 <td>{{ subject.Subject.SubCode }}</td>
+            </tr>
+            <tr>
                 <th>SubName</th>
                 <td>{{ subject.Subject.SubName }}</td>
+            </tr>
+            <tr>
                 <th>Offered RegEvent</th>
-                <td>{{ subject.Subject.RegEventId.__str__ }}</td>
+                <td>{{ subject.Subject.RegEventId }}</td>
+            </tr>
+            <tr>
                 <th>Current RegEvent</th>
-                <td>{{ subject.RegEventId.__str__ }}</td>
+                <td>{{ subject.RegEventId }}</td>
             </tr>
         </table>
     </div>
@@ -22,7 +28,7 @@
         <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" name="submit" value="submit">Submit</button>
+            <button type="submit" name="submit-form" value="submit">Submit</button>
         </form>
     </div>
     {% if msg %}
@@ -31,4 +37,7 @@
     </div>
     {% endif %}
 </div>
+<script>
+    
+</script>
 {% endblock %}

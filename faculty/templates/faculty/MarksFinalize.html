@@ -6,23 +6,8 @@
 
 <div class="container">
     <div class="row">
-        <table>
-            <tr>
-                <th>RegNo</th>
-                <td>{{mark.Registration.RegNo}}</td>
-            </tr>
-            <tr>
-                <th>Previous marks</th>
-                <td>{{mark.Marks}}</td>
-            </tr>
-            <tr>
-                <th>Total Marks</th>
-                <td>{{mark.TotalMarks}}</td>
-            </tr>
-        </table>
-    </div>
-    <br>
-    <div class="row">
+
+        <strong>Choose the subject corresponding to the required event to view the uploaded marks.</strong>
         <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}

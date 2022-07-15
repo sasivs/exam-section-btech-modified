@@ -92,7 +92,7 @@ def faculty_Coordinator_Status(request):
         Coordinators = Coordinator.objects.all()
     elif(request.user.groups.filter(name='HOD').exists()):
         user = request.user
-        hod = HOD.objects.filter(RevokeDate__isnull=True,User=user)
+        hod = HOD.objects.filter(RevokeDate__isnull=True,User=user).first()
         Coordinators = Coordinator.objects.filter(Dept=hod.Dept)
     return render(request, 'hod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
         

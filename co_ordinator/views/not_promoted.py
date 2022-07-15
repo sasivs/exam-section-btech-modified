@@ -1,11 +1,12 @@
-from django.contrib.auth.decorators import login_required, user_passes_test 
-from superintendent.user_access_test import is_Superintendent
+from django.contrib.auth.decorators import login_required, user_passes_test
+from hod.models import Coordinator 
+from superintendent.user_access_test import is_Superintendent, not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from co_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
 from co_ordinator.models import StudentGradePoints, NotPromoted, RollLists, StudentBacklogs, DroppedRegularCourses, \
     Subjects, StudentRegistrations
-from superintendent.models import RegistrationStatus
+from superintendent.models import CycleCoordinator, RegistrationStatus, HOD
 from ExamStaffDB.models import MandatoryCredits
 from co_ordinator.resources import NotPromotedResource
 from django.db.models import Q
@@ -15,13 +16,28 @@ from django.http.response import HttpResponse
 # Import render module
 
 
+'''
+Utility function for sorting
+'''
+
+def get_regd_no(np):
+    return np.get('student').RegNo
+
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(not_promoted_access)
 def not_promoted_list(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
     if request.method == 'POST':
-        form = NotPromotedListForm(request.POST)
+        form = NotPromotedListForm(regIDs, request.POST)
         if form.is_valid():
-            print("valid")
             event = form.cleaned_data['RegEvent']
             strs = event.split(':')
             depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
@@ -34,7 +50,6 @@ def not_promoted_list(request):
             regulation = int(strs[3])
             currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
             rolls = RollLists.objects.filter(RegEventId__in=currentRegEventId)
-            print(rolls)
             
             mandatory_credits = MandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
             mandatory_credits = mandatory_credits[0].Credits
@@ -77,6 +92,7 @@ def not_promoted_list(request):
                                 if len(check_registration) == 0:
                                     d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                     np.append(d)
+            np.sort(key=get_regd_no)
             if request.POST.get('download'):
                     from SupExamDBRegistrations.utils import NotPromotedBookGenerator
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
@@ -87,14 +103,24 @@ def not_promoted_list(request):
                     return response
             return render(request, 'co_ordinator/NotPromotedList.html', {'form':form, 'notPromoted':np})
     else:
-        form = NotPromotedListForm()
+        form = NotPromotedListForm(regIDs)
     return render(request, 'co_ordinator/NotPromotedList.html', {'form':form})
 
 
-
+@login_required(login_url="/login/")
+@user_passes_test(not_promoted_access)
 def not_promoted_upload(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
     if request.method == 'POST':
-        form = NotPromotedUploadForm(request.POST, request.FILES)
+        form = NotPromotedUploadForm(regIDs, request.POST, request.FILES)
         if form.is_valid() and form.cleaned_data['RegEvent']!='-- Select Registration Event --':
             regEvent = form.cleaned_data['RegEvent']
             strs = regEvent.split(':')
@@ -117,7 +143,6 @@ def not_promoted_upload(request):
             errorDataset.headers=['student_id', 'RegNo', 'AYear', 'BYear', 'Regulation', 'PoA']
             for i in range(len(dataset)):
                 row = dataset[i]
-                print(row)
                 if row[2] == ayear and row[3] == byear and row[4] == regulation:
                     newRow = (row[0],row[2],row[3], row[4], row[5])
                     newDataset.append(newRow)
@@ -129,20 +154,15 @@ def not_promoted_upload(request):
             if not result.has_errors():
                 not_promoted_resource.import_data(newDataset, dry_run=False)
                 if (len(errorDataset)!=0):
-                    print("here")
                     npErrRows = [(errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3], errorDataset[i][4], errorDataset[i][5]) for i in range(len(errorDataset))]
                     request.session['npErrRows'] = npErrRows
                     request.session['RegEvent'] = regEvent
                     return redirect('NotPromotedUploadErrorHandler' )
                 return(render(request,'co_ordinator/NotPromotedUploadSuccess.html'))
             else:
-                print("here1")
-
                 errors = result.row_errors()
-                print(errors[0][1][0].error)
                 indices = set([i for i in range(len(newDataset))])    
                 errorIndices = set([i[0]-1 for i in errors])
-                print(errors[0][0])
                 cleanIndices = indices.difference(errorIndices)
                 cleanDataset = Dataset()
                 for i in list(cleanIndices):
@@ -165,12 +185,12 @@ def not_promoted_upload(request):
                 request.session['RegEvent'] = regEvent
                 return redirect('NotPromotedUploadErrorHandler')
     else:
-        form = NotPromotedUploadForm()
+        form = NotPromotedUploadForm(regIDs)
     return render(request, 'co_ordinator/NotPromotedUpload.html', {'form':form})
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(not_promoted_access)
 def not_promoted_upload_error_handler(request):
     npErrRows = request.session.get('npErrRows')
     regEvent = request.session.get('RegEvent')
@@ -186,11 +206,24 @@ def not_promoted_upload_error_handler(request):
     return(render(request, 'co_ordinator/NotPromotedUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(not_promoted_status_access)
 def not_promoted_status(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    if 'Superintendent' in groups:
+        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
+    elif 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='R')
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
     if(request.method=='POST'):
-        form = NotPromotedStatusForm(request.POST)
-        # if(form.is_valid()):
+        form = NotPromotedStatusForm(regIDs, request.POST)
         if(request.POST['RegEvent']!='-- Select Registration Event --'):
             regEvent = request.POST['RegEvent']
             strs = regEvent.split(':')
@@ -202,10 +235,10 @@ def not_promoted_status(request):
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
-            notPromoted = NotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation)
+            notPromoted = NotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
             return render(request, 'co_ordinator/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
     else:
-        form = NotPromotedStatusForm()
+        form = NotPromotedStatusForm(regIDs)
     return render(request, 'co_ordinator/NotPromotedStatus.html', {'form':form})
 
 

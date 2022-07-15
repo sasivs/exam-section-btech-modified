@@ -14,9 +14,10 @@ urlpatterns =[
     path('MarksUpload', marks_upload.marks_upload, name='MarksUpload'),
     path('MarksUploadStatus', marks_upload.marks_upload_status, name='MarksUploadStatus'),
     path('MarksUpdate/<int:pk>', marks_upload.marks_update, name='MarksUpdate'),
+    path('MarksFinalize', marks_upload.marks_finalize, name='MarksFinalize'),
     path('SampleMarksExcelSheetDownload', marks_upload.download_sample_excel_sheet, name='SampleMarksExcelSheetDownload'),
     path('GradesGenerate', grades_generate.grades_generate, name='GradesGenerate'),
-    path('GradesStatus', grades_generate.grades_generate, name='GradesStatus'),
+    path('GradesStatus', grades_generate.grades_status, name='GradesStatus'),
 ]
 
 

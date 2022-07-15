@@ -11,14 +11,26 @@
             <button type="submit" name="">Submit</button> 
           </form>
     </div>
-
+    {% if thresholds %}
+    <br>
     <div class="row">
+        <table>
+            <tr>
+                <th>SubCode</th>
+                <td>{{thresholds.0.Subject.SubCode}}</td>
+            </tr>
+            <tr>
+                <th>SubName</th>
+                <td>{{thresholds.0.Subject.SubName}}</td>
+            </tr>
+            <tr>
+                <th>Uniform Grading</th>
+                <td>{{thresholds.0.uniform_grading}}</td>
+            </tr>
+        </table>
         <table>
             <thead>
                 <tr>
-                    <td style="border: 1px solid black;">SubCode</td>
-                    <td style="border: 1px solid black;">SubName</td>
-                    <td style="border: 1px solid black;">Uniform Grading</td>
                     <td style="border: 1px solid black;">Section</td>
                     <td style="border: 1px solid black;">Grade</td>
                     <td style="border: 1px solid black;">Threshold Mark</td>
@@ -27,16 +39,14 @@
             <tbody>
                 {% for thr in thresholds %}
                 <tr>
-                    <td style="border: 1px solid black;">thr.Subject.SubCode</td>
-                    <td style="border: 1px solid black;">thr.Subject.SubName</td>
-                    <td style="border: 1px solid black;">thr.uniform_grading</td>
-                    <td style="border: 1px solid black;">thr.Section</td>
-                    <td style="border: 1px solid black;">thr.Grade.Grade</td>
-                    <td style="border: 1px solid black;">thr.Threshold_Mark</td>
+                    <td style="border: 1px solid black;">{{thr.Section}}</td>
+                    <td style="border: 1px solid black;">{{thr.Grade.Grade}}</td>
+                    <td style="border: 1px solid black;">{{thr.Threshold_Mark}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

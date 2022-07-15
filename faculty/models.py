@@ -92,6 +92,9 @@ class StudentGrades(models.Model):
     AttGrade = models.CharField(max_length=2)
     class Meta:
         db_table = 'StudentGrades'
+        constraints = [
+            models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_registration')
+        ]
         managed = True
 
 
@@ -104,4 +107,7 @@ class StudentGrades_Staging(models.Model):
     AttGrade = models.CharField(max_length=2)
     class Meta:
         db_table = 'StudentGrades_Staging'
+        constraints = [
+            models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_Staging_registration')
+        ]
         managed = True

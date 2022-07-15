@@ -293,9 +293,8 @@ class RegistrationsFinalizeEventForm(forms.Form):
 
 
 class BacklogRegistrationForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(BacklogRegistrationForm,self).__init__(*args, **kwargs)
-        regIDs = RegistrationStatus.objects.filter(Status=1,Mode='B')
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -709,9 +708,8 @@ class MakeupRegistrationsForm(forms.Form):
 
 
 class NotPromotedListForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(NotPromotedListForm,self).__init__(*args, **kwargs)
-        regIDs = RegistrationStatus.objects.filter(Mode='R')
         regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -723,9 +721,8 @@ class NotPromotedListForm(forms.Form):
         self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs)) 
 
 class NotPromotedUploadForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(NotPromotedUploadForm,self).__init__(*args, **kwargs)
-        regIDs = RegistrationStatus.objects.filter(Mode='R')
         regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}

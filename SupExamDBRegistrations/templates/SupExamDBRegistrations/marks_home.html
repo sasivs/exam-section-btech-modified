@@ -7,7 +7,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
-                {% else %}
+                {% elif user|has_group:'Faculty' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MarksUpload' %}">Marks Upload</a>
                 </li>
@@ -15,7 +15,22 @@
                     <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MarksFinalize' %}">Marks Finalize</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'SampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
+                </li>
+                {% elif user|has_group:'HOD' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                {% elif user|has_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                {% elif user|has_group:'Cycle-Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
                 {% endif %}
             </ul>
