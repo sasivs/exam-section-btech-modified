@@ -1,5 +1,5 @@
 from django.urls import path
-from superintendent.views import HOD_assignment, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
+from superintendent.views import HOD_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
     cycle_coordinator_assignment
 
 
@@ -28,4 +28,6 @@ urlpatterns = [
 
     path('AddMarkDistribution', Marks_Distribution.mark_distribution_add, name='AddMarkDistribution'),
     path('MarkDistributionStatus', Marks_Distribution.mark_distribution_status, name='MarkDistributionStatus'),
+
+    path('SupBTSeatCancellation',cancellations.seat_cancellation,name='SupBTSeatCancellation'),
 ]

@@ -179,3 +179,7 @@ class MarksDistributionForm(forms.Form):
         self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
 
 
+class StudentCancellationForm(forms.Form):
+    def __init__ (self,*args, **kwargs):
+        super(StudentCancellationForm, self).__init__(*args, **kwargs)
+        self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)

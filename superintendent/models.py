@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from co_ordinator.models import Subjects
 # from ExamStaffDB.models import FacultyInfo
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
+from co_ordinator.models import StudentRegistrations
 
 # Create your models here.
 
@@ -63,12 +65,11 @@ class BranchChanges(models.Model):
 
 
 class HOD(models.Model):
-    Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.IntegerField()
     Dept = models.IntegerField()
     AssignedDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
-    User = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    User =models.IntegerField()
     class Meta:
         db_table = 'HOD'
         unique_together = ('Faculty', 'Dept', 'AssignedDate')
@@ -79,8 +80,8 @@ class CycleCoordinator(models.Model):
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
     )
-    User= models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE)
+    User= models.IntegerField()
+    Faculty = models.IntegerField()
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
     Cycle = models.IntegerField()
@@ -156,3 +157,128 @@ class GradePoints(models.Model):
         db_table = 'GradePoints'
         unique_together = ('Regulation', 'Grade', 'Points')
         managed = True
+
+    
+class CancelledStudentInfo(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    RegNo = models.IntegerField()
+    RollNo = models.IntegerField()
+    Name = models.CharField(max_length=70)
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    AdmissionYear = models.IntegerField()
+    Gender = models.CharField(max_length=10)
+    Category = models.CharField(max_length=20)
+    GuardianName = models.CharField(max_length=50)
+    Phone = models.IntegerField()
+    email = models.CharField(max_length=50)
+    Address1 = models.CharField(max_length=150)
+    Address2 = models.CharField(max_length=100, null=True)
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    CancelledTime = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'CancelledStudentInfo'
+        constraints = [
+            models.UniqueConstraint(fields=['RegNo'], name='unique_StudentInfo_RegNo'),
+            models.UniqueConstraint(fields=['RollNo'], name='unique_StudentInfo_RollNo'),
+        ]
+        managed = True
+
+class CancelledStudentRegistrations(models.Model):
+    RegNo = models.IntegerField()
+    RegEventId = models.IntegerField()
+    Mode = models.IntegerField()
+    sub_id = models.IntegerField()
+    class Meta:
+        db_table = 'CancelledStudentRegistrations'
+        managed = True
+
+
+class CancelledStudentGrades(models.Model):
+    RegId= models.IntegerField()
+    RegEventId = models.IntegerField()
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    AttGrade = models.CharField(max_length=2)
+    class Meta:
+        db_table = 'CancelledStudentGrades'
+        constraints = [
+            models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_registration')
+        ]
+        managed = True
+
+class CancelledRollLists(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    student = models.IntegerField()
+    RegEventId =models.IntegerField()
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    Section = models.CharField(max_length=2, default='NA')
+    class Meta:
+        db_table = 'CancelledRollLists'
+        unique_together = ('student', 'RegEventId')
+        managed = True
+
+class CancelledNotRegistered(models.Model):
+    RegEventId= models.IntegerField()
+    Student = models.IntegerField()
+    Registered = models.BooleanField()
+    class Meta:
+        db_table = 'CancelledNotRegistered'
+        unique_together = (('RegEventId', 'Student'))
+        managed = True
+
+class CancelledNotPromoted(models.Model):
+    AYear = models.IntegerField()
+    BYear = models.IntegerField()
+    Regulation = models.IntegerField()
+    student =models.IntegerField()
+    PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
+    class Meta:
+        db_table = 'CancelledNotPromoted'
+        unique_together=('AYear', 'BYear', 'Regulation', 'student')
+        managed = True
+
+class CancelledDroppedRegularCourses(models.Model):
+    student = models.IntegerField()
+    subject =models.IntegerField()
+    RegEventId = models.IntegerField()
+    Registered = models.BooleanField()
+    class Meta:
+        db_table = 'CancelledDroppedRegularCourses'
+        managed = True
+
+class CancelledMarks(models.Model):
+    Registration =models.IntegerField()
+    Marks = models.TextField()
+    TotalMarks = models.IntegerField()
+
+    class Meta:
+        db_table = 'CancelledMarks'
+        constraints = [
+            models.UniqueConstraint(fields=['Registration'], name='unique_marks_registration')
+        ]
+        managed = True
+
+    def get_total_marks(self):
+        marks_dis = self.Marks.split(',')
+        marks_dis = [mark.split('+') for mark in marks_dis]
+        subject = Subjects.objects.filter(id=self.Registration.sub_id).first()
+        ratio = subject.DistributionRatio.split(':')
+        total_parts = 0
+        for part in ratio:
+            total_parts += int(part)
+        total = 0
+        for index in range(len(marks_dis)):
+            marks_row = marks_dis[index]
+            sub_total = 0
+            for mark in marks_row:
+                sub_total += int(mark)
+            total = sub_total*int(ratio[index])
+        return round(total/total_parts)
