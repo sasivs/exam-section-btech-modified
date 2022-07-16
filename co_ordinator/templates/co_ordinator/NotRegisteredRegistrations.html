@@ -23,10 +23,10 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-sm-3">
-                    {{ form.RegEvent }}
+                    {{ form.regEvent }}
                 </div>
                 <div class="col-sm-2">
-                    {{ form.RegNo }}
+                    {{ form.regd_no }}
                 </div>
             </div>
             {% if RollNo %}
@@ -93,11 +93,17 @@
                     </tr>
                     {% endfor %}
                 </table>
-                <button type='submit' name="submit" value='submit'>Submit</button>
+                <button type='submit' name="submit-form" value='submit'>Submit</button>
             </div>
         </form>
 
     </div>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
 </div>
 
 

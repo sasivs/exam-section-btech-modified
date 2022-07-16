@@ -87,15 +87,12 @@ def dropped_regular_registrations(request):
             if((studyModeCredits+examModeCredits<=34) and(studyModeCredits<=32)):
                 for sub in form.myFields:
                     if(sub[6]=='R'): #Handling Regular Subjects
-                        regular_sub = Subjects.objects.get(id=sub[9])
                         if(form.cleaned_data['Check'+str(sub[9])] == False):
                             #delete regular_record from the registration table
-                            reg = StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
-                                 sub_id = sub[9], id=sub[10])
+                            reg = StudentRegistrations_Staging.objects.filter(id=sub[10])
                             if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
-                                     sub_id = sub[9], id=sub[10]).delete()
-                                new_dropped_course = DroppedRegularCourses(RegNo=request.POST['RegNo'], sub_id=sub[9])
+                                StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                                new_dropped_course = DroppedRegularCourses(student=studentInfo[0], subject_id=sub[9], RegEventId_id=reg.RegEventId, Registered=False)
                                 new_dropped_course.save()
                     elif sub[6] == 'D':
                         if(form.cleaned_data['Check'+str(sub[9])]):
@@ -105,12 +102,13 @@ def dropped_regular_registrations(request):
                                 newRegistration = StudentRegistrations_Staging(RegNo = request.POST['RegNo'], RegEventId = currentRegEventId,\
                                     Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()
+                                DroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=True)
                         else:
-                            reg = StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
-                                 sub_id = sub[9])
-                            if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
-                                     sub_id = sub[9]).delete()
+                            if sub[10]:
+                                reg = StudentRegistrations_Staging.objects.filter(id=sub[10])
+                                if len(reg) != 0:
+                                    StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                                    DroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=False)
                     else:   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode

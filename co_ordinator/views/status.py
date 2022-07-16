@@ -32,11 +32,12 @@ def btech_registration_status_home(request):
 def btech_regular_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, BYear=hod.BYear, Mode='R')
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
     elif 'Co-ordinator' in groups:
         cord = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='R')
@@ -81,11 +82,12 @@ def btech_regular_registration_status(request):
 def btech_backlog_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1, Mode='B')
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, BYear=hod.BYear, Mode='B')
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='B')
     elif 'Co-ordinator' in groups:
         cord = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='B')
@@ -130,11 +132,12 @@ def btech_backlog_registration_status(request):
 def btech_makeup_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1, Mode='M')
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, BYear=hod.BYear, Mode='M')
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='M')
     elif 'Co-ordinator' in groups:
         cord = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='M')
@@ -144,7 +147,7 @@ def btech_makeup_registration_status(request):
     heading = ''
     studentRegistrations = []
     if(request.method=='POST'):
-        form = MakeupRegistrationSummaryForm(request.POST)
+        form = MakeupRegistrationSummaryForm(regIDs, request.POST)
         if(form.is_valid()):
             regId = form.cleaned_data['regId']
             if regId!='--Choose Event--':
@@ -169,7 +172,7 @@ def btech_makeup_registration_status(request):
                     studentRegistrations = studentRegistrations.filter(RegNo=regNo)
                 studentRegistrations = list(studentRegistrations.values())
     else:
-        form = MakeupRegistrationSummaryForm()
+        form = MakeupRegistrationSummaryForm(regIDs)
     return render(request, 'co_ordinator/BTMakeupRegistrationStatus.html',
                     { 'studentRegistrations':studentRegistrations ,'form':form, 'heading' :heading }  )
 

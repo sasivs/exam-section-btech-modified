@@ -1,10 +1,11 @@
 from django import forms
 from superintendent.models import RegistrationStatus, Regulation, ProgrammeModel
 from co_ordinator.models import StudentRegistrations, Subjects
+from superintendent.validators import validate_file_extension
 
 
 class StudentInfoFileUpload(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(validators=[validate_file_extension])
 
 
 
@@ -25,7 +26,7 @@ class StudentInfoUpdateForm(forms.Form):
 class UpdateRollNumberForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(UpdateRollNumberForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField(label='Upload File')
+        self.fields['file'] = forms.FileField(label='Upload File', validators=[validate_file_extension])
 
 
 
@@ -91,7 +92,7 @@ class IXGradeStudentsStatus(forms.Form):
 class FacultyUploadForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(FacultyUploadForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField()
+        self.fields['file'] = forms.FileField(validators=[validate_file_extension])
 
 
 class FacultyInfoUpdateForm(forms.Form):

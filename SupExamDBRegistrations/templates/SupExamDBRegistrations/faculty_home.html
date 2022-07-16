@@ -10,10 +10,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'CoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
-                </li>
                 {% elif user|has_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
                 </li>
@@ -39,12 +39,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyCoordinatorAssignment' %}">Faculty Coordinator Assignment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'CoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
                 </li>
                 {% elif user|has_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">

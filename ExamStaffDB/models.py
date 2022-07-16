@@ -39,6 +39,7 @@ class MandatoryCredits(models.Model):
     Credits = models.IntegerField()
     class Meta:
         db_table = 'MandatoryCredits'
+        unique_together = (('Regulation', 'Dept', 'BYear'))
         managed = True
 
 
@@ -52,7 +53,7 @@ class IXGradeStudents(models.Model):
 
     class Meta:
         db_table = 'IXGradeStudents'
-        unique_together = ('Registration', 'Grade')
+        unique_together = (('Registration', 'Grade'))
         managed = True
 
 

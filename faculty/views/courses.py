@@ -9,6 +9,6 @@ from superintendent.user_access_test import grades_threshold_access
 @user_passes_test(grades_threshold_access)
 def courses_assigned(request):
     user = request.user
-    faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True)
+    faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
     subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
     return render(request, 'faculty/CoursesAssigned.html', {'subjects':subjects})

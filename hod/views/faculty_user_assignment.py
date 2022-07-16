@@ -66,9 +66,9 @@ def faculty_Coordinator(request):
         form = CoordinatorAssignmentForm(hod.Dept,request.POST)
         if form.is_valid():
             if form.cleaned_data.get('BYear') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and 'submit-form' in request.POST.keys():
-                initial_coodinator = Coordinator.objects.filter(RevokeDate__isnull=True, Dept=hod.Dept).first()
+                initial_coodinator = Coordinator.objects.filter(RevokeDate__isnull=True, Dept=hod.Dept, BYear=form.cleaned_data.get('BYear')).first()
                 if initial_coodinator:
-                    if (initial_coodinator.Faculty.id != int(form.cleaned_data.get('hod'))) or (initial_coodinator.User.id != int(form.cleaned_data.get('user'))):
+                    if (initial_coodinator.Faculty.id != int(form.cleaned_data.get('coordinator'))) or (initial_coodinator.User.id != int(form.cleaned_data.get('user'))):
                         initial_coodinator.RevokeDate = timezone.now()
                         initial_coodinator.save()
                         new_coordinator = Coordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), BYear=form.cleaned_data.get('BYear'),Dept =hod.Dept)

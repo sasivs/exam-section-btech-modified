@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render
 from superintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
-from co_ordinator.models import StudentRegistrations
+from co_ordinator.models import FacultyAssignment, StudentRegistrations
 from superintendent.models import RegistrationStatus, HOD
-from hod.models import Coordinator
+from hod.models import Coordinator, Faculty_user
 from ExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from ExamStaffDB.models import IXGradeStudents
 
@@ -44,11 +44,18 @@ def ix_student_status(request):
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
+    elif 'Faculty' in groups:
+        faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
+        faculty_assign = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
+        regIDs = RegistrationStatus.objects.filter(id__in=faculty_assign.values_list('RegEventId_id', flat=True))
     if request.method == 'POST':
         form = IXGradeStudentsStatus(regIDs, request.POST)
         if request.POST.get('submit'):
             regEvent = request.POST.get('regId')
-            students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+            if 'Faculty' in groups:
+                students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=faculty_assign.values_list('Subject_id', flat=True))
+            else:
+                students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
         elif request.POST.get('delete'):
             if 'ExamStaff' in groups:
                 IXGradeStudents.objects.filter(id=request.POST.get('delete')).delete()

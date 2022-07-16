@@ -59,7 +59,7 @@ def faculty_subject_assignment(request):
     return render(request, 'co_ordinator/FacultyAssignment.html',{'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(faculty_assignment_status_access)
+@user_passes_test(faculty_subject_assignment_access)
 def faculty_subject_assignment_detail(request, pk):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)

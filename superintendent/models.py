@@ -30,6 +30,9 @@ class ProgrammeModel(models.Model):
     Dept = models.IntegerField()
     class Meta:
         db_table = 'ProgrammeModel'
+        constraints = [
+            models.UniqueConstraint(fields=['PID'], name='unique_PID')
+        ]
         managed = True
 
 class RegistrationStatus(models.Model):
@@ -46,6 +49,9 @@ class RegistrationStatus(models.Model):
     GradeStatus = models.IntegerField()
     class Meta:
         db_table = 'Registration_Status'
+        constraints = [
+            models.UniqueConstraint(fields=['AYear', 'ASem', 'BYear', 'BSem', 'Regulation', 'Dept', 'Mode'], name='unique_Registration_status')
+        ]
         managed = True
 
     def __str__(self):
@@ -61,6 +67,9 @@ class BranchChanges(models.Model):
     AYear = models.IntegerField()
     class Meta:
         db_table = 'BranchChanges'
+        constraints = [
+            models.UniqueConstraint(fields=['AYear', 'RegNo'], name='unique_branch_change')
+        ]
         managed = True
 
 
@@ -72,7 +81,7 @@ class HOD(models.Model):
     User =models.IntegerField()
     class Meta:
         db_table = 'HOD'
-        unique_together = ('Faculty', 'Dept', 'AssignedDate')
+        unique_together = (('Faculty', 'Dept', 'AssignedDate'))
         managed = True
 
 class CycleCoordinator(models.Model):
@@ -88,7 +97,7 @@ class CycleCoordinator(models.Model):
 
     class Meta:
         db_table = 'CycleCoordinator'
-        unique_together = ('User', 'Faculty','AssignDate','RevokeDate')
+        unique_together = (('User', 'Faculty','AssignDate','RevokeDate'))
         managed = True
 
 class Departments(models.Model):
@@ -98,7 +107,7 @@ class Departments(models.Model):
 
     class Meta:
         db_table = 'Departments'
-        unique_together = ('Dept', 'Name', 'Dept_Code')
+        unique_together = (('Dept', 'Name', 'Dept_Code'))
         managed = True
 
 class MarksDistribution(models.Model):
@@ -107,7 +116,7 @@ class MarksDistribution(models.Model):
 
     class Meta:
         db_table = 'MarksDistribution'
-        unique_together = ('Distribution', 'DistributionNames')
+        unique_together = (('Distribution', 'DistributionNames'))
         managed = True
     
     def distributions(self):
@@ -155,7 +164,7 @@ class GradePoints(models.Model):
     Points = models.IntegerField()
     class Meta:
         db_table = 'GradePoints'
-        unique_together = ('Regulation', 'Grade', 'Points')
+        unique_together = (('Regulation', 'Grade', 'Points'))
         managed = True
 
     

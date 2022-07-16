@@ -5,14 +5,15 @@ from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistratio
 from faculty.models import Attendance_Shortage
 from superintendent.user_access_test import is_Faculty, attendance_shortage_status_access
 from import_export.formats.base_formats import XLSX
-from hod.models import Faculty_user
+from hod.models import Coordinator, Faculty_user
+from superintendent.models import CycleCoordinator, HOD
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Faculty)
 def attendance_shortage_upload(request):
     user = request.user
     faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-    subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
+    subjects  = FacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
     if(request.method == 'POST'):
             form = AttendanceShoratgeUploadForm(subjects,request.POST)
         # if(form.is_valid()):
@@ -40,19 +41,33 @@ def attendance_shortage_upload(request):
                     att_short = Attendance_Shortage(Registration=student_registration.first())
                     att_short.save()
                 msg = 'Attendance Shortage Updated successfully.'
-            return render(request, 'faculty/AttendanceShoratgeUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
+            return render(request, 'faculty/AttendanceShortageUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
     else:
         
         form = AttendanceShoratgeUploadForm(subjects)
-        return render(request, 'SupExamDBRegistrations/AttendanceShoratgeUpload.html',{'form':form})
+        return render(request, 'faculty/AttendanceShortageUpload.html',{'form':form})
 
 
 @login_required(login_url="/login/")
 @user_passes_test(attendance_shortage_status_access)
 def attendance_shortage_status(request):
     user = request.user
-    faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-    subjects  = FacultyAssignment.objects.filter(Faculty=faculty,RegEventId__Status=1)
+    groups = user.groups.all().values_list('name', flat=True)
+    subjects = None
+    if 'Faculty' in groups:
+        faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
+        subjects  = FacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+    elif 'Superintendent' in groups:
+        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
+    elif 'HOD' in groups:
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = FacultyAssignment.objects.filter(Dept=hod.Dept, RegEventId__Status=1)
+    elif 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(BYear=coordinator.BYear, Dept=coordinator.Dept, RegEventId__Status=1)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True)
+        subjects = FacultyAssignment.objects.filter(BYear=1, Dept=cycle_cord.Cycle, RegEventId__Status=1)
     if(request.method == 'POST'):
         form = AttendanceShoratgeStatusForm(subjects,request.POST)
         sub = request.POST['Subjects'].split(':')[0]
@@ -60,11 +75,11 @@ def attendance_shortage_status(request):
         section = request.POST['Subjects'].split(':')[2]
         roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
         att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('Student__RegNo', flat=True))
-        return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short})
+        return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form ,'att_short':att_short})
 
     else:
         form = AttendanceShoratgeStatusForm(subjects)
-    return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form})
+    return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form})
 
 
 @login_required(login_url="/login/")

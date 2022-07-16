@@ -134,16 +134,15 @@ def generateRollList(request):
                             prev_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1, BYear=byear-1)
                             prev_not_prom_regd_no = prev_not_prom_regs.values_list('student__RegNo', flat=True)
                             prev_not_prom_regs = prev_not_prom_regs.values_list('student', flat=True)
-                            reg_rgs = RollLists_Staging.objects.filter(~Q(student__in=prev_not_prom_regs), RegEventId_id__in=prev_regEventId, student__Dept=dept)
+                            reg_rgs = RollLists_Staging.objects.filter(~Q(student__in=prev_not_prom_regs), RegEventId__in=prev_regEventId, student__Dept=dept)
                             not_promoted_regno=[row.student.RegNo for row in not_promoted_regs]
 
                             regular_regd_no = reg_rgs.values_list('student__RegNo', flat=True)
-                            valid_rolls = regular_regd_no + not_promoted_regno
+                            valid_rolls = list(regular_regd_no) + not_promoted_regno
                             
                             initial_roll_list = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
                             RollLists_Staging.objects.filter(~Q(student__RegNo__in=valid_rolls), RegEventId_id=currentRegEventId).delete()
-
 
                             for reg in reg_rgs:
                                 if not initial_roll_list.filter(student=reg.student).exists():
@@ -409,7 +408,7 @@ def RollList_Status(request):
         regIDs = RegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, BYear=hod.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=co_ordinator.BYear)
@@ -480,7 +479,7 @@ def RollListFeeUpload(request):
                 rolls = rolls.values_list('student__RegNo', flat=True)
                 error_regd_no = set(paid_regd_no).difference(set(rolls))
                 for regd_no in unpaid_regd_no:
-                    not_registered = NotRegistered(student=regd_no.student, RegEventId_id=regeventid, Registered=False)
+                    not_registered = NotRegistered(Student=regd_no.student, RegEventId_id=regeventid, Registered=False)
                     not_registered.save()
                 unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
                 StudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()

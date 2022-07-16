@@ -27,11 +27,11 @@ def hod_assignment(request):
                     new_hod.save()
                     msg = 'Hod assignment is done successfully'
                 return render(request, 'superintendent/HodAssignment.html', {'form':form, 'msg':msg})
-            else:
-                if 'dept' in request.POST.keys():
-                    initial_hod = HOD.objects.filter(Dept=request.POST.get('dept'), RevokeDate__isnull=True).first()
-                    if initial_hod:
-                        return render(request, 'superintendent/HodAssignment.html', {'form':form, 'initial_hod':initial_hod.Faculty.id, 'initial_user':initial_hod.User.id})
+            # else:
+            #     if 'dept' in request.POST.keys():
+            #         initial_hod = HOD.objects.filter(Dept=request.POST.get('dept'), RevokeDate__isnull=True).first()
+            #         if initial_hod:
+            #             return render(request, 'superintendent/HodAssignment.html', {'form':form, 'initial_hod':initial_hod.Faculty.id, 'initial_user':initial_hod.User.id})
     else:
         form = HODAssignmentForm()
     return render(request, 'superintendent/HodAssignment.html', {'form':form})

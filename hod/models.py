@@ -13,7 +13,7 @@ class Faculty_user(models.Model):
     RevokeDate = models.DateTimeField(null=True)
     class Meta:
         db_table = 'Faculty_user'
-        unique_together=('User','Faculty','AssignDate','RevokeDate')
+        unique_together=(('User','Faculty','AssignDate','RevokeDate'))
         managed = True
 
 
@@ -26,5 +26,5 @@ class Coordinator(models.Model):
     RevokeDate = models.DateTimeField(null=True)
     class Meta:
         db_table = 'Faculty_Coordinator'
-        unique_together=('User','Faculty','AssignDate','RevokeDate')
+        unique_together=(('User','Faculty','AssignDate','RevokeDate'))
         managed = True

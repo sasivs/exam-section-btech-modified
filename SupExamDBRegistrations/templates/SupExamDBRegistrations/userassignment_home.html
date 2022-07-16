@@ -21,9 +21,18 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'CycleCoordinatorAssignmentStatus' %}">Cycle Coordinator Assignment Status</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'CoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
+            </li>
             {% elif user|has_group:"HOD" %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'FacultyUserAssignment' %}">Faculty User Assignment</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'FacultyCoordinatorAssignment' %}">Faculty Coordinator Assignment</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'CoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
             </li>
             {% endif %}
           </ul>

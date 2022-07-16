@@ -2,6 +2,7 @@ from django import forms
 from co_ordinator.models import StudentRegistrations, RollLists, Subjects
 from superintendent.models import GradePoints
 from faculty.models import GradesThreshold
+from superintendent.validators import validate_file_extension
 
 
 class AttendanceShoratgeUploadForm(forms.Form):
@@ -100,7 +101,7 @@ class MarksUploadForm(forms.Form):
             subject = Subjects.objects.get(id=subject)
             EXAM_CHOICES += subject.MarkDistribution.distributions()
             self.fields['exam-type'] = forms.CharField(label='Select Exam Type', required=False, max_length=26, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
-            self.fields['file'] = forms.FileField(required=False)
+            self.fields['file'] = forms.FileField(required=False, validators=[validate_file_extension])
             self.fields['file'].widget.attrs.update({'required':'True'})
 
 class MarksStatusForm(forms.Form):
