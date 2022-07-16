@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from superintendent.models import HOD, CycleCoordinator
-from ExamStaffDB.models import FacultyInfo
+from ExamStaffDB.models import FacultyInfo, StudentInfo
 from superintendent.models import ProgrammeModel, Departments, Regulation
 from co_ordinator.models import StudentBacklogs
 from superintendent.validators import validate_file_extension
@@ -184,3 +184,9 @@ class StudentCancellationForm(forms.Form):
     def __init__ (self,*args, **kwargs):
         super(StudentCancellationForm, self).__init__(*args, **kwargs)
         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
+    
+    def clean_RegNo(self):
+        regd_no = self.cleaned_data.get('RegNo')
+        if not StudentInfo.objects.filter(RegNo=regd_no).exists():
+            raise forms.ValidationError('Invalid Reg No.')
+        return regd_no

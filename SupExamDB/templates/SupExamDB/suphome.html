@@ -203,6 +203,15 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="CancellationDropDown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Cancellation
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="CancellationDropDown">
+                                <li><a class="dropdown-item" href="{% url 'SupBTCancellationHome' %}">Cancellation</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PreRegistrationDropDown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 Pre-Registration
@@ -212,7 +221,6 @@
                                         Registration</a></li>
                                 <li><a class="dropdown-item" href="{% url 'SupBTBranchChangeHome' %}">Branch Change</a>
                                 </li>
-
                             </ul>
                         </li>
                         <li class="nav-item dropdown">

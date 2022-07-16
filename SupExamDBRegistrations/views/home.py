@@ -57,3 +57,9 @@ def marks_home(request):
 @user_passes_test(user_management_home_access)
 def userassignment_home(request):
     return render(request, 'SupExamDBRegistrations/userassignment_home.html')
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def cancellation_home(request):
+    return render(request, 'SupExamDBRegistrations/registrationcancellation.html')

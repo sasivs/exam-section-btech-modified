@@ -25,6 +25,8 @@ urlpatterns = [
     path('SupBTFacultyHome', home.faculty_home, name='SupBTFacultyHome'),
     path('SupBTMarksHome', home.marks_home, name='SupBTMarksHome'),
     path('SupBTUserManagementHome', home.userassignment_home, name='SupBTUserManagementHome'),
+    path('SupBTRegistrationStatusHome', status.btech_registration_status_home, name = 'SupBTRegistrationStatusHome'),
+    path('SupBTCancellationHome', home.cancellation_home, name='SupBTCancellationHome'),
 
 
     # path('FacultyInfoUpload', FacultyInfo.faculty_upload, name = 'FacultyInfoUpload'),
@@ -63,7 +65,6 @@ urlpatterns = [
     
     # path('SupBTBacklogRegistrations', backlog_registrations.btech_backlog_registration, name = 'SupBTBacklogRegistrations'),
     #Registration Status
-    path('SupBTRegistrationStatusHome', status.btech_registration_status_home, name = 'SupBTRegistrationStatusHome'),
     # path('SupBTRegularRegistrationStatus', status.btech_regular_registration_status, name = 'SupBTRegularRegistrationStatus'),
     # path('SupBTBacklogRegistrationStatus', status.btech_backlog_registration_status, name = 'SupBTBacklogRegistrationStatus'),
     # path('SupBTMakeupRegistrationStatus', status.btech_makeup_registration_status, name='SupBTMakeupRegistrationStatus'),

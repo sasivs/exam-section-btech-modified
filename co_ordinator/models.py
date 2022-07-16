@@ -1,6 +1,6 @@
 from django.db import models
 # from ExamStaffDB.models import FacultyInfo
-from superintendent.models import RegistrationStatus, MarksDistribution
+# from superintendent.models import RegistrationStatus, MarksDistribution
 # from ExamStaffDB.models import StudentInfo
 
 
@@ -17,8 +17,8 @@ class Subjects_Staging(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     OfferedBy = models.IntegerField()
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
-    MarkDistribution = models.ForeignKey(MarksDistribution, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
+    MarkDistribution = models.ForeignKey('superintendent.MarksDistribution', on_delete=models.CASCADE)
     DistributionRatio = models.TextField()
 
     class Meta:
@@ -36,8 +36,8 @@ class Subjects(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     OfferedBy = models.IntegerField()
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
-    MarkDistribution = models.ForeignKey(MarksDistribution, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
+    MarkDistribution = models.ForeignKey('superintendent.MarksDistribution', on_delete=models.CASCADE)
     DistributionRatio = models.TextField()
     
     class Meta:
@@ -53,7 +53,7 @@ class RollLists(models.Model):
         (9,'CHEMISTRY')
     )
     student = models.ForeignKey('ExamStaffDB.StudentInfo', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
@@ -69,7 +69,7 @@ class RollLists_Staging(models.Model):
         (9,'CHEMISTRY')
     )
     student = models.ForeignKey('ExamStaffDB.StudentInfo', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
@@ -79,7 +79,7 @@ class RollLists_Staging(models.Model):
 
 
 class RegulationChange(models.Model):
-    RegEventId= models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId= models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
     student = models.ForeignKey('ExamStaffDB.StudentInfo', on_delete=models.CASCADE)
     PreviousRegulation = models.IntegerField()
     PresentRegulation = models.IntegerField()
@@ -90,7 +90,7 @@ class RegulationChange(models.Model):
 
 
 class NotRegistered(models.Model):
-    RegEventId= models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId= models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
     Student = models.ForeignKey('ExamStaffDB.StudentInfo', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
@@ -123,7 +123,7 @@ class StudentRegistrations_Staging(models.Model):
 class DroppedRegularCourses(models.Model):
     student = models.ForeignKey('ExamStaffDB.StudentInfo', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
         db_table = 'DroppedRegularCourses'
@@ -270,7 +270,7 @@ class NotPromoted(models.Model):
 
 class FacultyAssignment(models.Model):
     Subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('superintendent.RegistrationStatus', on_delete=models.CASCADE)
     Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo')
     Coordinator = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')
     Section = models.CharField(max_length=2, default='NA')

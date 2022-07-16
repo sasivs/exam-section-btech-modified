@@ -1,4 +1,3 @@
-from operator import itemgetter
 from django.shortcuts import render
 from superintendent.models import CancelledStudentInfo,CancelledStudentGrades,CancelledDroppedRegularCourses,CancelledNotPromoted,CancelledNotRegistered,CancelledRollLists,CancelledStudentRegistrations,CancelledMarks
 from co_ordinator.models import DroppedRegularCourses,NotPromoted,NotRegistered,RollLists,RollLists_Staging,StudentRegistrations,StudentRegistrations_Staging
@@ -7,9 +6,6 @@ from faculty.models import StudentGrades,Marks,Marks_Staging,StudentGrades_Stagi
 from superintendent.forms import StudentCancellationForm
 from SupExamDB.views import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.contrib.auth import logout 
-from django.db.models import F
-
     
 
 @login_required(login_url="/login/")
@@ -19,7 +15,6 @@ def seat_cancellation(request):
     if(request.method=='POST'):
         form = StudentCancellationForm(request.POST)
         if(form.is_valid()):
-            print(request.POST)
             regno = int(form.cleaned_data['RegNo'])
             studentInfo = StudentInfo.objects.filter(RegNo=regno)
             context = {'form':form}
@@ -31,45 +26,52 @@ def seat_cancellation(request):
                 notpromoted= NotPromoted.objects.filter(student_id=student.id)
                 notregistered =NotRegistered.objects.filter(Student_id=student.id)
                 rolls= RollLists.objects.filter(student_id=student.id)
-                regs =StudentRegistrations.objects.filter(Regno=regno)
-                grades =StudentGrades.objects.filter(RegId__in = regs.values_list('id'),flat =True)
+                regs =StudentRegistrations.objects.filter(RegNo=regno)
+                grades =StudentGrades.objects.filter(RegId__in = regs.values_list('id',flat =True))
                 marks = Marks.objects.filter(Registration__in = regs)
 
-                CancelledStudentInfo(RegNo=student.RegNo,RollNo=student.RollNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardinaName=student.GuardinaName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2,Cycle=student.Cycle).save
+                CancelledStudentInfo(RegNo=student.RegNo,RollNo=student.RollNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardianName=student.GuardianName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2,Cycle=student.Cycle).save()
                 for i in rolls:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
-                    CancelledRollLists.objects.create(**i_dict).save()
+                    i_dict.pop('_state')
+                    CancelledRollLists.objects.create(**i_dict)
                 for i in notregistered:
                     i_dict = i.__dict__
+                    i_dict.pop('_state')
                     i_dict.pop('id') 
-                    CancelledNotRegistered().objects.create(**i_dict).save()
+                    CancelledNotRegistered.objects.create(**i_dict)
                 for i in regs:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
-                    CancelledStudentRegistrations().objects.create(**i_dict).save()
+                    i_dict.pop('_state')
+                    CancelledStudentRegistrations.objects.create(**i_dict)
                 for i in droppedregular:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
-                    CancelledDroppedRegularCourses().objects.create(**i_dict).save()
+                    i_dict.pop('_state')
+                    CancelledDroppedRegularCourses.objects.create(**i_dict)
                     
                 for i in marks:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
-                    CancelledMarks().objects.create(**i_dict).save()
+                    i_dict.pop('_state')
+                    CancelledMarks.objects.create(**i_dict)
                 for i in grades:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
-                    CancelledStudentGrades().objects.create(**i_dict).save()
+                    i_dict.pop('_state')
+                    CancelledStudentGrades.objects.create(**i_dict)
                 for i in notpromoted:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
-                    CancelledNotPromoted().objects.create(**i_dict).save()
+                    i_dict.pop('_state')
+                    CancelledNotPromoted.objects.create(**i_dict)
 
 
 
                 Marks_Staging.objects.filter(Registration__in = regs).delete()
-                RollLists_Staging.objects.filter(Student_id=student.id).delete()
+                RollLists_Staging.objects.filter(student_id=student.id).delete()
                 StudentGrades_Staging.objects.filter(RegId__in = regs.values_list('id'),flat =True).delete()
                 StudentRegistrations_Staging.objects.filter(Regno=regno).delete()
                 marks.delete()
@@ -84,11 +86,10 @@ def seat_cancellation(request):
                     
                 
             
-            return render(request,'SupExamDBRegistrations/BTStudentCancellation.html',context)
-        else:
-            print('form validation failed')
+            return render(request,'superintendent/BTStudentCancellation.html',context)
+
     else:
         form = StudentCancellationForm()
     context = {'form':form}
-    return render(request,'SupExamDBRegistrations/BTStudentCancellation.html',context)
+    return render(request,'superintendent/BTStudentCancellation.html',context)
 

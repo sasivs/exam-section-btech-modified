@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from SupExamDBRegistrations.views.home import registration_access
 from django.shortcuts import render
 from hod.models import Coordinator
 from ExamStaffDB.models import StudentInfo
