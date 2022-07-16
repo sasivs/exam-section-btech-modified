@@ -94,7 +94,7 @@ def not_promoted_list(request):
                                     np.append(d)
             np.sort(key=get_regd_no)
             if request.POST.get('download'):
-                    from SupExamDBRegistrations.utils import NotPromotedBookGenerator
+                    from co_ordinator.utils import NotPromotedBookGenerator
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=NotPromoted({regevent}).xlsx'.format(regevent=event)
                     BookGenerator = NotPromotedBookGenerator(np, regulation, event)

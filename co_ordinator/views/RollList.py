@@ -437,7 +437,7 @@ def RollList_Status(request):
                 currentRegEventId = currentRegEventId[0].id
                 rollListStatus=RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).order_by('student__RegNo')
                 if request.POST.get('download'):
-                    from SupExamDBRegistrations.utils import RollListBookGenerator
+                    from co_ordinator.utils import RollListBookGenerator
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=RollList({event}).xlsx'.format(event=regEvent)
                     BookGenerator = RollListBookGenerator(rollListStatus, regEvent)
