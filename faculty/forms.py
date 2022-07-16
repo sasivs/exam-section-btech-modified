@@ -24,7 +24,7 @@ class AttendanceShoratgeStatusForm(forms.Form):
         for sub in Option:
             myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
                 str(sub.Subject.SubCode)+', '+str(sub.Section))]
-        myChoices = [('--Select Subject--','--Select Subject--')]+myChoices
+        myChoices = [('','--Select Subject--')]+myChoices
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
             max_length=26, widget=forms.Select(choices=myChoices))
 

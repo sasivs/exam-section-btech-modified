@@ -1,10 +1,11 @@
 {% extends 'SupExamDBRegistrations/subjecthome.html' %}
-
+{% block title %}Subjects Upload{% endblock title %}
 {% block sub %}
-
+{% with url_name=request.resolver_match.url_name %}
 <div class="container">
     {% if not validRows and not errorRows and not errorRows1 %}
     <div class="row">
+      {% if url_name == 'SupBTSubjectUpload' %}
       <strong>
         **DEC(Department Elective Courses) must be uploaded here only**  
         <br>
@@ -12,9 +13,24 @@
         <br>
         Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below:
         <br>
-        (SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable)
+        (SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable, OfferedBy)
         <br>
         </strong>
+      {% endif %}
+      {% if url_name == 'SupBTOpenSubjectUpload' %}
+      <strong>
+        **OEC(Open Elective Courses) must be uploaded here only**  
+        <br>
+        Upload the subjects information file for the corresponding event  in .xlsx format  having the following fields 
+        <br>
+        Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below:
+        <br>
+        (SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable, OfferedBy)
+        <br>
+        </strong>
+      {% endif %}
+    </div>
+    <div class="row">
         <form  method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}
@@ -142,7 +158,7 @@
   </div>
   {% endif %}
   </div>
-
+{% endwith %}
 <script>
   function isNumberKey(evt)
   {

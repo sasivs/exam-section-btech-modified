@@ -6,7 +6,6 @@
 
 <div class="container">
     <div class="row">
-        
         <strong>If its a single distribution subject,enter the marks with a plus sign in between and enter the description of the distribution in the Distribution name column. <br>
         For Example:If its a theory subject the Distribution column would look like 10+30+10+50  <br>
         and the DistributionName column would like Minor-1+Mid+Minor-2+End <br>
@@ -14,6 +13,8 @@
         For Example:If its a theory+lab subject the Distribution column would look like 10+30+10+50,60+40  <br>
         and the DistributionName column would like Minor-1+Mid+Minor-2+End,ContinuousAssessment+External <br>
         </strong>
+    </div>
+    <div class="row">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}

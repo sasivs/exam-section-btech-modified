@@ -61,20 +61,20 @@ def attendance_shortage_status(request):
         subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(Dept=hod.Dept, RegEventId__Status=1)
+        subjects = FacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True)
-        subjects = FacultyAssignment.objects.filter(BYear=coordinator.BYear, Dept=coordinator.Dept, RegEventId__Status=1)
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = FacultyAssignment.objects.filter(RegEventId__BYear=coordinator.BYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1)
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True)
-        subjects = FacultyAssignment.objects.filter(BYear=1, Dept=cycle_cord.Cycle, RegEventId__Status=1)
+        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = FacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1)
     if(request.method == 'POST'):
         form = AttendanceShoratgeStatusForm(subjects,request.POST)
         sub = request.POST['Subjects'].split(':')[0]
         regEvent = request.POST['Subjects'].split(':')[1]
         section = request.POST['Subjects'].split(':')[2]
         roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-        att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('Student__RegNo', flat=True))
+        att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list).values_list('Registration__RegNo', flat=True)
         return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form ,'att_short':att_short})
 
     else:

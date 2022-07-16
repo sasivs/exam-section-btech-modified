@@ -31,10 +31,10 @@ def grades_finalize(request):
                     gr.save()
                 RefreshMaterializedViews()
                 msg = 'Grades have been finalized.'
-                return render(request, 'SupExamDBRegistrations/GradesFinalize.html', {'form':form, 'msg':msg})
+                return render(request, 'hod/GradesFinalize.html', {'form':form, 'msg':msg})
     else:
         form = GradesFinalizeForm(subjects)
-    return render(request, 'SupExamDBRegistrations/GradesFinalize.html', {'form':form})
+    return render(request, 'hod/GradesFinalize.html', {'form':form})
 
 def RefreshMaterializedViews():
     conn = psycopg2.connect(

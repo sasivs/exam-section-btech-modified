@@ -2,6 +2,11 @@
 
 <div class="container">
     <div class="row">
+        <strong>
+            Use this to assign co ordinators for physics and chemistry cycles of first year.
+        </strong>
+    </div>
+    <div class="row">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit" name='submit-form' value="submit">Submit</button>

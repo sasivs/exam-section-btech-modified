@@ -257,7 +257,7 @@ class NotRegisteredStatusForm(forms.Form):
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        myChoices = [('','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=26, widget=forms.Select(choices=myChoices))
 
@@ -886,7 +886,7 @@ class FacultySubjectAssignmentForm(forms.Form):
             str(option[1])+':'+str(option[6])+':'+str(option[5]), DEPARTMENTS[option[4]-1]+':'+ \
                 YEARS[option[2]]+':'+ SEMS[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        myChoices = [('','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
         widget=forms.Select(choices=myChoices))
 
@@ -894,7 +894,7 @@ class FacultyAssignmentStatusForm(forms.Form):
     def __init__(self, regIDs, *args,**kwargs):
         super(FacultyAssignmentStatusForm,self).__init__(*args, **kwargs)
         regEventIDKVs = [(reg.id,reg.__str__()) for reg in regIDs]
-        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        regEventIDKVs = [('','-- Select Registration Event --')] + regEventIDKVs
         self.fields['regID'] = forms.CharField(label='Registration Event', required=False, widget = forms.Select(choices=regEventIDKVs, attrs={'required':'True'}))
 
 class GradeChallengeForm(forms.Form):

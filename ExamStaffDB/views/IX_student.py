@@ -39,7 +39,7 @@ def ix_student_status(request):
     if 'Superintendent' in groups or 'ExamStaff' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

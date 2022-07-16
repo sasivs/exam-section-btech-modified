@@ -16,7 +16,12 @@ def faculty_user(request):
     user = request.user
     hod = HOD.objects.filter(RevokeDate__isnull=True,User=user).first()
     faculty = FacultyInfo.objects.filter(Dept=hod.Dept,Working=True)
-        
+    faculty_assigned = Faculty_user.objects.filter(Faculty__in=faculty, RevokeDate__isnull=True)
+    for fac in faculty:
+        if faculty_assigned.filter(Faculty=fac).exists():
+            fac.User = faculty_assigned.filter(Faculty=fac).first().User
+        else:
+            fac.User = None
 
     return render(request, 'hod/FacultyUser.html',{'faculty':faculty})
 
@@ -50,7 +55,8 @@ login_required(login_url="/login/")
 def faculty_user_revoke(request,pk):
     fac = Faculty_user.objects.filter(Faculty_id=pk,RevokeDate__isnull=True).first()
     if fac:
-        fac.update(RevokeDate =timezone.now())
+        fac.RevokeDate = timezone.now()
+        fac.save()
     return redirect('FacultyUserAssignment')
 
 
