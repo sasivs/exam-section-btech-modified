@@ -16,10 +16,4 @@
     </div>
     {%endif%}
 </div>
-{% if initial_hod and initial_user %}
-<script>
-    document.getElementById('id_hod').value = {{initial_hod}};
-    document.getElementById('id_user').value = {{initial_user}};
-</script>
-{% endif %}
 {% endblock %}

@@ -106,6 +106,7 @@ class StudentRegistrations(models.Model):
     sub_id = models.IntegerField()
     class Meta:
         db_table = 'StudentRegistrations'
+        unique_together = (('RegNo', 'RegEventId', 'sub_id'))
         managed = True
 
 class StudentRegistrations_Staging(models.Model):
@@ -115,6 +116,7 @@ class StudentRegistrations_Staging(models.Model):
     sub_id = models.IntegerField()
     class Meta:
         db_table = 'StudentRegistrations_Staging'
+        unique_together = (('RegNo', 'RegEventId', 'sub_id'))
         managed = True
 
 
@@ -125,6 +127,7 @@ class DroppedRegularCourses(models.Model):
     Registered = models.BooleanField()
     class Meta:
         db_table = 'DroppedRegularCourses'
+        unique_together = (('student', 'subject'))
         managed = True
 
 

@@ -10,6 +10,8 @@ from ExamStaffDB.models import StudentInfo
 from faculty.models import Marks_Staging
 import datetime
 
+from superintendent.validators import validate_file_extension
+
 #Create your forms here
 
 
@@ -19,11 +21,10 @@ class RegistrationsEventForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ years[option[2]]+':'+\
                  sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
-                     for oIndex, option in enumerate(self.regIDs)]
+                     for oIndex, option in enumerate(regIDs)]
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
             widget=forms.Select(choices=myChoices,attrs={'onchange':"submit();"}))
@@ -31,7 +32,7 @@ class RegistrationsEventForm(forms.Form):
 class SubjectsUploadForm(forms.Form):
     def __init__(self, Options=None, *args,**kwargs):
         super(SubjectsUploadForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField(required=False)
+        self.fields['file'] = forms.FileField(required=False, validators=[validate_file_extension])
         self.fields['file'].widget.attrs.update({'required':'True'})
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
@@ -215,7 +216,7 @@ class UpdateSectionInfoForm(forms.Form):
 class UploadSectionInfoForm(forms.Form):
     def __init__(self, regIDs, *args,**kwargs):
         super(UploadSectionInfoForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField()
+        self.fields['file'] = forms.FileField(validators=[validate_file_extension])
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
@@ -232,7 +233,7 @@ class UploadSectionInfoForm(forms.Form):
 class RollListFeeUploadForm(forms.Form):
     def __init__(self, regIDs,*args,**kwargs):
         super(RollListFeeUploadForm, self).__init__(*args, **kwargs)
-        self.fields['file'] = forms.FileField()
+        self.fields['file'] = forms.FileField(validators=[validate_file_extension])
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
@@ -353,7 +354,6 @@ class BacklogRegistrationForm(forms.Form):
                 registeredBacklogs = []
                 for regn in studentRegistrations:
                     regEvent = RegistrationStatus.objects.get(id=regn.RegEventId)
-                    print(regEvent.id,regEvent.Mode)
                     if (regEvent.Mode == 'R'):
                         studentRegularRegistrations.append(regn)
                     elif regEvent.Mode == 'D':
@@ -392,11 +392,11 @@ class BacklogRegistrationForm(forms.Form):
                         self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                     else:
-                        mode = Selection[bRow.sub_id] 
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
-                            widget=forms.RadioSelect(),choices=[('1', 'Study Mode'), ('0', 'Exam Mode')])
-                        self.fields['RadioMode' + str(bRow.sub_id)].initial = str(mode)
-                        print("here")
+                        mode = Selection[bRow.sub_id]
+                        print(type(mode), mode=='1')
+                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=1,\
+                            widget=forms.RadioSelect(attrs={'required':'True'}))
+                        # self.fields['RadioMode' + str(bRow.sub_id)].initial = str(mode)
                     self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
                                     self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
                                         bRow.Regulation, bRow.sub_id, regBacklogsdict[bRow.sub_id]))
@@ -480,7 +480,7 @@ class OpenElectiveRegistrationsForm(forms.Form):
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
         subChoices = [('--Select Subject--','--Select Subject--')]
         self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))
-        self.fields['file'] = forms.FileField(label='Select File', required=False)
+        self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
         if 'regID' in self.data and self.data['regID'] != '--Choose Event--':
             subChoices += subjects
             self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))
@@ -553,13 +553,11 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 self.checkFields = []
                 self.radioFields = []
                 self.selectFields = [self.fields['RegEvent'], self.fields['RegNo']]
-                droppedCourses = DroppedRegularCourses.objects.filter(RegNo=self.data['RegNo'])
+                droppedCourses = DroppedRegularCourses.objects.filter(student__RegNo=self.data['RegNo'])
                 subjects = []
                 for row in droppedCourses:
-                    sub = Subjects.objects.get(id=row.sub_id)
-                    regEvent = RegistrationStatus.objects.get(id=sub.RegEventId)
-                    if(regEvent.BYear == byear and regEvent.Regulation == regulation):
-                        subjects.append(sub)
+                    if(row.RegEventId.BYear == byear and row.RegEventId.Regulation == regulation):
+                        subjects.append(row.subject)
                 reg_status = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
                 studentRegistrations=[]
                 for regevent in reg_status:
@@ -640,10 +638,8 @@ class DroppedRegularRegistrationsForm(forms.Form):
  
 
 class MakeupRegistrationsForm(forms.Form):
-    def __init__(self, *args,**kwargs):
+    def __init__(self, regIDs, *args,**kwargs):
         super(MakeupRegistrationsForm,self).__init__(*args, **kwargs)
-        regIDs = RegistrationStatus.objects.filter(Status=1,Mode='M')
-        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
@@ -732,7 +728,7 @@ class NotPromotedUploadForm(forms.Form):
         regEventIDKVs = list(set(regEventIDKVs))
         regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
         self.fields['RegEvent'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs))
-        self.fields['file'] = forms.FileField(label='Upload not promoted list')    
+        self.fields['file'] = forms.FileField(label='Upload not promoted list', validators=[validate_file_extension])    
 
 class NotPromotedUpdateForm(forms.Form):
     def __init__(self, Options=None, *args,**kwargs):
@@ -959,19 +955,19 @@ class GradeChallengeStatusForm(forms.Form):
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
 class NotRegisteredRegistrationsForm(forms.Form):
-    def __init__(self, co_ordinator, *args, **kwargs):
+    def __init__(self, regIDs, *args, **kwargs):
         super(NotRegisteredRegistrationsForm, self).__init__(*args, **kwargs)
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=co_ordinator.BYear, Mode='R')
         REGID_CHOICES = [('', 'Choose Event')]
-        REGID_CHOICES += [(reg.id, reg.__str__())for reg in regIDs]
-        self.fields['regEvent'] = forms.ChoiceField(label='Choose Event', widget=forms.Select(choices=REGID_CHOICES, attrs={'onchange':"submit()"}))
+        if regIDs:
+            REGID_CHOICES += [(reg.id, reg.__str__())for reg in regIDs]
+        self.fields['regEvent'] = forms.ChoiceField(label='Choose Event', required=False, choices=REGID_CHOICES, widget=forms.Select(attrs={'onchange':"submit()", 'required':'True'}))
 
         if self.data.get('regEvent'):
             regEvent = RegistrationStatus.objects.get(id=self.data.get('regEvent'))
-            not_registered_objs = NotRegistered.objects.filter(RegEventId__Dept=regEvent.Dept, RegEventId__BYear=regEvent.BYear, Registered=False).order_by('Student__RegNo', '-RegEventId_id').distinct('Student__RegNo')
+            not_registered_objs = NotRegistered.objects.filter(RegEventId__Dept=regEvent.Dept, RegEventId__BYear=regEvent.BYear, Registered=False).exclude(RegEventId=regEvent).order_by('Student__RegNo', '-RegEventId_id').distinct('Student__RegNo')
             REGNO_CHOICES = [('','Choose RegNo')]
             REGNO_CHOICES += [(nr_obj.id, str(nr_obj.Student.RegNo)+', '+nr_obj.RegEventId.__str__()) for nr_obj in not_registered_objs]
-            self.fields['regd_no'] = forms.ChoiceField(label='Choose RegNo', widget=forms.Select(choices=REGNO_CHOICES)) 
+            self.fields['regd_no'] = forms.ChoiceField(label='Choose RegNo', required=False, choices=REGNO_CHOICES, widget=forms.Select(attrs={'required':'True', 'onchange':'submit();'})) 
 
             if self.data.get('regd_no'):
                 self.myFields = []
@@ -982,19 +978,20 @@ class NotRegisteredRegistrationsForm(forms.Form):
                 '''
                 Query all the courses corresponding to the registration event and display those courses which are not registered even once.
                 '''
-                selected_nr_object = not_registered_objs.filter(id=self.data.get('regd_no'))
+                selected_nr_object = not_registered_objs.filter(id=self.data.get('regd_no')).first()
+                regNo = selected_nr_object.Student.RegNo
                 not_registered_courses = Subjects.objects.filter(RegEventId=selected_nr_object.RegEventId).exclude(Q(Category='OEC')|Q(Category='DEC'))
                 reg_status_objs = RegistrationStatus.objects.filter(AYear=regEvent.AYear, ASem=regEvent.ASem, Regulation=regEvent.Regulation)
-                student_registrations = StudentRegistrations_Staging.objects.filter(RegEventId__in=reg_status_objs.values_list('id', flat=True), RegNo=self.data.get('regd_no'))
+                student_registrations = StudentRegistrations_Staging.objects.filter(RegEventId__in=reg_status_objs.values_list('id', flat=True), RegNo=regNo)
                 Selection={student_registrations[i].sub_id:student_registrations[i].Mode for i in range(len(student_registrations))}
                 student_regular_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='R').values_list('id', flat=True))
                 student_backlog_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='B').values_list('id', flat=True))
                 student_dropped_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='D').values_list('id', flat=True))
-                registered_courses = StudentRegistrations_Staging.objects.filter(RegNo=self.data.get('regd_no'), sub_id__in=not_registered_courses.values_list('id', flat=True))
+                registered_courses = StudentRegistrations_Staging.objects.filter(RegNo=regNo, sub_id__in=not_registered_courses.values_list('id', flat=True))
                 self.addBacklogSubjects(student_backlog_regs, Selection)
                 self.addRegularSubjects(student_regular_regs)
                 self.addDroppedRegularSubjects(student_dropped_regs)
-                self.addNotregisteredCourses(not_registered_courses, registered_courses)
+                self.addNotregisteredCourses(not_registered_courses, registered_courses, Selection)
         
     def addBacklogSubjects(self, queryset,Selection):
         for bRow in queryset:
@@ -1020,7 +1017,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = Subjects.objects.filter(id=bRow.sub_id)
-            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId.id)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -1048,22 +1045,12 @@ class NotRegisteredRegistrationsForm(forms.Form):
 
     def addNotregisteredCourses(self, queryset, registered_courses, Selection):
         for row in queryset:
-            # if row.id in Selection.keys():
-            #     registration = StudentRegistrations_Staging.objects.filter()
-            #     self.fields['Check'+str(row.id)] = forms.BooleanField(required=False,\
-            #         widget=forms.CheckboxInput(attrs={'checked':True}))
-            #     self.fields['RadioMode' + str(row.id)] = forms.ChoiceField(required=False, \
-            #                 widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
-            #     self.myFields.append((row.SubCode, row.SubName, row.Credits, self['Check' + str(row.id)], 
-            #                         self['RadioMode' + str(row.id)],row.id in Selection.keys(),'R', row.OfferedYear, \
-            #                             row.Regulation, row.id))
-            # else:
             if not registered_courses.filter(sub_id=row.id).exists():
                 self.fields['Check' + str(row.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
                 self.fields['RadioMode' + str(row.id)] = forms.ChoiceField(required=False, \
                         widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                 self.myFields.append((row.SubCode, row.SubName, row.Credits, self['Check' + str(row.id)], 
-                                self['RadioMode' + str(row.id)],row.id in Selection.keys(),'NR', row.OfferedYear, \
-                                    row.Regulation, row.id, ''))
+                                self['RadioMode' + str(row.id)],row.id in Selection.keys(),'NR', row.RegEventId.AYear, \
+                                    row.RegEventId.Regulation, row.id, ''))
             
 

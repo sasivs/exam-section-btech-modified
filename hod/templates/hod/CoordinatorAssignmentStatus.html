@@ -1,4 +1,4 @@
-{% extends 'SupExamDBRegistrations/faculty_home.html' %} {% block sub %}
+{% extends 'SupExamDBRegistrations/userassignment_home.html' %} {% block sub %}
 
 <div class="container">
     <div class="row">
@@ -15,13 +15,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for h in Coordinator %}
+                {% for h in Coordinators %}
                 <tr>
                     <td style="border: 1px solid black;">{{h.id}}</td>
                     <td style="border: 1px solid black;">{{h.Dept}}</td>
                     <td style="border: 1px solid black;">{{h.BYear}}</td>
                     <td style="border: 1px solid black;">{{h.Faculty.Name}}</td>
-                    <td style="border: 1px solid black;">{{h.AssignedDate}}</td>
+                    <td style="border: 1px solid black;">{{h.AssignDate}}</td>
                     <td style="border: 1px solid black;">{{h.RevokeDate}}</td>
                     <td style="border: 1px solid black;">{{h.User.username}}</td>
                 </tr>

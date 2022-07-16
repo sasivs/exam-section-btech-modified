@@ -11,10 +11,10 @@ from superintendent.models import RegistrationStatus, HOD, MarksDistribution, Cy
 from hod.models import Coordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
-from superintendent.user_access_test import subject_access
+from superintendent.user_access_test import subject_access, subject_home_access
 
 @login_required(login_url="/login/")
-@user_passes_test(subject_access)
+@user_passes_test(subject_home_access)
 def subject_home(request):
     return render(request, 'SupExamDBRegistrations/subjecthome.html')
 
@@ -31,7 +31,8 @@ def subject_upload(request):
     elif 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
-    regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if request.POST.get('upload_file_submit'):
@@ -138,7 +139,7 @@ def subject_upload_error_handler(request):
     return(render(request, 'co_ordinator/BTSubjectsUploadErrorHandler.html',{'form':form, 'errorRows':errorRows}))
 
 @login_required(login_url="/login/")
-@user_passes_test(subject_access)
+@user_passes_test(subject_home_access)
 def subject_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
@@ -146,7 +147,7 @@ def subject_upload_status(request):
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -154,6 +155,8 @@ def subject_upload_status(request):
     elif 'Cycle-Co-ordinator' in groups:
         co_ordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode='R')
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
         form = RegistrationsEventForm(regIDs, request.POST)
         if(form.is_valid()):
@@ -284,6 +287,8 @@ def open_subject_upload(request):
     elif 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if request.POST.get('upload_file_submit'):

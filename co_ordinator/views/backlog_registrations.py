@@ -46,17 +46,16 @@ def btech_backlog_registration(request):
                 con['RegNo']=request.POST['RegNo']
             form = BacklogRegistrationForm(regIDs,con)
         elif 'RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST:
-            form = BacklogRegistrationForm(request.POST)
+            form = BacklogRegistrationForm(regIDs, request.POST)
         if not 'RegNo' in request.POST.keys():
             pass 
         elif not 'Submit' in request.POST.keys():
             regNo = request.POST['RegNo']
             event = (request.POST['RegEvent'])
-            print(regNo, event)
             studentInfo = StudentInfo.objects.filter(RegNo=regNo)
         elif('RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST and form.is_valid()):
             regNo = request.POST['RegNo']
-            event = (request.POST['RegEvent'])
+            event = request.POST['RegEvent']
             studentInfo = StudentInfo.objects.filter(RegNo=regNo) 
             studyModeCredits = 0
             examModeCredits = 0
@@ -77,20 +76,17 @@ def btech_backlog_registration(request):
             if((studyModeCredits+examModeCredits<=34) and(studyModeCredits<=32)):
                 for sub in form.myFields:
                     if(sub[6]=='R'): #Handling Regular Subjects
-                        regular_sub = Subjects.objects.get(id=sub[9])
                         # for regular and dropped there is no need to check if it is selected!!!
                         if form.cleaned_data['Check'+str(sub[9])] == False:   #delete regular_record from the registration table
-                            reg = StudentRegistrations_Staging.objects.\
-                                filter(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId_id,sub_id = sub[9], id=sub[10])
+                            reg = StudentRegistrations_Staging.objects.filter(id=sub[10])
                             if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.get(RegNo = request.POST['RegNo'], RegEventId=regular_sub.RegEventId_id,\
-                                     sub_id = sub[9], id=sub[10]).delete()
-                                new_dropped_course = DroppedRegularCourses(RegNo=request.POST['RegNo'], sub_id=sub[9])
+                                StudentRegistrations_Staging.objects.get(id=sub[10]).delete()
+                                new_dropped_course = DroppedRegularCourses(student=studentInfo[0], subject_id=sub[9], RegEventId_id=reg.RegEventId, Registered=False)
                                 new_dropped_course.save()
                     elif sub[6] == 'D':
                         if form.cleaned_data['Check'+str(sub[9])] == False:
-                            StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], \
-                                id=sub[10]).delete()
+                            StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                            DroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=False)
                     else:   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
@@ -98,8 +94,7 @@ def btech_backlog_registration(request):
                                 sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
                         elif(sub[5]):
                             #delete record from registration table
-                            StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
-                                sub_id = sub[9], id=sub[10]).delete()
+                            StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
                         elif(form.cleaned_data['Check'+str(sub[9])]):
                             #insert backlog registration
                             if sub[10]=='':
@@ -108,7 +103,7 @@ def btech_backlog_registration(request):
                                 newRegistration.save()                   
                 return(render(request,'co_ordinator/BTBacklogRegistrationSuccess.html'))
             else:
-                form = BacklogRegistrationForm(request.POST)
+                form = BacklogRegistrationForm(regIDs, request.POST)
                 context = {'form':form, 'msg':1}
                 context['study']=studyModeCredits
                 context['exam']=examModeCredits
@@ -116,9 +111,7 @@ def btech_backlog_registration(request):
                     context['RollNo'] = studentInfo[0].RollNo
                     context['Name'] = studentInfo[0].Name  
                 return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
-        else:
-            print("form validation failed")   
-            print(form.errors.as_data())          
+  
     else:
         form = BacklogRegistrationForm(regIDs)
     context = {'form':form, 'msg':0}

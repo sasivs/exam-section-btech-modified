@@ -5,6 +5,7 @@ from superintendent.models import HOD, CycleCoordinator
 from ExamStaffDB.models import FacultyInfo
 from superintendent.models import ProgrammeModel, Departments, Regulation
 from co_ordinator.models import StudentBacklogs
+from superintendent.validators import validate_file_extension
 import datetime
 
 
@@ -80,7 +81,7 @@ class GradePointsUploadForm(forms.Form):
         regulation = list(set(regulation))
         reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
         self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
-        self.fields['file'] =forms.FileField(label='upload grade points file')
+        self.fields['file'] =forms.FileField(label='upload grade points file', validators=[validate_file_extension])
 
 class GradePointsStatusForm(forms.Form):
     def __init__(self, *args,**kwargs):
