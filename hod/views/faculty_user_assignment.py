@@ -64,6 +64,8 @@ def faculty_Coordinator(request):
     hod = HOD.objects.filter(RevokeDate__isnull=True,User=user).first()
     if(request.method == 'POST'):
         form = CoordinatorAssignmentForm(hod.Dept,request.POST)
+        if 'BYear' in request.POST.keys():
+            assigned_coordinator = Coordinator.objects.filter(BYear=request.POST.get('BYear'), RevokeDate__isnull=True).first()
         if form.is_valid():
             if form.cleaned_data.get('BYear') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and 'submit-form' in request.POST.keys():
                 initial_coodinator = Coordinator.objects.filter(RevokeDate__isnull=True, Dept=hod.Dept, BYear=form.cleaned_data.get('BYear')).first()
@@ -78,6 +80,9 @@ def faculty_Coordinator(request):
                     new_coordinator.save()
                 msg = 'Coordinator assignment is done successfully'
                 return render(request, 'hod/CoordinatorAssignment.html', {'form':form, 'msg':msg})
+            else:
+                if assigned_coordinator:
+                    return render(request, 'hod/CoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
     else:
         form = CoordinatorAssignmentForm(hod.Dept)
         

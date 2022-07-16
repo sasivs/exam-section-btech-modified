@@ -15,4 +15,10 @@
     </div>
     {%endif%}
 </div>
+{% if initial_cord and initial_user %}
+<script>
+    document.getElementById('id_coordinator').value = {{initial_cord}};
+    document.getElementById('id_user').value = {{initial_user}};
+</script>
+{% endif %}
 {% endblock %}

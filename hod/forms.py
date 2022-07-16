@@ -24,18 +24,18 @@ class CoordinatorAssignmentForm(forms.Form):
         COORDINATOR_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]
         BYEAR_CHOICES =  [('', '--------'),(2, 2),(3, 3),(4, 4)]
-        self.fields['BYear'] = forms.CharField(label='BYear',  required=False, widget=forms.Select(choices=BYEAR_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
-        self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
-        self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
+        self.fields['BYear'] = forms.ChoiceField(label='BYear',  required=False, choices=BYEAR_CHOICES, widget=forms.Select(attrs={'onchange':"submit()", 'required':'True'}))
+        self.fields['coordinator'] = forms.ChoiceField(label='Coordinator',  required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        self.fields['user'] = forms.ChoiceField(label='User',  required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         if self.data.get('BYear'):
             faculty= FacultyInfo.objects.filter(Working=True, Dept=Option) #here1
             COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
-            self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
+            self.fields['coordinator'] = forms.ChoiceField(label='Coordinator', required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
             group = Group.objects.filter(name='Co-ordinator').first()
             assigned_users = Coordinator.objects.filter(RevokeDate__isnull=True).exclude(Dept=Option,BYear=self.data.get('BYear'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
             USER_CHOICES += [(user.id, user.username) for user in users]
-            self.fields['user'] = forms.CharField(label='User', required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
+            self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, initial=10, widget=forms.Select(attrs={'required':'True'}))
             initial_coordinator = Coordinator.objects.filter(Dept=Option,BYear=self.data.get('BYear') ,RevokeDate__isnull=True).first()
             if initial_coordinator:
                 self.fields['coordinator'].initial = initial_coordinator.Faculty.id

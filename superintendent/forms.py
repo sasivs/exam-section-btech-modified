@@ -156,9 +156,9 @@ class CycleCoordinatorAssignmentForm(forms.Form):
         CYCLE_CHOICES =  [('', '--------'), (9, 'Chemistry'), (10,'Physics')]
         COORDINATOR_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]
-        self.fields['cycle'] = forms.CharField(label='Cycle',  required=False, widget=forms.Select(choices=CYCLE_CHOICES, attrs={'required':'True', 'onchange':"submit();"}))
-        self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
-        self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
+        self.fields['cycle'] = forms.ChoiceField(label='Cycle',  required=False, choices=CYCLE_CHOICES, widget=forms.Select(attrs={'required':'True', 'onchange':"submit();"}))
+        self.fields['coordinator'] = forms.ChoiceField(label='Coordinator',  required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        self.fields['user'] = forms.ChoiceField(label='User',  required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         if self.data.get('cycle'):
             assigned_faculty = CycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
             faculty= FacultyInfo.objects.filter(Working=True).exclude(id__in=assigned_faculty.values_list('Faculty_id', flat=True)) #here1
@@ -167,10 +167,13 @@ class CycleCoordinatorAssignmentForm(forms.Form):
             assigned_users = CycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
             USER_CHOICES += [(user.id, user.username) for user in users]
-            self.fields['coordinator'] = forms.CharField(label='Coordinator',  required=False, widget=forms.Select(choices=COORDINATOR_CHOICES,  attrs={'required':'True'}))
-            self.fields['user'] = forms.CharField(label='User',  required=False, widget=forms.Select(choices=USER_CHOICES,  attrs={'required':'True'}))
-        # if self.data.get('cycle'):
-        #     cycle_cord = CycleCoordinator.objects.filter(Cycle=self.data.get('cycle'), RevokeDate__isnull=True)
+            self.fields['coordinator'] = forms.ChoiceField(label='Coordinator', required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+            self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+            initial_cycle_cord = CycleCoordinator.objects.filter(Cycle=self.data.get('cycle'), RevokeDate__isnull=True).first()
+            print('Here')
+            if initial_cycle_cord:
+                self.fields['coordinator'].initial = initial_cycle_cord.Faculty.id
+                self.fields['user'].initial = initial_cycle_cord.User.id 
 
 
 class MarksDistributionForm(forms.Form):
