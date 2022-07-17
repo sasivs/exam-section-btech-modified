@@ -13,7 +13,7 @@
         <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" name="">Submit</button> 
+            <button type="submit" name="" onclick="return confirm('Are you sure you want to finalize the marks?')">Submit</button> 
           </form>
     </div>
     {% if msg %}

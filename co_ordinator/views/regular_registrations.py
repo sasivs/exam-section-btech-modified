@@ -100,15 +100,17 @@ def registrations_finalize(request):
                 regulation=int(strs[5])
                 mode = strs[6]
                 regs = []
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                currentRegEvent = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
-                currentRegEventId = currentRegEventId[0].id
+                currentRegEventId = currentRegEvent[0].id
                 regs = StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId)
 
                 for reg in regs:
                     # if not StudentRegistrations.objects.filter(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
                     s=StudentRegistrations(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
-                    s.save() 
+                    s.save()
+                currentRegEvent.RegistrationStatus = 0
+                currentRegEvent.save()
                 return render(request, 'co_ordinator/BTRegistrationsFinalizeSuccess.html')
     else:
         form = RegistrationsFinalizeEventForm(regIDs)

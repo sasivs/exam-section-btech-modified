@@ -24,10 +24,10 @@ def generateRollList(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         if 'Regulation_change' in request.POST:
             (ayear,asem,byear,bsem,regulation)=request.session.get('ayasbybsr')
@@ -340,10 +340,10 @@ def UploadSectionInfo(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if(request.method=='POST'):
         form=UploadSectionInfoForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
@@ -457,10 +457,10 @@ def RollListFeeUpload(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if(request.method=='POST'):
         form=RollListFeeUploadForm(regIDs, request.POST,request.FILES)
         if(form.is_valid()):
@@ -526,10 +526,10 @@ def rolllist_finalize(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         form = RollListFinalizeForm(regIDs, request.POST)
         if form.is_valid():
@@ -538,6 +538,9 @@ def rolllist_finalize(request):
             for roll in rolls:
                 finalized_roll = RollLists(student=roll.student, RegEventId=roll.RegEventId, Section=roll.Section, Cycle=roll.Cycle)
                 finalized_roll.save()
+            reg_status_obj = RegistrationStatus.objects.filter(id=regEvent).first()
+            reg_status_obj.RollListStatus = 0
+            reg_status_obj.save()
             return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
     else:
         form = RollListFinalizeForm(regIDs)

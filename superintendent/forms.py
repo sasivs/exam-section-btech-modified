@@ -42,6 +42,7 @@ class DBYBSAYASSelectionForm(forms.Form):
         deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
         rChoices = [(0,'--Select Regulation--')]
         statusBox = forms.ChoiceField(label='Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
+        rollBox = forms.ChoiceField(label='RollList Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
         regBox = forms.ChoiceField(label='Registration Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
         marksBox = forms.ChoiceField(label='Marks Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
         gradesBox = forms.ChoiceField(label='Grades Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
@@ -54,6 +55,7 @@ class DBYBSAYASSelectionForm(forms.Form):
         self.fields['dept'] = deptBox
         self.fields['regulation'] = regulationBox
         self.fields['status'] = statusBox
+        self.fields['roll-status'] = rollBox
         self.fields['reg-status'] = regBox
         self.fields['marks-status'] = marksBox
         self.fields['grades-status'] = gradesBox

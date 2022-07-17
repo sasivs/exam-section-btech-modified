@@ -25,6 +25,7 @@ def manage_registrations(request):
             BSem = request.POST['bSem']
             Dept = int(request.POST['dept'])
             Status = int(request.POST['status'])
+            rollStatus = int(request.POST['roll-status'])
             regStatus = int(request.POST['reg-status'])
             marksStatus = int(request.POST['marks-status'])
             gradesStatus = int(request.POST['grades-status'])
@@ -34,7 +35,7 @@ def manage_registrations(request):
                 Mode=Mode)
             if(len(rg_status)==0):
                 rg_status_obj = RegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
-                Mode=Mode, RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus, Status=Status)
+                Mode=Mode, RollListStatus=rollStatus, RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus, Status=Status)
                 msg = f'The event {rg_status_obj.AYear}:{rg_status_obj.ASem}:{rg_status_obj.BYear}:{rg_status_obj.BSem}:\
                         {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \
                         (RegistrationStatus:{rg_status_obj.RegistrationStatus}), (MarksStatus:{rg_status_obj.MarksStatus}), (GradesStatus:{rg_status_obj.GradeStatus}) \

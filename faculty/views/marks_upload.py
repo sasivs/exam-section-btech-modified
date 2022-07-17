@@ -160,6 +160,9 @@ def marks_finalize(request):
                     final_mark.TotalMarks = mark.TotalMarks
                     final_mark.save()
             msg = 'Marks are finalized successfully.'
+            reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
+            reg_status_obj.MarksStatus = 0
+            reg_status_obj.save()
     else:
         form = MarksStatusForm(subjects)
     return render(request, 'faculty/MarksFinalize.html', {'form':form, 'msg':msg})
