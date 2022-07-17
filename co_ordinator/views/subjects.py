@@ -189,8 +189,18 @@ def subject_upload_status(request):
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
 def subject_delete(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = None
+    msg = ''
+    if 'Cycle-Co-ordinator' in groups:
+        coordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
+    elif 'Co-ordinator' in groups:
+        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
     if(request.method=='POST'):
-        form = SubjectDeletionForm(request.POST)
+        form = SubjectDeletionForm(regIDs, request.POST)
         if('regID' in request.POST.keys()):
             if(form.is_valid()):
                 depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
@@ -220,10 +230,10 @@ def subject_delete(request):
                             subjects.append(sub[0])
                     if(len(deletedSubjects)!=0):
                         msg = 'Subject(s) Deleted successfully.'
-                        form = SubjectDeletionForm(request.POST)
+                        form = SubjectDeletionForm(regIDs, request.POST)
                         return render(request,'co_ordinator/BTSubjectsDelete.html',{'form':form,'msg': msg})
     else:
-        form = SubjectDeletionForm()
+        form = SubjectDeletionForm(regIDs)
     return render(request, 'co_ordinator/BTSubjectsDelete.html',{'form':form})
 
 
