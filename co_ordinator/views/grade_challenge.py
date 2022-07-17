@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from SupExamDBRegistrations.views.home import is_Superintendent
+from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from co_ordinator.models import FacultyAssignment, GradeChallenge, RollLists 
 from hod.models import Coordinator

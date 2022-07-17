@@ -13,10 +13,6 @@ from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from superintendent.user_access_test import subject_access, subject_home_access
 
-@login_required(login_url="/login/")
-@user_passes_test(subject_home_access)
-def subject_home(request):
-    return render(request, 'SupExamDBRegistrations/subjecthome.html')
 
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)

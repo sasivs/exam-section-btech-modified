@@ -22,10 +22,7 @@ from superintendent.models import CycleCoordinator, ProgrammeModel, Registration
 #     return render(request, 'SupExamDBRegistrations/DeptYearRegistrationStatus.html',
 #                     { 'studentMakeupBacklogsVsRegistrations':studentMakeupBacklogsVsRegistrations }  )
 
-@login_required(login_url="/login/")
-@user_passes_test(registration_status_access)
-def btech_registration_status_home(request):
-    return render(request, 'SupExamDBRegistrations/Status/registrationstatus.html')
+
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_status_access)

@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from ExamStaffDB.views import StudInfo, IX_student, mandatory_credits, FacultyInfo
 
@@ -20,3 +22,6 @@ urlpatterns = [
     path('FacultyInfoDeletion', FacultyInfo.Faculty_delete, name = 'FacultyInfoDeletion'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from co_ordinator.views import faculty_subject_assignment, grade_challenge, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, open_elective_registrations, Dec_register_all, Dec_upload_file, \
     dropped_regular_regs, makeupReg, not_promoted, status
@@ -62,3 +64,6 @@ urlpatterns = [
     path('FacultySubjectAssignmentDetail/<int:pk>', faculty_subject_assignment.faculty_subject_assignment_detail, name='FacultySubjectAssignmentDetail'),
     path('FacultyAssignmentStatus', faculty_subject_assignment.faculty_assignment_status, name = 'FacultyAssignmentStatus'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

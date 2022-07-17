@@ -5,28 +5,28 @@ from django.conf.urls.static import static
 from ExamStaffDB.views import StudInfo, mandatory_credits
 
 from SupExamDBRegistrations.views import cancellations, grades, \
-    home, grades
+    grades
 from SupExamDB import views as supviews
 from co_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, open_elective_registrations, regular_registrations, status, subjects
 from ExamStaffDB.views import FacultyInfo
-from superintendent.views import add_regulation, branch_change, create_registration_event, grade_points
+from superintendent.views import add_regulation, branch_change, create_registration_event, grade_points, home
 # from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
-    path('sindex',supviews.sup_home, name='sindex'),
-    path("logout", supviews.logout_request, name="logout_request"),
-    path('home', supviews.sup_home, name='home'),
-    path('SupBTPreRegistrationHome', home.pre_registrations_home, name="SupBTPreRegistrationHome"),
-    path('SupBTBranchChangeHome', home.branch_change_home, name='SupBTBranchChangeHome'),
-    path('SupBTRegistrationHome', home.registration_home, name = 'SupBTRegistrationHome'),
-    path('SupBTRollListHome', home.rolllist_home, name='SupBTRollListHome'),
-    path('SupBTSubjectHome', subjects.subject_home, name = 'SupBTSubjectHome'),
-    path('SupBTGradesHome', home.grades_home, name="SupBTGradesHome"),
-    path('SupBTNotPromotedHome', home.not_promoted_home, name="SupBTNotPromotedHome"),
-    path('SupBTFacultyHome', home.faculty_home, name='SupBTFacultyHome'),
-    path('SupBTMarksHome', home.marks_home, name='SupBTMarksHome'),
-    path('SupBTUserManagementHome', home.userassignment_home, name='SupBTUserManagementHome'),
-    path('SupBTRegistrationStatusHome', status.btech_registration_status_home, name = 'SupBTRegistrationStatusHome'),
-    path('SupBTCancellationHome', home.cancellation_home, name='SupBTCancellationHome'),
+    # path('sindex',supviews.sup_home, name='sindex'),
+    # path("logout", supviews.logout_request, name="logout_request"),
+    # path('home', supviews.sup_home, name='home'),
+    # path('SupBTPreRegistrationHome', home.pre_registrations_home, name="SupBTPreRegistrationHome"),
+    # path('SupBTBranchChangeHome', home.branch_change_home, name='SupBTBranchChangeHome'),
+    # path('SupBTRegistrationHome', home.registration_home, name = 'SupBTRegistrationHome'),
+    # path('SupBTRollListHome', home.rolllist_home, name='SupBTRollListHome'),
+    # path('SupBTSubjectHome', subjects.subject_home, name = 'SupBTSubjectHome'),
+    # path('SupBTGradesHome', home.grades_home, name="SupBTGradesHome"),
+    # path('SupBTNotPromotedHome', home.not_promoted_home, name="SupBTNotPromotedHome"),
+    # path('SupBTFacultyHome', home.faculty_home, name='SupBTFacultyHome'),
+    # path('SupBTMarksHome', home.marks_home, name='SupBTMarksHome'),
+    # path('SupBTUserManagementHome', home.userassignment_home, name='SupBTUserManagementHome'),
+    # path('SupBTRegistrationStatusHome', status.btech_registration_status_home, name = 'SupBTRegistrationStatusHome'),
+    # path('SupBTCancellationHome', home.cancellation_home, name='SupBTCancellationHome'),
 
 
     # path('FacultyInfoUpload', FacultyInfo.faculty_upload, name = 'FacultyInfoUpload'),
