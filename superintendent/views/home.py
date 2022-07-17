@@ -78,4 +78,4 @@ def subject_home(request):
 @login_required(login_url="/login/")
 @user_passes_test(registration_status_access)
 def btech_registration_status_home(request):
-    return render(request, 'superintendent/Status/registrationstatus.html')
+    return render(request, 'superintendent/registrationstatus.html')
