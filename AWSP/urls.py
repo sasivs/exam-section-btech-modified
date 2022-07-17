@@ -18,6 +18,7 @@ from AWSP import views
 from django.urls import path, include
 
 urlpatterns = [
+    path('', views.index, name='index'),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('Transcripts/', include('Transcripts.urls')),
@@ -28,7 +29,7 @@ urlpatterns = [
     path('faculty/', include('faculty.urls')),
     path('hod/', include('hod.urls')),
     path('co_ordinator/', include('co_ordinator.urls')),
-    path('SupExamDB/',include('SupExamDB.urls')),
+    path('SupExamDB/',include('SupExamDB.urls')), 
     path('SupExamDBRegistrations/',include('SupExamDBRegistrations.urls')),
     path('SupExamDBRegistrationStatus/',include('SupExamDBRegistrationStatus.urls')),
     path('GradesProcessing/',include('GradesProcessing.urls')),

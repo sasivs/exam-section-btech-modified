@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse 
 
@@ -19,3 +20,8 @@ def home(request):
         return HttpResponseRedirect(reverse('sindex'))
     elif request.user.groups.filter(name='Cycle-Co-ordinator').exists():
         return HttpResponseRedirect(reverse('sindex'))
+
+
+# Create your views here.
+def index(request):
+    return render(request, 'superintendent/index.html')
