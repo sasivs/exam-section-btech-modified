@@ -54,7 +54,7 @@ class SubjectDeletionForm(forms.Form):
             ':'+str(option[6])+\
             ':'+str(option[5]), depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ \
                 ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        myChoices = [('','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=26, widget=forms.Select(choices=myChoices,attrs={'onchange':'submit();'}))
         self.eventBox = self['regID']
             

@@ -23,7 +23,7 @@
                     <td style="border: 1px solid black;">RegNo</td>
                     <td style="border: 1px solid black;">sub_id</td>
                     <td style="border: 1px solid black;">Grade</td>
-                    {% if user|has_group:'ExamStaffDB' %}
+                    {% if user|has_group:'ExamStaff' %}
                     <td style="border: 1px solid black;">Action</td>
                     {% endif %}
                 </tr>
@@ -31,13 +31,13 @@
             <tbody>
                 {% for student in students %}
                 <tr>
-                    <td style="border: 1px solid black;">student.id</td>
-                    <td style="border: 1px solid black;">student.Registration.RegNo</td>
-                    <td style="border: 1px solid black;">student.Registration.sub_id</td>
-                    <td style="border: 1px solid black;">student.Grade</td>
-                    {% if user|has_group:'ExamStaffDB' %}
+                    <td style="border: 1px solid black;">{{student.id}}</td>
+                    <td style="border: 1px solid black;">{{student.Registration.RegNo}}</td>
+                    <td style="border: 1px solid black;">{{student.Registration.sub_i}}d</td>
+                    <td style="border: 1px solid black;">{{student.Grade}}</td>
+                    {% if user|has_group:'ExamStaff' %}
                     <td style="border: 1px solid black;">
-                        <button type="submit" name="delete" value="student.id" onclick="return confirm('Are you sure you want to delete {{student.id}}\'s record?')">
+                        <button type="submit" name="delete" value="{{student.id}}" onclick="return confirm('Are you sure you want to delete {{student.id}}\'s record?')">
                             Delete
                         </button>
                     </td>

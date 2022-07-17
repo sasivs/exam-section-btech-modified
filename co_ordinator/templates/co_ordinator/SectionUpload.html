@@ -5,6 +5,8 @@
 
 <div class="container">
     <div class="row">
+        <strong>Once the Roll lIst has been generated ,it can be downloaded in the RollList status option. <br>
+        Once the roll list is downloaded ,fill up the section entry option and upload the file here for the corresponding registration event.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Upload</button>

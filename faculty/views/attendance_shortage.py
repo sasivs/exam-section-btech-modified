@@ -15,7 +15,7 @@ def attendance_shortage_upload(request):
     faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
     subjects  = FacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
     if(request.method == 'POST'):
-            form = AttendanceShoratgeUploadForm(subjects,request.POST)
+            form = AttendanceShoratgeUploadForm(subjects, request.POST, request.FILES)
         # if(form.is_valid()):
             sub = request.POST['Subjects'].split(':')[0]
             regEvent = request.POST['Subjects'].split(':')[1]
@@ -73,19 +73,17 @@ def attendance_shortage_status(request):
         sub = request.POST['Subjects'].split(':')[0]
         regEvent = request.POST['Subjects'].split(':')[1]
         section = request.POST['Subjects'].split(':')[2]
+        msg = ''
         roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-        att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list).values_list('Registration__RegNo', flat=True)
-        return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form ,'att_short':att_short})
+        att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
+        if request.POST.get('delete'):
+            att_short.filter(id=request.POST.get('delete')).delete()
+            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+            att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
+            msg = 'Attendance shortage record has been deleted successfully'
+        return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form ,'att_short':att_short, 'msg':msg})
 
     else:
         form = AttendanceShoratgeStatusForm(subjects)
     return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form})
 
-
-@login_required(login_url="/login/")
-@user_passes_test(is_Faculty)
-def attendance_shortage_delete(request,pk):
-    att_short = Attendance_Shortage.objects.filter(id =pk)
-    if len(att_short) != 0:
-        att_short.delete()
-    return render(request, 'faculty/AttendanceDeleteSuccess.html')

@@ -14,14 +14,17 @@ def ix_student_assignment(request):
     if request.method == 'POST':
         form = IXGradeStudentsAddition(request.POST)
         if form.is_valid():
-            if form.cleaned_data.get('submit-form'):
+            if request.POST.get('submit-form'):
                 regEvent = form.cleaned_data.get('regId')
                 subject = form.cleaned_data.get('subject')
                 regd_no = form.cleaned_data.get('regd_no')
                 grade = form.cleaned_data.get('grade')
                 student_registration = StudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject, RegNo=regd_no).first()
-                ix_row = IXGradeStudents(Registration=student_registration, Grade=grade)
-                ix_row.save()
+                if IXGradeStudents.objects.filter(Registration=student_registration).exists():
+                    IXGradeStudents.objects.filter(Registration=student_registration).update(Grade=grade)
+                else:
+                    ix_row = IXGradeStudents(Registration=student_registration, Grade=grade)
+                    ix_row.save()
                 msg = 'Student Grade Added Successfully.'
                 return render(request, 'ExamStaffDB/IXStudentAddition.html', {'form':form, 'msg':msg})
     else:

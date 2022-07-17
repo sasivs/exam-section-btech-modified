@@ -51,9 +51,11 @@
                     <a class="nav-link" href="{% url 'IXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
                 {% elif user|has_group:'Faculty' %}
+                {% if user|has_group:'Course-Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesThreshold' %}">Grades Threshold</a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesThresholdStatus' %}">Grades Threshold Status</a>
                 </li>

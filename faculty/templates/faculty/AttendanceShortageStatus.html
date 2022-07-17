@@ -6,8 +6,8 @@
  <strong>Choose the subject corresponding to required registration event to view the list of attendance shortage students.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
-            <button type="submit">Generate</button>
-        </form>
+            <button type="submit" name="submit-form" value="submit">Generate</button>
+        
     </div>
     {% if att_short %}
     <strong> List of Attendance Shortade Students</strong>
@@ -26,11 +26,19 @@
                     {{ field.Registration.RegNo }}
                 </td>
                 <td style="border: 1px solid black;">
-                    <a href="{% url 'AttendanceShoratgeDelete' field.id %}">Assign</a>
+                    <button type="submit" name="delete" value="{{field.id}}" onclick="return confirm('Are you sure you want to delete attendance shortage record of {{field.Registration.RegNo}}?')">Delete</button>
+                    <!-- <a href="{% url 'AttendanceShoratgeDelete' field.id %}" onclick="return confirm('Are you sure you want to delete attendance shortage record ?')">Delete</a> -->
                 </td>
             </tr>
             {% endfor %}
         </table>
+    </div>
+    {% endif %}
+</form>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
     </div>
     {% endif %}
 </div>

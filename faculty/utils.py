@@ -22,6 +22,12 @@ class SampleMarksUploadExcelSheetGenerator:
         marks_distribution = self.subject.MarkDistribution
         distribution_names = marks_distribution.DistributionNames.split(',')
         distribution_names = [name.split('+') for name in distribution_names]
+        
+        for outer_index in range(len(distribution_names)):
+            for inner_index in range(len(distribution_names[outer_index])):
+                marks_limit = marks_distribution.get_marks_limit(outer_index, inner_index)
+                distribution_names[outer_index][inner_index] += '(' + str(marks_limit) + ')'
+        
         marks_distribution_names = ['RegNo', 'Name'] 
         for dis_name in distribution_names:
             marks_distribution_names.extend(dis_name)

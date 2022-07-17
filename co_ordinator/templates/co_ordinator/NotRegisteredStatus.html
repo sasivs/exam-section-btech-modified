@@ -2,7 +2,10 @@
 
 <div class="container">
     <div class="row">
-        <strong>Choose the required registration event to view the details of not_registered students.</strong>
+        <strong>Choose the required registration event to view the details of not_registered students.
+            <br>Student who did not attend for the registration process/did not pay fee will be visible here.
+            <br>Note:Please note that the not registered list will only be generated only after  the completion of fee upload.
+        </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Generate</button>

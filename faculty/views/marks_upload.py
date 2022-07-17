@@ -158,7 +158,6 @@ def marks_finalize(request):
                 if final_mark:
                     final_mark.Marks = mark.Marks
                     final_mark.TotalMarks = mark.TotalMarks
-                    print(final_mark.__dict__)
                     final_mark.save()
             msg = 'Marks are finalized successfully.'
     else:

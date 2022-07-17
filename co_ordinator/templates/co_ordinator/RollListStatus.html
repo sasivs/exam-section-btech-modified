@@ -2,7 +2,9 @@
 
 <div class="container">
     <div class="row">
-        <strong>Choose the required registration event to view the status of the Roll Lists.</strong>
+        <strong>Choose the required registration event to view the status of the Roll Lists.
+            <br> Download option would be userful for section upload and fee upload.
+        </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Status</button>

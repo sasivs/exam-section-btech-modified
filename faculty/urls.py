@@ -6,7 +6,6 @@ from faculty.views import attendance_shortage, grades_threshold, courses, marks_
 urlpatterns =[
     path('AttendanceShoratgeUpload',attendance_shortage.attendance_shortage_upload,name='AttendanceShoratgeUpload'),
     path('AttendanceShoratgeStatus',attendance_shortage.attendance_shortage_status,name='AttendanceShoratgeStatus'),
-    path('AttendanceShoratgeDelete/<int:pk>',attendance_shortage.attendance_shortage_delete,name='AttendanceShoratgeDelete'),
     path('GradesThreshold', grades_threshold.grades_threshold, name='GradesThreshold'),
     path('GradesThresholdAssign/<int:pk>', grades_threshold.grades_threshold_assign, name='GradesThresholdAssign'),
     path('GradesThresholdStatus', grades_threshold.grades_threshold_status, name='GradesThresholdStatus'),

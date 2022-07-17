@@ -19,7 +19,7 @@ def faculty_subject_assignment(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Co_ordinator' in groups:
+    if 'Co-ordinator' in groups:
         current_user = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         valid_subjects = Subjects.objects.filter(OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear)
         regular_regIDs = valid_subjects.filter(RegEventId__Status=1, RegEventId__RegistrationStatus=1).values_list('RegEventId_id', flat=True)
@@ -63,7 +63,7 @@ def faculty_subject_assignment(request):
 def faculty_subject_assignment_detail(request, pk):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Co_ordinator' in groups:
+    if 'Co-ordinator' in groups:
         current_user = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
     elif 'HOD' in groups:
         current_user = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -132,11 +132,11 @@ def faculty_assignment_status(request):
         if(form.is_valid()):
             regeventid=form.cleaned_data['regID']
             if current_user.group == 'Superintendent':
-                faculty = FacultyAssignment.objects.filter(Subject__RegEventId__id=regeventid)
+                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid)
             elif current_user.group == 'Co-ordinator' or current_user.group == 'HOD':
-                faculty = FacultyAssignment.objects.filter(Subject__RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept)
+                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept)
             elif current_user.group == 'Cycle-Co-ordinator':
-                faculty = FacultyAssignment.objects.filter(Subject__RegEventId__id=regeventid)
+                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid)
             return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
     else:
         form = FacultyAssignmentStatusForm(regIDs)

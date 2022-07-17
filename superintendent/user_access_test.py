@@ -157,7 +157,7 @@ def marks_status_access(user):
 
 def not_promoted_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Co_ordinator' in groups or 'Cycle-Co-ordinator' in groups:
+    if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return  False
 

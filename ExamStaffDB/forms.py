@@ -84,7 +84,9 @@ class IXGradeStudentsAddition(forms.Form):
 class IXGradeStudentsStatus(forms.Form):
     def __init__(self, regs, *args, **kwargs):
         super(IXGradeStudentsStatus, self).__init__(*args, **kwargs) 
-        REG_CHOICES = [(reg.id, reg.__str__()) for reg in regs]
+        REG_CHOICES = []
+        if regs:
+            REG_CHOICES = [(reg.id, reg.__str__()) for reg in regs]
         REG_CHOICES = [('', 'Choose Registration Event')] + REG_CHOICES
         self.fields['regId'] = forms.CharField(label='Choose Registration Event', widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':"submit()"}))
 

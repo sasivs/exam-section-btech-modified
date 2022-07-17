@@ -35,8 +35,8 @@
                     <a href="{% url 'FacultyUserDetail' fac.id %}"><button>Assign</button></a>
                 </td>
                 <td style="border: 1px solid black;"> 
-                    <a href="{% url 'FacultyUserRevoke' fac.id %}" onclick="return confirm('Are you sure you want to revoke user for {}?'.format({{fac.Name}}))">
-                        <button onclick="return confirm('Are you sure you want to revoke user for {}?'.format({{fac.Name}}))">Revoke</button>
+                    <a href="{% url 'FacultyUserRevoke' fac.id %}" onclick="return confirm('Are you sure you want to revoke user for faculty {{fac.Name}}?')">
+                        <button >Revoke</button>
                     </a>
                 </td>
 
