@@ -100,7 +100,7 @@ def grades_home_access(user):
 
 def ix_grade_student_status_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'ExamStaff' in groups or 'Faculty' in groups:
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'ExamStaff' in groups or 'Faculty' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return  False
 

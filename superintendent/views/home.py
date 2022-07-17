@@ -20,7 +20,7 @@ def logout_request(request):
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def registration_home(request):
-    return render(request,'superintendent/BTRegistrationHome.html')
+    return render(request,'superintendent/registrationhome.html')
 
 @login_required(login_url="/login/")
 @user_passes_test(grades_home_access)
