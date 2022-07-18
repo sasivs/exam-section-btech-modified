@@ -400,16 +400,16 @@ def NotRegisteredStatus(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
     if request.method == 'POST':
         form = NotRegisteredStatusForm(regIDs, request.POST)
         if(form.is_valid):
