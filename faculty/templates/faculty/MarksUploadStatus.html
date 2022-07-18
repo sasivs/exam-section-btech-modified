@@ -35,7 +35,9 @@
                     <td style="border: 1px solid black;">{{mark1}}</td>
                     {% endfor %} {% if user|has_group:'Faculty' %}
                     <td style="border: 1px solid black;">
+                        {% if mark.Status == 1 %}
                         <a href="{% url 'MarksUpdate' mark.id %}" class="btn btn-primary">Update</a>
+                        {% endif %}
                     </td>
                     {% endif %}
                 </tr>

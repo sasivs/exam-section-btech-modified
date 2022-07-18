@@ -92,9 +92,14 @@ def generateRollList(request):
                     regulation = int(strs[5])
                     ayasbybsr = (ayear,asem,byear,bsem,regulation)
                     mode = strs[6]
-                    currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    currentRegEvent = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                        Dept=dept,Mode=mode,Regulation=regulation).first()
+                    currentRegEvent.RollListFeeStatus = 0
+                    currentRegEvent.save()
+                    currentRegEvent = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                         Dept=dept,Mode=mode,Regulation=regulation)
-                    currentRegEventId = currentRegEventId[0].id
+                    currentRegEventId = currentRegEvent[0].id
+                    NotRegistered.objects.filter(RegEventId_id=currentRegEventId).delete()
                     if mode == 'R':
                         if(byear==1):
                             reg_rgs = StudentInfo.objects.filter(AdmissionYear=ayear,Cycle=dept,Regulation=regulation)
@@ -244,94 +249,12 @@ def first_year_rollLists_cycle_handler(request):
                     s_info.Cycle=cycle
                     s_info.save()
                     roll.save()
-        return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
+            return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
     else:
         form = RollListsCycleHandlerForm(Options=not_prom_regs)
     return (render(request, 'co_ordinator/RollListsCycleHandlerForm.html',{'form':form}))
 
 
-
-
-
-# @login_required(login_url="/login/")
-# @user_passes_test(is_Superintendent)
-# def RollList_Status(request):
-#     if request.method == 'POST':
-#         form = RollListStatusForm([],request.POST)
-#         if(form.is_valid):
-#             ayear=int(request.POST.get('aYear'))
-#             byear=int(request.POST.get('bYear'))
-#             dept=int(request.POST.get('dept'))
-#             print(ayear, byear, dept)
-#             if(byear==1):
-#                 total_regs =[]
-#                 reg_rgs = StudentInfo.objects.filter(AdmissionYear=ayear,Cycle=dept)
-#                 reg_rgs = [row.RegNo for row in reg_rgs]
-#                 total_regs += reg_rgs
-#                 not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=1, PoA='R')
-
-#                 not_prom_regs = [row.RegNo for row in not_prom_regs]
-                    
-#                 final_not_prom_regs = []
-                       
-#                 for reg in not_prom_regs:
-#                     s_info = StudentInfo.objects.get(RegNo=reg)
-#                     if(s_info.Cycle==dept):
-#                             final_not_prom_regs.append(reg)   
-#                 not_prom_regs = final_not_prom_regs
-#                 if(len( not_prom_regs) !=0):
-#                     total_regs += not_prom_regs
-#                 Option =[]
-#                 for reg in total_regs:
-#                     roll = RollLists_Staging.objects.filter(RegNo=reg,AYear=ayear,BYear=byear)
-#                     if(len(roll)!=0):
-#                         Option.append((reg,roll[0].AYear,roll[0].BYear,roll[0].Regulation))
-#                     else:
-#                         Option =[(reg,'','','')] + Option
-#                 form = RollListStatusForm(Option,request.POST )
-#                 return (render(request, 'co_ordinator/RollListStatus.html',{'form': form}))            
-#             else:
-#                         total_regs =[]
-#                         reg_rgs = RollLists_Staging.objects.filter(AYear=ayear-1,Dept=dept,BYear=byear-1)
-#                         reg_rgs = [row.RegNo for row in reg_rgs]
-#                         pres_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1,BYear=byear)
-#                         present_not_prom_regs=[]
-#                         not_promoted_regno=[]
-#                         for reg in pres_not_prom_regs:
-#                             not_promoted_regno.append(reg.RegNo)
-
-#                         present_not_prom_regs = [row.RegNo for row in present_not_prom_regs]
-#                         prev_not_prom_regs = NotPromoted.objects.filter(AYear=ayear-1, BYear=byear-1)
-#                         prev_not_prom_regs = [row.RegNo for row in prev_not_prom_regs]
-#                         final_regs = []
-#                         not_prom_prev_prev_bmode = NotPromoted.objects.filter(AYear = ayear-2, BYear= 1, PoA='B')
-#                         not_prom_prev_prev_bmode = [row.RegNo for row in not_prom_prev_prev_bmode]
-#                         not_promoted_prev_bmode =  NotPromoted.objects.filter(AYear = ayear-1, BYear= 1, PoA='B')
-#                         not_promoted_prev_bmode = [row.RegNo for row in not_promoted_prev_bmode]
-#                         for reg in not_prom_prev_prev_bmode:
-#                             if(reg not in  not_promoted_prev_bmode):
-#                                 not_promoted_regno.append(reg)
-                            
-#                         for reg in reg_rgs:
-#                             if(reg not in prev_not_prom_regs):
-#                                 final_regs.append(reg)
-#                         total_regs += final_regs
-#                         print(total_regs) 
-#                         total_regs += not_promoted_regno
-#                         print(total_regs)
-#                         Option =[]
-#                         for reg in total_regs:
-#                             roll = RollLists_Staging.objects.filter(RegNo=reg,AYear=ayear,BYear=byear)
-#                             if(len(roll)!=0):
-#                                 Option.append((reg,roll[0].AYear,roll[0].BYear,roll[0].Regulation))
-#                             else:
-#                                 Option =[(reg,'','','')] + Option
-#                         form = RollListStatusForm(Option,request.POST)
-#                         return (render(request, 'co_ordinator/RollListStatus.html',{'form': form}))            
-#     else:
-#         Option=[]
-#         form = RollListStatusForm(Options=Option)
-#         return render(request, 'SupexamDBRegistrations/RollListStatus.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
@@ -354,47 +277,24 @@ def UploadSectionInfo(request):
             dataset = XLSX().create_dataset(data)
             errDataset=Dataset()
             regeventid=form.cleaned_data['regID']
-            errDataset.headers=['id','RegNo','Cycle','Section']
             errData = []
-            if(form.cleaned_data['regID']!='--Choose Event--'):
+            if(form.cleaned_data['regID']!=''):
+                roll_list = RollLists_Staging.objects.filter(RegEventId_id=regeventid)
                 for row in dataset:
-                    if RollLists_Staging.objects.filter(id=row[0]).exists():
-                        roll=RollLists_Staging.objects.get(id=row[0])
+                    if roll_list.filter(id=row[0]).exists():
+                        roll=roll_list.filter(id=row[0]).first()
                         roll.Cycle = row[8]
                         roll.Section=row[9]
                         roll.save()
                     else:
-                        errDataset.append(row)
-                for i in errDataset:
-                    errData.append(i)
-                if(len(errData)!=0):
-                    SecInfoErrRows = [ (errData[i][0],errData[i][1],errData[i][8],errData[i][9] ) for i in range(len(errData))]
-                    request.session['SecInfoErrRows'] = SecInfoErrRows
-                    return HttpResponseRedirect(reverse('UploadSectionInfoErrorHandler'))
-                return (render(request, 'co_ordinator/SectionInfoUploadSuccess.html'))
+                        errData.append(row)
+                msg = 'Section Information has been updated successfully.'
+                return (render(request, 'co_ordinator/SectionUpload.html', {'form':form, 'errorRows':errData, 'msg':msg}))
                   
     else:
         form = UploadSectionInfoForm(regIDs)
     return  render(request, 'co_ordinator/SectionUpload.html',{'form':form})
 
-
-@login_required(login_url="/login/")
-@user_passes_test(roll_list_access)
-def UploadSectionInfoErrorHandler(request):
-    SectionInfoRows = request.session.get('SecInfoErrRows')
-    for row in SectionInfoRows:
-        print(row[0])
-    if(request.method=='POST'):
-        form = UpdateSectionInfoForm(SectionInfoRows,request.POST)
-        if(form.is_valid()):
-            for cIndex, fRow in enumerate(SectionInfoRows):
-                if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    RollLists_Staging.objects.filter(id=fRow[0]).update(\
-                        regEventId=fRow[1],RegNo=fRow[2],Cycle=fRow[3],Section=fRow[4])
-            return render(request, 'co_ordinator/SectionInfoUploadSuccess.html')
-    else:
-        form = UpdateSectionInfoForm(Options=SectionInfoRows)
-    return(render(request, 'co_ordinator/SectionInfoUploadErrorHandler.html',{'form':form}))
 
 
 
@@ -484,6 +384,9 @@ def RollListFeeUpload(request):
                 unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
                 StudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
                 RollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=regeventid).delete() 
+                currentRegEvent = RegistrationStatus.objects.get(id=regeventid)
+                currentRegEvent.RollListFeeStatus = 1
+                currentRegEvent.save()
                 return render(request, 'co_ordinator/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
     else:
         form = RollListFeeUploadForm(regIDs)
@@ -526,10 +429,10 @@ def rolllist_finalize(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear).exclude(RollListFeeStatus=0)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = RegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1).exclude(RollListFeeStatus=0)
     if request.method == 'POST':
         form = RollListFinalizeForm(regIDs, request.POST)
         if form.is_valid():
@@ -547,19 +450,3 @@ def rolllist_finalize(request):
     return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form})
 
 
-
-
-
-
-
-
-# @login_required(login_url="/login/")
-# @user_passes_test(is_Superintendent)
-# def rolllist_finalize_error_handler(request):
-    
-#     if request.method == 'POST':
-#         form = RollListErrorHandlerForm(errRolls, request.POST)
-#         if form.is_valid():
-#             for i in len(errRolls):
-#                 if form.cleaned_data['Check'+str(errRolls[i])]:
-#                     addRoll = RollLists(RegNo=errRolls[i])

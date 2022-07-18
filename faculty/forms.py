@@ -109,9 +109,10 @@ class MarksStatusForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):
         super(MarksStatusForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
-        for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
-                str(sub.Subject.SubCode)+', '+str(sub.Section))]
+        if subjects:
+            for sub in subjects:
+                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
+                    str(sub.Subject.SubCode)+', '+str(sub.Section))]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 

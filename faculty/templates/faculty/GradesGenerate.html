@@ -7,6 +7,13 @@
 
 <div class="container">
     <div class="row">
+        <strong>
+            Grades can be generated after assignment of marks threshoold.
+            <br>
+            Threshold assignment can be done by the course co-ordinator.
+        </strong>
+    </div>
+    <div class="row">
         <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}

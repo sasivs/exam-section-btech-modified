@@ -148,7 +148,9 @@ class RollListFinalizeForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in regIDs]
+        self.regIDs = []
+        if regIDs:
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation, row.id) for row in regIDs]
         myChoices = [(option[7], depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
                     ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
@@ -210,22 +212,16 @@ class UpdateSectionInfoForm(forms.Form):
             self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
             self.fields['Check'+str(Options[fi][0])].initial = False  
             self.checkFields.append(self['Check' + str(Options[fi][0])])
-            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4], self['Check' + str(Options[fi][0])]))
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], self['Check' + str(Options[fi][0])]))
 
 
 class UploadSectionInfoForm(forms.Form):
     def __init__(self, regIDs, *args,**kwargs):
         super(UploadSectionInfoForm, self).__init__(*args, **kwargs)
         self.fields['file'] = forms.FileField(validators=[validate_file_extension])
-        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        sems = {1:'I',2:'II'}
-        self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
-        myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
-            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
-                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
-                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        if regIDs:
+            myChoices = [(reg.id, reg.__str__())for reg in regIDs]
+        myChoices = [('','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=26, widget=forms.Select(choices=myChoices))
 
