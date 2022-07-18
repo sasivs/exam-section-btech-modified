@@ -45,6 +45,7 @@ class RegistrationStatus(models.Model):
     Mode = models.CharField(max_length=1) # R for Regular B for Backlog
     Status = models.IntegerField()
     RollListStatus = models.IntegerField()
+    RollListFeeStatus = models.IntegerField(default=0)
     RegistrationStatus = models.IntegerField()
     MarksStatus = models.IntegerField()
     GradeStatus = models.IntegerField()

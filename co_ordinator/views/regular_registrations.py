@@ -101,8 +101,8 @@ def registrations_finalize(request):
                 mode = strs[6]
                 regs = []
                 currentRegEvent = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-                currentRegEventId = currentRegEvent[0].id
+                    Dept=dept,Mode=mode,Regulation=regulation).first()
+                currentRegEventId = currentRegEvent.id
                 regs = StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId)
 
                 for reg in regs:

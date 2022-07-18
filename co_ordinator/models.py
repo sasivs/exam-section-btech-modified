@@ -274,6 +274,7 @@ class FacultyAssignment(models.Model):
     Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo')
     Coordinator = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')
     Section = models.CharField(max_length=2, default='NA')
+    MarksStatus = models.IntegerField(default=1)
 
     class Meta:
         db_table = 'FacultyAssignment'

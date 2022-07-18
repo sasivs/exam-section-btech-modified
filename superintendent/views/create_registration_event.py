@@ -43,9 +43,9 @@ def manage_registrations(request):
                 rg_status_obj.save()
                 
             else:
-                rg_status.update(Status=Status, )
-                rg_status_obj = RegistrationStatus.objects.get(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
-                Mode=Mode, Status=Status, RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus)
+                rg_status.update(Status=Status,RollListStatus=rollStatus,RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus)
+                rg_status_obj = RegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
+                Mode=Mode).first()
                 msg = f'The event {rg_status_obj.AYear}:{rg_status_obj.ASem}:{rg_status_obj.BYear}:{rg_status_obj.BSem}:\
                     {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \
                        (RegistrationStatus:{rg_status_obj.RegistrationStatus}), (MarksStatus:{rg_status_obj.MarksStatus}), (GradesStatus:{rg_status_obj.GradeStatus}) \

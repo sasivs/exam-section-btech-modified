@@ -20,7 +20,7 @@ def marks_upload(request):
     faculty = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1, RegEventId__MarksStatus=1)
+    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, MarksStatus=1, RegEventId__Status=1, RegEventId__MarksStatus=1)
     if request.method == 'POST':
         form = MarksUploadForm(subjects, request.POST, request.FILES)
         if form.is_valid():
@@ -98,6 +98,9 @@ def marks_upload_status(request):
             roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
             marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
+            fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
+            for mark in marks_objects:
+                mark.Status = fac_assign_obj.MarksStatus
             return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects})
     else:
         form = MarksStatusForm(subjects=subjects)
@@ -141,7 +144,7 @@ def marks_finalize(request):
     faculty = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1, RegEventId__MarksStatus=1)
+    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, MarksStatus=1, RegEventId__Status=1, RegEventId__MarksStatus=1)
     msg = ''
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
@@ -160,9 +163,13 @@ def marks_finalize(request):
                     final_mark.TotalMarks = mark.TotalMarks
                     final_mark.save()
             msg = 'Marks are finalized successfully.'
-            reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
-            reg_status_obj.MarksStatus = 0
-            reg_status_obj.save()
+            fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
+            fac_assign_obj.MarksStatus = 0
+            fac_assign_obj.save()
+            if not FacultyAssignment.objects.filter(Subject_id=subject, RegEventId=regEvent, MarksStatus=1).exists():
+                reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
+                reg_status_obj.MarksStatus = 0
+                reg_status_obj.save()
     else:
         form = MarksStatusForm(subjects)
     return render(request, 'faculty/MarksFinalize.html', {'form':form, 'msg':msg})
