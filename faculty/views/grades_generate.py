@@ -126,6 +126,7 @@ def grades_status(request):
             for grade in grades:
                 grade.RegNo = student_registrations.filter(id=grade.RegId).first().RegNo
                 grade.regEvent = regEvent.__str__()
+                grade.Marks = Marks_Staging.objects.filter(Registration_id=grade.RegId).first().TotalMarks
             import operator
             grades = sorted(grades, key=operator.attrgetter('RegNo'))
             return render(request, 'faculty/GradesStatus.html', {'form':form, 'grades':grades})
