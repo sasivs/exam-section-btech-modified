@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from django.shortcuts import redirect
-
+from django.http import HttpResponse
 from ExamStaffDB.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm
 from ExamStaffDB.models import StudentInfo
 from ExamStaffDB.resources import StudentInfoResource
@@ -27,8 +27,8 @@ def StudInfoFileUpload(request):
                 'GuardianName','Phone','email','Address1','Address2','Cycle']
             for i in range(len(dataset)):
                 row = dataset[i]
-                newRow = (row[0],row[1],row[2],row[3],row[4],row[12],row[5],row[6],row[7],row[8],row[9],row[10],row[11],\
-                    row[13])
+                newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],\
+                    row[12],row[13])
                 newDataset.append(newRow)
             StudInfo_resource = StudentInfoResource()
             result = StudInfo_resource.import_data(newDataset,dry_run=True)
@@ -114,28 +114,14 @@ def update_rollno(request):
         form = UpdateRollNumberForm()
     return render(request, 'ExamStaffDB/UpdateRollNumber.html', {'form':form})
 
-# @login_required(login_url="/login/")
-# @user_passes_test(is_Superintendent)
-# def update_non_first_year_section(request):
-#     form = UpdateNonFirstYearSectionForm(request.POST, request.FILES)
-#     if request.method == 'POST':
-#         if form.is_valid():
-#             file = form.cleaned_data['file']
-#             data = bytes()
-#             for chunk in file.chunks():
-#                 data+=chunk
-#             dataset = XLSX().create_dataset(data)
-#             errorStudentInfoSection = []
-#             for i in range(len(dataset)):
-#                 row = dataset[i]
-#                 if StudentInfo.objects.filter(RegNo=row[0]).exists():
-#                     studentRow = StudentInfo.objects.get(RegNo=row[0])
-#                     studentRow.NonFirstYearSection = row[3]
-#                     studentRow.save()
-#                 else:
-#                     errorStudentInfoSection.append(row)
-#         return render(request, 'SUpExamDBRegistrations/UpdateNonFirstYearSectionSuccess.html', {'form':form, \
-#             'errorStudentInfoSection':errorStudentInfoSection})
-#     else:
-#         form = UpdateNonFirstYearSectionForm()
-#     return render(request, 'SupExamDBRegistrations/UpdateNonFirstYearSection.html', {'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_ExamStaff)
+def download_sample_studentinfo_sheet(request):
+    from co_ordinator.utils import ModelTemplateBookGenerator
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='StudentInfo')
+    BookGenerator = ModelTemplateBookGenerator(StudentInfo)
+    workbook = BookGenerator.generate_workbook()
+    workbook.save(response)
+    return response

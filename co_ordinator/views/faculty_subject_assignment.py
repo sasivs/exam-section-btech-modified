@@ -22,15 +22,15 @@ def faculty_subject_assignment(request):
     if 'Co-ordinator' in groups:
         current_user = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         valid_subjects = Subjects.objects.filter(OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear)
-        regular_regIDs = valid_subjects.filter(RegEventId__Status=1, RegEventId__RegistrationStatus=1).values_list('RegEventId_id', flat=True)
-        active_regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=current_user.BYear).exclude(Mode='R')
+        regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+        active_regIDs = RegistrationStatus.objects.filter(Status=1, BYear=current_user.BYear).exclude(Mode='R')
         other_regIDs = StudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
         regIDs = RegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regIDs))
     elif 'HOD' in groups:
         current_user = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         valid_subjects = Subjects.objects.filter(OfferedBy=current_user.Dept, RegEventId__BYear=1)
-        regular_regIDs = valid_subjects.filter(RegEventId__Status=1, RegEventId__RegistrationStatus=1).values_list('RegEventId_id', flat=True)
-        active_regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1).exclude(Mode='R')
+        regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+        active_regIDs = RegistrationStatus.objects.filter(Status=1, BYear=1).exclude(Mode='R')
         other_regIDs = StudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
         regIDs = RegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regIDs))
     if(request.method =='POST'):
@@ -69,7 +69,7 @@ def faculty_subject_assignment_detail(request, pk):
         current_user = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
     subject = Subjects.objects.get(id=pk)
     faculty = FacultyInfo.objects.filter(Dept=current_user.Dept, Working=True)
-    sections = RollLists.objects.filter(RegEventId_id=request.session.get('currentRegEvent')).values_list('Section', flat=True).distinct()
+    sections = RollLists.objects.filter(RegEventId_id=request.session.get('currentRegEvent')).values_list('Section', flat=True).distinct().order_by('Section')
     faculty_assigned = FacultyAssignment.objects.filter(Subject=subject, RegEventId_id=request.session.get('currentRegEvent'))
     co_ordinator=''
     if faculty_assigned:
@@ -105,16 +105,16 @@ def faculty_assignment_status(request):
         current_user = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         current_user.group = 'Co-ordinator'  
         valid_subjects = Subjects.objects.filter(OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear)
-        regular_regIDs = valid_subjects.filter(RegEventId__Status=1, RegEventId__RegistrationStatus=1).values_list('RegEventId_id', flat=True)
-        active_regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=current_user.BYear).exclude(Mode='R')
+        regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+        active_regIDs = RegistrationStatus.objects.filter(Status=1, BYear=current_user.BYear).exclude(Mode='R')
         other_regIDs = StudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
         regIDs = RegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regIDs))
     elif 'HOD' in groups:
         current_user = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         current_user.group = 'HOD'
         valid_subjects = Subjects.objects.filter(OfferedBy=current_user.Dept, RegEventId__BYear=1)
-        regular_regIDs = valid_subjects.filter(RegEventId__Status=1, RegEventId__RegistrationStatus=1).values_list('RegEventId_id', flat=True)
-        active_regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1).exclude(Mode='R')
+        regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+        active_regIDs = RegistrationStatus.objects.filter(Status=1, BYear=1).exclude(Mode='R')
         other_regIDs = StudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
         regIDs = RegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regIDs))
     elif 'Superintendent' in groups:
@@ -132,11 +132,11 @@ def faculty_assignment_status(request):
         if(form.is_valid()):
             regeventid=form.cleaned_data['regID']
             if current_user.group == 'Superintendent':
-                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid)
+                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
             elif current_user.group == 'Co-ordinator' or current_user.group == 'HOD':
-                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept)
+                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept).order_by('Section')
             elif current_user.group == 'Cycle-Co-ordinator':
-                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid)
+                faculty = FacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
             return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
     else:
         form = FacultyAssignmentStatusForm(regIDs)

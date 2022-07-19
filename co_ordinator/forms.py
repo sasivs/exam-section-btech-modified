@@ -738,10 +738,10 @@ class NotPromotedUpdateForm(forms.Form):
             self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], Options[fi][4], Options[fi][5], self['Check' + str(Options[fi][0])])) 
 
 class NotPromotedStatusForm(forms.Form):
-      def __init__(self, Options=None, *args,**kwargs):
+      def __init__(self, regIDs, *args,**kwargs):
         super(NotPromotedStatusForm, self).__init__(*args, **kwargs)
-        regIDs = RegistrationStatus.objects.filter(Mode='R')
-        regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
+        if regIDs:
+            regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \

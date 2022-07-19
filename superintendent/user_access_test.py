@@ -45,7 +45,7 @@ def subject_home_access(user):
 
 def registration_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return False 
 
@@ -170,5 +170,12 @@ def not_promoted_status_access(user):
 def not_promoted_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'HOD' in groups or 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
+        return True
+    return  False
+
+
+def sample_regno_sheet_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups or 'Faculty' in groups or 'Cycle-Co-ordinator' in groups or 'Superintendent' in groups:
         return True
     return  False

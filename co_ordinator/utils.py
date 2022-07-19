@@ -1,5 +1,6 @@
 from openpyxl import Workbook
 from openpyxl import styles
+from co_ordinator.models import Subjects
 
 class RollListBookGenerator:
     def __init__(self, rollList, regEventId):
@@ -78,3 +79,74 @@ class NotPromotedBookGenerator:
             for col_num, cell_value in enumerate(row_data,1):
                 cell = worksheet.cell(row=row_num, column=col_num)
                 cell.value = cell_value
+
+class ModelTemplateBookGenerator:
+    def __init__(self, klass):
+        if not hasattr(klass, "_default_manager"):
+            klass__name = (
+                klass.__name__ if isinstance(klass, type) else klass.__class__.__name__
+            )
+            raise ValueError(
+                "Argument must be a model, not '%s'." % klass__name
+            )
+        self.fields = [field.name for field in klass._meta.fields]
+        self.fields.pop(0)
+        self.klass = klass.__name__
+        
+
+    def generate_workbook(self):
+        workbook = Workbook()
+        workbook.remove(workbook.active)
+
+        self.generate_template_sheet(workbook=workbook)
+        return workbook
+    
+    def generate_template_sheet(self, workbook):
+        file = str(self.klass)
+        worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
+        row_num = 1
+        for col_num, column_title in enumerate(self.fields,1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.font = styles.Font(bold=True)
+            cell.value = column_title
+
+class SubjectsTemplateBookGenerator:
+    def __init__(self):
+        self.fields = ['SubCode', 'SubName', 'BYear', 'BSem', 'Dept','OfferedYear', 'Regulation',\
+                        'Creditable', 'Credits','Type','Category', 'OfferedBy']
+
+    def generate_workbook(self):
+        workbook = Workbook()
+        workbook.remove(workbook.active)
+
+        self.generate_template_sheet(workbook=workbook)
+        return workbook
+    
+    def generate_template_sheet(self, workbook):
+        file = 'Subjects'
+        worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
+        row_num = 1
+        for col_num, column_title in enumerate(self.fields,1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.font = styles.Font(bold=True)
+            cell.value = column_title
+
+class RegNoTemplateBookGenerator:
+    def __init__(self):
+        self.fields = ['RegNo']
+
+    def generate_workbook(self):
+        workbook = Workbook()
+        workbook.remove(workbook.active)
+
+        self.generate_template_sheet(workbook=workbook)
+        return workbook
+    
+    def generate_template_sheet(self, workbook):
+        file = 'RegNo-Model'
+        worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
+        row_num = 1
+        for col_num, column_title in enumerate(self.fields,1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.font = styles.Font(bold=True)
+            cell.value = column_title

@@ -1,8 +1,9 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from SupExamDB.views import is_Superintendent
 from co_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm
 from co_ordinator.models import Subjects_Staging, Subjects
@@ -251,7 +252,6 @@ def subject_finalize(request):
     if(request.method=='POST'):
         form = SubjectFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
-            print('valid form')
             depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
             years = {1:'I',2:'II',3:'III',4:'IV'}
             deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
@@ -281,18 +281,14 @@ def subject_finalize(request):
     return render(request, 'co_ordinator/BTSubjectFinalize.html',{'form':form, 'msg':msg})
 
 @login_required(login_url="/login/")
-@user_passes_test(subject_access)
+@user_passes_test(is_Superintendent)
 def open_subject_upload(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     msg = ''
-    if 'Cycle-Co-ordinator' in groups:
-        coordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
-    elif 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
+    if 'Superintendent' in groups:
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
@@ -380,3 +376,15 @@ def open_subject_upload(request):
     else:
         form = SubjectsUploadForm(Options=regIDs)
     return (render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
+
+
+@login_required(login_url="/login/")
+@user_passes_test(subject_access)
+def download_sample_subject_sheet(request):
+    from co_ordinator.utils import SubjectsTemplateBookGenerator
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='Subjects')
+    BookGenerator = SubjectsTemplateBookGenerator()
+    workbook = BookGenerator.generate_workbook()
+    workbook.save(response)
+    return response

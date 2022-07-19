@@ -7,9 +7,9 @@ from ExamStaffDB.views import StudInfo, mandatory_credits
 from SupExamDBRegistrations.views import cancellations, grades, \
     grades
 from SupExamDB import views as supviews
-from co_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, open_elective_registrations, regular_registrations, status, subjects
+from co_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, regular_registrations, status, subjects
 from ExamStaffDB.views import FacultyInfo
-from superintendent.views import add_regulation, branch_change, create_registration_event, grade_points, home
+from superintendent.views import add_regulation, branch_change, create_registration_event, grade_points, home, open_elective_registrations
 # from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
     # path('sindex',supviews.sup_home, name='sindex'),

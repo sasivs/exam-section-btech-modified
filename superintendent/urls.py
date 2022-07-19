@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from superintendent.views import HOD_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
-    cycle_coordinator_assignment, home
+    cycle_coordinator_assignment, home, open_elective_registrations
 
 
 
@@ -26,8 +26,11 @@ urlpatterns = [
 
     path('AddRegulation', add_regulation.addRegulation, name = 'AddRegulation'),
 
-    path('ManageRegistrations', create_registration_event.manage_registrations,name='ManageRegistrations'),
+    path('CreateRegistrationEvent', create_registration_event.create_registration_event, name='CreateRegistrationEvent'),
 
+    path('UpdateManageRegistrations', create_registration_event.update_manage_registrations,name='UpdateManageRegistrations'),
+
+    path('OpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='OpenElectiveRegistrations'),
 
     path('GradePointsUpload', grade_points.grade_points_upload, name='GradePointsUpload'),
     path('GradePointsStatus', grade_points.grade_points_status, name='GradePointsStatus'),

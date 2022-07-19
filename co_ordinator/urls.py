@@ -2,8 +2,9 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from co_ordinator.views import faculty_subject_assignment, grade_challenge, not_registered_registrations, subjects, RollList,\
-    regular_registrations, backlog_registrations, open_elective_registrations, Dec_register_all, Dec_upload_file, \
+    regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
     dropped_regular_regs, makeupReg, not_promoted, status
+from superintendent.views import open_elective_registrations
 
 # create your urls here
 
@@ -15,6 +16,7 @@ urlpatterns = [
     path('SupBTSubjectUploadStatus', subjects.subject_upload_status, name = 'SupBTSubjectUploadStatus'),
     path('SupBTSubjectDelete', subjects.subject_delete, name = 'SupBTSubjectDelete'),
     path('SupBTSubjectFinalize', subjects.subject_finalize, name = 'SupBTSubjectFinalize'),
+    path('DownloadSampleSubjectSheet', subjects.download_sample_subject_sheet, name='DownloadSampleSubjectSheet'),
 
     path('SupBTOpenSubjectUpload', subjects.open_subject_upload,name='SupBTOpenSubjectUpload'),
 
@@ -30,7 +32,6 @@ urlpatterns = [
 
     path('SupBTRegistrations', regular_registrations.btech_regular_registration, name = 'SupBTRegistrations'),
 
-    path('OpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='OpenElectiveRegistrations'),
 
     path('DepartmentElectiveRegistrationsUpload',Dec_upload_file.dept_elective_regs_upload, name='DepartmentElectiveRegistrationsUpload'),
     path('DepartmentElectiveRegistrationsAll',Dec_register_all.dept_elective_regs_all, name='DepartmentElectiveRegistrationsAll'),

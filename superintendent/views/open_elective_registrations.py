@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
+from SupExamDB.views import is_Superintendent
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import OpenElectiveRegistrationsForm
 from co_ordinator.models import Subjects, StudentRegistrations_Staging
@@ -8,17 +9,13 @@ from import_export.formats.base_formats import XLSX
 from hod.models import Coordinator
 
 @login_required(login_url="/login/")
-@user_passes_test(registration_access)
+@user_passes_test(is_Superintendent)
 def open_elective_regs(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
-    if 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='R')
-    elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
+    if 'Superintendent' in groups:
+        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     necessary_field_msg = False
@@ -56,7 +53,7 @@ def open_elective_regs(request):
                 regNo = int(dataset[i][0])
                 reg = StudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                 reg.save()
-            return render(request, 'co_ordinator/OecRegistrationsSuccess.html')
+            return render(request, 'superintendent/OecRegistrationsSuccess.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
             dept = deptDict[strs[0]]
@@ -74,5 +71,5 @@ def open_elective_regs(request):
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:
         form = OpenElectiveRegistrationsForm(regIDs)
-    return render(request, 'co_ordinator/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})
+    return render(request, 'superintendent/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})
 

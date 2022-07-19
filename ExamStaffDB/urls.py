@@ -7,6 +7,8 @@ from ExamStaffDB.views import StudInfo, IX_student, mandatory_credits, FacultyIn
 urlpatterns = [
 
     path('StudentInfoFileUpload',StudInfo.StudInfoFileUpload, name = 'StudentInfoFileUpload'),
+    path('DownloadSampleStudentInfoSheet', StudInfo.download_sample_studentinfo_sheet, name='DownloadSampleStudentInfoSheet'),
+
     path('StudentInfoUploadErrorHandler', StudInfo.student_info_error_handler, name = 'StudentInfoUploadErrorHandler'),
     path('UpdateRollNumber', StudInfo.update_rollno, name='UpdateRollNumber'),
 

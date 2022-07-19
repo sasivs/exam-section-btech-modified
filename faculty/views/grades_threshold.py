@@ -32,48 +32,48 @@ def grades_threshold_assign(request, pk):
         if form.is_valid():
             if request.POST.get('submit-form'):
                 if prev_thresholds:
-                    if (form.cleaned_data.get('uniform_grading')=='1' and prev_thresholds.first().uniform_grading) or \
-                        (form.cleaned_data.get('uniform_grading')=='0' and not prev_thresholds.first().uniform_grading):
-                        if form.cleaned_data.get('uniform_grading')=='1':
-                            for grade in grades:
-                                if form.cleaned_data[str(grade.id)]:
-                                    prev_thresholds.filter(Grade=grade).update(Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
-                        else:
-                            section = form.cleaned_data.get('section')
-                            for grade in grades:
-                                if form.cleaned_data[section+str(grade.id)]:
-                                    prev_thresholds.filter(Grade=grade, Section=section).update(Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
-                    else:
-                        prev_thresholds.delete()
-                        if form.cleaned_data.get('uniform_grading')=='1':
-                            for grade in grades:
-                                if form.cleaned_data[str(grade.id)]:
-                                    threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                        uniform_grading=True, Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
-                                    threshold_mark.save()
-                        else:
-                            section = form.cleaned_data.get('section')
-                            for grade in grades:
-                                if form.cleaned_data[section+str(grade.id)]:
-                                    threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                        uniform_grading=False, Section=section, \
-                                            Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
-                                    threshold_mark.save()
+                    # if (form.cleaned_data.get('uniform_grading')=='1' and prev_thresholds.first().uniform_grading) or \
+                    #     (form.cleaned_data.get('uniform_grading')=='0' and not prev_thresholds.first().uniform_grading):
+                    #     if form.cleaned_data.get('uniform_grading')=='1':
+                    for grade in grades:
+                        if form.cleaned_data[str(grade.id)]:
+                            prev_thresholds.filter(Grade=grade).update(Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                        # else:
+                        #     section = form.cleaned_data.get('section')
+                        #     for grade in grades:
+                        #         if form.cleaned_data[section+str(grade.id)]:
+                        #             prev_thresholds.filter(Grade=grade, Section=section).update(Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
+                    # else:
+                    #     prev_thresholds.delete()
+                    #     if form.cleaned_data.get('uniform_grading')=='1':
+                    #         for grade in grades:
+                    #             if form.cleaned_data[str(grade.id)]:
+                    #                 threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
+                    #                     uniform_grading=True, Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                    #                 threshold_mark.save()
+                    #     else:
+                    #         section = form.cleaned_data.get('section')
+                    #         for grade in grades:
+                    #             if form.cleaned_data[section+str(grade.id)]:
+                    #                 threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
+                    #                     uniform_grading=False, Section=section, \
+                    #                         Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
+                    #                 threshold_mark.save()
                 else:
-                    if form.cleaned_data.get('uniform_grading')=='1':
-                        for grade in grades:
-                            if form.cleaned_data[str(grade.id)]:
-                                threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                    uniform_grading=True, Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
-                                threshold_mark.save()
-                    else:
-                        section = form.cleaned_data.get('section')
-                        for grade in grades:
-                            if form.cleaned_data[section+str(grade.id)]:
-                                threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                    uniform_grading=False, Section=section, \
-                                        Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
-                                threshold_mark.save()
+                    # if form.cleaned_data.get('uniform_grading')=='1':
+                    for grade in grades:
+                        if form.cleaned_data[str(grade.id)]:
+                            threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
+                                uniform_grading=True, Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                            threshold_mark.save()
+                    # else:
+                    #     section = form.cleaned_data.get('section')
+                    #     for grade in grades:
+                    #         if form.cleaned_data[section+str(grade.id)]:
+                    #             threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
+                    #                 uniform_grading=False, Section=section, \
+                    #                     Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
+                    #             threshold_mark.save()
                 msg = 'Grades Threshold noted successfully'
                 return render(request, 'faculty/GradesThresholdAssign.html', {'subject':subject_faculty, 'msg':msg})
 

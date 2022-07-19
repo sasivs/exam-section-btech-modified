@@ -17,7 +17,7 @@
                     <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'MarksFinalize' %}">Marks Finalize</a>
+                    <a class="nav-link" href="{% url 'MarksHodSubmission' %}">Marks Hod Submission</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'SampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
@@ -25,6 +25,9 @@
                 {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MarksFinalize' %}">Marks Finalize</a>
                 </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">

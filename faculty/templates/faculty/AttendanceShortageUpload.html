@@ -4,9 +4,18 @@
 
 <div class="container">
     <div class="row">
+        <strong>List of all the attendence shortage students should be uploaded for the selected subject.
+            <br>Note:File being uploaded must have only the following fields.
+            <br>(RegNo)
+            <br>Sample file is available for download(check below). 
+        </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">Upload</button>
+            <br><br>
+            <hr>
+            <label for="download-sample">Download template sheet:</label>
+            <a href="{% url 'DownloadSampleAttendanceShortageSheet' %}" name="download-sample" class="btn btn-primary">Download</a>
         </form>
     </div>
     {% if msg %}

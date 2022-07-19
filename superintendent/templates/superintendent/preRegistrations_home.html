@@ -14,7 +14,10 @@
                 <a class="nav-link" href="{% url 'AddRegulation' %}">Add Regulation</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'ManageRegistrations' %}">Manage Registrations</a>
+                <a class="nav-link" href="{% url 'CreateRegistrationEvent' %}">Create Registration Event</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'UpdateManageRegistrations' %}">Update Registration Event</a>
               </li>
               {% elif user|has_group:"ExamStaff" %}
               <li class="nav-item">

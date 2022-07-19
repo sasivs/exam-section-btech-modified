@@ -73,7 +73,74 @@ class DBYBSAYASSelectionForm(forms.Form):
             regulations = list(set(regulations))
             rChoices += regulations
             self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
-        
+            if self.data.get('bYear')!='1':
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+            else:
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+            deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
+            deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
+            self.fields['dept'] = deptBox
+        elif self.data.get('bYear'):
+            if self.data.get('bYear') != '1':
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+            else:
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+            deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
+            deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
+            self.fields['dept'] = deptBox
+
+class CreateRegistrationEventForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CreateRegistrationEventForm, self).__init__(*args, **kwargs)
+        deptChoices = [('','--Select Dept--')]
+        bYearChoices = [('','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
+        bSemChoices = [('','--Select BSem--'),(1,1),(2,2)]
+        aYearChoices = [('','--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        aSemChoices = [('','--Select ASem--')] + [(1,1),(2,2),(3,3)]
+        aYearBox = forms.IntegerField(label='Select AYear', required=False, widget=forms.Select(choices=aYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
+        aSemBox = forms.IntegerField(label='Select ASem', required=False, widget=forms.Select(choices=aSemChoices, attrs={'required':'True'}))
+        bYearBox = forms.IntegerField(label='Select BYear', required=False, widget=forms.Select(choices=bYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
+        bSemBox = forms.IntegerField(label='Select BSem', required=False, widget=forms.Select(choices=bSemChoices, attrs={'required':'True'}))
+        deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
+        rChoices = [('','--Select Regulation--')]
+        regulationBox = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
+        modeBox = forms.ChoiceField(label='Select Mode', required=False, widget=forms.RadioSelect(attrs={'required':'True'}),choices = [('R', 'Regular'),('B','Backlog'),('D','DroppedRegular'),('M','Makeup')])
+        self.fields['aYear'] = aYearBox
+        self.fields['aSem'] = aSemBox
+        self.fields['bYear'] = bYearBox
+        self.fields['bSem'] = bSemBox
+        self.fields['dept'] = deptBox
+        self.fields['regulation'] = regulationBox
+        self.fields['mode'] = modeBox
+        if self.data.get('aYear') and self.data.get('bYear'):
+            regulations = Regulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
+            dropped_course_regulations = Regulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
+            backlog_course_regulations = StudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
+            backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
+            dropped_course_regulations = [(regu.Regulation,regu.Regulation) for regu in dropped_course_regulations]
+            regulations = [(regu.Regulation,regu.Regulation) for regu in regulations]
+            regulations +=  dropped_course_regulations + backlog_course_regulations
+            regulations = list(set(regulations))
+            rChoices += regulations
+            self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
+            if self.data.get('bYear')!='1':
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+            else:
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+            deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
+            deptChoices += [('all', 'All Departments')]
+            deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
+            self.fields['dept'] = deptBox
+
+        elif self.data.get('bYear'):
+            if self.data.get('bYear') != '1':
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+            else:
+                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+            deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
+            deptChoices += [('all', 'All Departments')]
+            deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
+            self.fields['dept'] = deptBox
 
 class GradePointsUploadForm(forms.Form):
     def __init__(self, *args,**kwargs):

@@ -7,8 +7,12 @@
 
 <div class="container">
     <div class="row">
-        <strong>Columns should not be altered in case of uploading marks.(Other columns can either be filled or kept empty) <br> If a student is absent for the exam allot him '0'(zero) marks.
-        <br></strong>
+        <strong>
+            Columns should not be altered in case of uploading marks.(Other columns can either be filled or kept empty) 
+            <br> 
+            If a student is absent for the exam allot him '0'(zero) marks.
+            <br>
+        </strong>
         <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}

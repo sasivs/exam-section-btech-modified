@@ -2,10 +2,15 @@
 {% block title %}Manage Registrations{% endblock title %}
 
 {% block sub %}
+{% with url_name=request.resolver_match.url_name %}
 
 <div class="container">
     <div class="row">
+        {% if url_name == 'UpdateManageRegistrations' %}
         <strong>Enable/Disable(Activate/Deactivate) the events based on the requirement </strong>
+        {% elif url_name == 'CreateRegistrationEvent' %}
+        <strong>Create Registration event for all departments at once of a particular BTech year and academic year </strong>
+        {% endif %}
     </div>
     {% if msg %}
     <br>
@@ -22,6 +27,7 @@
         </form>
     </div>
 </div>
+{% endwith %}
 
 <script>
     var dropdown = document.getElementById('id_aSem');

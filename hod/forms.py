@@ -1,5 +1,6 @@
 from django import forms 
 from django.contrib.auth.models import Group
+from numpy import require
 from superintendent.models import RegistrationStatus
 from hod.models import Coordinator
 from ExamStaffDB.models import FacultyInfo
@@ -7,16 +8,20 @@ from ExamStaffDB.models import FacultyInfo
 
 
 class GradesFinalizeForm(forms.Form):
-    def __init__(self, subjects, *args,**kwargs):
+    def __init__(self, regIDs, *args, **kwargs):
         super(GradesFinalizeForm, self).__init__(*args, **kwargs)
-        subject_Choices=[]
-        for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+\
-                str(sub.Subject.SubCode))]
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
-        self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
+        REG_CHOICES = [('', '--------')]
+        if regIDs:
+            REG_CHOICES += [(reg.id, reg.__str__()) for reg in regIDs]
+        self.fields['regEvent'] = forms.CharField(label='Choose RegEvent', max_length=26, required=False, choices=REG_CHOICES, widget=forms.Select(attrs={'required':'True'}))
 
-
+class MarksFinalizeForm(forms.Form):
+    def __init__(self, regIDs, *args, **kwargs):
+        super(MarksFinalizeForm, self).__init__(*args, **kwargs)
+        REG_CHOICES = [('', '--------')]
+        if regIDs:
+            REG_CHOICES += [(reg.id, reg.__str__()) for reg in regIDs]
+        self.fields['regEvent'] = forms.CharField(label='Choose RegEvent', max_length=26, required=False, choices=REG_CHOICES, widget=forms.Select(attrs={'required':'True'}))
 
 class CoordinatorAssignmentForm(forms.Form):
     def __init__(self,Option=None , *args,**kwargs):

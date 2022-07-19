@@ -28,38 +28,64 @@ def marks_upload(request):
                 subject = form.cleaned_data.get('subject').split(':')[0]
                 regEvent = form.cleaned_data.get('subject').split(':')[1]
                 section = form.cleaned_data.get('subject').split(':')[2]
-                exam_outer_index = int(form.cleaned_data.get('exam-type').split(',')[0])
-                exam_inner_index = int(form.cleaned_data.get('exam-type').split(',')[1])
-                file = form.cleaned_data.get('file')
                 roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
                 marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                     Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
                 mark_distribution = Subjects.objects.get(id=subject).MarkDistribution
-                mark_dis_limit = mark_distribution.get_marks_limit(exam_outer_index, exam_inner_index)
+                file = form.cleaned_data.get('file')
                 data = bytes()
                 for chunk in file.chunks():
                     data += chunk
                 dataset = XLSX().create_dataset(data)
-                sheet_col_index = mark_distribution.get_excel_column_index(exam_outer_index, exam_inner_index)
                 invalidRegNo = []
                 invalidMarks = []
-                for row in dataset:
-                    required_obj = marks_objects.filter(Registration__RegNo=row[0])
-                    if not required_obj:
-                        invalidRegNo.append(row)
-                        continue
-                    if mark_dis_limit < int(row[sheet_col_index]):
-                        invalidMarks.append(row)
-                        continue
-                    required_obj = required_obj.first()
-                    marks_string = required_obj.Marks.split(',')
-                    marks = [mark.split('+') for mark in marks_string]
-                    marks[exam_outer_index][exam_inner_index] = str(row[sheet_col_index])
-                    marks = ['+'.join(mark) for mark in marks]
-                    marks_string = ','.join(marks)
-                    required_obj.Marks = marks_string
-                    required_obj.TotalMarks = required_obj.get_total_marks()
-                    required_obj.save()
+                if form.cleaned_data.get('exam-type') != 'all':
+                    exam_outer_index = int(form.cleaned_data.get('exam-type').split(',')[0])
+                    exam_inner_index = int(form.cleaned_data.get('exam-type').split(',')[1])
+                    mark_dis_limit = mark_distribution.get_marks_limit(exam_outer_index, exam_inner_index)
+                    sheet_col_index = mark_distribution.get_excel_column_index(exam_outer_index, exam_inner_index)
+                    for row in dataset:
+                        required_obj = marks_objects.filter(Registration__RegNo=row[0])
+                        if not required_obj:
+                            invalidRegNo.append(row)
+                            continue
+                        if mark_dis_limit < int(row[sheet_col_index]):
+                            invalidMarks.append(row)
+                            continue
+                        required_obj = required_obj.first()
+                        marks_string = required_obj.Marks.split(',')
+                        marks = [mark.split('+') for mark in marks_string]
+                        marks[exam_outer_index][exam_inner_index] = str(row[sheet_col_index])
+                        marks = ['+'.join(mark) for mark in marks]
+                        marks_string = ','.join(marks)
+                        required_obj.Marks = marks_string
+                        required_obj.TotalMarks = required_obj.get_total_marks()
+                        required_obj.save()
+                else:
+                    marks_dis_list = mark_distribution.Distribution.split(',')
+                    marks_dis_list = [dis.split('+') for dis in marks_dis_list]
+                    for row in dataset:
+                        required_obj = marks_objects.filter(Registration__RegNo=row[0])
+                        if not required_obj:
+                            invalidRegNo.append(row)
+                            continue
+                        if mark_dis_limit < int(row[sheet_col_index]):
+                            invalidMarks.append(row)
+                            continue
+                        required_obj = required_obj.first()
+                        marks_string = required_obj.Marks.split(',')
+                        marks = [mark.split('+') for mark in marks_string]
+                        for outer in range(len(marks_dis_list)):
+                            for inner in range(len(marks_dis_list[outer])):
+                                mark_dis_limit = marks_dis_list[outer][inner]
+                                sheet_col_index = mark_distribution.get_excel_column_index(outer, inner)
+                                marks[exam_outer_index][exam_inner_index] = str(row[sheet_col_index])
+                        marks = ['+'.join(mark) for mark in marks]
+                        marks_string = ','.join(marks)
+                        required_obj.Marks = marks_string
+                        required_obj.TotalMarks = required_obj.get_total_marks()
+                        required_obj.save()
+
                 msg = 'Marks Upload for the selected exam has been done.'
                 return render(request, 'faculty/MarksUpload.html', {'form':form, 'invalidRegNo':invalidRegNo, \
                     'invalidMarks':invalidMarks, 'msg':msg})
@@ -133,7 +159,7 @@ def marks_update(request, pk):
 
 @login_required(login_url="/login/")
 @user_passes_test(marks_upload_access)
-def marks_finalize(request):
+def marks_hod_submission(request):
     
     '''
     Using MarkStatusForm, as the required fields are same in this case and for marks status view. 
@@ -152,24 +178,10 @@ def marks_finalize(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
-            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-            marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
-                Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
-            final_marks_objects = Marks.objects.filter(Registration_id__in=marks_objects.values_list('Registration_id', flat=True))
-            for mark in marks_objects:
-                final_mark = final_marks_objects.filter(Registration=mark.Registration).first()
-                if final_mark:
-                    final_mark.Marks = mark.Marks
-                    final_mark.TotalMarks = mark.TotalMarks
-                    final_mark.save()
-            msg = 'Marks are finalized successfully.'
             fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
             fac_assign_obj.MarksStatus = 0
             fac_assign_obj.save()
-            if not FacultyAssignment.objects.filter(Subject_id=subject, RegEventId=regEvent, MarksStatus=1).exists():
-                reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
-                reg_status_obj.MarksStatus = 0
-                reg_status_obj.save()
+            msg = 'Marks have been submitted to HOD successfully.'
     else:
         form = MarksStatusForm(subjects)
     return render(request, 'faculty/MarksFinalize.html', {'form':form, 'msg':msg})
