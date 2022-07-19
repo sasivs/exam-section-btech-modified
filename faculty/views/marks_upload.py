@@ -69,17 +69,17 @@ def marks_upload(request):
                         if not required_obj:
                             invalidRegNo.append(row)
                             continue
-                        if mark_dis_limit < int(row[sheet_col_index]):
-                            invalidMarks.append(row)
-                            continue
                         required_obj = required_obj.first()
                         marks_string = required_obj.Marks.split(',')
                         marks = [mark.split('+') for mark in marks_string]
                         for outer in range(len(marks_dis_list)):
                             for inner in range(len(marks_dis_list[outer])):
-                                mark_dis_limit = marks_dis_list[outer][inner]
+                                mark_dis_limit = int(marks_dis_list[outer][inner])
                                 sheet_col_index = mark_distribution.get_excel_column_index(outer, inner)
-                                marks[exam_outer_index][exam_inner_index] = str(row[sheet_col_index])
+                                if mark_dis_limit < int(row[sheet_col_index]):
+                                    invalidMarks.append(row)
+                                    continue
+                                marks[outer][inner] = str(row[sheet_col_index])
                         marks = ['+'.join(mark) for mark in marks]
                         marks_string = ','.join(marks)
                         required_obj.Marks = marks_string
@@ -121,21 +121,24 @@ def marks_upload_status(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
-            distribution = subject.MarkDistribution.Distribution
-            distributionNames =subject.MarkDistribution.DistributionNames
+            subject_obj = Subjects.objects.get(id=subject)
+            distribution = subject_obj.MarkDistribution.Distribution
+            distributionNames =subject_obj.MarkDistribution.DistributionNames
             distribution =  distribution.split(',')
             distributionNames = distributionNames.split(',')
-            for marks,names in zip(distribution, distributionNames):
-                names = names.split('+')
-                marks = marks.split('+')
+            distributionNames = [name.split('+') for name in distributionNames] 
+            names_list = []
+            for name in  distributionNames:
+                names_list.extend(name)
 
             roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
             marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
             fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
             for mark in marks_objects:
+                mark.Marks_list = mark.get_marks_list() 
                 mark.Status = fac_assign_obj.MarksStatus
-            return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names,'marks1':marks})
+            return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names_list})
     else:
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'faculty/MarksUploadStatus.html', {'form':form})

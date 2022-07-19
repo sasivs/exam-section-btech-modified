@@ -20,7 +20,7 @@ from superintendent.user_access_test import subject_access, subject_home_access
 def subject_upload(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    regIDs = None
+    regIDs = []
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
         coordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -285,7 +285,7 @@ def subject_finalize(request):
 def open_subject_upload(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    regIDs = None
+    regIDs = []
     msg = ''
     if 'Superintendent' in groups:
         regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')

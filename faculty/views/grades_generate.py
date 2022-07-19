@@ -60,11 +60,9 @@ def grades_generate(request):
                     grade.save()
                 marks_objects = marks_objects.exclude(Registration=ix_grade.Registration)
             
-            if GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=True).exists():
-                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=True).order_by('-Threshold_Mark')
-            else:
-                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, uniform_grading=False, Section=section).order_by('-Threshold_Mark')
-
+            if GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent).exists():
+                thresholds = GradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent).order_by('-Threshold_Mark')
+            
             if not thresholds:
                 msg = 'Grade Threshold is not updated for this subject.'
                 return render(request, 'faculty/GradesGenerate.html', {'form':form, 'msg':msg})

@@ -13,7 +13,7 @@ class GradesFinalizeForm(forms.Form):
         REG_CHOICES = [('', '--------')]
         if regIDs:
             REG_CHOICES += [(reg.id, reg.__str__()) for reg in regIDs]
-        self.fields['regEvent'] = forms.CharField(label='Choose RegEvent', max_length=26, required=False, choices=REG_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        self.fields['regEvent'] = forms.CharField(label='Choose RegEvent', max_length=26, required=False, widget=forms.Select(choices=REG_CHOICES, attrs={'required':'True'}))
 
 class MarksFinalizeForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):
@@ -21,7 +21,7 @@ class MarksFinalizeForm(forms.Form):
         REG_CHOICES = [('', '--------')]
         if regIDs:
             REG_CHOICES += [(reg.id, reg.__str__()) for reg in regIDs]
-        self.fields['regEvent'] = forms.CharField(label='Choose RegEvent', max_length=26, required=False, choices=REG_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        self.fields['regEvent'] = forms.CharField(label='Choose RegEvent', max_length=26, required=False, widget=forms.Select(choices=REG_CHOICES,attrs={'required':'True'}))
 
 class CoordinatorAssignmentForm(forms.Form):
     def __init__(self,Option=None , *args,**kwargs):

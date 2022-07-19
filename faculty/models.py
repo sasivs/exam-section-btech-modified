@@ -18,7 +18,6 @@ class GradesThreshold(models.Model):
     Subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
-    uniform_grading = models.BooleanField()
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
         db_table = 'GradesThreshold'
@@ -53,6 +52,15 @@ class Marks_Staging(models.Model):
                 sub_total += int(mark)
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
+
+    def get_marks_list(self):
+        marks = self.Marks.split(',')
+        marks = [mark.split('+') for mark in marks]
+        marks_list = []
+        for mark in marks:
+            marks_list.extend(mark)
+        return marks_list
+
 
 class Marks(models.Model):
     Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)

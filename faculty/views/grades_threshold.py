@@ -64,7 +64,7 @@ def grades_threshold_assign(request, pk):
                     for grade in grades:
                         if form.cleaned_data[str(grade.id)]:
                             threshold_mark = GradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                uniform_grading=True, Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                                Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
                             threshold_mark.save()
                     # else:
                     #     section = form.cleaned_data.get('section')
