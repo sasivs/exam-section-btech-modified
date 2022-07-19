@@ -1,21 +1,14 @@
-{% extends 'superintendent/marks_home.html' %}
-{% block title %}Marks Status{% endblock title %}
-
-{% load static %}
-
-{% block sub %}
-{% load user_check_tag %}
+{% extends 'superintendent/marks_home.html' %} {% block title %}Marks Status{% endblock title %} {% load static %} {% block sub %} {% load user_check_tag %}
 
 <div class="container">
     <div class="row">
 
         <strong>Choose the subject corresponding to the required event to view the uploaded marks.  <br>
         Update option is available to update marks(If Required).</strong>
-        <form  method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" name="">Submit</button> 
-          </form>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="">Submit</button>
+        </form>
     </div>
     {% if marks %}
     <div class="row">
@@ -25,7 +18,9 @@
                     <td style="border: 1px solid black;">RegNo</td>
                     <td style="border: 1px solid black;">Marks</td>
                     <td style="border: 1px solid black;">Total</td>
-                    {% if user|has_group:'Faculty' %}
+                    {% for name in names %}
+                    <td style="border: 1px solid black;">{{name}}</td>
+                    {% endfor %} {% if user|has_group:'Faculty' %}
                     <td style="border: 1px solid black;">Action</td>
                     {% endif %}
                 </tr>
@@ -36,7 +31,9 @@
                     <td style="border: 1px solid black;">{{mark.Registration.RegNo}}</td>
                     <td style="border: 1px solid black;">{{mark.Marks}}</td>
                     <td style="border: 1px solid black;">{{mark.TotalMarks}}</td>
-                    {% if user|has_group:'Faculty' %}
+                    {% for mark1 in marks1 %}
+                    <td style="border: 1px solid black;">{{mark1}}</td>
+                    {% endfor %} {% if user|has_group:'Faculty' %}
                     <td style="border: 1px solid black;">
                         {% if mark.Status == 1 %}
                         <a href="{% url 'MarksUpdate' mark.id %}" class="btn btn-primary">Update</a>

@@ -121,13 +121,21 @@ def marks_upload_status(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
+            distribution = subject.MarkDistribution.Distribution
+            distributionNames =subject.MarkDistribution.DistributionNames
+            distribution =  distribution.split(',')
+            distributionNames = distributionNames.split(',')
+            for marks,names in zip(distribution, distributionNames):
+                names = names.split('+')
+                marks = marks.split('+')
+
             roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
             marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
             fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
             for mark in marks_objects:
                 mark.Status = fac_assign_obj.MarksStatus
-            return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects})
+            return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names,'marks1':marks})
     else:
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'faculty/MarksUploadStatus.html', {'form':form})
