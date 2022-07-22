@@ -2,11 +2,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from superintendent.user_access_test import grades_threshold_access, grades_threshold_status_access
-from faculty.models import GradesThreshold
+from faculty.models import GradesThreshold, Marks_Staging
 from hod.models import Faculty_user, Coordinator
 from co_ordinator.models import FacultyAssignment
 from superintendent.models import GradePoints, HOD, CycleCoordinator
 from faculty.forms import GradeThresholdForm, GradeThresholdStatusForm
+from json import dumps
+import statistics as stat
 
 
 @login_required(login_url="/login/")
@@ -27,10 +29,15 @@ def grades_threshold_assign(request, pk):
     subject = subject_faculty.Subject
     grades = GradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
     prev_thresholds = GradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty.RegEventId)
+    marks = Marks_Staging.objects.filter(Registration__RegEventId=subject_faculty.RegEventId.id, Registration__sub_id=subject.id)
+    marks_list = marks.values_list('TotalMarks', flat=True)
+    mean = round(stat.mean(marks_list), 2)
+    stdev = round(stat.stdev(marks_list), 2)
+    maximum = max(marks_list)
     if request.method == 'POST':
         form = GradeThresholdForm(subject_faculty, request.POST)
-        if form.is_valid():
-            if request.POST.get('submit-form'):
+        if request.POST.get('submit-form'):
+            if form.is_valid():
                 if prev_thresholds:
                     # if (form.cleaned_data.get('uniform_grading')=='1' and prev_thresholds.first().uniform_grading) or \
                     #     (form.cleaned_data.get('uniform_grading')=='0' and not prev_thresholds.first().uniform_grading):
@@ -76,10 +83,33 @@ def grades_threshold_assign(request, pk):
                     #             threshold_mark.save()
                 msg = 'Grades Threshold noted successfully'
                 return render(request, 'faculty/GradesThresholdAssign.html', {'subject':subject_faculty, 'msg':msg})
+        else:
+            grades_data = [grade.Grade for grade in grades]
+            no_of_students = {grade.Grade:0 for grade in grades}
+            for index, grade in enumerate(grades):
+                if request.POST.get(str(grade.id)):
+                    no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=int(request.POST.get(str(grade.id)))))
+            for index in range(len(grades)-1, 0, -1):
+                no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
+            no_of_students = dumps(no_of_students)
+            return render(request, 'faculty/GradesThresholdAssign.html', {'subject':subject_faculty, 'form':form, 'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
+
 
     else:
         form = GradeThresholdForm(subject_faculty)
-    return render(request, 'faculty/GradesThresholdAssign.html', {'subject':subject_faculty, 'form':form})
+        if prev_thresholds:
+            grades_data = [grade.Grade for grade in grades]
+            no_of_students = {grade.Grade:0 for grade in grades}
+            for index, grade in enumerate(grades):
+                if prev_thresholds.filter(Grade=grade.id):
+                    threshold_mark = prev_thresholds.filter(Grade=grade.id).first().Threshold_Mark
+                    no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=threshold_mark))
+            total = 0
+            for index in range(len(grades)-1, 0, -1):
+                no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
+                total += no_of_students[grades_data[index]]
+            no_of_students = dumps(no_of_students)
+    return render(request, 'faculty/GradesThresholdAssign.html', {'subject':subject_faculty, 'form':form,  'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
 
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_status_access)
