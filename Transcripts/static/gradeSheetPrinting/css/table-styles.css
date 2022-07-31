@@ -4,3 +4,14 @@ padding: 1px;
 border: 1px solid black;
 border-collapse: collapse;
 }
+
+.container{
+    max-width: 1400px;
+    padding: 1rem 1rem;
+
+}
+
+.navbar-brand{
+    width: 11%;
+    text-align: center;
+}
