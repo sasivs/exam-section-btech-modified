@@ -179,3 +179,9 @@ def sample_regno_sheet_access(user):
     if 'Co-ordinator' in groups or 'Faculty' in groups or 'Cycle-Co-ordinator' in groups or 'Superintendent' in groups:
         return True
     return  False
+
+def gpa_staging_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'HOD' in groups:
+        return True
+    return  False

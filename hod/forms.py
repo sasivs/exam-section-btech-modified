@@ -1,7 +1,6 @@
 from django import forms 
 from django.contrib.auth.models import Group
 from numpy import require
-from superintendent.models import RegistrationStatus
 from hod.models import Coordinator
 from ExamStaffDB.models import FacultyInfo
 
@@ -47,6 +46,15 @@ class CoordinatorAssignmentForm(forms.Form):
                 self.fields['user'].initial = initial_coordinator.User.id
 
 
+class GpaStagingForm(forms.Form):
+    def __init__(self, regIds, *args,**kwargs):
+        super(GpaStagingForm, self).__init__(*args, **kwargs)
+        REGID_CHOICES = [('', '------------')]
+        if regIds:
+            REGID_CHOICES += [(reg.id, reg.__str__) for reg in regIds]
+        self.fields['regId'] = forms.ChoiceField(label='Choose Event', required=False, choices=REGID_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        
+            
 # class AttendanceShoratgeStatusForm(forms.Form):
 #     def __init__(self,Option=None , *args,**kwargs):
 #         super(AttendanceShoratgeStatusForm, self).__init__(*args, **kwargs)

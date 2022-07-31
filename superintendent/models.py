@@ -295,3 +295,16 @@ class CancelledMarks(models.Model):
                 sub_total += int(mark)
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
+
+class StudentCGPAs_Staging(models.Model):
+    RegNo = models.IntegerField()
+    AYASBYBS_G = models.IntegerField()
+    CGP = models.IntegerField()
+    CC = models.IntegerField()
+    CGPA = models.FloatField()
+    SGP = models.IntegerField()
+    SC = models.IntegerField()
+    SGPA = models.FloatField()
+    class Meta:
+        db_table = 'StudentCGPAs_StagingMV'
+        managed = False

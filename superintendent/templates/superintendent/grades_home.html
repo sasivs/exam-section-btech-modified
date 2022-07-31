@@ -28,6 +28,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'CGPA' %}">CGPA</a>
+                </li>
                 {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'GradesThresholdStatus' %}">Grades Threshold Status</a>
@@ -43,6 +46,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'AttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'CGPA' %}">CGPA</a>
                 </li>
                 {% elif user|has_group:'ExamStaff' %}
                 <li class="nav-item">
