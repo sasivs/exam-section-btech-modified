@@ -4,11 +4,11 @@ from superintendent.user_access_test import is_Superintendent, not_promoted_acce
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from co_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
-from co_ordinator.models import StudentGradePoints, NotPromoted, RollLists, StudentBacklogs, DroppedRegularCourses, \
-    Subjects, StudentRegistrations
-from superintendent.models import CycleCoordinator, RegistrationStatus, HOD
-from ExamStaffDB.models import MandatoryCredits
-from co_ordinator.resources import NotPromotedResource
+from co_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
+    BTSubjects, BTStudentRegistrations
+from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
+from ExamStaffDB.models import BTMandatoryCredits
+from co_ordinator.resources import BTNotPromotedResource
 from django.db.models import Q
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -30,11 +30,11 @@ def not_promoted_list(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
     if request.method == 'POST':
         form = NotPromotedListForm(regIDs, request.POST)
         if form.is_valid():
@@ -48,14 +48,14 @@ def not_promoted_list(request):
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
-            rolls = RollLists.objects.filter(RegEventId__in=currentRegEventId)
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
+            rolls = BTRollLists.objects.filter(RegEventId__in=currentRegEventId)
             
-            mandatory_credits = MandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
+            mandatory_credits = BTMandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
             mandatory_credits = mandatory_credits[0].Credits
             np = []
             for roll in rolls:
-                grades = StudentGradePoints.objects.filter(RegNo=roll.student.RegNo, AYear=ayear, BYear=byear).filter(~Q(Grade='F')).\
+                grades = BTStudentGradePoints.objects.filter(RegNo=roll.student.RegNo, AYear=ayear, BYear=byear).filter(~Q(Grade='F')).\
                     filter(~Q(Grade='I')).filter(~Q(Grade='X')).filter(~Q(Grade='R'))
                 credits=0
                 for g in grades:
@@ -65,30 +65,30 @@ def not_promoted_list(request):
                     np.append(d)
                 else:
                     if byear == 2 or byear == 3:
-                        backlogs = StudentBacklogs.objects.filter(RegNo=roll.student.RegNo, BYear=byear-1)
+                        backlogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo, BYear=byear-1)
                         if len(backlogs) != 0:
                             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
                         else:
-                            dropped_courses = DroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
+                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
                             for course in dropped_courses:
-                                sub = Subjects.objects.get(id=course.sub_id)
-                                offeredEvent = RegistrationStatus.objects.get(id=sub.RegEventId)
+                                sub = BTSubjects.objects.get(id=course.sub_id)
+                                offeredEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
                                 if offeredEvent.BYear == byear-1:
-                                    check_registration = StudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
+                                    check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
                                     if len(check_registration) == 0:
                                         d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                         np.append(d)
                     elif byear == 4:
-                        backlogs = StudentBacklogs.objects.filter(RegNo=roll.student.RegNo)
+                        backlogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo)
                         if len(backlogs) != 0:
                             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
                         else:
-                            dropped_courses = DroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
+                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
                             for course in dropped_courses:
-                                sub = Subjects.objects.get(id=course.sub_id)
-                                check_registration = StudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
+                                sub = BTSubjects.objects.get(id=course.sub_id)
+                                check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
                                 if len(check_registration) == 0:
                                     d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                     np.append(d)
@@ -114,11 +114,11 @@ def not_promoted_upload(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
     if request.method == 'POST':
         form = NotPromotedUploadForm(regIDs, request.POST, request.FILES)
         if form.is_valid() and form.cleaned_data['RegEvent']!='-- Select Registration Event --':
@@ -199,7 +199,7 @@ def not_promoted_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(npErrRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    NotPromoted.objects.filter(student_id=fRow[0],AYear=fRow[2], BYear=fRow[3], Regulation=fRow[4]).update(PoA=fRow[5])
+                    BTNotPromoted.objects.filter(student_id=fRow[0],AYear=fRow[2], BYear=fRow[3], Regulation=fRow[4]).update(PoA=fRow[5])
             return render(request, 'co_ordinator/NotPromotedUploadSuccess.html')
     else:
         form = NotPromotedUpdateForm(Options=npErrRows)
@@ -212,16 +212,16 @@ def not_promoted_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
     elif 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='R')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
     if(request.method=='POST'):
         form = NotPromotedStatusForm(regIDs, request.POST)
         if(request.POST['RegEvent']!='-- Select Registration Event --'):
@@ -235,7 +235,7 @@ def not_promoted_status(request):
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
-            notPromoted = NotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
+            notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
             return render(request, 'co_ordinator/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
     else:
         form = NotPromotedStatusForm(regIDs)
@@ -261,7 +261,7 @@ def not_promoted_status(request):
 #         bsem = rom2int[strs[2]]
 #         regulation = int(strs[5])
 #         mode = strs[6]
-#         currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+#         currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
 #                     Dept=dept,Mode=mode,Regulation=regulation)
 #         currentRegEventId = currentRegEventId[0].id
 #         con = {} 
@@ -278,11 +278,11 @@ def not_promoted_status(request):
 #             regNo = request.POST['RegNo']
 #             event = (request.POST['RegEvent'])
 #             print(regNo, event)
-#             studentInfo = StudentInfo.objects.filter(RegNo=regNo)
+#             studentInfo = BTStudentInfo.objects.filter(RegNo=regNo)
 #         elif('RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST and form.is_valid()):
 #             regNo = request.POST['RegNo']
 #             event = (request.POST['RegEvent'])
-#             studentInfo = StudentInfo.objects.filter(RegNo=regNo) 
+#             studentInfo = BTStudentInfo.objects.filter(RegNo=regNo) 
 #             studyModeCredits = 0
 #             examModeCredits = 0
 #             for sub in form.myFields:
@@ -303,21 +303,21 @@ def not_promoted_status(request):
 #                 for sub in form.myFields:
 #                     if sub[6] == 'D':
 #                         if form.cleaned_data['Check'+str(sub[9])] == False:
-#                             StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], \
+#                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], \
 #                                 id=sub[10]).delete()
 #                     else:   #Handling Backlog Subjects
 #                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
 #                             #update operation mode could be study mode or exam mode
-#                             StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
+#                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
 #                                 sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
 #                         elif(sub[5]):
 #                             #delete record from registration table
-#                             StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
+#                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
 #                                 sub_id = sub[9], id=sub[10]).delete()
 #                         elif(form.cleaned_data['Check'+str(sub[9])]):
 #                             #insert backlog registration
 #                             if sub[10]=='':
-#                                 newRegistration = StudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
+#                                 newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
 #                                 Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
 #                                 newRegistration.save()                   
 #                 return(render(request,'co_ordinator/BTBacklogRegistrationSuccess.html'))
