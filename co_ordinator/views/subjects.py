@@ -92,7 +92,7 @@ def subject_upload(request):
                     cleanDataset.append(newDataset[i])
                 cleanDataset.headers = newDataset.headers
             
-                result1 = BTSubject_resource.import_data(cleanDataset, dry_run=True)
+                result1 = Subject_resource.import_data(cleanDataset, dry_run=True)
                 if not result1.has_errors():
                     Subject_resource.import_data(cleanDataset, dry_run=False)
                 else:
