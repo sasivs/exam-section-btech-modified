@@ -11,59 +11,60 @@ from superintendent.views import open_elective_registrations
 
 urlpatterns = [
 
-    path('SupBTSubjectUpload', subjects.subject_upload, name = 'SupBTSubjectUpload'),
-    path('SupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'SupBTSubjectsUploadErrorHandler'),
-    path('SupBTSubjectUploadStatus', subjects.subject_upload_status, name = 'SupBTSubjectUploadStatus'),
-    path('SupBTSubjectDelete', subjects.subject_delete, name = 'SupBTSubjectDelete'),
-    path('SupBTSubjectFinalize', subjects.subject_finalize, name = 'SupBTSubjectFinalize'),
-    path('DownloadSampleSubjectSheet', subjects.download_sample_subject_sheet, name='DownloadSampleSubjectSheet'),
+    path('BTSupBTSubjectUpload', subjects.subject_upload, name = 'BTSupBTSubjectUpload'),
+    path('BTSupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'BTSupBTSubjectsUploadErrorHandler'),
+    path('BTSupBTSubjectUploadStatus', subjects.subject_upload_status, name = 'BTSupBTSubjectUploadStatus'),
+    path('BTSupBTSubjectDelete', subjects.subject_delete, name = 'BTSupBTSubjectDelete'),
+    path('BTSupBTSubjectFinalize', subjects.subject_finalize, name = 'BTSupBTSubjectFinalize'),
+    path('BTDownloadSampleSubjectSheet', subjects.download_sample_subject_sheet, name='BTDownloadSampleSubjectSheet'),
 
-    path('SupBTOpenSubjectUpload', subjects.open_subject_upload,name='SupBTOpenSubjectUpload'),
-
-
-    path('GenerateRollList',RollList.generateRollList,name='GenerateRollList'),
-    path('RollListSectionUpload',RollList.UploadSectionInfo,name='RollListSectionUpload'),
-    path('RollListFeeUpload',RollList.RollListFeeUpload,name='RollListFeeUpload'),
-    path('FirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'FirstYearRollListsCycleHandler'),
-    path('RollListStatus',RollList.RollList_Status,name='RollListStatus'),
-    path('FinalizeRollLists', RollList.rolllist_finalize, name='FinalizeRollLists'),
-    path('NotRegisteredStatus',RollList.NotRegisteredStatus,name='NotRegisteredStatus'),
+    path('BTSupBTOpenSubjectUpload', subjects.open_subject_upload,name='BTSupBTOpenSubjectUpload'),
 
 
-    path('SupBTRegistrations', regular_registrations.btech_regular_registration, name = 'SupBTRegistrations'),
+    path('BTGenerateRollList',RollList.generateRollList,name='BTGenerateRollList'),
+    path('BTRollListSectionUpload',RollList.UploadSectionInfo,name='BTRollListSectionUpload'),
+    path('BTRollListFeeUpload',RollList.RollListFeeUpload,name='BTRollListFeeUpload'),
+    path('BTFirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'BTFirstYearRollListsCycleHandler'),
+    path('BTRollListStatus',RollList.RollList_Status,name='BTRollListStatus'),
+    path('BTFinalizeRollLists', RollList.rolllist_finalize, name='BTFinalizeRollLists'),
+    path('BTNotRegisteredStatus',RollList.NotRegisteredStatus,name='BTNotRegisteredStatus'),
 
 
-    path('DepartmentElectiveRegistrationsUpload',Dec_upload_file.dept_elective_regs_upload, name='DepartmentElectiveRegistrationsUpload'),
-    path('DepartmentElectiveRegistrationsAll',Dec_register_all.dept_elective_regs_all, name='DepartmentElectiveRegistrationsAll'),
-
-    path('DroppedRegularRegistrations', dropped_regular_regs.dropped_regular_registrations, name='DroppedRegularRegistrations'),
-
-    path('MakeupRegistrations', makeupReg.makeup_registrations, name='MakeupRegistrations'),
-
-    path('SupBTBacklogRegistrations', backlog_registrations.btech_backlog_registration, name = 'SupBTBacklogRegistrations'),
-
-    path('NotRegisteredRegistrations', not_registered_registrations.not_registered_registrations, name='NotRegisteredRegistrations'),
-
-    path('SupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'SupBTRegistrationsFinalize'),
+    path('BTSupBTRegistrations', regular_registrations.btech_regular_registration, name = 'BTSupBTRegistrations'),
 
 
-    path('GradeChallengeUpdate', grade_challenge.grade_challenge, name='GradeChallengeUpdate'),
-    path('GradeChallengeStatus', grade_challenge.grade_challenge_status, name='GradeChallengeStatus'),
+    path('BTDepartmentElectiveRegistrationsUpload',Dec_upload_file.dept_elective_regs_upload, name='BTDepartmentElectiveRegistrationsUpload'),
+    path('BTDepartmentElectiveRegistrationsAll',Dec_register_all.dept_elective_regs_all, name='BTDepartmentElectiveRegistrationsAll'),
+
+    path('BTDroppedRegularRegistrations', dropped_regular_regs.dropped_regular_registrations, name='BTDroppedRegularRegistrations'),
+
+    path('BTMakeupRegistrations', makeupReg.makeup_registrations, name='BTMakeupRegistrations'),
+
+    path('BTSupBTBacklogRegistrations', backlog_registrations.btech_backlog_registration, name = 'BTSupBTBacklogRegistrations'),
+
+    path('BTNotRegisteredRegistrations', not_registered_registrations.not_registered_registrations, name='BTNotRegisteredRegistrations'),
+
+    path('BTSupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'BTSupBTRegistrationsFinalize'),
+
+
+    path('BTGradeChallengeUpdate', grade_challenge.grade_challenge, name='BTGradeChallengeUpdate'),
+    path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
 
     
-    path('NotPromotedList', not_promoted.not_promoted_list, name='NotPromotedList'),
-    path('NotPromotedUpload', not_promoted.not_promoted_upload, name='NotPromotedUpload'),
-    path('NotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='NotPromotedUploadErrorHandler'),
-    path('NotPromotedStatus', not_promoted.not_promoted_status, name='NotPromotedStatus'),
+    path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
+    path('BTNotPromotedList', not_promoted.not_promoted_list, name='BTNotPromotedList'),
+    path('BTNotPromotedUpload', not_promoted.not_promoted_upload, name='BTNotPromotedUpload'),
+    path('BTNotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='BTNotPromotedUploadErrorHandler'),
+    path('BTNotPromotedStatus', not_promoted.not_promoted_status, name='BTNotPromotedStatus'),
 
 
-    path('SupBTRegularRegistrationStatus', status.btech_regular_registration_status, name = 'SupBTRegularRegistrationStatus'),
-    path('SupBTBacklogRegistrationStatus', status.btech_backlog_registration_status, name = 'SupBTBacklogRegistrationStatus'),
-    path('SupBTMakeupRegistrationStatus', status.btech_makeup_registration_status, name='SupBTMakeupRegistrationStatus'),
+    path('BTSupBTRegularRegistrationStatus', status.btech_regular_registration_status, name = 'BTSupBTRegularRegistrationStatus'),
+    path('BTSupBTBacklogRegistrationStatus', status.btech_backlog_registration_status, name = 'BTSupBTBacklogRegistrationStatus'),
+    path('BTSupBTMakeupRegistrationStatus', status.btech_makeup_registration_status, name='BTSupBTMakeupRegistrationStatus'),
 
-    path('FacultySubjectAssignment', faculty_subject_assignment.faculty_subject_assignment, name='FacultySubjectAssignment'),
-    path('FacultySubjectAssignmentDetail/<int:pk>', faculty_subject_assignment.faculty_subject_assignment_detail, name='FacultySubjectAssignmentDetail'),
-    path('FacultyAssignmentStatus', faculty_subject_assignment.faculty_assignment_status, name = 'FacultyAssignmentStatus'),
+    path('BTFacultySubjectAssignment', faculty_subject_assignment.faculty_subject_assignment, name='BTFacultySubjectAssignment'),
+    path('BTFacultySubjectAssignmentDetail/<int:pk>', faculty_subject_assignment.faculty_subject_assignment_detail, name='BTFacultySubjectAssignmentDetail'),
+    path('BTFacultyAssignmentStatus', faculty_subject_assignment.faculty_assignment_status, name = 'BTFacultyAssignmentStatus'),
 ]
 
 if settings.DEBUG:
