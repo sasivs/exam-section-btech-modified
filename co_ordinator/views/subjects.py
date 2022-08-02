@@ -6,10 +6,10 @@ from django.urls import reverse
 from SupExamDB.views import is_Superintendent
 from co_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm
-from co_ordinator.models import Subjects_Staging, Subjects
+from co_ordinator.models import BTSubjects_Staging, BTSubjects
 from co_ordinator.resources import SubjectStagingResource
-from superintendent.models import RegistrationStatus, HOD, MarksDistribution, CycleCoordinator
-from hod.models import Coordinator
+from superintendent.models import BTRegistrationStatus, BTHOD, BTMarksDistribution, BTCycleCoordinator
+from hod.models import BTCoordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from superintendent.user_access_test import subject_access, subject_home_access
@@ -23,18 +23,18 @@ def subject_upload(request):
     regIDs = []
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
-        coordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
+        coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
     elif 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if request.POST.get('upload_file_submit'):
             (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(request.POST['regID'])]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear, BYear=byear, ASem=asem, BSem=bsem, Dept=dept, Mode=mode, Regulation=regulation).first().id
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear, BYear=byear, ASem=asem, BSem=bsem, Dept=dept, Mode=mode, Regulation=regulation).first().id
             if(form.is_valid()):
                 if(form.cleaned_data['regID']!='--Choose Event--'):
                     file = form.cleaned_data['file']
@@ -48,10 +48,10 @@ def subject_upload(request):
                         'Creditable', 'Credits','Type','Category', 'OfferedBy']
                     newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy', \
                         'DistributionRatio', 'MarkDistribution']
-                    currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                         Dept=dept,Mode=mode,Regulation=regulation)
                     currentRegEventId = currentRegEventId[0].id
-                    marks_distribution = MarksDistribution.objects.all()
+                    marks_distribution = BTMarksDistribution.objects.all()
                     for i in range(len(dataset)):
                         row = dataset[i]
                         if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation)):
@@ -73,12 +73,12 @@ def subject_upload(request):
                 row[8] = request.POST.get('ratio_distribution_'+str(row[0])).strip()
                 row[9] = int(request.POST.get('mark_distribution_'+str(row[0])))
                 newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6], row[7], row[8], row[9])
-                mark_distribution = MarksDistribution.objects.filter(id=row[9]).first()
+                mark_distribution = BTMarksDistribution.objects.filter(id=row[9]).first()
                 if len(mark_distribution.Distribution.split(',')) != len(row[8].split(':')):
                     errorRows.append(newRow)
                 else:
                     newDataset.append(newRow)
-            Subject_resource = SubjectStagingResource()
+            Subject_resource = BTSubjectStagingResource()
             result = Subject_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 Subject_resource.import_data(newDataset, dry_run=False)
@@ -92,7 +92,7 @@ def subject_upload(request):
                     cleanDataset.append(newDataset[i])
                 cleanDataset.headers = newDataset.headers
             
-                result1 = Subject_resource.import_data(cleanDataset, dry_run=True)
+                result1 = BTSubject_resource.import_data(cleanDataset, dry_run=True)
                 if not result1.has_errors():
                     Subject_resource.import_data(cleanDataset, dry_run=False)
                 else:
@@ -127,7 +127,7 @@ def subject_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(subjectRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    Subjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
+                    BTSubjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
                         Creditable=fRow[2],Credits=fRow[3],Type=fRow[4],Category=fRow[5],OfferedBy=fRow[7],\
                              DistributionRatio=fRow[8], MarkDistribution=fRow[9])
             return render(request, 'co_ordinator/BTSubjectsUploadSuccess.html')
@@ -142,16 +142,16 @@ def subject_upload_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
     elif 'Co-ordinator' in groups:
-        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, Mode='R')
+        co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
-        co_ordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode='R')
+        co_ordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
@@ -170,14 +170,14 @@ def subject_upload_status(request):
                 bsem = rom2int[strs[2]]
                 regulation = int(strs[5])
                 mode = strs[6]
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
                 currentRegEventId = currentRegEventId[0].id
                 subjects = []
                 if(mode=='R' or mode=='D'):
-                    subjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
+                    subjects = BTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
                 else:
-                    subjects = Subjects.objects.filter(RegEventId=currentRegEventId)
+                    subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId)
                 return render(request, 'co_ordinator/BTSubjectsUploadStatus.html',{'subjects':subjects,'form':form})
     else:
         form = RegistrationsEventForm(regIDs)
@@ -191,11 +191,11 @@ def subject_delete(request):
     regIDs = None
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
-        coordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
+        coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
     elif 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
     if(request.method=='POST'):
         form = SubjectDeletionForm(regIDs, request.POST)
         if('regID' in request.POST.keys()):
@@ -212,7 +212,7 @@ def subject_delete(request):
                 bsem = rom2int[strs[2]]
                 regulation = int(strs[5])
                 mode = strs[6]
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
                 currentRegEventId = currentRegEventId[0].id
                 if(mode=='R'): # deleting is only valid for regular registrations, the other case is not even possible
@@ -220,7 +220,7 @@ def subject_delete(request):
                     deletedSubjects = []
                     for sub in form.myFields:
                         if(form.cleaned_data['Check'+sub[0]]==True):
-                            subject = Subjects_Staging.objects.filter(SubCode=sub[0],RegEventId=currentRegEventId)
+                            subject = BTSubjects_Staging.objects.filter(SubCode=sub[0],RegEventId=currentRegEventId)
                             subject.delete()
                             deletedSubjects.append(sub[0]+':' + str(sub[4]))
                         else:
@@ -244,11 +244,11 @@ def subject_finalize(request):
     regIDs = None
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
-        coordinator = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
+        coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
     elif 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, Mode='R')
     if(request.method=='POST'):
         form = SubjectFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
@@ -265,13 +265,13 @@ def subject_finalize(request):
                 bsem = rom2int[strs[2]]
                 regulation = int(strs[5])
                 mode = strs[6]
-                currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
                 currentRegEventId = currentRegEventId[0].id
                 subjects = []
-                subjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
+                subjects = BTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
                 for sub in subjects:
-                   s=Subjects(SubCode=sub.SubCode,SubName=sub.SubName,Creditable=sub.Creditable,Credits=sub.Credits,\
+                   s=BTSubjects(SubCode=sub.SubCode,SubName=sub.SubName,Creditable=sub.Creditable,Credits=sub.Credits,\
                            OfferedBy=sub.OfferedBy,Type=sub.Type,Category=sub.Category,RegEventId=sub.RegEventId, \
                             DistributionRatio=sub.DistributionRatio, MarkDistribution=sub.MarkDistribution)
                    s.save() 
@@ -288,14 +288,14 @@ def open_subject_upload(request):
     regIDs = []
     msg = ''
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if(request.method=='POST'):
         form = SubjectsUploadForm(regIDs, request.POST,request.FILES)
         if request.POST.get('upload_file_submit'):
             (ayear,asem,byear,bsem,dept,mode,regulation) = regIDs[int(request.POST['regID'])]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear, BYear=byear, ASem=asem, BSem=bsem, Dept=dept, Mode=mode, Regulation=regulation).first().id
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear, BYear=byear, ASem=asem, BSem=bsem, Dept=dept, Mode=mode, Regulation=regulation).first().id
             if(form.is_valid()):
                 if(form.cleaned_data['regID']!='--Choose Event--'):
                     file = form.cleaned_data['file']
@@ -309,10 +309,10 @@ def open_subject_upload(request):
                         'Creditable', 'Credits','Type','Category', 'OfferedBy']
                     newDataset.headers = ['SubCode', 'SubName', 'Creditable', 'Credits', 'Type', 'Category', 'RegEventId', 'OfferedBy', \
                         'DistributionRatio', 'MarkDistribution']
-                    currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                    currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                         Dept=dept,Mode=mode,Regulation=regulation)
                     currentRegEventId = currentRegEventId[0].id
-                    marks_distribution = MarksDistribution.objects.all()
+                    marks_distribution = BTMarksDistribution.objects.all()
                     for i in range(len(dataset)):
                         row = dataset[i]
                         if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation) and row[10]=='OEC'):
@@ -334,12 +334,12 @@ def open_subject_upload(request):
                 row[8] = request.POST.get('ratio_distribution_'+str(row[0])).strip()
                 row[9] = int(request.POST.get('mark_distribution_'+str(row[0])))
                 newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6], row[7], row[8], row[9])
-                mark_distribution = MarksDistribution.objects.filter(id=row[9]).first()
+                mark_distribution = BTMarksDistribution.objects.filter(id=row[9]).first()
                 if len(mark_distribution.Distribution.split(',')) != len(row[8].split(':')):
                     errorRows.append(newRow)
                 else:
                     newDataset.append(newRow)
-            Subject_resource = SubjectStagingResource()
+            Subject_resource = BTSubjectStagingResource()
             result = Subject_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 Subject_resource.import_data(newDataset, dry_run=False)
@@ -383,7 +383,7 @@ def open_subject_upload(request):
 def download_sample_subject_sheet(request):
     from co_ordinator.utils import SubjectsTemplateBookGenerator
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='Subjects')
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='BTSubjects')
     BookGenerator = SubjectsTemplateBookGenerator()
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)
