@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import MakeupRegistrationsForm
-from co_ordinator.models import StudentRegistrations_Staging
-from superintendent.models import RegistrationStatus,CycleCoordinator
+from co_ordinator.models import BTStudentRegistrations_Staging
+from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
 from hod.models import Coordinator
 
 @login_required(login_url="/login/")
@@ -13,11 +13,11 @@ def makeup_registrations(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
     if 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='M')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='M')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1,Mode='M')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1,Mode='M')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if request.method == 'POST' and request.POST['RegEvent'] != '-- Select Registration Event --':
@@ -35,7 +35,7 @@ def makeup_registrations(request):
         bsem = rom2int[strs[2]]
         regulation = int(strs[5])
         mode = strs[6]
-        currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+        currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
         currentRegEventId = currentRegEventId[0].id
         con = {} 
@@ -52,16 +52,16 @@ def makeup_registrations(request):
             pass
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' in request.POST.keys() and form.is_valid():
             for sub in form.myFields:
-                already_registered = StudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
+                already_registered = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
                         sub_id=sub[8], RegEventId=currentRegEventId)
                 if form.cleaned_data['Check'+str(sub[8])]:
                     if len(already_registered) == 0:
-                        newReg = StudentRegistrations_Staging(RegNo=request.POST['RegNo'], sub_id=sub[8],\
+                        newReg = BTStudentRegistrations_Staging(RegNo=request.POST['RegNo'], sub_id=sub[8],\
                             Mode=form.cleaned_data['RadioMode'+str(sub[8])], RegEventId=currentRegEventId)
                         newReg.save()
                 else:
                     if len(already_registered) != 0:
-                        StudentRegistrations_Staging.objects.get(id=already_registered[0].id).delete()
+                        BTStudentRegistrations_Staging.objects.get(id=already_registered[0].id).delete()
             return render(request, 'co_ordinator/MakeupRegistrationsSuccess.html')
     elif request.method == 'POST':
         form = MakeupRegistrationsForm(regIDs,request.POST)
