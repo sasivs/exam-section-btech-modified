@@ -1,0 +1,29 @@
+{% extends 'superintendent/registrationhome.html' %}
+
+{% block sub %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script> 
+        $(document).ready(function(){
+            
+        })
+        function applySelection(value){
+            var $monthSelect = $("#id_MonthSelect");
+            $monthSelect.find('option').remove();
+            var choices={2020:[1,2,3,4],2021:[5,6,7,8],2022:[9,10,11,12]};
+            for(var i=0;i<4;i++){
+                $monthSelect.append('<option value='+choices[value][i] +'>'+choices[value][i]+'</option>');
+                console.log(choices[value][i]);
+            } 
+            console.log(value);
+        };
+    </script>
+<div class="container">
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Update Status</button> 
+        </form>
+       </div>
+</div>
+{% endblock %}

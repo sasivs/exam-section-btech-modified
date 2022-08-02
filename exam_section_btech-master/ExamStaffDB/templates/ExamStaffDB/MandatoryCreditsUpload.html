@@ -1,0 +1,23 @@
+{% extends 'superintendent/preRegistrations_home.html' %} {% block sub %}
+{% block title %}Mandatory Credits Upload{% endblock title %}
+
+
+
+
+<div class="container">
+    <div class="row">
+        <strong>Enter the minimum number of credits to be required for a student in a particular academic year to be promoted.
+        </strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

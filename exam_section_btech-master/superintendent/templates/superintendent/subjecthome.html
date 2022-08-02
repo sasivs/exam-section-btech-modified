@@ -1,0 +1,63 @@
+{% extends 'superintendent/suphome.html' %}
+{% block title %}Subjects Home{% endblock title %}
+
+
+{% block content %}
+{% load user_check_tag %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      <ul class="nav flex-column">
+        {% if user|has_group:"Superintendent" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'AddMarkDistribution' %}">Add Mark Distribution</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'MarkDistributionStatus' %}">Mark Distribution Status</a>
+        </li>
+        {% elif user|has_group:"HOD" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+        </li>
+        {% elif user|has_group:"Co-ordinator" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectUpload' %}">Subjects Upload</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectDelete' %}">Subjects Delete</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectFinalize' %}">Finalize Subjects</a>
+        </li>
+        {% elif user|has_group:"Cycle-Co-ordinator" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectUpload' %}">Subjects Upload</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectDelete' %}">Subjects Delete</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'SupBTSubjectFinalize' %}">Finalize Subjects</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="col-md-10">
+      {% block sub %}
+      {% endblock %}
+    </div>
+  </div>
+  {% endblock %}

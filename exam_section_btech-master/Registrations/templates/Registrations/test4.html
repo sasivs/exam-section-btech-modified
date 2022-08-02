@@ -1,0 +1,16 @@
+{% extends 'GradesProcessing/gphome1.html' %}
+
+{% comment %} used to call forms {% endcomment %}
+{% block sub %}
+
+<div class="col-sm-2">
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+            {{form.as_p}}
+        </table>
+        <input type = 'submit' value='Submit'>
+    </form>
+
+
+{% endblock %} 

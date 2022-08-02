@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How to create Dependent Drop-Down List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+        var $productVar = $("#prod");
+        $itemVar = $("#item");
+        $options = $itemVar.find("option");
+        $productVar.on("change", function(){
+            $itemVar.html($options.filter('[value="'+this.value+'"]'));
+        }).trigger("change");
+        }
+        );
+    </script>
+</head>
+<body>
+<center>
+    <strong> How to create Dependent Drop-Down List using jQuery</strong>
+    <h2> Django Web Application</h2>
+    <hr/>
+    <select id="prod">
+        <option disabled selected="true">-- select Product -- </option>
+        {% for product in productList%}
+        <option value = {{product.PID}} >{{product.PName}} </option>
+        {% endfor %}
+        <option></option>
+    </select>
+    <select id="item">
+        <option disabled selected="true">-- select Item -- </option>
+        {% for item in itemList%}
+        <option value = {{item.PID}} >{{item.ItemName}} </option>
+        {% endfor %}
+        <option></option>
+    </select>
+
+</center>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                <strong style="text-align: center">{{ message }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="col-md-5">
+    <br><h2 class="logo">Welcome to </h2><h3 style="font-family: Algerian,serif; text-align: center; padding-bottom: 8px;">Institute Automation System</h3>
+        {% if user.is_authenticated %}
+            <p class="pt-3">Logged in as <strong>{{ user.username }}</strong>. <a href="{% url 'logout' %}">Log out</a>.</p>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-success pull-right" role="button" style="margin-top: 14px;">Log in</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary pull-left" role="button" style="margin-top: 14px;">Sign Up</a>
+        {% endif %}
+
+    </div>
+{% endblock %}

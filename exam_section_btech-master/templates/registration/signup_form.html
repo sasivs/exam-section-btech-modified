@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="col-md-5 center-block">
+        <p align="center"> Sign Up as a <b>"{{ user_type }}"</b></p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {{ form|crispy }}
+            <a href="{% url 'signup' %}" style="color: white;text-decoration: none;"><button type="button" class="btn btn-secondary pull-left">Go back</button></a>
+            <button type="submit" class="btn btn-success pull-right">Sign Up</button>
+        </form>
+    </div>
+{% endblock %}

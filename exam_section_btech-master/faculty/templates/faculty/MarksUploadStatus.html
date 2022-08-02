@@ -1,0 +1,72 @@
+{% extends 'superintendent/marks_home.html' %} {% block title %}Marks Status{% endblock title %} {% load static %} {% block sub %} {% load user_check_tag %}
+
+<div class="container">
+    <div class="row">
+
+        <strong>Choose the subject corresponding to the required event to view the uploaded marks.  <br>
+        Update option is available to update marks(If Required).</strong>
+        <br>
+        <strong>Clicking on table headers allows you to sort the table rows in ascending/descending order</strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="">Submit</button>
+        </form>
+    </div>
+    {% if marks %}
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    {% for name in names %}
+                    <td style="border: 1px solid black;">{{name}}</td>
+                    {% endfor %} 
+                    <td style="border: 1px solid black;">Total</td>
+                    {% if user|has_group:'Faculty' %}
+                    <td style="border: 1px solid black;">Action</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for mark in marks %}
+                <tr>
+                    <td style="border: 1px solid black;">{{mark.Registration.RegNo}}</td>
+                    {% for exam_mark in mark.Marks_list %}
+                    <td style="border: 1px solid black;">{{exam_mark}}</td>
+                    {% endfor %} 
+                    <td style="border: 1px solid black;">{{mark.TotalMarks}}</td>
+                    {% if user|has_group:'Faculty' %}
+                    <td style="border: 1px solid black;">
+                        {% if mark.Status == 1 %}
+                        <a href="{% url 'MarksUpdate' mark.id %}" class="btn btn-primary">Update</a>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

@@ -1,0 +1,43 @@
+{% extends 'superintendent/registrationhome.html' %}
+
+{% block sub %}
+ 
+
+
+
+<div class="container">
+    <div class="row">
+        <p> <strong> Welcome to Registration Portal </strong></p>
+            {% comment %} <div class="col-sm-2">
+              <b>Dept</b> <br>
+              <select id="rollnos">
+                  <option disabled selected="true">-- select Dept --</option>
+                  {% for rec in programmeList %}
+                      <option value={{rec.Dept}}>{{rec.Specialization}}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-2">
+              <b>Year</b> <br>
+              <select id="Year">
+                  <option disabled selected="true">-- select year --</option>
+                  {% for rec in yearList %}
+                      <option value={{rec}}>{{rec}}</option>
+                  {% endfor %}
+              </select>
+              <div class="col-sm-2">
+              <b>Get details</b> <br>
+              <center>
+                    <a class="btn btn-primary" href="{% url 'DeptYearRegistrationStatus' %}" role="button" id="printing-form-ref">Go</a>
+                </center>
+            </div> {% endcomment %}
+
+            {% comment %} </div> {% endcomment %}
+        </div>
+      
+    <!-- <p id="CGPA">
+
+    </p> -->
+    
+</div>
+{% endblock %}

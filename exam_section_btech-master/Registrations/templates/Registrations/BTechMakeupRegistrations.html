@@ -1,0 +1,64 @@
+{% extends 'Registrations/index.html' %}
+
+{% block sub%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    
+     $(document).ready(function(){
+       $rollnos = $("#rollnos");
+        $rollnos.on("change", function(){
+          var studentIDBox = document.getElementById('rollnos');
+          var anchorElement = document.getElementById("printing-form-ref");
+          var myUrl = "{% url 'BTechMakeupRegistrationPage' 8888 %}";
+          anchorElement.href = myUrl.replace('8888', studentIDBox.options[studentIDBox.selectedIndex].value);
+          console.log(myUrl.replace('8888', studentIDBox.options[studentIDBox.selectedIndex].value));
+        });
+     });  
+ </script>
+
+<div class="container">
+    <div class="row">
+            <div class="col-sm-2">
+              <b>RegNo/RollNo</b> <br>
+              <select id="rollnos">
+                  <option disabled selected="true">-- select RollNo --</option>
+                  {% for rec in studentRegNos %}
+                    {% if rec.Dept < 9 %}
+                      <option value={{rec.RegNo}}>{{rec.RollNo}}</option>
+                    {% else %}
+                      <option value={{rec.RegNo}}>{{rec.RegNo}}</option>
+                    {% endif %}
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-1">
+                
+            </div>
+            <div class="col-sm-2">
+              
+            </div>
+            <div class="col-sm-1">
+              
+          </div>
+            <div class="col-sm-2">
+                
+            </div>
+            <div class="col-sm-2">
+
+            </div>
+            <div class="col-sm-2">
+              <b>Get Failed Subjects</b> <br>
+              <center>
+                    <a class="btn btn-primary" href="#" role="button" id="printing-form-ref">Go</a>
+                </center>
+            </div>
+        </div>
+      
+    <!-- <p id="CGPA">
+
+    </p> -->
+    
+</div>
+
+
+{% endblock %}

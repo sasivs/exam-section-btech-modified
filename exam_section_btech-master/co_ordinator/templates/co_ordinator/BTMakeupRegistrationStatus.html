@@ -1,0 +1,61 @@
+{% extends 'superintendent/registrationstatus.html' %}
+{% block title %}Makeup Registration Status{% endblock title %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong>
+ 
+            Registrations done for the particular event can be viewed here.
+     
+            </strong>
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                {% csrf_token %}
+                {{ form.as_p }}
+            </div>
+            <div class="row"> <strong> {{heading}}  </strong></div>
+            <div class = "row">
+                <table>
+                    <th>
+                        <tr>
+                            <td style="border: 1px solid black;">RegNo</td>
+                            <td style="border: 1px solid black;">RollNo</td>
+                            <td style="border: 1px solid black;">Name</td>
+                            <td style="border: 1px solid black;">BYear</td>
+                            <!-- <td style="border: 1px solid black;">BSem</td> -->
+                            <td style="border: 1px solid black;">Registered Subjects</td>
+                    </th>
+                    {% for registration  in studentRegistrations %}
+                    <tr>
+                        <td style="border: 1px solid black;">
+                            {{ registration.RegNo }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ registration.RollNo }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                          {{ registration.Name }}
+                      </td>
+                      <td style="border: 1px solid black;">
+                        {{ registration.BYear }}
+                    </td>
+                    <!-- <td style="border: 1px solid black;">
+                      {{ registration.BSem }}
+                    </td> -->
+                    <td style="border: 1px solid black;">
+                    {{ registration.RegisteredSubjects }}
+                    </td>
+                </tr>
+                    {% endfor %}
+            </div>
+            <div class="row">
+                <button type="submit">Status</button> 
+            </div>
+        </form>
+    </div>
+    
+</div>
+
+{% endblock %}

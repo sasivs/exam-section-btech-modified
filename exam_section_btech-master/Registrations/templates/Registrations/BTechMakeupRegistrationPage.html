@@ -1,0 +1,139 @@
+{% extends 'Registrations/index.html' %}
+
+{% load static %}
+
+{% block sub %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    function submitFunc(){
+     var checkboxes = document.getElementsByClassName("form-check-input");
+     var tableCells = document.getElementsByTagName("td");
+     var headerCells = document.getElementsByTagName("th");
+     console.log("The Numbe of checkboxes" + checkboxes.length); 
+     for(var ci=0;ci<checkboxes.length;ci++){
+        if(checkboxes[ci].checked){
+           var myRequest = new XMLHttpRequest();
+           var subCode = tableCells[5*ci];
+           console.log(subCode);
+           console.log(headerCells[0]);
+           myRequest.open()
+
+           var myRequest = new XMLHttpRequest();
+          myRequest.open('GET', "../gradeSheetPrinting/GetBTechIDs/"+admissionYearBox.options[admissionYearBox.selectedIndex].value+'/'+
+                departmentBox.options[departmentBox.selectedIndex].value);
+          myRequest.onload = function() {
+              var myData = JSON.parse(myRequest.responseText);
+              $rollnos.find('option').remove();
+              
+              console.log("Flag:" + myData.flag);
+              if(myData.flag){
+                $rollnos.append('<option disabled selected="true">-- select RollNo -- </option>');
+                $.each(myData.data, function(key, value){
+                      $rollnos.append('<option value=' + value.RegNo + '> ' + value.RollNo + '</option>');
+                  });
+              }else{
+                $rollnos.append('<option disabled selected="true">-- select RegNo -- </option>');
+                $.each(myData.data, function(key, value){
+                      $rollnos.append('<option value=' + value.RegNo + '> ' + value.RegNo + '</option>');
+                  });
+              }
+              
+          }
+          myRequest.onerror = function(){
+              console.log(myRequest.status);
+              console.log("Some thing is going wrong");
+          }
+          myRequest.send();      
+        }
+     }
+     
+    }
+  </script>
+
+<div class="container">
+    <div class="row">
+    <br>
+    <div class=container id="grade-sheet">
+      
+      <br>
+
+      <table class="table"  id="grades" width="85%"" cellpadding=5 style="border-collapse: collapse; border: 1 px solid black;" width=>
+      <thead>
+        <tr>
+          <th scope="col" class="col-sm-2" style="border: 1px solid black; text-align: center;"><b>{{studentInfo.RegNo}}</b></th>
+          <th scope="col" class="col-sm-4" style="text-align: left; border: 1px solid black;"><b>{{studentInfo.Name}}</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>{{studentInfo.RollNo}}</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b></b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>Register Yes/No</b></th>
+        </tr>
+        <tr>
+          <th scope="col" class="col-sm-2" style="border: 1px solid black; text-align: center;"><b>Sub Code</b></th>
+          <th scope="col" class="col-sm-4" style="text-align: left; border: 1px solid black;"><b>Subject Name</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>Credits</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>Grade</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: center; border: 1px solid black;"><b>Register Yes/No</b></th>
+        </tr>
+      </thead>
+      <tbody id="grades-table-body">
+        {% for studentGradesRec in studentMakeupBacklogs %}
+        <tr>
+          {% if forloop.last %}
+          <td style="border-left: 1px solid black; text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="border-left: 1px solid black; text-align: center;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.SubCode}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: left;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: left;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.SubName}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: center;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.Credits}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: center;border-right: 1px solid black;">
+          {% endif %}
+            {{studentGradesRec.Grade}}
+          </td>
+          {% if forloop.last %}
+          <td style="text-align: center;border-right: 1px solid black; border-bottom: 1px solid black;">
+          {% else %}
+          <td style="text-align: center;border-right: 1px solid black;">
+          {% endif %}                                                                                                                                                                                                                                               
+            <div class="form-check">
+                <input class= "form-check-input" type="checkbox" name="flexCheckDefault" id="flexCheckDefault{{forloop.counter }}">
+                <label class="form-check-label" for="flexCheckDefault{{forloop.counter}}">
+                Yes
+                </label>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+    <div class="container">
+        <div class="row">
+            <right>
+
+            <button type="button" class="btn btn-primary" onclick="submitFunc()">Submit</button>
+            </right>
+        </div>                                                                                                                                                                                                                                                    
+    </div>
+    
+    
+    <!-- <p id="CGPA">
+
+    </p> -->
+    </div>
+{% endblock %}

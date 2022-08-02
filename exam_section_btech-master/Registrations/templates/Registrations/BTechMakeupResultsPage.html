@@ -1,0 +1,73 @@
+{% extends 'GradesProcessing/gphome.html' %}
+
+{% block sub%}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+function printFunc(){
+        var prtContent = document.getElementById("main");
+        
+        var WinPrint = window.open('', '', 'left=0,top=0,width=21cm,height=29.7cm,toolbar=0,scrollbars=0,status=0 ');
+        //var htmlStr = "<html> " + prtContent. + "</html>";
+        console.log(prtContent.outerHTML);
+        WinPrint.document.style = "width: 21cm; height:29.7cm; margin: 30mm 45mm 30mm 45mm;";
+        
+        WinPrint.document.write("<center><b><strong>B.Tech Makeup Marks</b><strong></center>");
+        WinPrint.document.write("<br>");
+        WinPrint.document.write("<br>");
+        WinPrint.document.write(  "<center> " + prtContent.outerHTML + "</center>" );
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+      }
+
+</script>
+
+<div class="container" id="main">
+    <div>
+    <br>
+         <h2>Department: {{dept.Specialization}}</h2>
+         
+        <table>
+        <tr>
+        <td class="col-sm-2" style="text-align: center;"><h4>{{subjectInfo.SubCode}}</h4></td>
+        <td class="col-sm-6" style="text-align: left;"><h4>{{subjectInfo.SubName}}</h4></td>
+         <td class="col-sm-3" style="text-align: right;"><h4> credits: {{subjectInfo.Credits}}</h4></td>
+        </tr>
+        </table>
+        <br>
+    </div>
+    <div class="row">
+    <table class="table"  id="grades" width="85%"" cellpadding=5 style="border-collapse: collapse; border: 1 px solid black;" width=>
+      <thead>
+        <tr>
+          <th scope="col" class="col-sm-2" style="border: 1px solid black; text-align: center;"><b>RegNo</b></th>
+          <th scope="col" class="col-sm-2" style="border: 1px solid black; text-align: center;"><b>RollNo</b></th>
+          <th scope="col" class="col-sm-6" style="border: 1px solid black; text-align: center;"><b>Name</b></th>
+          <th scope="col" class="col-sm-1" style="text-align: center; border: 1px solid black;"><b>Marks</b></th>
+          <th scope="col" class="col-sm-1" style="text-align: center; border: 1px solid black;"><b>Grade</b></th>
+        </tr>
+      </thead>
+      <tbody id="grades-table-body">
+        {% for studentMakeupRec in studentMakeupMarks %}
+        <tr>
+          
+            <td style="border-left: 1px solid black; text-align: center; border-right: 1px solid black; border-bottom: 1px solid black;"> {{studentMakeupRec.RegNo}}</td>
+            <td style="text-align: center; border-right: 1px solid black; border-bottom: 1px solid black;"> {{studentMakeupRec.RollNo}}</td>
+            <td style="text-align: left; border-right: 1px solid black; border-bottom: 1px solid black;"> {{studentMakeupRec.Name}}</td>
+            <td style="text-align: center; border-right: 1px solid black; border-bottom: 1px solid black;">{{studentMakeupRec.Marks}} </td>
+            <td style="text-align: center; border-right: 1px solid black; border-bottom: 1px solid black;">{{studentMakeupRec.Grade}} </td>
+          
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+</div>
+<center>
+<button onclick="printFunc()">Print</button>
+ </center>       
+{% endblock %}

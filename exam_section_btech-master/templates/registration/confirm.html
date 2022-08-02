@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if messages %}
+        {% for message in messages %}
+
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                <strong style="text-align: center">{{ message }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+<div class="col-md-5" style="margin-top: 8px">
+    <br><h2 class="logo">Welcome to </h2><h2 class="title">EMS - Portal</h2><br>
+    <p class="title" style="font-size: 18px;  color: red; font-family: 'Monotype Corsiva';">Please confirm your E-mail address to complete the <a href="http://mail.google.com/" target="_blank" style="text-decoration: none;">registration</a></p>
+</div>
+
+{% endblock %}
