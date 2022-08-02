@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from hod.models import Coordinator
+from hod.models import BTCoordinator
 from superintendent.user_access_test import is_Superintendent, registration_status_access
 from co_ordinator.forms import  RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
-from co_ordinator.models import BacklogRegistrationSummary, RegularRegistrationSummary, MakeupRegistrationSummary
-from superintendent.models import CycleCoordinator, ProgrammeModel, RegistrationStatus, HOD
+from co_ordinator.models import BTBacklogRegistrationSummary, BTRegularRegistrationSummary, BTMakeupRegistrationSummary
+from superintendent.models import BTCycleCoordinator, BTProgrammeModel, BTRegistrationStatus, BTHOD
 
 
 # def is_Superintendent(user):
@@ -18,7 +18,7 @@ from superintendent.models import CycleCoordinator, ProgrammeModel, Registration
 # @login_required(login_url="/login/")
 # @user_passes_test(is_Superintendent)
 # def btech_makeup_registration_status(request,dept,year):
-#     studentMakeupBacklogsVsRegistrations = StudentMakeupBacklogsVsRegistrations.objects.filter(BYear=year).filter(Dept=dept)
+#     studentMakeupBacklogsVsRegistrations = BTStudentMakeupBacklogsVsRegistrations.objects.filter(BYear=year).filter(Dept=dept)
 #     return render(request, 'SupExamDBRegistrations/DeptYearRegistrationStatus.html',
 #                     { 'studentMakeupBacklogsVsRegistrations':studentMakeupBacklogsVsRegistrations }  )
 
@@ -31,16 +31,16 @@ def btech_regular_registration_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
     elif 'Co-ordinator' in groups:
-        cord = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='R')
+        cord = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='R')
     heading = ''
     studentRegistrations = []
     if(request.method=='POST'):
@@ -61,9 +61,9 @@ def btech_regular_registration_status(request):
                 regulation = int(strs[5])
                 mode = strs[6]
                 studymode = strs[6]
-                deptObj = ProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
+                deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
-                studentRegistrations = RegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                studentRegistrations = BTRegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept).order_by('RegNo')
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
@@ -81,16 +81,16 @@ def btech_backlog_registration_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='B')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='B')
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='B')
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='B')
     elif 'Co-ordinator' in groups:
-        cord = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='B')
+        cord = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='B')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='B')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='B')
     heading = ''
     studentRegistrations = []
     if(request.method=='POST'):
@@ -111,9 +111,9 @@ def btech_backlog_registration_status(request):
                 regulation = int(strs[5])
                 mode = strs[6]
                 studymode = strs[6]
-                deptObj = ProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
+                deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
-                studentRegistrations = BacklogRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                studentRegistrations = BTBacklogRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept)
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
@@ -131,16 +131,16 @@ def btech_makeup_registration_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1, Mode='M')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='M')
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='M')
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='M')
     elif 'Co-ordinator' in groups:
-        cord = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='M')
+        cord = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cord.Dept, BYear=cord.BYear, Mode='M')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='M')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=cycle_cord.Cycle, BYear=1, Mode='M')
     heading = ''
     studentRegistrations = []
     if(request.method=='POST'):
@@ -160,9 +160,9 @@ def btech_makeup_registration_status(request):
                 # bsem = rom2int[strs[2]]
                 regulation = int(strs[4])
                 mode = strs[5]
-                deptObj = ProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
+                deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
-                studentRegistrations = MakeupRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                studentRegistrations = BTMakeupRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, Dept=dept)
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
