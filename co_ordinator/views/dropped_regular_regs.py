@@ -2,10 +2,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import DroppedRegularRegistrationsForm
-from co_ordinator.models import Subjects, DroppedRegularCourses, StudentRegistrations_Staging
-from superintendent.models import RegistrationStatus,CycleCoordinator
-from ExamStaffDB.models import StudentInfo
-from hod.models import Coordinator
+from co_ordinator.models import BTSubjects, BTDroppedRegularCourses, BTStudentRegistrations_Staging
+from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
+from ExamStaffDB.models import BTStudentInfo
+from hod.models import BTCoordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
@@ -14,11 +14,11 @@ def dropped_regular_registrations(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
     if 'Co-ordinator' in groups:
-        coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='D')
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='D')
     elif 'Cycle-Co-ordinator' in groups:
-        cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='D')
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='D')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     studentInfo = []
@@ -37,19 +37,19 @@ def dropped_regular_registrations(request):
         bsem = rom2int[strs[2]]
         regulation = int(strs[5])
         mode = strs[6]
-        currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+        currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
         currentRegEventId = currentRegEventId[0].id
         con = {key:request.POST[key] for key in request.POST.keys()} 
         if('RegNo' in request.POST.keys()):
-            droppedCourses = DroppedRegularCourses.objects.filter(RegNo=request.POST['RegNo'])
-            reg_status = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
+            droppedCourses = BTDroppedRegularCourses.objects.filter(RegNo=request.POST['RegNo'])
+            reg_status = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
             studentRegistrations=[]
             for regevent in reg_status:
-                studentRegistrations += list(StudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'],RegEventId=regevent.id))
+                studentRegistrations += list(BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'],RegEventId=regevent.id))
             studentRegularRegistrations = []
             for regn in studentRegistrations:
-                regEvent = RegistrationStatus.objects.get(id=regn.RegEventId)
+                regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId)
                 if (regEvent.Mode == 'R' or regEvent.Mode == 'D'):
                     studentRegularRegistrations.append(regn)
             for row in droppedCourses:
@@ -63,11 +63,11 @@ def dropped_regular_registrations(request):
         elif not 'Submit' in request.POST.keys():
             regNo = request.POST['RegNo']
             event = (request.POST['RegEvent'])
-            studentInfo = StudentInfo.objects.filter(RegNo=regNo)
+            studentInfo = BTStudentInfo.objects.filter(RegNo=regNo)
         elif('RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST and form.is_valid()):
             regNo = request.POST['RegNo']
             event = (request.POST['RegEvent'])
-            studentInfo = StudentInfo.objects.filter(RegNo=regNo) 
+            studentInfo = BTStudentInfo.objects.filter(RegNo=regNo) 
             studyModeCredits = 0
             examModeCredits = 0
             for sub in form.myFields:
@@ -89,33 +89,33 @@ def dropped_regular_registrations(request):
                     if(sub[6]=='R'): #Handling Regular Subjects
                         if(form.cleaned_data['Check'+str(sub[9])] == False):
                             #delete regular_record from the registration table
-                            reg = StudentRegistrations_Staging.objects.filter(id=sub[10])
+                            reg = BTStudentRegistrations_Staging.objects.filter(id=sub[10])
                             if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
-                                new_dropped_course = DroppedRegularCourses(student=studentInfo[0], subject_id=sub[9], RegEventId_id=reg.RegEventId, Registered=False)
+                                BTStudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                                new_dropped_course = BTDroppedRegularCourses(student=studentInfo[0], subject_id=sub[9], RegEventId_id=reg.RegEventId, Registered=False)
                                 new_dropped_course.save()
                     elif sub[6] == 'D':
                         if(form.cleaned_data['Check'+str(sub[9])]):
-                            reg = StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
+                            reg = BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
                                  sub_id = sub[9])
                             if(len(reg) == 0):
-                                newRegistration = StudentRegistrations_Staging(RegNo = request.POST['RegNo'], RegEventId = currentRegEventId,\
+                                newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'], RegEventId = currentRegEventId,\
                                     Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()
-                                DroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=True)
+                                BTDroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=True)
                         else:
                             if sub[10]:
-                                reg = StudentRegistrations_Staging.objects.filter(id=sub[10])
+                                reg = BTStudentRegistrations_Staging.objects.filter(id=sub[10])
                                 if len(reg) != 0:
-                                    StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
-                                    DroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=False)
+                                    BTStudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                                    BTDroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=False)
                     else:   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
-                            StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
+                            BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
                         elif(sub[5]):
                             #delete record from registration table
-                            StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).delete()  
+                            BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).delete()  
                 return(render(request,'co_ordinator/DroppedRegularRegSuccess.html'))
             else:
                 form = DroppedRegularRegistrationsForm(regIDs,request.POST)
