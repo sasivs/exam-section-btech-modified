@@ -36,10 +36,10 @@ def grades_finalize(request):
             # reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
             # reg_status_obj.GradeStatus = 0
             # reg_status_obj.save()
-            return render(request, 'hod/GradesFinalize.html', {'form':form, 'msg':msg})
+            return render(request, 'BThod/GradesFinalize.html', {'form':form, 'msg':msg})
     else:
         form = GradesFinalizeForm(regIDs)
-    return render(request, 'hod/GradesFinalize.html', {'form':form})
+    return render(request, 'BThod/GradesFinalize.html', {'form':form})
 
 def RefreshMaterializedViews():
     conn = psycopg2.connect(

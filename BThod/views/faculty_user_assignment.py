@@ -23,7 +23,7 @@ def faculty_user(request):
         else:
             fac.User = None
 
-    return render(request, 'hod/FacultyUser.html',{'faculty':faculty})
+    return render(request, 'BThod/FacultyUser.html',{'faculty':faculty})
 
 login_required(login_url="/login/")
 @user_passes_test(is_Hod)
@@ -46,7 +46,7 @@ def faculty_user_detail(request,pk):
             fac_user = BTFaculty_user(User_id=request.POST.get('fac_user'), Faculty_id=pk)
             fac_user.save()
         return redirect('FacultyUserAssignment')
-    return render(request, 'hod/FacultyUserdetail.html', { 'faculty':faculty,\
+    return render(request, 'BThod/FacultyUserdetail.html', { 'faculty':faculty,\
         'Users':users,'assigned_user':assigned_user})
 
 
@@ -85,14 +85,14 @@ def faculty_Coordinator(request):
                     new_coordinator = BTCoordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), BYear=form.cleaned_data.get('BYear'),Dept =hod.Dept)
                     new_coordinator.save()
                 msg = 'BTCoordinator assignment is done successfully'
-                return render(request, 'hod/CoordinatorAssignment.html', {'form':form, 'msg':msg})
+                return render(request, 'BThod/CoordinatorAssignment.html', {'form':form, 'msg':msg})
             else:
                 if assigned_coordinator:
-                    return render(request, 'hod/CoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
+                    return render(request, 'BThod/CoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
     else:
         form = CoordinatorAssignmentForm(hod.Dept)
         
-    return render(request, 'hod/CoordinatorAssignment.html',{'form':form})
+    return render(request, 'BThod/CoordinatorAssignment.html',{'form':form})
 
 
 @login_required(login_url="/login/")
@@ -105,5 +105,5 @@ def faculty_Coordinator_Status(request):
         user = request.user
         hod = BTHOD.objects.filter(RevokeDate__isnull=True,User=user).first()
         Coordinators = BTCoordinator.objects.filter(Dept=hod.Dept)
-    return render(request, 'hod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
+    return render(request, 'BThod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
         

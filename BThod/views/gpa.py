@@ -29,7 +29,7 @@ def gpa_staging(request):
                 if no_of_students != 0: gpa_distribution[gp]=no_of_students
             from json import dumps
             gpa_distribution = dumps(gpa_distribution)
-            return render(request, 'hod/GPAStaging.html', {'form':form, 'gpa':gpa, 'gpa_data':gpa_distribution})
+            return render(request, 'BThod/GPAStaging.html', {'form':form, 'gpa':gpa, 'gpa_data':gpa_distribution})
     else:
         form = GpaStagingForm(regIds)
-    return render(request, 'hod/GPAStaging.html', {'form':form})
+    return render(request, 'BThod/GPAStaging.html', {'form':form})
