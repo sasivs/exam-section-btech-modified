@@ -306,5 +306,5 @@ class BTStudentCGPAs_Staging(models.Model):
     SC = models.IntegerField()
     SGPA = models.FloatField()
     class Meta:
-        db_table = 'StudentCGPAs_StagingMV'
+        db_table = 'BTStudentCGPAs_StagingMV'
         managed = False
