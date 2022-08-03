@@ -5,7 +5,7 @@
 <div class="container">
     {% if not validRows and not errorRows and not errorRows1 %}
     <div class="row">
-      {% if url_name == 'SupBTSubjectUpload' %}
+      {% if url_name == 'BTSupBTSubjectUpload' %}
       <strong>
         **DEC(Department Elective Courses) must be uploaded here only**   <br>
         **OEC(Open Elective Courses) must be uploaded only at Open Elective Subjects Upload option**
@@ -28,7 +28,7 @@
         <br>
         </strong>
       {% endif %}
-      {% if url_name == 'SupBTOpenSubjectUpload' %}
+      {% if url_name == 'BTSupBTOpenSubjectUpload' %}
       <strong>
         **OEC(Open Elective Courses) must be uploaded here only**  <br>
         **DEC(Department Elective Courses) must be uploaded only at Subjects Upload option**
@@ -61,7 +61,7 @@
           <br><br>
           <hr>
           <label for="download-sample">Download template sheet:</label>
-          <a href="{% url 'DownloadSampleSubjectSheet' %}" name="download-sample" class="btn btn-primary">Download</a>
+          <a href="{% url 'BTDownloadSampleSubjectSheet' %}" name="download-sample" class="btn btn-primary">Download</a>
         </form>
     </div>
     {% endif %}

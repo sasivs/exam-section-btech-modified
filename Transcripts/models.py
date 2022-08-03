@@ -52,7 +52,7 @@ class DeptExamEventStudents(models.Model):
         managed = False
 
 
-class StudentGradePoints(models.Model):
+class BTStudentGradePoints(models.Model):
     RegNo = models.IntegerField()
     SubCode = models.CharField(max_length=10)
     SubName = models.CharField(max_length=100)

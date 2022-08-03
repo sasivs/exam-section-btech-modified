@@ -1,13 +1,13 @@
 from django.http.response import HttpResponse, HttpResponseRedirect
 from Registrations.models import CoordinatorBacklogRegNos, CoordinatorMakeupRegNos, CoordinatorMakeupSubCodesV, StudentMakeupBacklogsVsRegistrations, StudentMakeupMarksDetails, CurrentAcademicYear,CoordinatorInfo, StudentMakeupMarks, Coordinator1Info
 from django.urls import reverse 
-from co_ordinator.models import StudentRegistrations, StudentMakeups, StudentBacklogs
+from co_ordinator.models import BTStudentRegistrations, BTStudentMakeups, BTStudentBacklogs
 from Registrations.forms  import MarksForm, RegistrationForm1, RegistrationsInsertionForm, SimpleForm, StudentIDForm, RegistrationForm, TestForm
 from django.shortcuts import render
 from Transcripts.models import ProgrammeModel, StudentCGPAs, StudentInfo, ProgrammeModel
 from Transcripts.models import DepartmentExamEvents
 from Transcripts.models import DeptExamEventStudents
-from Transcripts.models import StudentGradePoints
+from Transcripts.models import BTStudentGradePoints
 from Transcripts.models import StudentCGPAs
 from Transcripts.models import HeldIn
 from Transcripts.models import StudentExamEvents
@@ -120,7 +120,7 @@ def test_form_view(request, regNo):
         print(form.cleaned_data['checkBoxes'])    
     else:
         studentInfo = StudentInfo(RegNo=regNo)
-        studentMakeupBacklogs = StudentMakeups.objects.filter(RegNo=regNo)
+        studentMakeupBacklogs = BTStudentMakeups.objects.filter(RegNo=regNo)
         form = RegistrationsInsertionForm(regNo=studentInfo.RegNo,rollNo=studentInfo.RollNo, 
                                     name=studentInfo.Name)
     return render(request, 'Registrations/BTechMakeupRegistrationPage.html',{ 'studentMakeupBacklogs':studentMakeupBacklogs, 'studentInfo': studentInfo, 'form':form}  )
@@ -132,7 +132,7 @@ def btech_makeup_registration_page(request, regNo):
     print(request.user.username)
     coordinatorDetails = CoordinatorInfo.objects.filter(UserId=request.user.username)[0]
     if(request.method=='POST'):
-        studentMakeupBacklogs = StudentMakeups.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
+        studentMakeupBacklogs = BTStudentMakeups.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
          
         choices = [(studentMakeupBacklogs[i].SubCode, 
                         studentMakeupBacklogs[i].SubCode + " " + 
@@ -143,11 +143,11 @@ def btech_makeup_registration_page(request, regNo):
         if(form.is_valid()):
             AYear=CurrentAcademicYear.objects.all()
             print(form.cleaned_data['Choices'])
-            StudentRegistrations.objects.filter(RegNo=regNo).filter(Dept=coordinatorDetails.Dept).filter(BYear=coordinatorDetails.Year).delete()
+            BTStudentRegistrations.objects.filter(RegNo=regNo).filter(Dept=coordinatorDetails.Dept).filter(BYear=coordinatorDetails.Year).delete()
             StudentMakeupMarks.objects.filter(RegNo=regNo).filter(Dept=coordinatorDetails.Dept).filter(BYear=coordinatorDetails.Year).delete()
             for choice in form.cleaned_data['Choices']:
                 subjectTobeInserted = studentMakeupBacklogs.filter(SubCode=choice)
-                newRegistration = StudentRegistrations(RegNo=subjectTobeInserted[0].RegNo,
+                newRegistration = BTStudentRegistrations(RegNo=subjectTobeInserted[0].RegNo,
                             SubCode=subjectTobeInserted[0].SubCode,
                             AYear=AYear[0].AcademicYear,
                             ASem=3,
@@ -179,8 +179,8 @@ def btech_makeup_registration_page(request, regNo):
             return render(request, 'Registrations/success_page.html')    
     else:
         studentInfo = StudentInfo.objects.filter(RegNo=regNo)
-        studentMakeupBacklogs = StudentMakeups.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
-        studentRegistrations = StudentRegistrations.objects.filter(RegNo=regNo,AYear=2020,ASem=3)
+        studentMakeupBacklogs = BTStudentMakeups.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
+        studentRegistrations = BTStudentRegistrations.objects.filter(RegNo=regNo,AYear=2020,ASem=3)
         choices = [(studentMakeupBacklogs[i].SubCode,
                         studentMakeupBacklogs[i].SubCode + " " + 
                         studentMakeupBacklogs[i].SubName + " " +
@@ -201,7 +201,7 @@ def btech_makeup_registration_page1(request, regNo):
     coordinatorSem1Details = Coordinator1Info.objects.filter(UserId=request.user.username)[0]
     coordinatorSem2Details = Coordinator1Info.objects.filter(UserId=request.user.username)[1]
     if(request.method=='POST'):
-        studentMakeupBacklogs = StudentMakeups.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter((Q(Dept=coordinatorSem1Details.Dept) & Q(BSem=coordinatorSem1Details.Sem ))| (Q(Dept=coordinatorSem2Details.Dept) & Q(BSem=coordinatorSem2Details.Sem)))
+        studentMakeupBacklogs = BTStudentMakeups.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter((Q(Dept=coordinatorSem1Details.Dept) & Q(BSem=coordinatorSem1Details.Sem ))| (Q(Dept=coordinatorSem2Details.Dept) & Q(BSem=coordinatorSem2Details.Sem)))
         choices = [(studentMakeupBacklogs[i].SubCode, 
                         studentMakeupBacklogs[i].SubCode + " " + 
                         studentMakeupBacklogs[i].SubName + " " +
@@ -211,11 +211,11 @@ def btech_makeup_registration_page1(request, regNo):
         if(form.is_valid()):
             AYear=CurrentAcademicYear.objects.all()
             print(form.cleaned_data['Choices'])
-            StudentRegistrations.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter((Q(Dept=coordinatorSem1Details.Dept) & Q(BSem=coordinatorSem1Details.Sem ))| (Q(Dept=coordinatorSem2Details.Dept) & Q(BSem=coordinatorSem2Details.Sem))).delete()
+            BTStudentRegistrations.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter((Q(Dept=coordinatorSem1Details.Dept) & Q(BSem=coordinatorSem1Details.Sem ))| (Q(Dept=coordinatorSem2Details.Dept) & Q(BSem=coordinatorSem2Details.Sem))).delete()
             StudentMakeupMarks.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter(Dept=coordinatorSem1Details.Dept).filter(Dept=coordinatorSem2Details.Dept).delete()
             for choice in form.cleaned_data['Choices']:
                 subjectTobeInserted = studentMakeupBacklogs.filter(SubCode=choice)
-                newRegistration = StudentRegistrations(RegNo=subjectTobeInserted[0].RegNo,
+                newRegistration = BTStudentRegistrations(RegNo=subjectTobeInserted[0].RegNo,
                             SubCode=subjectTobeInserted[0].SubCode,
                             AYear=AYear[0].AcademicYear,
                             ASem=3,
@@ -247,8 +247,8 @@ def btech_makeup_registration_page1(request, regNo):
             return render(request, 'Registrations/success_page1.html')    
     else:
         studentInfo = StudentInfo.objects.filter(RegNo=regNo)
-        studentMakeupBacklogs = StudentMakeups.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter((Q(Dept=coordinatorSem1Details.Dept) & Q(BSem=coordinatorSem1Details.Sem ))| (Q(Dept=coordinatorSem2Details.Dept) & Q(BSem=coordinatorSem2Details.Sem)))
-        studentRegistrations = StudentRegistrations.objects.filter(RegNo=regNo,AYear=2020,ASem=3)
+        studentMakeupBacklogs = BTStudentMakeups.objects.filter(RegNo=regNo).filter(BYear=coordinatorSem1Details.Year).filter((Q(Dept=coordinatorSem1Details.Dept) & Q(BSem=coordinatorSem1Details.Sem ))| (Q(Dept=coordinatorSem2Details.Dept) & Q(BSem=coordinatorSem2Details.Sem)))
+        studentRegistrations = BTStudentRegistrations.objects.filter(RegNo=regNo,AYear=2020,ASem=3)
         choices = [(studentMakeupBacklogs[i].SubCode,
                         studentMakeupBacklogs[i].SubCode + " " + 
                         studentMakeupBacklogs[i].SubName + " " +
@@ -338,7 +338,7 @@ def student_makeup_mark_results_page(request, SubCode):
     coordinatorDetails = CoordinatorInfo.objects.filter(UserId=request.user.username)[0]
     #studentMakeupMarks=StudentMakeupMarks.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=SubCode)
     studentMakeupMarksDetails =StudentMakeupMarksDetails.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=subCodeRegs[0]).filter(Regulation=subCodeRegs[1])
-    subjectInfo = StudentMakeups.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=subCodeRegs[0]).filter(Regulation=subCodeRegs[1]).distinct()
+    subjectInfo = BTStudentMakeups.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=subCodeRegs[0]).filter(Regulation=subCodeRegs[1]).distinct()
     dept = ProgrammeModel.objects.filter(Dept=coordinatorDetails.Dept)
     
     return render(request, 'Registrations/BTechMakeupResultsPage.html',
@@ -416,7 +416,7 @@ def student_makeup_mark_results_page1(request, SubCode):
     coordinatorDetails = Coordinator1Info.objects.filter(UserId=request.user.username)[0]
     #studentMakeupMarks=StudentMakeupMarks.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=SubCode)
     studentMakeupMarksDetails =StudentMakeupMarksDetails.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=subCodeRegs[0]).filter(Regulation=subCodeRegs[1])
-    subjectInfo = StudentMakeups.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=subCodeRegs[0]).filter(Regulation=subCodeRegs[1]).distinct()
+    subjectInfo = BTStudentMakeups.objects.filter(BYear=coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept).filter(SubCode=subCodeRegs[0]).filter(Regulation=subCodeRegs[1]).distinct()
     dept = ProgrammeModel.objects.filter(Dept=coordinatorDetails.Dept)
     
     return render(request, 'Registrations/BTechMakeupResultsPageCycle.html',
@@ -429,7 +429,7 @@ def btech_backlog_registration_page(request, regNo):
     print(request.user.username)
     coordinatorDetails = CoordinatorInfo.objects.filter(UserId=request.user.username)[0]
     if(request.method=='POST'):
-        studentBacklogs = StudentBacklogs.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
+        studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
         choices = [(studentBacklogs[i].SubCode, studentBacklogs[i].SubName, studentBacklogs[i].Credits,
                         studentBacklogs[i].Grade ) for i in range(len(studentBacklogs))]
         
@@ -438,7 +438,7 @@ def btech_backlog_registration_page(request, regNo):
         if(form.is_valid()):
             AYear=CurrentAcademicYear.objects.all()
             #print(form.cleaned_data['Choices'])
-            StudentRegistrations.objects.filter(RegNo=regNo).filter(Dept=coordinatorDetails.Dept).filter(BYear=coordinatorDetails.Year).delete()
+            BTStudentRegistrations.objects.filter(RegNo=regNo).filter(Dept=coordinatorDetails.Dept).filter(BYear=coordinatorDetails.Year).delete()
             StudentMakeupMarks.objects.filter(RegNo=regNo).filter(Dept=coordinatorDetails.Dept).filter(BYear=coordinatorDetails.Year).delete()
             for cIndex, choice in enumerate(choices):
                 print(form.cleaned_data.get('RadioMode'+choice[0]))
@@ -447,7 +447,7 @@ def btech_backlog_registration_page(request, regNo):
                     print(form.cleaned_data.get('RadioMode'+choice[0]))
                     
                     subjectTobeInserted = studentBacklogs.filter(SubCode=choice[0])
-                    newRegistration = StudentRegistrations(RegNo=subjectTobeInserted[0].RegNo,
+                    newRegistration = BTStudentRegistrations(RegNo=subjectTobeInserted[0].RegNo,
                                 SubCode=subjectTobeInserted[0].SubCode,
                                 AYear=2021,
                                 ASem=1,
@@ -464,9 +464,9 @@ def btech_backlog_registration_page(request, regNo):
     else:
         AYear=CurrentAcademicYear.objects.all()
         studentInfo = StudentInfo.objects.filter(RegNo=regNo)
-        studentBacklogs = StudentBacklogs.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
+        studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=regNo).filter(BYear = coordinatorDetails.Year).filter(Dept=coordinatorDetails.Dept)
 
-        studentRegistrations = StudentRegistrations.objects.filter(RegNo=regNo,AYear=2021,ASem=1)
+        studentRegistrations = BTStudentRegistrations.objects.filter(RegNo=regNo,AYear=2021,ASem=1)
         choices = [(studentBacklogs[i].SubCode,studentBacklogs[i].Grade ) for i in range(len(studentBacklogs))]
 
         subDetails = [ (studentBacklogs[i].SubCode,

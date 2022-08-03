@@ -1,5 +1,5 @@
 from django.db import models
-from co_ordinator.models import StudentRegistrations
+from co_ordinator.models import BTStudentRegistrations
 
 # Create your models here.
 
@@ -48,7 +48,7 @@ class IXGradeStudents(models.Model):
         ('I', 'I'),
         ('X', 'X')
     )
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
 
     class Meta:

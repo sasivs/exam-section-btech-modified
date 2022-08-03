@@ -3,7 +3,7 @@ from django.shortcuts import render
 from superintendent.user_access_test import grades_threshold_access, grades_status_access
 from superintendent.models import RegistrationStatus, HOD
 from hod.models import Faculty_user, Coordinator
-from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
+from co_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from faculty.models import Attendance_Shortage, GradesThreshold, Marks_Staging, StudentGrades_Staging
 from ExamStaffDB.models import IXGradeStudents
 from faculty.forms import MarksStatusForm
@@ -22,7 +22,7 @@ def grades_generate(request):
     faculty = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1, RegEventId__GradeStatus=1)
+    subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1, RegEventId__GradeStatus=1)
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
         if form.is_valid():
@@ -31,7 +31,7 @@ def grades_generate(request):
             regEvent = RegistrationStatus.objects.get(id=regEvent)
             section = form.cleaned_data.get('subject').split(':')[2]
 
-            roll_list = RollLists.objects.filter(RegEventId=regEvent, Section=section)
+            roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
 
             marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent.id, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
@@ -100,15 +100,15 @@ def grades_status(request):
     subjects = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
     elif 'Superintendent' in groups:
-        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1)
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
         if form.is_valid():
@@ -116,8 +116,8 @@ def grades_status(request):
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             regEvent = RegistrationStatus.objects.get(id=regEvent)
             section = form.cleaned_data.get('subject').split(':')[2]
-            roll_list = RollLists.objects.filter(RegEventId=regEvent, Section=section)
-            student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject, \
+            roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
+            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject, \
                 RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             grades = StudentGrades_Staging.objects.filter(RegEventId=regEvent.id, RegId__in=student_registrations.values_list('id',flat=True))
             grades = list(grades)

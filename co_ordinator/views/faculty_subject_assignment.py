@@ -89,10 +89,10 @@ def faculty_subject_assignment_detail(request, pk):
                     faculty_row.faculty_id = request.POST.get('faculty-'+str(sec))
                     faculty_row.save()
                 else:
-                    faculty_row = FacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
+                    faculty_row = BTFacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
                         Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=request.session['currentRegEvent'])
                     faculty_row.save()
-        return redirect('FacultySubjectAssignment')
+        return redirect('BTFacultySubjectAssignment')
     return render(request, 'co_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
         'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_assigned})
 

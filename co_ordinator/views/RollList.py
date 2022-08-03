@@ -71,7 +71,7 @@ def generateRollList(request):
                         request.session['not_promoted_regno'] = (not_promoted_regnos)
                         request.session['ayasbybsr'] = ayasbybsr
                         request.session['currentRegEventId'] = request.session.get('currentRegEventId')
-                        return HttpResponseRedirect(reverse('FirstYearRollListsCycleHandler' ))
+                        return HttpResponseRedirect(reverse('BTFirstYearRollListsCycleHandler' ))
                 return (render(request, 'co_ordinator/RollListGenerateSuccess.html')) 
             
         else:
@@ -151,7 +151,7 @@ def generateRollList(request):
 
                             for reg in reg_rgs:
                                 if not initial_roll_list.filter(student=reg.student).exists():
-                                    roll = RollLists_Staging(student=reg.student, RegEventId_id=currentRegEventId)
+                                    roll = BTRollLists_Staging(student=reg.student, RegEventId_id=currentRegEventId)
                                     roll.save()
                             
                             BTStudentRegistrations_Staging.objects.filter(RegNo__in=prev_not_prom_regd_no,RegEventId=currentRegEventId).delete()
@@ -178,7 +178,7 @@ def generateRollList(request):
                             for regd_no in backlog_rolls:
                                 student = BTStudentInfo.objects.get(RegNo=regd_no)
                                 if not initial_roll_list.filter(student=student, Cycle=dept).exists():
-                                    roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student, Cycle=dept)
+                                    roll = BTRollLists_Staging(RegEventId_id=currentRegEventId, student=student, Cycle=dept)
                                     roll.save()
                         else:
 
@@ -189,7 +189,7 @@ def generateRollList(request):
                             for regd_no in backlog_rolls:
                                 student = BTStudentInfo.objects.get(RegNo=regd_no) 
                                 if not initial_roll_list.filter(student=student).exists():
-                                    roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student)
+                                    roll = BTRollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                                     roll.save()
                         BTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=backlog_rolls).delete()
                     elif mode == 'M':
@@ -203,7 +203,7 @@ def generateRollList(request):
                             for regd_no in makeup_rolls:
                                 student = BTStudentInfo.objects.get(RegNo=regd_no)
                                 if not initial_roll_list.filter(student=student, Cycle=dept).exists():
-                                        roll = RollLists_Staging(RegEventId_id=currentRegEventId, student=student, Cycle=dept)
+                                        roll = BTRollLists_Staging(RegEventId_id=currentRegEventId, student=student, Cycle=dept)
                                         roll.save()
                         else:
                             for regd_no in makeup_rolls:

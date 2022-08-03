@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render
 from superintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
-from co_ordinator.models import FacultyAssignment, StudentRegistrations
+from co_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
 from superintendent.models import RegistrationStatus, HOD
 from hod.models import Coordinator, Faculty_user
 from ExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
@@ -19,7 +19,7 @@ def ix_student_assignment(request):
                 subject = form.cleaned_data.get('subject')
                 regd_no = form.cleaned_data.get('regd_no')
                 grade = form.cleaned_data.get('grade')
-                student_registration = StudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject, RegNo=regd_no).first()
+                student_registration = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject, RegNo=regd_no).first()
                 if IXGradeStudents.objects.filter(Registration=student_registration).exists():
                     IXGradeStudents.objects.filter(Registration=student_registration).update(Grade=grade)
                 else:
@@ -49,7 +49,7 @@ def ix_student_status(request):
         regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
     elif 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-        faculty_assign = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
+        faculty_assign = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
         regIDs = RegistrationStatus.objects.filter(id__in=faculty_assign.values_list('RegEventId_id', flat=True))
     if request.method == 'POST':
         form = IXGradeStudentsStatus(regIDs, request.POST)

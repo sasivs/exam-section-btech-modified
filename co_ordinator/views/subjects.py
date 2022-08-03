@@ -107,7 +107,7 @@ def subject_upload(request):
                 request.session['subErrRows'] = subErrRows
                 request.session['errorRows'] = errorRows
                 # request.session['currentRegEventId'] = currentRegEventId              
-                return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
+                return HttpResponseRedirect(reverse('BTSupBTSubjectsUploadErrorHandler'))
             if errorRows:
                 return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
             msg = 'Subjects Uploaded successfully.'
@@ -368,7 +368,7 @@ def open_subject_upload(request):
                 request.session['subErrRows'] = subErrRows
                 request.session['errorRows'] = errorRows
                 # request.session['currentRegEventId'] = currentRegEventId              
-                return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
+                return HttpResponseRedirect(reverse('BTSupBTSubjectsUploadErrorHandler'))
             if errorRows:
                 return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
             msg = 'Subjects Uploaded successfully.'

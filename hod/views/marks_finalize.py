@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from co_ordinator.models import FacultyAssignment
+from co_ordinator.models import BTFacultyAssignment
 from superintendent.user_access_test import is_Hod
 from django.shortcuts import render
 from superintendent.models import RegistrationStatus, HOD
@@ -16,7 +16,7 @@ def marks_finalize(request):
     regIDs = None
     if 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__MarksStatus=1, Subject__OfferedBy=hod.Dept)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__MarksStatus=1, Subject__OfferedBy=hod.Dept)
         regIDs = RegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
     msg = ''
     if request.method == 'POST':

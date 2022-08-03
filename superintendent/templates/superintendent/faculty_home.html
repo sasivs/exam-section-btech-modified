@@ -11,17 +11,17 @@
                     <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
+                    <a class="nav-link" href="{% url 'BTFacultySubjectAssignment' %}">Faculty Subject Assignment</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
                 {% elif user|has_group:'ExamStaff' %}
                 <li class="nav-item">
@@ -38,14 +38,14 @@
                     <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultySubjectAssignment' %}">Faculty Subject Assignment</a>
+                    <a class="nav-link" href="{% url 'BTFacultySubjectAssignment' %}">Faculty Subject Assignment</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
                 {% elif user|has_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyAssignmentStatus' %}">Faculty Assignment Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
                 {% else %}
                 <li class="nav-item">

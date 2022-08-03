@@ -10,43 +10,43 @@
             <ul class="nav flex-column">
                 {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
                 </li>
                 {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
                 </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
                 </li>
                 {% elif user|has_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'SupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                    <a class="nav-link" href="{% url 'BTSupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
                 </li>
                 {% endif %}
             </ul>

@@ -9,7 +9,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http.response import HttpResponseRedirect, JsonResponse
 from django.urls import reverse 
 from superintendent.models import ProgrammeModel
-from co_ordinator.models import StudentGradePoints
+from co_ordinator.models import BTStudentGradePoints
 from ExamStaffDB.models import StudentInfo
 from Transcripts.models import StudentExamEvents, DepartmentExamEvents, DeptExamEventStudents, StudentAdmissionYearDetails,\
      StudentCGPAs, HeldIn
@@ -103,7 +103,7 @@ def get_event_regNos(request, department, event):
 @user_passes_test(is_Superintendent)
 
 def get_student_regno_grades(request, regno, ayasbybs):
-    studentGrades = StudentGradePoints.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs))
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs))
     studentGradesQS = list(studentGrades.values())
     return JsonResponse({'data':studentGradesQS}, safe=False)
 
@@ -114,7 +114,7 @@ def get_student_regno_grades(request, regno, ayasbybs):
 def get_student_rollno_grades(request, rollno, ayasbybs):
     studInfo = StudentInfo.objects.filter(RollNo=int(rollno))
     regNo = studInfo[0].RegNo
-    studentGrades = StudentGradePoints.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs))
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs))
     studentGradesQS = list(studentGrades.values())
     return JsonResponse({'data':studentGradesQS,'regNo':regNo}, safe=False)
 
@@ -216,7 +216,7 @@ def btech_printing_dept_wise_studentpage(request, idtype, dept, event):
         # If page is out of range deliver last page of results
         deptExamEventStudentPage = paginator.page(paginator.num_pages)
     studentDetails = deptExamEventStudentPage.object_list[0]
-    studentGrades = StudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=event)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=event)[0]
     heldInStr = heldInDetails.HeldIn + ' ' + str(heldInDetails.AYear)
@@ -260,7 +260,7 @@ def btech_printing_studentpages(request, regNo):
         studentGradePage = paginator.page(paginator.num_pages)
 
     studentDetails = studentGradePage.object_list[0]
-    studentGrades = StudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=studentDetails.AYASBYBS)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=studentDetails.AYASBYBS)[0]
     heldInStr = heldInDetails.HeldIn + ' ' + str(heldInDetails.AYear)

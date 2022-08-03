@@ -4,7 +4,7 @@ from django.db.models import Q
 from superintendent.models import HOD, CycleCoordinator
 from ExamStaffDB.models import FacultyInfo, StudentInfo
 from superintendent.models import ProgrammeModel, Departments, Regulation
-from co_ordinator.models import StudentBacklogs
+from co_ordinator.models import BTStudentBacklogs
 from superintendent.validators import validate_file_extension
 import datetime
 
@@ -65,7 +65,7 @@ class DBYBSAYASSelectionForm(forms.Form):
             self.data['bYear']!='0':
             regulations = Regulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
             dropped_course_regulations = Regulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
-            backlog_course_regulations = StudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
+            backlog_course_regulations = BTStudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
             backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
             dropped_course_regulations = [(regu.Regulation,regu.Regulation) for regu in dropped_course_regulations]
             regulations = [(regu.Regulation,regu.Regulation) for regu in regulations]
@@ -115,7 +115,7 @@ class CreateRegistrationEventForm(forms.Form):
         if self.data.get('aYear') and self.data.get('bYear'):
             regulations = Regulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
             dropped_course_regulations = Regulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
-            backlog_course_regulations = StudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
+            backlog_course_regulations = BTStudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
             backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
             dropped_course_regulations = [(regu.Regulation,regu.Regulation) for regu in dropped_course_regulations]
             regulations = [(regu.Regulation,regu.Regulation) for regu in regulations]

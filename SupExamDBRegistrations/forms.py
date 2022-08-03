@@ -101,7 +101,7 @@
 
 # #     def addRegularSubjects(self, queryset):
 # #         for bRow in queryset:
-# #             SubjectDetails = Subjects_Staging.objects.filter(SubCode=bRow.SubCode)
+# #             SubjectDetails = BTSubjects_Staging.objects.filter(SubCode=bRow.SubCode)
 # #             print(bRow.SubCode)
 # #             print(SubjectDetails)
 # #             self.fields['Check' + SubjectDetails[0].SubCode] = forms.BooleanField(required=False, widget=CheckboxInput(attrs={'checked': True}))
@@ -363,7 +363,7 @@
 # #                     Dept=dept,Mode=mode,Regulation=regulation)
 # #             currentRegEventId = currentRegEventId[0].id
 # #             self.myFields = []
-# #             self.deptSubjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
+# #             self.deptSubjects = BTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
 # #             for sub in self.deptSubjects:
 # #                 self.fields['Check' + sub.SubCode] = forms.BooleanField(required=False, widget=CheckboxInput())
 # #                 if('Check'+sub.SubCode in self.data.keys() and self.data['Check'+sub.SubCode]==True):

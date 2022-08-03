@@ -136,7 +136,7 @@ class Coordinator1Info(models.Model):
         db_table = 'Coordinator1Info'
         managed = False 
 
-# class StudentBacklogs(models.Model):
+# class BTStudentBacklogs(models.Model):
 #     RegNo = models.IntegerField()
 #     RollNo = models.IntegerField()
 #     # Name = models.CharField(max_length=70)

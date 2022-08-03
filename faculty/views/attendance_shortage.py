@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 from django.shortcuts import render
 from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
-from co_ordinator.models import FacultyAssignment, RollLists, StudentRegistrations
+from co_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from faculty.models import Attendance_Shortage
 from superintendent.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
 from import_export.formats.base_formats import XLSX
@@ -14,7 +14,7 @@ from superintendent.models import CycleCoordinator, HOD
 def attendance_shortage_upload(request):
     user = request.user
     faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-    subjects  = FacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+    subjects  = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
     if(request.method == 'POST'):
             form = AttendanceShoratgeUploadForm(subjects, request.POST, request.FILES)
         # if(form.is_valid()):
@@ -29,14 +29,14 @@ def attendance_shortage_upload(request):
                 data+=chunk
             dataset = XLSX().create_dataset(data)
 
-            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section).values_list('student__RegNo', flat=True)
+            roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section).values_list('student__RegNo', flat=True)
             errorRegNo = []
             for i in range(len(dataset)):
                 regno = dataset[i][0]
                 if regno not in roll_list:
                     errorRegNo.append(regno)
                     continue 
-                student_registration = StudentRegistrations.objects.filter(RegNo=regno, RegEventId=regEvent, sub_id=sub)
+                student_registration = BTStudentRegistrations.objects.filter(RegNo=regno, RegEventId=regEvent, sub_id=sub)
                 att_short = Attendance_Shortage.objects.filter(Registration=student_registration.first())
                 if len(att_short) == 0 :
                     att_short = Attendance_Shortage(Registration=student_registration.first())
@@ -57,29 +57,29 @@ def attendance_shortage_status(request):
     subjects = None
     if 'Faculty' in groups:
         faculty = Faculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-        subjects  = FacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+        subjects  = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
     elif 'Superintendent' in groups:
-        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'HOD' in groups:
         hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         coordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(RegEventId__BYear=coordinator.BYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=coordinator.BYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1)
     if(request.method == 'POST'):
         form = AttendanceShoratgeStatusForm(subjects,request.POST)
         sub = request.POST['Subjects'].split(':')[0]
         regEvent = request.POST['Subjects'].split(':')[1]
         section = request.POST['Subjects'].split(':')[2]
         msg = ''
-        roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+        roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
         att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
         if request.POST.get('delete'):
             att_short.filter(id=request.POST.get('delete')).delete()
-            roll_list = RollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+            roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
             att_short = Attendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
             msg = 'Attendance shortage record has been deleted successfully'
         return render(request, 'faculty/AttendanceShortageStatus.html',{'form':form ,'att_short':att_short, 'msg':msg})

@@ -1,10 +1,10 @@
 from django.db import models
 from superintendent.models import RegistrationStatus, GradePoints
-from co_ordinator.models import Subjects, StudentRegistrations
+from co_ordinator.models import BTSubjects, BTStudentRegistrations
 # Create your models here.
 
 class Attendance_Shortage(models.Model):
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'Attendance_Shortage'
@@ -15,7 +15,7 @@ class Attendance_Shortage(models.Model):
 
 class GradesThreshold(models.Model):
     Grade = models.ForeignKey(GradePoints, on_delete=models.CASCADE)
-    Subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
+    Subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
     Section = models.CharField(max_length=2, default='NA')
@@ -25,7 +25,7 @@ class GradesThreshold(models.Model):
         managed = True
 
 class Marks_Staging(models.Model):
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
@@ -39,7 +39,7 @@ class Marks_Staging(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = Subjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = BTSubjects.objects.filter(id=self.Registration.sub_id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:
@@ -63,7 +63,7 @@ class Marks_Staging(models.Model):
 
 
 class Marks(models.Model):
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
@@ -77,7 +77,7 @@ class Marks(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = Subjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = BTSubjects.objects.filter(id=self.Registration.sub_id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:

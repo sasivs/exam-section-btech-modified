@@ -3,7 +3,7 @@ from django.shortcuts import render
 from SupExamDB.views import is_Superintendent
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import OpenElectiveRegistrationsForm
-from co_ordinator.models import Subjects, StudentRegistrations_Staging
+from co_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
 from superintendent.models import RegistrationStatus,CycleCoordinator
 from import_export.formats.base_formats import XLSX
 from hod.models import Coordinator
@@ -51,7 +51,7 @@ def open_elective_regs(request):
             currentRegEventId = currentRegEventId[0].id
             for i in range(len(dataset)):
                 regNo = int(dataset[i][0])
-                reg = StudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
+                reg = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                 reg.save()
             return render(request, 'superintendent/OecRegistrationsSuccess.html')
         elif regId != '--Choose Event--':
@@ -66,7 +66,7 @@ def open_elective_regs(request):
             currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
-            subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='OEC')
+            subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId, Category='OEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:

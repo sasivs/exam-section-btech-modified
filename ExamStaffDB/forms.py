@@ -1,6 +1,6 @@
 from django import forms
 from superintendent.models import RegistrationStatus, Regulation, ProgrammeModel
-from co_ordinator.models import StudentRegistrations, Subjects
+from co_ordinator.models import BTStudentRegistrations, BTSubjects
 from superintendent.validators import validate_file_extension
 
 
@@ -62,8 +62,8 @@ class IXGradeStudentsAddition(forms.Form):
         REG_CHOICES = [(0, 'Choose Registration Event')] + REG_CHOICES
         self.fields['regId'] = forms.CharField(label='Choose Registration Event', max_length=30, widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':'submit();', 'required':'True'}))
         if self.data.get('regId'):
-            registrations = StudentRegistrations.objects.filter(RegEventId=self.data.get('regId'))
-            subjects = Subjects.objects.filter(id__in=registrations.values_list('sub_id', flat=True))
+            registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regId'))
+            subjects = BTSubjects.objects.filter(id__in=registrations.values_list('sub_id', flat=True))
             SUBJECT_CHOICES = [(sub.id, sub.SubCode) for sub in subjects]
             SUBJECT_CHOICES = [('', 'Select Subject')] + SUBJECT_CHOICES
             self.fields['subject'] = forms.CharField(label='Select Subject', max_length=30, required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
@@ -76,7 +76,7 @@ class IXGradeStudentsAddition(forms.Form):
         subject = self.cleaned_data.get('subject')
         regd_no = self.cleaned_data.get('regd_no')
         if subject and regd_no:
-            if not StudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, RegNo=regd_no):
+            if not BTStudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, RegNo=regd_no):
                 raise forms.ValidationError('Invalid Registration Number')
         return regd_no
 

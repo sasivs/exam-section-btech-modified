@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from co_ordinator.models import Subjects
+from co_ordinator.models import BTSubjects
 # from ExamStaffDB.models import FacultyInfo
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
-from co_ordinator.models import StudentRegistrations
+from co_ordinator.models import BTStudentRegistrations
 
 # Create your models here.
 
@@ -282,7 +282,7 @@ class CancelledMarks(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = Subjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = BTSubjects.objects.filter(id=self.Registration.sub_id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:

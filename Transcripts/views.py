@@ -7,7 +7,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Transcripts.models import ProgrammeModel, StudentCGPAs, StudentFinalSGPAs, StudentInfo
 from Transcripts.models import DepartmentExamEvents
 from Transcripts.models import DeptExamEventStudents
-from Transcripts.models import StudentGradePoints, StudentGradePointsV
+from Transcripts.models import BTStudentGradePoints, StudentGradePointsV
 from Transcripts.models import StudentCGPAs
 from Transcripts.models import HeldIn
 from Transcripts.models import StudentExamEvents
@@ -175,7 +175,7 @@ def btech_printing_dept_wise_studentpage(request, idtype, dept, event):
         # If page is out of range deliver last page of results
         deptExamEventStudentPage = paginator.page(paginator.num_pages)
     studentDetails = deptExamEventStudentPage.object_list[0]
-    studentGrades = StudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=event)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=event)[0]
     heldInStr = heldInDetails.HeldIn + ' ' + str(heldInDetails.HeldInYear)
@@ -215,7 +215,7 @@ def btech_printing_studentpages(request, regNo):
         # If page is out of range deliver last page of results
         studentGradePage = paginator.page(paginator.num_pages)
     studentDetails = studentGradePage.object_list[0]
-    studentGrades = StudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=studentDetails.AYASBYBS)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=studentDetails.AYASBYBS)[0]
     heldInStr = heldInDetails.HeldInMonth + ' ' + str(heldInDetails.HeldInYear)
@@ -245,7 +245,7 @@ def btech_printing_studentwise(request):
 @login_required(login_url="/login/")
 def btech_printing_consolidated(request):
     programmeList =StudentCGPAs.objects.filter(RegNo=951111)
-    subjectsList=StudentGradePoints.objects.filter(RegNo=951111)
+    subjectsList=BTStudentGradePoints.objects.filter(RegNo=951111)
     progQS = list(programmeList.values())
     subQS=list(subjectsList.values())
     return JsonResponse({'data':progQS,'sub':subQS}, safe=False)

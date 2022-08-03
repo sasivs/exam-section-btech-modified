@@ -41,7 +41,7 @@ class BTSubjects(models.Model):
     DistributionRatio = models.TextField()
     
     class Meta:
-        db_table = 'Subjects'
+        db_table = 'BTSubjects'
         unique_together = ('SubCode', 'RegEventId')
         managed = True
 
@@ -122,7 +122,7 @@ class BTStudentRegistrations_Staging(models.Model):
 
 class BTDroppedRegularCourses(models.Model):
     student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
+    subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
@@ -247,7 +247,7 @@ class BTMakeupRegistrationSummary(models.Model):
 
 
 class BTGradeChallenge(models.Model):
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     prev_marks = models.TextField()
     updated_marks = models.TextField()
     prev_grade = models.CharField(max_length=2)
@@ -269,7 +269,7 @@ class BTNotPromoted(models.Model):
         managed = True
 
 class BTFacultyAssignment(models.Model):
-    Subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
+    Subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo')
     Coordinator = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')

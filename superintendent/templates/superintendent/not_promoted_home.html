@@ -10,31 +10,31 @@
             <ul class="nav flex-column">
               {% if user|has_group:'Superintendent' %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedStatus' %}">Not Promoted Status</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedStatus' %}">Not Promoted Status</a>
               </li> 
               {% elif user|has_group:'Co-ordinator' %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedList' %}">Not Promoted List</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedList' %}">Not Promoted List</a>
               </li>  
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedUpload' %}">Upload Not Promoted List</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedUpload' %}">Upload Not Promoted List</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedStatus' %}">Not Promoted Status</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedStatus' %}">Not Promoted Status</a>
               </li> 
               {% elif user|has_group:'Cycle-Co-ordinator' %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedList' %}">Not Promoted List</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedList' %}">Not Promoted List</a>
               </li>  
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedUpload' %}">Upload Not Promoted List</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedUpload' %}">Upload Not Promoted List</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedStatus' %}">Not Promoted Status</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedStatus' %}">Not Promoted Status</a>
               </li> 
               {% elif user|has_group:'HOD' %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'NotPromotedStatus' %}">Not Promoted Status</a>
+                <a class="nav-link" href="{% url 'BTNotPromotedStatus' %}">Not Promoted Status</a>
               </li> 
               {% endif %}
               

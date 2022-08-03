@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from superintendent.models import CancelledStudentInfo,CancelledStudentGrades,CancelledDroppedRegularCourses,CancelledNotPromoted,CancelledNotRegistered,CancelledRollLists,CancelledStudentRegistrations,CancelledMarks
-from co_ordinator.models import DroppedRegularCourses,NotPromoted,NotRegistered,RollLists,RollLists_Staging,StudentRegistrations,StudentRegistrations_Staging
+from co_ordinator.models import BTDroppedRegularCourses,BTNotPromoted,BTNotRegistered,BTRollLists,BTRollLists_Staging,BTStudentRegistrations,BTStudentRegistrations_Staging
 from ExamStaffDB.models import StudentInfo
 from faculty.models import StudentGrades,Marks,Marks_Staging,StudentGrades_Staging
 from superintendent.forms import StudentCancellationForm
@@ -22,11 +22,11 @@ def seat_cancellation(request):
                 student=studentInfo.first()
                 context['RegNo'] = studentInfo[0].RegNo
                 context['Name'] = studentInfo[0].Name
-                droppedregular= DroppedRegularCourses.objects.filter(student_id=student.id)
-                notpromoted= NotPromoted.objects.filter(student_id=student.id)
-                notregistered =NotRegistered.objects.filter(Student_id=student.id)
-                rolls= RollLists.objects.filter(student_id=student.id)
-                regs =StudentRegistrations.objects.filter(RegNo=regno)
+                droppedregular= BTDroppedRegularCourses.objects.filter(student_id=student.id)
+                notpromoted= BTNotPromoted.objects.filter(student_id=student.id)
+                notregistered =BTNotRegistered.objects.filter(Student_id=student.id)
+                rolls= BTRollLists.objects.filter(student_id=student.id)
+                regs =BTStudentRegistrations.objects.filter(RegNo=regno)
                 grades =StudentGrades.objects.filter(RegId__in = regs.values_list('id',flat =True))
                 marks = Marks.objects.filter(Registration__in = regs)
 
@@ -71,9 +71,9 @@ def seat_cancellation(request):
 
 
                 Marks_Staging.objects.filter(Registration__in = regs).delete()
-                RollLists_Staging.objects.filter(student_id=student.id).delete()
+                BTRollLists_Staging.objects.filter(student_id=student.id).delete()
                 StudentGrades_Staging.objects.filter(RegId__in = regs.values_list('id'),flat =True).delete()
-                StudentRegistrations_Staging.objects.filter(Regno=regno).delete()
+                BTStudentRegistrations_Staging.objects.filter(Regno=regno).delete()
                 marks.delete()
                 grades.delete()
                 regs.delete()

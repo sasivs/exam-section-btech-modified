@@ -157,7 +157,7 @@ def not_promoted_upload(request):
                     npErrRows = [(errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3], errorDataset[i][4], errorDataset[i][5]) for i in range(len(errorDataset))]
                     request.session['npErrRows'] = npErrRows
                     request.session['RegEvent'] = regEvent
-                    return redirect('NotPromotedUploadErrorHandler' )
+                    return redirect('BTNotPromotedUploadErrorHandler' )
                 return(render(request,'co_ordinator/NotPromotedUploadSuccess.html'))
             else:
                 errors = result.row_errors()
@@ -183,7 +183,7 @@ def not_promoted_upload(request):
                 npErrRows = [(errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3], errorData[i][4], errorData[i][5]) for i in range(len(errorData))]
                 request.session['npErrRows'] = npErrRows
                 request.session['RegEvent'] = regEvent
-                return redirect('NotPromotedUploadErrorHandler')
+                return redirect('BTNotPromotedUploadErrorHandler')
     else:
         form = NotPromotedUploadForm(regIDs)
     return render(request, 'co_ordinator/NotPromotedUpload.html', {'form':form})
