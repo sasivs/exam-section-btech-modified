@@ -1,0 +1,44 @@
+{% extends 'superintendent/subjecthome.html' %}
+{% block title %}Marks Distribution Status{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+{% load user_check_tag %}
+<div class="container">
+    <div class="row">
+        <strong>Status of added mark distributions can be viewed here.(Delete Option is available to remove a particular ditribution)</strong>
+    </div>
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Id</td>
+                    <td style="border: 1px solid black;">Distribution</td>
+                    <td style="border: 1px solid black;">Distribution Fields</td>
+                    {% if user|has_group:"Superintendent" %}
+                    <td style="border: 1px solid black;">Action</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for dis in distributions %}
+                <tr>
+                    <td style="border: 1px solid black;">{{dis.id}}</td>
+                    <td style="border: 1px solid black;">{{dis.Distribution}}</td>
+                    <td style="border: 1px solid black;">{{dis.DistributionNames}}</td>
+                    {% if user|has_group:"Superintendent" %}
+                    <td style="border: 1px solid black;">
+                        <form action="" method="POST">{% csrf_token %}
+                            <button type="submit" name="delete" value="{{dis.id}}" onclick="return confirm('Are you sure you want to delete distribution {{dis.id}}?')">Delete</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

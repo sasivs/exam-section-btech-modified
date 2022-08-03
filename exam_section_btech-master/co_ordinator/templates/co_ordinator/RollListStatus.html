@@ -1,0 +1,71 @@
+{% extends 'superintendent/rollList_home.html' %} 
+{% block title %}RollLists Status{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <strong>Choose the required registration event to view the status of the Roll Lists.
+            <br> Download option would be userful for section upload and fee upload.
+        </strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Status</button>
+            <button type="submit" name="download" value="download">Download</button>
+        </form>
+    </div>
+</div>
+    <div class="container">
+        <div class="row">
+            <table>
+                <th>
+                    <tr>
+                        <td style="border: 1px solid black;">id </td>
+                        <td style="border: 1px solid black;">AYear </td>
+                        <td style="border: 1px solid black;">BYear </td>
+                        <td style="border: 1px solid black;">ASem </td>
+                        <td style="border: 1px solid black;">BSem </td>
+                        <td style="border: 1px solid black;">Dept </td>
+                        <td style="border: 1px solid black;">Regulation </td>
+                        <td style="border: 1px solid black;">RegNo </td>
+                        <td style="border: 1px solid black;">Cycle </td>
+                        <td style="border: 1px solid black;">Section</td>
+                    </tr>
+                </th>
+                {% for field in rolls %}
+                <tr>
+                    <td style="border: 1px solid black;">
+                        {{ field.id }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.AYear }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.BYear }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.ASem }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.BSem }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.Dept }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.Regulation }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.student.RegNo }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.Cycle }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.Section }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

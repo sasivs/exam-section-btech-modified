@@ -1,0 +1,70 @@
+{% extends 'superintendent/marks_home.html' %}
+{% block title %}Upload Marks{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong>
+            Columns should not be altered in case of uploading marks.(Other columns can either be filled or kept empty) 
+            <br> 
+            If a student is absent for the exam allot him '0'(zero) marks.
+            <br>
+        </strong>
+        <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="submit-form" value="submit">Submit</button> 
+        </form>
+    </div>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    {% if invalidRegNo %}
+    <div class="row">
+        <strong>These rows do not have corresponding marks rows.</strong>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in invalidRegNo %}
+                <tr>
+                    <td style="border: 1px solid black;">{{row.0}}</td>
+                    <td style="border: 1px solid black;">{{row.1}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if invalidMarks %}
+    <div class="row">
+        <strong>These rows have marks greater than total marks for that exam type.</strong>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in invalidMarks %}
+                <tr>
+                    <td style="border: 1px solid black;">{{row.0}}</td>
+                    <td style="border: 1px solid black;">{{row.1}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

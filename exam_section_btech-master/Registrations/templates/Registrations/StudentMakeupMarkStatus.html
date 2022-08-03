@@ -1,0 +1,38 @@
+{% extends 'GradesProcessing/gphome.html' %}
+
+{% block sub%}
+
+
+<div class="container">
+    <table class="table"  id="grades" width="85%"" cellpadding=5 style="border-collapse: collapse; border: 1 px solid black;" width=>
+      <thead>
+        <tr>
+          <th scope="col" class="col-sm-1" style="border: 1px solid black; text-align: center;"><b>RegNo</b></th>
+          <th scope="col" class="col-sm-1" style="text-align: left; border: 1px solid black;"><b>SubCode</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: left; border: 1px solid black;"><b>AYear</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: left; border: 1px solid black;"><b>ASem</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: left; border: 1px solid black;"><b>OfferedYear</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: left; border: 1px solid black;"><b>Dept</b></th>
+          <th scope="col" class="col-sm-2" style="text-align: left; border: 1px solid black;"><b>BYear</b></th>
+          <th scope="col" class="col-sm-4" style="text-align: center; border: 1px solid black;"><b>Marks</b></th>
+        </tr>
+      </thead>
+      <tbody id="grades-table-body">
+        {% for studentMakeupRec in studentmakeupmarks %}
+        <tr>
+            <td> {{studentMakeupRec.RegNo}}</td>
+            <td> {{studentMakeupRec.SubCode}}</td>
+            <td> {{studentMakeupRec.AYear}}</td>
+            <td>{{studentMakeupRec.ASem}}</td>
+            <td>{{studentMakeupRec.OfferedYear}} </td>
+            <td>{{studentMakeupRec.Dept}} </td>
+            <td>{{studentMakeupRec.BYear}} </td>
+            <td>{{studentMakeupRec.Marks}} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

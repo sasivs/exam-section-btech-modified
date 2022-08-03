@@ -1,0 +1,55 @@
+{% extends 'superintendent/not_promoted_home.html' %}
+{% block title %}Not Promoted{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+ 
+
+
+
+<div class="container">
+    <div class="row">
+        <strong>
+            On selecting the event,  list of all not promoted students will be displayed .
+        </strong>
+        <form action="" method="post" >
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" value="submit">Status</button> 
+        </form>
+    </div>
+    <div class = "row">
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">AYear</td>
+                    <td style="border: 1px solid black;">BYear</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">PoA</td>
+                </tr>
+            </th>
+            {% for np  in notPromoted %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ np.student.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.AYear }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.BYear }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.Regulation }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.PoA }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

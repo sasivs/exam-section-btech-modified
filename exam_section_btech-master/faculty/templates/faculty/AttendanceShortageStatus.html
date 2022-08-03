@@ -1,0 +1,46 @@
+{% extends 'superintendent/grades_home.html' %} 
+{% block title %}Attendance Shortage Status{% endblock title %}
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+ <strong>Choose the subject corresponding to required registration event to view the list of attendance shortage students.</strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="submit-form" value="submit">Generate</button>
+        
+    </div>
+    {% if att_short %}
+    <strong> List of Attendance Shortade Students</strong>
+    <div class="row">
+        <br>
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">Delete</td>
+                </tr>
+            </th>
+            {% for field in att_short %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ field.Registration.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    <button type="submit" name="delete" value="{{field.id}}" onclick="return confirm('Are you sure you want to delete attendance shortage record of {{field.Registration.RegNo}}?')">Delete</button>
+                    <!-- <a href="{% url 'AttendanceShoratgeDelete' field.id %}" onclick="return confirm('Are you sure you want to delete attendance shortage record ?')">Delete</a> -->
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+</form>
+    {% if msg %}
+    <br>
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

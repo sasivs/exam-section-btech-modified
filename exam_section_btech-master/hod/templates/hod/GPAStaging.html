@@ -1,0 +1,95 @@
+{% extends 'superintendent/grades_home.html' %}
+{% block title %}CGPA{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" name="submit-form" value="submit">Submit</button>
+        </form>
+    </div>
+    {% if gpa %}
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">CGP</td>
+                    <td style="border: 1px solid black;">CC</td>
+                    <td style="border: 1px solid black;">CGPA</td>
+                    <td style="border: 1px solid black;">SGP</td>
+                    <td style="border: 1px solid black;">SC</td>
+                    <td style="border: 1px solid black;">SGPA</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gp in gpa %}
+                <tr>
+                    <td style="border: 1px solid black;">{{gp.RegNo}}</td>
+                    <td style="border: 1px solid black;">{{gp.CGP}}</td>
+                    <td style="border: 1px solid black;">{{gp.CC}}</td>
+                    <td style="border: 1px solid black;">{{gp.CGPA}}</td>
+                    <td style="border: 1px solid black;">{{gp.SGP}}</td>
+                    <td style="border: 1px solid black;">{{gp.SC}}</td>
+                    <td style="border: 1px solid black;">{{gp.SGPA}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col col-lg-6">
+            <canvas id="histogram"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script_links %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
+<script>
+    const ctx = document.getElementById('histogram').getContext('2d');
+    var data = JSON.parse("{{gpa_data|escapejs}}");
+    const chart_labels = [];
+    const n_students = [];
+    for (var key in data){
+        chart_labels.push(key)
+        n_students.push(data[key])
+    }
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+                labels: chart_labels,
+                datasets: [{
+                label: 'Number of Students',
+                data: n_students,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.5
+            }]
+        },
+    });
+</script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

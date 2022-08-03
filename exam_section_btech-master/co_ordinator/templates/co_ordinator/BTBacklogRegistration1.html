@@ -1,0 +1,84 @@
+{% extends 'superintendent/registrationhome.html' %}
+
+{% load static %}
+
+{% block sub %}
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script> 
+     $(document).ready(function(){
+        var $regEventVar = $("#regeventids");
+        var $regNoVar = $("#regnos");
+        const regEventIDsList = document.getElementById("regeventids");
+        const rollList = document.getElementById("regnos");
+        $regEventVar.on("change",function(){
+          console.log(regEventIDsList.selectedIndex);
+          var event =  regEventIDsList.options[regEventIDsList.selectedIndex].text;
+          console.log(event);
+          var myRequest = new XMLHttpRequest();
+          var eventDetails = event.split('-');
+          var depts = {"BTE":1,"CHE":2,"CE":3,"CSE":4,"EEE":5,"ECE":6,"ME":7,"MME":8,"Chemistry":9,"Physics":10}
+          var romans2int = {"I":1,"II":2,"III":3,"IV":4}
+          myRequest.open('GET',"getBTBacklogRegNos/"+depts[eventDetails[0]]+"/"+romans2int[eventDetails[3]],true);
+          myRequest.onload = function(){
+          var mydata = JSON.parse(myRequest.responseText);
+          $regNoVar.find('option').remove();
+          $regNoVar.append('<option disabled selected="true">-- select RegNo/RollNo --</option>');
+          $.each(mydata.data, function(key, value){
+            $regNoVar.append('<option value='+value.RegNo +'>'+value.RollNo+'</option>');
+              });
+        }
+        myRequest.error = function(){
+          console.log(myRequest.status);
+          console.log('Some thing not working');
+        }  
+        myRequest.send();
+        }); 
+        $regNoVar.on("change", function(){
+           var selectedRollNo = rollList.options[rollList.selectedIndex].text;
+           var myRequest = new XMLHttpRequest();
+           myRequest.open('GET', "getBTRegisteredSubjects/"+selectedRollNo, true);
+           myRequest.onload = function(){
+             var mydata = JSON.parse(myRequest.responseText);
+
+           }
+           myRequest.error = function(){
+            console.log(myRequest.status);
+            console.log('Some thing not working');
+          }  
+          myRequest.send();
+        });
+        
+    });
+    </script>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+              <b>Registration Event ID</b> <br>
+                 <select id="regeventids">
+                  <option disabled selected="true">-- select Registration Event ID --</option>
+                   {% for r in regEventIDs %}
+                   <option value={{r.0}}>{{r.1}}</option>
+                   {% endfor %}
+                </select>
+        </div>
+        <div class="col-sm-2">
+            </div>
+            <div class="col-sm-1">
+              <b>RegNo/RollNo</b> <br>
+                <select id="regnos">
+                <option disabled selected="true">-- select RegNo --</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+
+            </div>
+            <div class="col-sm-1">
+              {% comment %} <button onclick="printFunc()">Print</button> {% endcomment %}
+            </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'superintendent/suphome.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'DeptYearRegistrationStatus' %}">Registration Status</a>
+                  </li>
+              </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %}
+            {% endblock %}
+        </div>
+</div>
+{% endblock %}
