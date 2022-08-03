@@ -48,7 +48,7 @@ def dept_elective_regs_all(request):
                 reg.save()
             rolls = rolls.values_list('student__RegNo', flat=True)
             MTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(RegNo__in=rolls).delete()
-            return render(request, 'co_ordinator/Dec_Regs_success.html')
+            return render(request, 'MTco_ordinator/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
             dept = deptDict[strs[0]]
@@ -67,4 +67,4 @@ def dept_elective_regs_all(request):
             form = DeptElectiveRegsForm(subjects,data)
     else:
         form = DeptElectiveRegsForm(regIDs)
-    return render(request, 'co_ordinator/Dec_register_all.html',{'form':form})
+    return render(request, 'MTco_ordinator/Dec_register_all.html',{'form':form})

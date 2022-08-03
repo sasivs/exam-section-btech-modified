@@ -103,11 +103,11 @@ def generateRollList(request):
                 MTNotRegistered.objects.filter(RegEventId_id=currentRegEventId).delete()
                 currentRegEvent.RollListFeeStatus = 0
                 currentRegEvent.save()
-                return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
+                return (render(request, 'MTco_ordinator/RollListGenerateSuccess.html'))
 
     else:
         form = GenerateRollListForm(regIDs)
-    return  render(request, 'co_ordinator/generateRollList.html',{'form':form})
+    return  render(request, 'MTco_ordinator/generateRollList.html',{'form':form})
 
 
 
@@ -145,10 +145,10 @@ def RollListFeeUpload(request):
                 currentRegEvent = MTRegistrationStatus.objects.get(id=regeventid)
                 currentRegEvent.RollListFeeStatus = 1
                 currentRegEvent.save()
-                return render(request, 'co_ordinator/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
+                return render(request, 'MTco_ordinator/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
     else:
         form = RollListFeeUploadForm(regIDs)
-    return  render(request, 'co_ordinator/RollListFeeUpload.html',{'form':form})
+    return  render(request, 'MTco_ordinator/RollListFeeUpload.html',{'form':form})
 
 
 @login_required(login_url="/login/")
@@ -172,10 +172,10 @@ def rolllist_finalize(request):
             reg_status_obj = MTRegistrationStatus.objects.get(id=regEvent)
             reg_status_obj.RollListStatus = 0
             reg_status_obj.save()
-            return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
+            return render(request, 'MTco_ordinator/RollListsFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
     else:
         form = RollListFinalizeForm(regIDs)
-    return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form})
+    return render(request, 'MTco_ordinator/RollListsFinalize.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_status_access)
@@ -221,9 +221,9 @@ def RollList_Status(request):
                     workbook = BookGenerator.generate_workbook()
                     workbook.save(response)
                     return response
-                return (render(request, 'co_ordinator/RollListStatus.html',{'form':form,'rolls': rollListStatus}))            
+                return (render(request, 'MTco_ordinator/RollListStatus.html',{'form':form,'rolls': rollListStatus}))            
     form = RollListStatusForm(regIDs)
-    return render(request, 'co_ordinator/RollListStatus.html', {'form':form})
+    return render(request, 'MTco_ordinator/RollListStatus.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_status_access)
@@ -245,7 +245,7 @@ def NotRegisteredStatus(request):
         if(form.is_valid):
             regEventId=request.POST.get('regID')
             not_regd_status=MTNotRegistered.objects.filter(RegEventId_id=regEventId) 
-            return (render(request, 'co_ordinator/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
+            return (render(request, 'MTco_ordinator/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
     else:
         form = NotRegisteredStatusForm(regIDs)
-    return render(request, 'co_ordinator/NotRegisteredStatus.html', {'form':form})
+    return render(request, 'MTco_ordinator/NotRegisteredStatus.html', {'form':form})

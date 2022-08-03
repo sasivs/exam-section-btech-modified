@@ -51,10 +51,10 @@ def faculty_subject_assignment(request):
                 student_Registrations = MTStudentRegistrations.objects.filter(RegEventId=regEventId.id).values_list('sub_id', flat=True)
                 subjects = MTSubjects.objects.filter(OfferedBy=current_user.Dept, id__in=student_Registrations.values_list('sub_id', flat=True))
             request.session['currentRegEvent']=regEventId.id
-            return render(request, 'co_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
+            return render(request, 'MTco_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
     else:
         form = FacultySubjectAssignmentForm(regIDs)
-    return render(request, 'co_ordinator/FacultyAssignment.html',{'form':form})
+    return render(request, 'MTco_ordinator/FacultyAssignment.html',{'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(faculty_assignment_status_access)
@@ -93,7 +93,7 @@ def faculty_subject_assignment_detail(request, pk):
                     Faculty_id=request.POST.get('faculty'), RegEventId_id=request.session['currentRegEvent'])
                 faculty_row.save()
         return redirect('MTFacultySubjectAssignment')
-    return render(request, 'co_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
+    return render(request, 'MTco_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
         'co_ordinator':co_ordinator, 'faculty_id':faculty_selected})
 
 @login_required(login_url="/login/")
@@ -137,7 +137,7 @@ def faculty_assignment_status(request):
                 faculty = MTFacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept)
             # elif current_user.group == 'Cycle-Co-ordinator':
             #     faculty = MTFacultyAssignment.objects.filter(Subject__RegEventId__id=regeventid)
-            return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
+            return render(request, 'MTco_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
     else:
         form = FacultyAssignmentStatusForm(regIDs)
-    return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form})
+    return render(request, 'MTco_ordinator/FacultyAssignmentStatus.html',{'form':form})

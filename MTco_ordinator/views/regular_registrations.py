@@ -34,11 +34,11 @@ def mtech_regular_registration(request):
                     rolls = MTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
+                        return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                     subs = MTSubjects.objects.filter(~Q(Category='OEC'),RegEventId=currentRegEventId).filter(~Q(Category='DEC'))
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
+                        return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                     initial_registrations=MTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId,Mode=1)
                     for roll in rolls:
                         for sub in subs:
@@ -47,16 +47,16 @@ def mtech_regular_registration(request):
                             regRow.save()
                     MTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo',flat=True)),RegEventId=currentRegEventId).delete()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
-                    return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
+                    return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                 else:
                     rolls = MTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'MTco_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
                     subs = MTSubjects.objects.filter(~Q(Category='OEC'),RegEventId=currentRegEventId).filter(~Q(Category='DEC'))
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
-                        return render(request, 'co_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'MTco_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
                     initial_registrations=MTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId,Mode=1)
                     for roll in rolls:
                         for sub in subs:
@@ -65,10 +65,10 @@ def mtech_regular_registration(request):
                             regRow.save()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     MTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
-                    return render(request, 'co_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
+                    return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
     else:
         form = RegistrationsUploadForm(Options=regIDs)
-    return(render(request, 'co_ordinator/BTRegularRegistrationUpload.html',{'form':form }))
+    return(render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html',{'form':form }))
 
 
 
@@ -108,7 +108,7 @@ def registrations_finalize(request):
                     s.save()
                 currentRegEvent.RegistrationStatus = 0
                 currentRegEvent.save()
-                return render(request, 'co_ordinator/BTRegistrationsFinalizeSuccess.html')
+                return render(request, 'MTco_ordinator/BTRegistrationsFinalizeSuccess.html')
     else:
         form = RegistrationsFinalizeEventForm(regIDs)
-    return render(request, 'co_ordinator/BTRegistrationsFinalize.html',{'form':form})
+    return render(request, 'MTco_ordinator/BTRegistrationsFinalize.html',{'form':form})

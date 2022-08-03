@@ -56,7 +56,7 @@ def dept_elective_regs_upload(request):
                 regNo = int(dataset[i][0])
                 reg = MTStudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId,Mode=1,sub_id=subId)
                 reg.save()
-            return render(request, 'co_ordinator/Dec_Regs_success.html')
+            return render(request, 'MTco_ordinator/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
             dept = deptDict[strs[0]]
@@ -74,4 +74,4 @@ def dept_elective_regs_upload(request):
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:
         form = OpenElectiveRegistrationsForm(regIDs)
-    return render(request, 'co_ordinator/Dec_Registrations_upload.html',{'form':form,'msg':necessary_field_msg})
+    return render(request, 'MTco_ordinator/Dec_Registrations_upload.html',{'form':form,'msg':necessary_field_msg})

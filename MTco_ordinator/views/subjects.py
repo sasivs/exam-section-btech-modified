@@ -61,7 +61,7 @@ def subject_upload(request):
                             errorDataset.append(newRow)
                     request.session['newDataset'] = list(newDataset)
                     request.session['currentRegEventId'] = currentRegEventId              
-                return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
+                return render(request, 'MTco_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
                     'validRows':newDataset, 'marks_distribution':marks_distribution})
         elif request.POST.get('mark_dis_submit'):
             newDataset = Dataset()
@@ -108,12 +108,12 @@ def subject_upload(request):
                 # request.session['currentRegEventId'] = currentRegEventId              
                 return HttpResponseRedirect(reverse('MTSupBTSubjectsUploadErrorHandler'))
             if errorRows:
-                return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
+                return render(request, 'MTco_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
             msg = 'Subjects Uploaded successfully.'
 
     else:
         form = SubjectsUploadForm(Options=regIDs)
-    return (render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
+    return (render(request, 'MTco_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
 
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
@@ -129,10 +129,10 @@ def subject_upload_error_handler(request):
                     MTSubjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
                         Creditable=fRow[2],Credits=fRow[3],Type=fRow[4],Category=fRow[5],OfferedBy=fRow[7], ProgrammeCode=fRow[8],\
                              DistributionRatio=fRow[9], MarkDistribution=fRow[10])
-            return render(request, 'co_ordinator/BTSubjectsUploadSuccess.html')
+            return render(request, 'MTco_ordinator/BTSubjectsUploadSuccess.html')
     else:
         form = StudentRegistrationUpdateForm(Options=subjectRows)
-    return(render(request, 'co_ordinator/BTSubjectsUploadErrorHandler.html',{'form':form, 'errorRows':errorRows}))
+    return(render(request, 'MTco_ordinator/BTSubjectsUploadErrorHandler.html',{'form':form, 'errorRows':errorRows}))
 
 @login_required(login_url="/login/")
 @user_passes_test(subject_home_access)
@@ -170,10 +170,10 @@ def subject_upload_status(request):
                 currentRegEventId = currentRegEventId[0].id
                 subjects = []
                 subjects = MTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
-                return render(request, 'co_ordinator/BTSubjectsUploadStatus.html',{'subjects':subjects,'form':form})
+                return render(request, 'MTco_ordinator/BTSubjectsUploadStatus.html',{'subjects':subjects,'form':form})
     else:
         form = RegistrationsEventForm(regIDs)
-    return render(request, 'co_ordinator/BTSubjectsUploadStatus.html',{'form':form})
+    return render(request, 'MTco_ordinator/BTSubjectsUploadStatus.html',{'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
@@ -218,10 +218,10 @@ def subject_delete(request):
                     if(len(deletedSubjects)!=0):
                         msg = 'Subject(s) Deleted successfully.'
                         form = SubjectDeletionForm(regIDs, request.POST)
-                        return render(request,'co_ordinator/BTSubjectsDelete.html',{'form':form,'msg': msg})
+                        return render(request,'MTco_ordinator/BTSubjectsDelete.html',{'form':form,'msg': msg})
     else:
         form = SubjectDeletionForm(regIDs)
-    return render(request, 'co_ordinator/BTSubjectsDelete.html',{'form':form})
+    return render(request, 'MTco_ordinator/BTSubjectsDelete.html',{'form':form})
 
 
 
@@ -266,7 +266,7 @@ def subject_finalize(request):
                 msg = 'Subjects finalized successfully.'
     else:
         form = SubjectFinalizeEventForm(regIDs)
-    return render(request, 'co_ordinator/BTSubjectFinalize.html',{'form':form, 'msg':msg})
+    return render(request, 'MTco_ordinator/BTSubjectFinalize.html',{'form':form, 'msg':msg})
 
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
@@ -313,7 +313,7 @@ def open_subject_upload(request):
                             errorDataset.append(newRow)
                     request.session['newDataset'] = list(newDataset)
                     request.session['currentRegEventId'] = currentRegEventId              
-                return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
+                return render(request, 'MTco_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows':errorDataset, \
                     'validRows':newDataset, 'marks_distribution':marks_distribution})
         elif request.POST.get('mark_dis_submit'):
             newDataset = Dataset()
@@ -360,12 +360,12 @@ def open_subject_upload(request):
                 # request.session['currentRegEventId'] = currentRegEventId              
                 return HttpResponseRedirect(reverse('MTSupBTSubjectsUploadErrorHandler'))
             if errorRows:
-                return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
+                return render(request, 'MTco_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
             msg = 'Subjects Uploaded successfully.'
 
     else:
         form = SubjectsUploadForm(Options=regIDs)
-    return (render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
+    return (render(request, 'MTco_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
 
 
 @login_required(login_url="/login/")

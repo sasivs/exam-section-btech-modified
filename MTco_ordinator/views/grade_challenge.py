@@ -73,14 +73,14 @@ def grade_challenge(request):
 
                 msg = 'Grade Challenge result for {} is updated successfully'.format(request.POST.get('regd_no'))
 
-                return render(request, 'co_ordinator/GradeChallenge.html', {'form':form, 'msg':msg})
+                return render(request, 'MTco_ordinator/GradeChallenge.html', {'form':form, 'msg':msg})
                 
         elif request.POST.get('regID') and request.POST.get('subject') and request.POST.get('regd_no'):
             mark_obj = MTMarks_Staging.objects.filter(Registration__RegEventId=request.POST.get('regID'), Registration__subject=request.POST.get('subject'))
-            return render(request, 'co_ordinator/GradeChallenge.html', {'form':form, 'mark':mark_obj})
+            return render(request, 'MTco_ordinator/GradeChallenge.html', {'form':form, 'mark':mark_obj})
     else:
         form = GradeChallengeForm(co_ordinator=co_ordinator)
-    return render(request, 'co_ordinator/GradeChallenge.html', {'form':form})
+    return render(request, 'MTco_ordinator/GradeChallenge.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
@@ -101,7 +101,7 @@ def grade_challenge_status(request):
                 MTGradeChallenge.objects.filter(id=grade_challenge_id).delete()
                 grade_challenge_objs = MTGradeChallenge.objects.filter(Registration__sub_id=subject, Registration__RegEventId=regEvent)
                 msg = 'Grade Challenge object is deleted successfully.'
-            return render(request, 'co_ordinator/GradeChallengeStatus.html', {'form':form, 'grade_challenge':grade_challenge_objs, 'msg':msg})
+            return render(request, 'MTco_ordinator/GradeChallengeStatus.html', {'form':form, 'grade_challenge':grade_challenge_objs, 'msg':msg})
     else:
         form = GradeChallengeStatusForm(subjects=subjects)
-    return render(request, 'co_ordinator/GradeChallengeStatus.html', {'form':form})
+    return render(request, 'MTco_ordinator/GradeChallengeStatus.html', {'form':form})

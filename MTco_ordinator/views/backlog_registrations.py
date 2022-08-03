@@ -70,7 +70,7 @@ def mtech_backlog_registration(request):
             #             if(len(studentInfo)!=0):
             #                 context['RegNo'] = studentInfo[0].RegNo
             #                 context['Name'] = studentInfo[0].Name  
-            #             return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+            #             return render(request, 'MTco_ordinator/BTBacklogRegistration.html',context)
 
             # if((studyModeCredits+examModeCredits<=34) and(studyModeCredits<=32)):
             for sub in form.myFields:
@@ -102,7 +102,7 @@ def mtech_backlog_registration(request):
                             newRegistration = MTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
                             Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                             newRegistration.save()     
-                    return(render(request,'co_ordinator/BTBacklogRegistrationSuccess.html'))
+                    return(render(request,'MTco_ordinator/BTBacklogRegistrationSuccess.html'))
 
             # else:
             #     form = BacklogRegistrationForm(request.POST)
@@ -121,4 +121,4 @@ def mtech_backlog_registration(request):
     if(len(studentInfo)!=0):
         context['RegNo'] = studentInfo[0].RegNo
         context['Name'] = studentInfo[0].Name  
-    return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+    return render(request, 'MTco_ordinator/BTBacklogRegistration.html',context)
