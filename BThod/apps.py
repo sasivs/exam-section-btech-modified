@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class HodConfig(AppConfig):
+class BTHodConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'hod'
+    name = 'BThod'

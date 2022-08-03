@@ -1,7 +1,7 @@
 from django import forms 
 from django.db.models import Q 
 from BTco_ordinator.models import BTStudentRegistrations, BTStudentRegistrations_Staging
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTFacultyAssignment, BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary

@@ -9,7 +9,7 @@ from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, Stu
 from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
 from BTco_ordinator.resources import SubjectStagingResource
 from superintendent.models import BTRegistrationStatus, BTHOD, BTMarksDistribution, BTCycleCoordinator
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from superintendent.user_access_test import subject_access, subject_home_access

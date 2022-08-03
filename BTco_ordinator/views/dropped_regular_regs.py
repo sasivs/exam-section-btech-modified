@@ -5,7 +5,7 @@ from BTco_ordinator.forms import DroppedRegularRegistrationsForm
 from BTco_ordinator.models import BTSubjects, BTDroppedRegularCourses, BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)

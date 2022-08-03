@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
-from hod.forms import CoordinatorAssignmentForm
-from hod.models import  BTFaculty_user,BTCoordinator
+from BThod.forms import CoordinatorAssignmentForm
+from BThod.models import  BTFaculty_user,BTCoordinator
 from BTExamStaffDB.models import BTFacultyInfo
 from superintendent.user_access_test import is_Hod, co_ordinator_assignment_access
 from django.contrib.auth.decorators import login_required, user_passes_test

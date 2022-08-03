@@ -1,6 +1,6 @@
 from django import template
 from django.contrib.auth.models import Group
-from hod.models import BTFaculty_user
+from BThod.models import BTFaculty_user
 from BTco_ordinator.models import BTFacultyAssignment
 
 register = template.Library()

@@ -6,7 +6,7 @@ from BTco_ordinator.forms import OpenElectiveRegistrationsForm
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
 from import_export.formats.base_formats import XLSX
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)

@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from hod.views import faculty_user_assignment, grades_finalize, marks_finalize, gpa
+from BThod.views import faculty_user_assignment, grades_finalize, marks_finalize, gpa
 
 
 urlpatterns =[  

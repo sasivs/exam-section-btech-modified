@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
 from superintendent.user_access_test import is_ExamStaff, faculty_info_status_access
 from BTExamStaffDB.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
-from hod.models import  BTCoordinator
+from BThod.models import  BTCoordinator
 from BTExamStaffDB.models import BTFacultyInfo
 from superintendent.models import BTHOD
 from BTExamStaffDB.resources import FacultyInfoResource

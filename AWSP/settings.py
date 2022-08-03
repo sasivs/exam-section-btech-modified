@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'SupExamDBRegistrationStatus',
     'CoordinatorDB',
     'import_export',
-    'hod',
+    'BThod',
     'superintendent',
     'BTco_ordinator',
     'BTExamStaffDB', 

@@ -6,7 +6,7 @@ from import_export.formats.base_formats import XLSX
 from superintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
-from hod.models import BTFaculty_user, BTCoordinator
+from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment
 from BTfaculty.models import BTMarks, BTMarks_Staging
 from BTfaculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm

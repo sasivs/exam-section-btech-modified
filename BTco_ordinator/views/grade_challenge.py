@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from BTco_ordinator.models import BTFacultyAssignment, BTGradeChallenge, BTRollLists 
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 from BTfaculty.models import BTMarks_Staging, BTAttendance_Shortage, BTStudentGrades_Staging
 from BTco_ordinator.forms import GradeChallengeForm, GradeChallengeStatusForm
 from BTExamStaffDB.models import BTIXGradeStudents

@@ -4,7 +4,7 @@ from superintendent.user_access_test import registration_access
 from BTco_ordinator.forms import DeptElectiveRegsForm
 from BTco_ordinator.models import BTRollLists_Staging, BTSubjects, BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 
 
 @login_required(login_url="/login/")

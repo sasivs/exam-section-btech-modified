@@ -4,7 +4,7 @@ from superintendent.user_access_test import registration_access
 from BTco_ordinator.forms import BacklogRegistrationForm
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 
 

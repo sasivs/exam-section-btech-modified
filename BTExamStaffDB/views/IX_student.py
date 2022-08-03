@@ -4,7 +4,7 @@ from django.shortcuts import render
 from superintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
 from superintendent.models import BTRegistrationStatus, BTHOD
-from hod.models import BTCoordinator, BTFaculty_user
+from BThod.models import BTCoordinator, BTFaculty_user
 from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from BTExamStaffDB.models import BTIXGradeStudents
 

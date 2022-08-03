@@ -11,7 +11,7 @@ from BTco_ordinator.forms import RollListStatusForm, RollListRegulationDifferenc
 from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTRollLists_Staging, BTRegulationChange, BTStudentBacklogs, BTNotRegistered
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from BTExamStaffDB.models import BTStudentInfo 
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 from BTco_ordinator.models import BTNotPromoted, BTStudentRegistrations_Staging,  BTStudentMakeups, BTDroppedRegularCourses
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX

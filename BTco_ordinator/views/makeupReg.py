@@ -4,7 +4,7 @@ from superintendent.user_access_test import registration_access
 from BTco_ordinator.forms import MakeupRegistrationsForm
 from BTco_ordinator.models import BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
-from hod.models import BTCoordinator
+from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)

@@ -3,7 +3,7 @@ from BTco_ordinator.models import BTFacultyAssignment
 from superintendent.user_access_test import is_Hod
 from django.shortcuts import render
 from superintendent.models import BTRegistrationStatus, BTHOD
-from hod.forms import MarksFinalizeForm
+from BThod.forms import MarksFinalizeForm
 from BTfaculty.models import BTMarks_Staging, BTMarks
 
 

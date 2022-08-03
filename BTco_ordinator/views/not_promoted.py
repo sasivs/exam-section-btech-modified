@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from hod.models import BTCoordinator 
+from BThod.models import BTCoordinator 
 from superintendent.user_access_test import is_Superintendent, not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
