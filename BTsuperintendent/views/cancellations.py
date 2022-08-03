@@ -86,10 +86,10 @@ def seat_cancellation(request):
                     
                 
             
-            return render(request,'superintendent/BTStudentCancellation.html',context)
+            return render(request,'BTsuperindent/BTStudentCancellation.html',context)
 
     else:
         form = StudentCancellationForm()
     context = {'form':form}
-    return render(request,'superintendent/BTStudentCancellation.html',context)
+    return render(request,'BTsuperindent/BTStudentCancellation.html',context)
 

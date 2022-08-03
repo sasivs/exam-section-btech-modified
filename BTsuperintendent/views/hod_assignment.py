@@ -26,19 +26,19 @@ def hod_assignment(request):
                     new_hod = BTHOD(Faculty_id=form.cleaned_data.get('hod'), User_id=form.cleaned_data.get('user'), Dept=form.cleaned_data.get('dept'))
                     new_hod.save()
                     msg = 'Hod assignment is done successfully'
-                return render(request, 'superintendent/HodAssignment.html', {'form':form, 'msg':msg})
+                return render(request, 'BTsuperindent/HodAssignment.html', {'form':form, 'msg':msg})
             else:
                 if 'dept' in request.POST.keys():
                     initial_hod = BTHOD.objects.filter(Dept=request.POST.get('dept'), RevokeDate__isnull=True).first()
                     if initial_hod:
-                        return render(request, 'superintendent/HodAssignment.html', {'form':form, 'initial_hod':initial_hod.Faculty.id, 'initial_user':initial_hod.User.id})
+                        return render(request, 'BTsuperindent/HodAssignment.html', {'form':form, 'initial_hod':initial_hod.Faculty.id, 'initial_user':initial_hod.User.id})
     else:
         form = HODAssignmentForm()
-    return render(request, 'superintendent/HodAssignment.html', {'form':form})
+    return render(request, 'BTsuperindent/HodAssignment.html', {'form':form})
 
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
 def hod_assignment_status(request):
     hods = BTHOD.objects.all()
-    return render(request, 'superintendent/HodAssignmentStatus.html', {'hod':hods})
+    return render(request, 'BTsuperindent/HodAssignmentStatus.html', {'hod':hods})

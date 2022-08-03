@@ -17,10 +17,10 @@ def mark_distribution_add(request):
             mark_distribution = BTMarksDistribution(Distribution=Distribution, DistributionNames=marksDistribution)
             mark_distribution.save()
             msg = 'Mark Distribution Added Successfully'
-        return render(request, 'superintendent/MarksDistribution.html', {'form':form, 'msg':msg})
+        return render(request, 'BTsuperindent/MarksDistribution.html', {'form':form, 'msg':msg})
     else:
         form = MarksDistributionForm()
-    return render(request, 'superintendent/MarksDistribution.html', {'form':form})
+    return render(request, 'BTsuperindent/MarksDistribution.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
@@ -36,4 +36,4 @@ def mark_distribution_status(request):
             mark_distribution.filter(id=id).delete()
             mark_distribution = BTMarksDistribution.objects.all()
 
-    return render(request, 'superintendent/MarkDistributionStatus.html', {'distributions':mark_distribution})
+    return render(request, 'BTsuperindent/MarkDistributionStatus.html', {'distributions':mark_distribution})

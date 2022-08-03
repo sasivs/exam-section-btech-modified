@@ -29,13 +29,13 @@ def branch_change(request):
                 context['regno']=regno
                 context['Name'] = name
                 context['dept'] = newDept
-                return render(request,'superintendent/BTBranchChangeSuccess.html',context )
+                return render(request,'BTsuperindent/BTBranchChangeSuccess.html',context )
         else:
             print("form is not valid")
     else:
         form = BranchChangeForm()
     context['form']= form   
-    return render(request,'superintendent/BTBranchChange.html', context)
+    return render(request,'BTsuperindent/BTBranchChange.html', context)
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
@@ -51,10 +51,10 @@ def branch_change_status(request):
             results = BTBranchChanges.objects.filter(AYear=ayear).values()
             context['ayear'] = ayear
             context['rows'] = results
-            return render(request, 'superintendent/BTBranchChangeStatus.html', context)
+            return render(request, 'BTsuperindent/BTBranchChangeStatus.html', context)
         else:
             print('form validation failed')        
     else:
         form = BranchChangeStausForm()
     context['form'] = form
-    return render(request, 'superintendent/BTBranchChangeStatus.html', context)
+    return render(request, 'BTsuperindent/BTBranchChangeStatus.html', context)

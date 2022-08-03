@@ -18,7 +18,7 @@ def addRegulation(request):
                 r = BTRegulation(AdmissionYear=admYear, AYear=ayear, BYear=byear, Regulation=regulation)
                 r.save()
                 msg = 'Regulation Added Successfully.'
-                return render(request, 'superintendent/AddRegulation.html', {'form':form, 'msg':msg})
+                return render(request, 'BTsuperindent/AddRegulation.html', {'form':form, 'msg':msg})
     else:
         form = AddRegulationForm()
-    return render(request, 'superintendent/AddRegulation.html', {'form':form})
+    return render(request, 'BTsuperindent/AddRegulation.html', {'form':form})

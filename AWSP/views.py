@@ -24,4 +24,4 @@ def home(request):
 
 # Create your views here.
 def index(request):
-    return render(request, 'superintendent/index.html')
+    return render(request, 'BTsuperindent/index.html')

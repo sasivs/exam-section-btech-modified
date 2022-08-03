@@ -26,7 +26,7 @@ def create_registration_event(request):
                 if BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode).exists():
                     msg = 'Registration event already created.'
-                    return render(request, 'superintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
+                    return render(request, 'BTsuperindent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
                 else:
                     rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                         Mode=Mode, RollListStatus=1, RegistrationStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
@@ -50,7 +50,7 @@ def create_registration_event(request):
                 msg = 'The Event has been created successfully for {} departments'.format(created_dept)
     else:
         form = CreateRegistrationEventForm()
-    return render(request, 'superintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
+    return render(request, 'BTsuperindent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
 
 
 @login_required(login_url="/login/")
@@ -64,7 +64,7 @@ def update_manage_registrations(request):
             AYear = request.POST['aYear']
         else:
             form = DBYBSAYASSelectionForm(data)
-            return render(request, 'superintendent/BTRegistrationStatus.html',{'form':form})
+            return render(request, 'BTsuperindent/BTRegistrationStatus.html',{'form':form})
 
         if(request.POST['dept']!='0' and request.POST['bSem']!='0' and request.POST['aSem']!='0'):
             AYear = request.POST['aYear']
@@ -98,7 +98,7 @@ def update_manage_registrations(request):
                     {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \
                        (RegistrationStatus:{rg_status_obj.RegistrationStatus}), (MarksStatus:{rg_status_obj.MarksStatus}), (GradesStatus:{rg_status_obj.GradeStatus}) \
                         for {rg_status_obj.Mode} mode.'
-            return render(request, 'superintendent/BTRegistrationStatus.html',{'form':form, 'msg':msg}) 
+            return render(request, 'BTsuperindent/BTRegistrationStatus.html',{'form':form, 'msg':msg}) 
     else:
         form = DBYBSAYASSelectionForm()
-    return render(request, 'superintendent/BTRegistrationStatus.html',{'form':form})
+    return render(request, 'BTsuperindent/BTRegistrationStatus.html',{'form':form})
