@@ -65,7 +65,7 @@ def grades_generate(request):
 
             if not thresholds:
                 msg = 'Grade Threshold is not updated for this subject.'
-                return render(request, 'faculty/GradesGenerate.html', {'form':form, 'msg':msg})
+                return render(request, 'MTfaculty/GradesGenerate.html', {'form':form, 'msg':msg})
 
             for mark in marks_objects:
                 for threshold in thresholds:
@@ -80,10 +80,10 @@ def grades_generate(request):
                             break
             
             msg = 'Grades generated successfully.'
-            return render(request, 'faculty/GradesGenerate.html', {'form':form, 'msg':msg})
+            return render(request, 'MTfaculty/GradesGenerate.html', {'form':form, 'msg':msg})
     else:
         form = MarksStatusForm(subjects=subjects)
-    return render(request, 'faculty/GradesGenerate.html', {'form':form})
+    return render(request, 'MTfaculty/GradesGenerate.html', {'form':form})
 
 
 @login_required(login_url="/login/")
@@ -126,7 +126,7 @@ def grades_status(request):
                 grade.Marks = MTMarks_Staging.objects.filter(Registration_id=grade.RegId).first().TotalMarks
             import operator
             grades = sorted(grades, key=operator.attrgetter('RegNo'))
-            return render(request, 'faculty/GradesStatus.html', {'form':form, 'grades':grades})
+            return render(request, 'MTfaculty/GradesStatus.html', {'form':form, 'grades':grades})
     else:
         form = MarksStatusForm(subjects=subjects)
-    return render(request, 'faculty/GradesStatus.html', {'form':form})
+    return render(request, 'MTfaculty/GradesStatus.html', {'form':form})

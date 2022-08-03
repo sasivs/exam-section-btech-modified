@@ -43,11 +43,11 @@ def attendance_shortage_upload(request):
                     att_short = MTAttendance_Shortage(Registration=student_registration.first())
                     att_short.save()
                 msg = 'Attendance Shortage Updated successfully.'
-            return render(request, 'faculty/AttendanceShortageUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
+            return render(request, 'MTfaculty/AttendanceShortageUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
     else:
         
         form = AttendanceShoratgeUploadForm(subjects)
-        return render(request, 'faculty/AttendanceShortageUpload.html',{'form':form})
+        return render(request, 'MTfaculty/AttendanceShortageUpload.html',{'form':form})
 
 
 @login_required(login_url="/login/")
@@ -79,11 +79,11 @@ def attendance_shortage_status(request):
             roll_list = MTRollLists.objects.filter(RegEventId_id=regEvent)
             att_short = MTAttendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=sub, Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
             msg = 'Attendance shortage record has been deleted successfully'
-        return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short, 'msg':msg})
+        return render(request, 'MTfaculty/AttendanceShoratgeStatus.html',{'form':form ,'att_short':att_short, 'msg':msg})
 
     else:
         form = AttendanceShoratgeStatusForm(subjects)
-    return render(request, 'faculty/AttendanceShoratgeStatus.html',{'form':form})
+    return render(request, 'MTfaculty/AttendanceShoratgeStatus.html',{'form':form})
 
 
 @login_required(login_url="/login/")

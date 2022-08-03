@@ -14,4 +14,4 @@ def courses_assigned(request):
     if not faculty:
         raise Http404('You are not assigned for any courses yet.')
     subjects = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-    return render(request, 'faculty/CoursesAssigned.html', {'subjects':subjects})
+    return render(request, 'MTfaculty/CoursesAssigned.html', {'subjects':subjects})
