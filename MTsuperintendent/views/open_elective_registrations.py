@@ -53,7 +53,7 @@ def open_elective_regs(request):
                regNo = int(dataset[i][0])
                reg = MTStudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                reg.save()
-            return render(request, 'superintendent/OecRegistrationsSuccess.html')
+            return render(request, 'MTsuperintendent/OecRegistrationsSuccess.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
             dept = deptDict[strs[0]]
@@ -71,4 +71,4 @@ def open_elective_regs(request):
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:
         form = OpenElectiveRegistrationsForm(regIDs)
-    return render(request, 'superintendent/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})
+    return render(request, 'MTsuperintendent/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})

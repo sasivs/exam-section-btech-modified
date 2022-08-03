@@ -67,10 +67,10 @@ def seat_cancellation(request):
                 rolls.delete()
                 notregistered.delete()
 
-            return render(request,'superintendent/BTStudentCancellation.html',context)
+            return render(request,'MTsuperintendent/BTStudentCancellation.html',context)
 
     else:
         form = StudentCancellationForm()
     context = {'form':form}
-    return render(request,'superintendent/BTStudentCancellation.html',context)
+    return render(request,'MTsuperintendent/BTStudentCancellation.html',context)
 

@@ -22,7 +22,7 @@ def addRegulation(request):
                 r = MTRegulation(AdmissionYear=admYear, AYear=ayear, MYear=myear, Regulation=regulation)
                 r.save()
                 msg = 'Regulation Added Successfully.'
-                return render(request, 'superintendent/AddRegulation.html', {'form':form, 'msg':msg})
+                return render(request, 'MTsuperintendent/AddRegulation.html', {'form':form, 'msg':msg})
     else:
         form = AddRegulationForm()
-    return render(request, 'superintendent/AddRegulation.html', {'form':form})
+    return render(request, 'MTsuperintendent/AddRegulation.html', {'form':form})

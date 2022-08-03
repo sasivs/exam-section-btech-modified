@@ -43,7 +43,7 @@ def grade_points_upload(request):
                         # request.session['currentRegEventId'] = currentRegEventId
                         return redirect('MTGradePointsUploadErrorHandler' )
                     msg = 'The data for grade points is uploaded succesfully.'
-                    return(render(request,'superintendent/GradePointsUpload.html', {'form':form, 'msg':msg}))
+                    return(render(request,'MTsuperintendent/GradePointsUpload.html', {'form':form, 'msg':msg}))
                 else:
                     errors = result.row_errors()
                     indices = set([i for i in range(len(newDataset))])    
@@ -73,7 +73,7 @@ def grade_points_upload(request):
             for row in form.fields.values(): print(row)
     else:
         form = GradePointsUploadForm()
-    return render(request, 'superintendent/GradePointsUpload.html', {'form':form})
+    return render(request, 'MTsuperintendent/GradePointsUpload.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
@@ -85,10 +85,10 @@ def grade_points_upload_error_handler(request):
             for cIndex, fRow in enumerate(errRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     MTGradePoints.objects.filter(Regulation=fRow[0], Grade=fRow[1]).update(Points=fRow[2])
-            return render(request, 'superintendent/GradePointsUploadSuccess.html')
+            return render(request, 'MTsuperintendent/GradePointsUploadSuccess.html')
     else:
         form = GradePointsUpdateForm(Options=errRows)
-    return(render(request, 'superintendent/GradePointsUploadErrorHandler.html',{'form':form}))
+    return(render(request, 'MTsuperintendent/GradePointsUploadErrorHandler.html',{'form':form}))
 
 
 @login_required(login_url="/login/")
@@ -99,7 +99,7 @@ def grade_points_status(request):
         if form.is_valid():
             regulation = form.cleaned_data.get('Regulation')
             grade_points_obj = MTGradePoints.objects.filter(Regulation=regulation)
-            return render(request, 'superintendent/GradePointsStatus.html', {'form':form, 'grade_points':grade_points_obj})
+            return render(request, 'MTsuperintendent/GradePointsStatus.html', {'form':form, 'grade_points':grade_points_obj})
     form = GradePointsStatusForm()
-    return render(request, 'superintendent/GradePointsStatus.html', {'form':form})
+    return render(request, 'MTsuperintendent/GradePointsStatus.html', {'form':form})
 
