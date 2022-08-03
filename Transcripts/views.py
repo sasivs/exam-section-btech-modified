@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #from gradeSheetPrinting.models import ProductModel
 #from gradeSheetPrinting.models import ItemModel
-from Transcripts.models import ProgrammeModel, StudentCGPAs, StudentFinalSGPAs, StudentInfo
+from Transcripts.models import BTProgrammeModel, StudentCGPAs, StudentFinalSGPAs, BTStudentInfo
 from Transcripts.models import DepartmentExamEvents
 from Transcripts.models import DeptExamEventStudents
 from Transcripts.models import BTStudentGradePoints, StudentGradePointsV
@@ -57,7 +57,7 @@ def phd_printing(request):
 
 @login_required(login_url="/login/")
 def get_programme_json(request):
-    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     progQS = list(programmeList.values())
     return JsonResponse({'data': progQS }, safe=False)
 
@@ -102,7 +102,7 @@ def get_student_regno_grades(request, regno, ayasbybs):
 
 @login_required(login_url="/login/")
 def get_student_rollno_grades(request, rollno, ayasbybs):
-    studInfo = StudentInfo.objects.filter(RollNo=int(rollno))
+    studInfo = BTStudentInfo.objects.filter(RollNo=int(rollno))
     regNo = studInfo[0].RegNo
     studentGrades = StudentGradePointsV.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs)).order_by('Order','SubCode')
     studentGradesQS = list(studentGrades.values())
@@ -125,7 +125,7 @@ def get_student_cgpa(request, option, regno, ayasbybs):
         eventStatus = StudentExamEvents.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs))
         cgpa = StudentCGPAs.objects.filter(RegNo=int(regno)).filter(AYASBYBS_G=int(ayasbybs))
     else:
-        studInfo = StudentInfo.objects.filter(RollNo=int(regno))
+        studInfo = BTStudentInfo.objects.filter(RollNo=int(regno))
         tRegNo = studInfo[0].RegNo
         eventStatus = StudentExamEvents.objects.filter(RegNo=int(tRegNo)).filter(AYASBYBS=int(ayasbybs))
         cgpa = StudentCGPAs.objects.filter(RegNo=int(tRegNo)).filter(AYASBYBS_G=int(ayasbybs))
@@ -136,7 +136,7 @@ def get_student_cgpa(request, option, regno, ayasbybs):
 
 @login_required(login_url="/login/")
 def btech_printing_deptwise(request):
-    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     #progQS = list(programmeList.values())
     #return JsonResponse({'data': progQS} , safe=False)
     deptExamEventList = DepartmentExamEvents.objects.all()
@@ -149,7 +149,7 @@ def btech_printing_deptwise(request):
 
 @login_required(login_url="/login/")
 def btech_printing_deptwise_paginated(request):
-    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     deptExamEventList = DepartmentExamEvents.objects.all()
     deptExamEventStudentList = DeptExamEventStudents.objects.all()
     return render(request, 'Transcripts/BTech-Dept-Wise-Pagination.html',{
@@ -179,7 +179,7 @@ def btech_printing_dept_wise_studentpage(request, idtype, dept, event):
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=event)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=event)[0]
     heldInStr = heldInDetails.HeldIn + ' ' + str(heldInDetails.HeldInYear)
-    programmeDetails = ProgrammeModel.objects.filter(Dept=dept).filter(ProgrammeName='B.Tech.')[0]
+    programmeDetails = BTProgrammeModel.objects.filter(Dept=dept).filter(ProgrammeName='B.Tech.')[0]
     romans = {1:'I',2:'II',3:'III',4:'IV'}
     yearSemStr = romans[heldInDetails.BYear] + ' Yr '+ romans[heldInDetails.BSem] + ' Sem'
     eventStatus = StudentExamEvents.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)[0]
@@ -199,7 +199,7 @@ def btech_printing_dept_wise_studentpage(request, idtype, dept, event):
 def btech_printing_studentpages(request, regNo):
     StudentExamEventsList = StudentExamEvents.objects.filter(RegNo=regNo)
     if(StudentExamEventsList.count()==0):
-        programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+        programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
         admissionYears = StudentAdmissionYearDetails.objects.values_list('AdmissionYear', flat=True).distinct()
         return render(request, 'Transcripts/BTech-Student-Wise.html',{ 'programmeList':programmeList, 'admissionYears': admissionYears,}  )
 
@@ -220,7 +220,7 @@ def btech_printing_studentpages(request, regNo):
     heldInDetails = HeldIn.objects.filter(AYASBYBS=studentDetails.AYASBYBS)[0]
     heldInStr = heldInDetails.HeldInMonth + ' ' + str(heldInDetails.HeldInYear)
     deptExamEvent = DeptExamEventStudents.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)[0]
-    programmeDetails = ProgrammeModel.objects.filter(Dept=deptExamEvent.Dept).filter(ProgrammeName='B.Tech.')[0]
+    programmeDetails = BTProgrammeModel.objects.filter(Dept=deptExamEvent.Dept).filter(ProgrammeName='B.Tech.')[0]
     romans = {1:'I',2:'II',3:'III',4:'IV'}
     yearSemStr = romans[heldInDetails.BYear] + ' Yr '+ romans[heldInDetails.BSem] + ' Sem'
     eventStatus = StudentExamEvents.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)[0]
@@ -238,7 +238,7 @@ def btech_printing_studentpages(request, regNo):
 
 @login_required(login_url="/login/")
 def btech_printing_studentwise(request):
-    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     admissionYears = StudentAdmissionYearDetails.objects.values_list('AdmissionYear', flat=True).distinct()
     return render(request, 'Transcripts/BTech-Student-Wise.html',{ 'programmeList':programmeList, 'admissionYears': admissionYears,}  )
 
@@ -286,8 +286,8 @@ def btech_get_cmm_grades(request,regNo):
 
     numberOfRows = [len(sem1QS)-len(sem2QS),len(sem3QS)-len(sem4QS),
                     len(sem5QS)-len(sem6QS),len(sem7QS)-len(sem8QS)]
-    studentDetails = StudentInfo.objects.filter(RegNo=regNo)[0]
-    branchDetails = ProgrammeModel.objects.filter(Dept=studentDetails.Dept).filter(ProgrammeType='UG')[0]
+    studentDetails = BTStudentInfo.objects.filter(RegNo=regNo)[0]
+    branchDetails = BTProgrammeModel.objects.filter(Dept=studentDetails.Dept).filter(ProgrammeType='UG')[0]
     return JsonResponse({'data':studentGradeListQS,
                          'results':[sem1QS, sem2QS, sem3QS, sem4QS, sem5QS, sem6QS, sem7QS, sem8QS], 
                          'sgpas':sgpas,

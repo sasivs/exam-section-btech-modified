@@ -5,17 +5,17 @@
 # from superintendent.models import MarksDistribution 
 
 
-# class ProgrammeModel(models.Model):
+# class BTProgrammeModel(models.Model):
 #     PID = models.IntegerField(primary_key=True)
 #     ProgrammeName = models.CharField(max_length=20)
 #     ProgrammeType = models.CharField(max_length=10)
 #     Specialization = models.CharField(max_length=100)
 #     Dept = models.IntegerField()
 #     class Meta:
-#         db_table = 'ProgrammeModel'
+#         db_table = 'BTProgrammeModel'
 #         managed = False
 
-# class StudentInfo(models.Model):
+# class BTStudentInfo(models.Model):
 #     CYCLE_CHOICES = (
 #         (10,'PHYSICS'),
 #         (9,'CHEMISTRY')
@@ -36,7 +36,7 @@
 #     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
 
 #     class Meta:
-#         db_table = 'StudentInfo'
+#         db_table = 'BTStudentInfo'
 #         managed = False
 
 

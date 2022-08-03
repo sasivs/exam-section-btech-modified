@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from django.utils import timezone
-from superintendent.models import HOD
+from superintendent.models import BTHOD
 from superintendent.forms import HODAssignmentForm
 
 @login_required(login_url="/login/")
@@ -12,24 +12,24 @@ def hod_assignment(request):
         form = HODAssignmentForm(request.POST)
         if form.is_valid():
             if form.cleaned_data.get('dept') and form.cleaned_data.get('hod') and form.cleaned_data.get('user') and 'submit-form' in request.POST.keys():
-                initial_hod = HOD.objects.filter(RevokeDate__isnull=True, Dept=form.cleaned_data.get('dept')).first()
+                initial_hod = BTHOD.objects.filter(RevokeDate__isnull=True, Dept=form.cleaned_data.get('dept')).first()
                 if initial_hod:
                     if (initial_hod.Faculty.id != int(form.cleaned_data.get('hod'))) or (initial_hod.User.id != int(form.cleaned_data.get('user'))):
                         initial_hod.RevokeDate = timezone.now()
                         initial_hod.save()
-                        new_hod = HOD(Faculty_id=form.cleaned_data.get('hod'), User_id=form.cleaned_data.get('user'), Dept=form.cleaned_data.get('dept'))
+                        new_hod = BTHOD(Faculty_id=form.cleaned_data.get('hod'), User_id=form.cleaned_data.get('user'), Dept=form.cleaned_data.get('dept'))
                         new_hod.save()
                         msg = 'Hod assignment is done successfully'
                     else:
                         msg = 'No change made in hod assignment'
                 else:
-                    new_hod = HOD(Faculty_id=form.cleaned_data.get('hod'), User_id=form.cleaned_data.get('user'), Dept=form.cleaned_data.get('dept'))
+                    new_hod = BTHOD(Faculty_id=form.cleaned_data.get('hod'), User_id=form.cleaned_data.get('user'), Dept=form.cleaned_data.get('dept'))
                     new_hod.save()
                     msg = 'Hod assignment is done successfully'
                 return render(request, 'superintendent/HodAssignment.html', {'form':form, 'msg':msg})
             else:
                 if 'dept' in request.POST.keys():
-                    initial_hod = HOD.objects.filter(Dept=request.POST.get('dept'), RevokeDate__isnull=True).first()
+                    initial_hod = BTHOD.objects.filter(Dept=request.POST.get('dept'), RevokeDate__isnull=True).first()
                     if initial_hod:
                         return render(request, 'superintendent/HodAssignment.html', {'form':form, 'initial_hod':initial_hod.Faculty.id, 'initial_user':initial_hod.User.id})
     else:
@@ -40,5 +40,5 @@ def hod_assignment(request):
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
 def hod_assignment_status(request):
-    hods = HOD.objects.all()
+    hods = BTHOD.objects.all()
     return render(request, 'superintendent/HodAssignmentStatus.html', {'hod':hods})

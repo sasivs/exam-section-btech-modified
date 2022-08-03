@@ -1,8 +1,8 @@
 from django import forms 
 from django.contrib.auth.models import Group
 from numpy import require
-from hod.models import Coordinator
-from ExamStaffDB.models import FacultyInfo
+from hod.models import BTCoordinator
+from ExamStaffDB.models import BTFacultyInfo
 
 
 
@@ -32,15 +32,15 @@ class CoordinatorAssignmentForm(forms.Form):
         self.fields['coordinator'] = forms.ChoiceField(label='Coordinator',  required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         self.fields['user'] = forms.ChoiceField(label='User',  required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         if self.data.get('BYear'):
-            faculty= FacultyInfo.objects.filter(Working=True, Dept=Option) #here1
+            faculty= BTFacultyInfo.objects.filter(Working=True, Dept=Option) #here1
             COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
             self.fields['coordinator'] = forms.ChoiceField(label='Coordinator', required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
             group = Group.objects.filter(name='Co-ordinator').first()
-            assigned_users = Coordinator.objects.filter(RevokeDate__isnull=True).exclude(Dept=Option,BYear=self.data.get('BYear'))
+            assigned_users = BTCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Dept=Option,BYear=self.data.get('BYear'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
             USER_CHOICES += [(user.id, user.username) for user in users]
             self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, initial=10, widget=forms.Select(attrs={'required':'True'}))
-            initial_coordinator = Coordinator.objects.filter(Dept=Option,BYear=self.data.get('BYear') ,RevokeDate__isnull=True).first()
+            initial_coordinator = BTCoordinator.objects.filter(Dept=Option,BYear=self.data.get('BYear') ,RevokeDate__isnull=True).first()
             if initial_coordinator:
                 self.fields['coordinator'].initial = initial_coordinator.Faculty.id
                 self.fields['user'].initial = initial_coordinator.User.id

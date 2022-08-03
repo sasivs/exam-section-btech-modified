@@ -7,14 +7,14 @@ from django.db.models.base import Model
 
 # Create your models here.
 
-class ProgrammeModel(models.Model):
+class BTProgrammeModel(models.Model):
     PID = models.IntegerField(primary_key=True)
     ProgrammeName = models.CharField(max_length=20)
     ProgrammeType = models.CharField(max_length=10)
     Specialization = models.CharField(max_length=100)
     Dept = models.IntegerField()
     class Meta:
-        db_table = 'Departments'
+        db_table = 'BTProgrammeModel'
         managed = False
 
 
@@ -77,13 +77,13 @@ class StudentGradePointsV(models.Model):
         db_table = 'StudentGradePointsV'
         managed = False
 
-class StudentInfo(models.Model):
+class BTStudentInfo(models.Model):
     RegNo = models.IntegerField()
     RollNo = models.IntegerField()
     Name = models.CharField(max_length=70)
     Dept = models.IntegerField()
     class Meta:
-        db_table = 'StudentInfo'
+        db_table = 'BTStudentInfo'
         managed = False
 
 

@@ -3,7 +3,7 @@ from co_ordinator.models import BTStudentRegistrations
 
 # Create your models here.
 
-class StudentInfo(models.Model):
+class BTStudentInfo(models.Model):
     CYCLE_CHOICES = (
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
@@ -24,7 +24,7 @@ class StudentInfo(models.Model):
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
 
     class Meta:
-        db_table = 'StudentInfo'
+        db_table = 'BTStudentInfo'
         constraints = [
             models.UniqueConstraint(fields=['RegNo'], name='unique_StudentInfo_RegNo'),
             models.UniqueConstraint(fields=['RollNo'], name='unique_StudentInfo_RollNo'),
@@ -32,18 +32,18 @@ class StudentInfo(models.Model):
         managed = True
 
 
-class MandatoryCredits(models.Model):
+class BTMandatoryCredits(models.Model):
     Regulation = models.IntegerField()
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     Credits = models.IntegerField()
     class Meta:
-        db_table = 'MandatoryCredits'
+        db_table = 'BTMandatoryCredits'
         unique_together = (('Regulation', 'Dept', 'BYear'))
         managed = True
 
 
-class IXGradeStudents(models.Model):
+class BTIXGradeStudents(models.Model):
     GRADE_CHOICES = (
         ('I', 'I'),
         ('X', 'X')
@@ -52,12 +52,12 @@ class IXGradeStudents(models.Model):
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
 
     class Meta:
-        db_table = 'IXGradeStudents'
+        db_table = 'BTIXGradeStudents'
         unique_together = (('Registration', 'Grade'))
         managed = True
 
 
-class FacultyInfo(models.Model):
+class BTFacultyInfo(models.Model):
     FacultyId = models.IntegerField(default=100)
     Name = models.CharField(max_length=100)
     Phone = models.IntegerField()
@@ -65,7 +65,7 @@ class FacultyInfo(models.Model):
     Dept = models.IntegerField()
     Working = models.BooleanField()
     class Meta:
-        db_table = 'FacultyInfo'
+        db_table = 'BTFacultyInfo'
         constraints = [
             models.UniqueConstraint(fields=['FacultyId'], name='unique_facultyinfo_facultyid')
         ]

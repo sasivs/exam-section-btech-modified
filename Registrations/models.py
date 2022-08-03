@@ -95,7 +95,7 @@ class CoordinatorMakeupSubCodesV(models.Model):
         managed = False
     
 class StudentMakeupMarks(models.Model):
-    RegNo = models.IntegerField() #models.ForeignKey(StudentInfo, on_delete=models.CASCADE, to_field='RegNo')
+    RegNo = models.IntegerField() #models.ForeignKey(BTStudentInfo, on_delete=models.CASCADE, to_field='RegNo')
     SubCode = models.CharField(max_length=10)
     AYear = models.IntegerField()
     ASem = models.IntegerField()

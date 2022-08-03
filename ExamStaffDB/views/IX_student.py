@@ -3,10 +3,10 @@ from django.http import Http404
 from django.shortcuts import render
 from superintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from co_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
-from superintendent.models import RegistrationStatus, HOD
-from hod.models import Coordinator, Faculty_user
+from superintendent.models import BTRegistrationStatus, BTHOD
+from hod.models import BTCoordinator, BTFaculty_user
 from ExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
-from ExamStaffDB.models import IXGradeStudents
+from ExamStaffDB.models import BTIXGradeStudents
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
@@ -20,10 +20,10 @@ def ix_student_assignment(request):
                 regd_no = form.cleaned_data.get('regd_no')
                 grade = form.cleaned_data.get('grade')
                 student_registration = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject, RegNo=regd_no).first()
-                if IXGradeStudents.objects.filter(Registration=student_registration).exists():
-                    IXGradeStudents.objects.filter(Registration=student_registration).update(Grade=grade)
+                if BTIXGradeStudents.objects.filter(Registration=student_registration).exists():
+                    BTIXGradeStudents.objects.filter(Registration=student_registration).update(Grade=grade)
                 else:
-                    ix_row = IXGradeStudents(Registration=student_registration, Grade=grade)
+                    ix_row = BTIXGradeStudents(Registration=student_registration, Grade=grade)
                     ix_row.save()
                 msg = 'Student Grade Added Successfully.'
                 return render(request, 'ExamStaffDB/IXStudentAddition.html', {'form':form, 'msg':msg})
@@ -40,30 +40,30 @@ def ix_student_status(request):
     regIDs = None
     students = None
     if 'Superintendent' in groups or 'ExamStaff' in groups:
-        regIDs = RegistrationStatus.objects.filter(Status=1)
+        regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept)
     elif 'Co-ordinator' in groups:
-        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
+        co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
     elif 'Faculty' in groups:
-        faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
+        faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         faculty_assign = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-        regIDs = RegistrationStatus.objects.filter(id__in=faculty_assign.values_list('RegEventId_id', flat=True))
+        regIDs = BTRegistrationStatus.objects.filter(id__in=faculty_assign.values_list('RegEventId_id', flat=True))
     if request.method == 'POST':
         form = IXGradeStudentsStatus(regIDs, request.POST)
         if request.POST.get('submit'):
             regEvent = request.POST.get('regId')
             if 'Faculty' in groups:
-                students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=faculty_assign.values_list('Subject_id', flat=True))
+                students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=faculty_assign.values_list('Subject_id', flat=True))
             else:
-                students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+                students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
         elif request.POST.get('delete'):
             if 'ExamStaff' in groups:
-                IXGradeStudents.objects.filter(id=request.POST.get('delete')).delete()
+                BTIXGradeStudents.objects.filter(id=request.POST.get('delete')).delete()
                 regEvent = request.POST.get('regId')
-                students = IXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+                students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
                 msg = 'Record Deleted Successfully.'
             else:
                 raise Http404('You are not authorized to view this page')

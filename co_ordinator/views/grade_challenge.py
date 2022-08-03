@@ -42,7 +42,7 @@ def grade_challenge(request):
 
                 attendance_shortage = BTAttendance_Shortage.objects.filter(Registration=required_marks_obj.Registration)
 
-                ix_grades = IXGradeStudents.objects.filter(Registration=required_marks_obj.Registration)
+                ix_grades = BTIXGradeStudents.objects.filter(Registration=required_marks_obj.Registration)
 
 
                 if attendance_shortage:
@@ -58,7 +58,7 @@ def grade_challenge(request):
                 
                 else:
                     if BTGradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), uniform_grading=True).exists():
-                        thresholds = GradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), uniform_grading=True).order_by('-ThresholdMark')
+                        thresholds = BTGradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), uniform_grading=True).order_by('-ThresholdMark')
                     else:
                         roll_list_obj = BTRollLists.objects.filter(Student__RegNo=request.POST.get('regd_no'), RegEventId_id=request.POST.get('regID'))
                         thresholds = BTGradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), unifrom_grading=False, Section=roll_list_obj.Section).order_by('-ThresholdMark')

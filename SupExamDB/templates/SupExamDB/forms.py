@@ -1,9 +1,9 @@
 from Registrations import forms
 from django import forms
-from Transcripts.models import ProgrammeModel 
+from Transcripts.models import BTProgrammeModel 
 
 class DeptYearSelectionForm(forms.Form,):
-    departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+    departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
     deptChoices =[(rec.Dept, rec.Specialization) for rec in departments]
     yearChoices = [(1, 1),(2, 2),(3, 3),(4, 4)]
     deptBox = forms.CharField(label='Select Department', widget=forms.Select(choices=deptChoices))

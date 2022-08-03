@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from co_ordinator.models import BTSubjects
-# from ExamStaffDB.models import FacultyInfo
+# from ExamStaffDB.models import BTFacultyInfo
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 from co_ordinator.models import BTStudentRegistrations
 
@@ -10,32 +10,32 @@ from co_ordinator.models import BTStudentRegistrations
 User = get_user_model()
 
 
-class Regulation(models.Model):
+class BTRegulation(models.Model):
     AdmissionYear = models.IntegerField()
     AYear = models.IntegerField()
     BYear = models.IntegerField()
     Regulation = models.IntegerField()
     class Meta:
-        db_table = 'Regulation'
+        db_table = 'BTRegulation'
         constraints = [
             models.UniqueConstraint(fields=['AdmissionYear', 'AYear', 'BYear'], name='unique_Regulation')
         ]
         managed = True
 
-class ProgrammeModel(models.Model):
+class BTProgrammeModel(models.Model):
     PID = models.IntegerField(primary_key=True)
     ProgrammeName = models.CharField(max_length=20)
     ProgrammeType = models.CharField(max_length=10)
     Specialization = models.CharField(max_length=100)
     Dept = models.IntegerField()
     class Meta:
-        db_table = 'ProgrammeModel'
+        db_table = 'BTProgrammeModel'
         constraints = [
             models.UniqueConstraint(fields=['PID'], name='unique_PID')
         ]
         managed = True
 
-class RegistrationStatus(models.Model):
+class BTRegistrationStatus(models.Model):
     AYear = models.IntegerField()
     ASem = models.IntegerField()
     BYear = models.IntegerField()
@@ -50,7 +50,7 @@ class RegistrationStatus(models.Model):
     MarksStatus = models.IntegerField()
     GradeStatus = models.IntegerField()
     class Meta:
-        db_table = 'Registration_Status'
+        db_table = 'BTRegistration_Status'
         constraints = [
             models.UniqueConstraint(fields=['AYear', 'ASem', 'BYear', 'BSem', 'Regulation', 'Dept', 'Mode'], name='unique_Registration_status')
         ]
@@ -61,63 +61,63 @@ class RegistrationStatus(models.Model):
             str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
         return name
 
-class BranchChanges(models.Model):
+class BTBranchChanges(models.Model):
     RegNo = models.IntegerField()
     RollNo = models.IntegerField()
     CurrentDept = models.IntegerField()
     NewDept = models.IntegerField()
     AYear = models.IntegerField()
     class Meta:
-        db_table = 'BranchChanges'
+        db_table = 'BTBranchChanges'
         constraints = [
             models.UniqueConstraint(fields=['AYear', 'RegNo'], name='unique_branch_change')
         ]
         managed = True
 
 
-class HOD(models.Model):
-    Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE)
+class BTHOD(models.Model):
+    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()
     AssignedDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
     User =models.ForeignKey(User, on_delete=models.CASCADE)
     class Meta:
-        db_table = 'HOD'
+        db_table = 'BTHOD'
         unique_together = (('Faculty', 'Dept', 'AssignedDate'))
         managed = True
 
-class CycleCoordinator(models.Model):
+class BTCycleCoordinator(models.Model):
     CYCLE_CHOICES = (
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
     )
     User =models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.FacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
     Cycle = models.IntegerField()
 
     class Meta:
-        db_table = 'CycleCoordinator'
+        db_table = 'BTCycleCoordinator'
         unique_together = (('User', 'Faculty','AssignDate','RevokeDate'))
         managed = True
 
-class Departments(models.Model):
+class BTDepartments(models.Model):
     Dept = models.IntegerField()
     Name = models.CharField(max_length=255)
     Dept_Code = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'Departments'
+        db_table = 'BTDepartments'
         unique_together = (('Dept', 'Name', 'Dept_Code'))
         managed = True
 
-class MarksDistribution(models.Model):
+class BTMarksDistribution(models.Model):
     Distribution = models.TextField()
     DistributionNames=models.TextField()
 
     class Meta:
-        db_table = 'MarksDistribution'
+        db_table = 'BTMarksDistribution'
         unique_together = (('Distribution', 'DistributionNames'))
         managed = True
     
@@ -160,17 +160,17 @@ class MarksDistribution(models.Model):
         return index
 
 
-class GradePoints(models.Model):
+class BTGradePoints(models.Model):
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     Points = models.IntegerField()
     class Meta:
-        db_table = 'GradePoints'
+        db_table = 'BTGradePoints'
         unique_together = (('Regulation', 'Grade', 'Points'))
         managed = True
 
     
-class CancelledStudentInfo(models.Model):
+class BTCancelledStudentInfo(models.Model):
     CYCLE_CHOICES = (
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
@@ -192,38 +192,38 @@ class CancelledStudentInfo(models.Model):
     CancelledTime = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'CancelledStudentInfo'
+        db_table = 'BTCancelledStudentInfo'
         constraints = [
             models.UniqueConstraint(fields=['RegNo'], name='unique_cancelled_StudentInfo_RegNo'),
             models.UniqueConstraint(fields=['RollNo'], name='unique_cancelled_StudentInfo_RollNo'),
         ]
         managed = True
 
-class CancelledStudentRegistrations(models.Model):
+class BTCancelledStudentRegistrations(models.Model):
     RegNo = models.IntegerField()
     RegEventId = models.IntegerField()
     Mode = models.IntegerField()
     sub_id = models.IntegerField()
     class Meta:
-        db_table = 'CancelledStudentRegistrations'
+        db_table = 'BTCancelledStudentRegistrations'
         unique_together = (('RegNo', 'RegEventId', 'sub_id'))
         managed = True
 
 
-class CancelledStudentGrades(models.Model):
+class BTCancelledStudentGrades(models.Model):
     RegId= models.IntegerField()
     RegEventId = models.IntegerField()
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     class Meta:
-        db_table = 'CancelledStudentGrades'
+        db_table = 'BTCancelledStudentGrades'
         constraints = [
             models.UniqueConstraint(fields=['RegId'], name='unique_cancelled_StudentGrades_registration')
         ]
         managed = True
 
-class CancelledRollLists(models.Model):
+class BTCancelledRollLists(models.Model):
     CYCLE_CHOICES = (
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
@@ -233,47 +233,47 @@ class CancelledRollLists(models.Model):
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
-        db_table = 'CancelledRollLists'
+        db_table = 'BTCancelledRollLists'
         unique_together = (('student_id', 'RegEventId_id'))
         managed = True
 
-class CancelledNotRegistered(models.Model):
+class BTCancelledNotRegistered(models.Model):
     RegEventId_id = models.IntegerField()
     Student_id = models.IntegerField()
     Registered = models.BooleanField()
     class Meta:
-        db_table = 'CancelledNotRegistered'
+        db_table = 'BTCancelledNotRegistered'
         unique_together = (('RegEventId_id', 'Student_id'))
         managed = True
 
-class CancelledNotPromoted(models.Model):
+class BTCancelledNotPromoted(models.Model):
     AYear = models.IntegerField()
     BYear = models.IntegerField()
     Regulation = models.IntegerField()
     student_id = models.IntegerField()
     PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     class Meta:
-        db_table = 'CancelledNotPromoted'
+        db_table = 'BTCancelledNotPromoted'
         unique_together=(('AYear', 'BYear', 'Regulation', 'student_id'))
         managed = True
 
-class CancelledDroppedRegularCourses(models.Model):
+class BTCancelledDroppedRegularCourses(models.Model):
     student_id = models.IntegerField()
     subject_id =models.IntegerField()
     RegEventId_id = models.IntegerField()
     Registered = models.BooleanField()
     class Meta:
-        db_table = 'CancelledDroppedRegularCourses'
+        db_table = 'BTCancelledDroppedRegularCourses'
         unique_together = (('student_id', 'subject_id'))
         managed = True
 
-class CancelledMarks(models.Model):
+class BTCancelledMarks(models.Model):
     Registration_id = models.IntegerField()
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
     class Meta:
-        db_table = 'CancelledMarks'
+        db_table = 'BTCancelledMarks'
         constraints = [
             models.UniqueConstraint(fields=['Registration_id'], name='unique_cancelled_marks_registration')
         ]
@@ -296,7 +296,7 @@ class CancelledMarks(models.Model):
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
 
-class StudentCGPAs_Staging(models.Model):
+class BTStudentCGPAs_Staging(models.Model):
     RegNo = models.IntegerField()
     AYASBYBS_G = models.IntegerField()
     CGP = models.IntegerField()

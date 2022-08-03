@@ -1,11 +1,11 @@
 from import_export import resources
-from ExamStaffDB.models import StudentInfo, FacultyInfo
+from ExamStaffDB.models import BTStudentInfo, BTFacultyInfo
 
 
 class StudentInfoResource(resources.ModelResource):
     class Meta:
-        model = StudentInfo 
+        model = BTStudentInfo 
 
 class FacultyInfoResource(resources.ModelResource):
     class Meta:
-        model = FacultyInfo
+        model = BTFacultyInfo

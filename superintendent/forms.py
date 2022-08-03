@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
-from superintendent.models import HOD, CycleCoordinator
-from ExamStaffDB.models import FacultyInfo, StudentInfo
-from superintendent.models import ProgrammeModel, Departments, Regulation
+from superintendent.models import BTHOD, BTCycleCoordinator
+from ExamStaffDB.models import BTFacultyInfo, BTStudentInfo
+from superintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
 from co_ordinator.models import BTStudentBacklogs
 from superintendent.validators import validate_file_extension
 import datetime
@@ -28,7 +28,7 @@ class AddRegulationForm(forms.Form):
 class DBYBSAYASSelectionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(DBYBSAYASSelectionForm, self).__init__(*args, **kwargs)
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+        departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
         deptChoices = [(0,'--Select Dept--')] + deptChoices
         bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
@@ -63,8 +63,8 @@ class DBYBSAYASSelectionForm(forms.Form):
         if 'aYear' in self.data and 'bYear' in self.data and self.data['aYear']!='' and \
             self.data['bYear']!='' and self.data['aYear']!='0' and \
             self.data['bYear']!='0':
-            regulations = Regulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
-            dropped_course_regulations = Regulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
+            regulations = BTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
+            dropped_course_regulations = BTRegulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
             backlog_course_regulations = BTStudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
             backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
             dropped_course_regulations = [(regu.Regulation,regu.Regulation) for regu in dropped_course_regulations]
@@ -74,17 +74,17 @@ class DBYBSAYASSelectionForm(forms.Form):
             rChoices += regulations
             self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
             if self.data.get('bYear')!='1':
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
             deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
             deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
             self.fields['dept'] = deptBox
         elif self.data.get('bYear'):
             if self.data.get('bYear') != '1':
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
             deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
             deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
             self.fields['dept'] = deptBox
@@ -113,8 +113,8 @@ class CreateRegistrationEventForm(forms.Form):
         self.fields['regulation'] = regulationBox
         self.fields['mode'] = modeBox
         if self.data.get('aYear') and self.data.get('bYear'):
-            regulations = Regulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
-            dropped_course_regulations = Regulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
+            regulations = BTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
+            dropped_course_regulations = BTRegulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
             backlog_course_regulations = BTStudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
             backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
             dropped_course_regulations = [(regu.Regulation,regu.Regulation) for regu in dropped_course_regulations]
@@ -124,9 +124,9 @@ class CreateRegistrationEventForm(forms.Form):
             rChoices += regulations
             self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
             if self.data.get('bYear')!='1':
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
             deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
             deptChoices += [('all', 'All Departments')]
             deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
@@ -134,9 +134,9 @@ class CreateRegistrationEventForm(forms.Form):
 
         elif self.data.get('bYear'):
             if self.data.get('bYear') != '1':
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
-                departments = ProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+                departments = BTProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
             deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
             deptChoices += [('all', 'All Departments')]
             deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
@@ -145,7 +145,7 @@ class CreateRegistrationEventForm(forms.Form):
 class GradePointsUploadForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(GradePointsUploadForm, self).__init__(*args, **kwargs)
-        regulation = Regulation.objects.all()
+        regulation = BTRegulation.objects.all()
         regulation = [(row.Regulation, row.Regulation) for row in regulation]
         regulation = list(set(regulation))
         reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
@@ -155,7 +155,7 @@ class GradePointsUploadForm(forms.Form):
 class GradePointsStatusForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(GradePointsStatusForm, self).__init__(*args, **kwargs)
-        regulation = Regulation.objects.all()
+        regulation = BTRegulation.objects.all()
         regulation = [(row.Regulation, row.Regulation) for row in regulation]
         regulation = list(set(regulation))
         reguChoices = [('','-- Select Regulation --')] +regulation
@@ -178,7 +178,7 @@ class BranchChangeForm(forms.Form):
     def __init__(self,  *args,**kwargs):
         super(BranchChangeForm, self).__init__(*args, **kwargs)
         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
+        departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
         deptChoices = [(0,'--Select Dept--')] + deptChoices
         self.fields['CurrentDept'] = forms.CharField(label='CurrentDept',widget=forms.Select(choices=deptChoices))
@@ -197,7 +197,7 @@ class BranchChangeStausForm(forms.Form):
 class HODAssignmentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(HODAssignmentForm, self).__init__(*args, **kwargs)
-        departments = Departments.objects.all()
+        departments = BTDepartments.objects.all()
         DEPT_CHOICES = [('', '--------')]
         HOD_CHOICES = [('', '--------')]
         USER_CHOICES = [('', '--------')]
@@ -206,15 +206,15 @@ class HODAssignmentForm(forms.Form):
         self.fields['hod'] = forms.ChoiceField(label='HOD', required=False, choices=HOD_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         if self.data.get('dept'):
-            faculty= FacultyInfo.objects.filter(Working=True, Dept=self.data.get('dept'))
+            faculty= BTFacultyInfo.objects.filter(Working=True, Dept=self.data.get('dept'))
             HOD_CHOICES += [(fac.id, fac.Name) for fac in faculty]
             self.fields['hod'] = forms.ChoiceField(label='HOD', required=False, choices=HOD_CHOICES, widget=forms.Select(attrs={'required':'True'}))
             group = Group.objects.filter(name='HOD').first()
-            assigned_users = HOD.objects.filter(RevokeDate__isnull=True).exclude(Dept=self.data.get('dept'))
+            assigned_users = BTHOD.objects.filter(RevokeDate__isnull=True).exclude(Dept=self.data.get('dept'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
             USER_CHOICES += [(user.id, user.username) for user in users]
             self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
-            initial_hod = HOD.objects.filter(Dept=self.data.get('dept'), RevokeDate__isnull=True).first()
+            initial_hod = BTHOD.objects.filter(Dept=self.data.get('dept'), RevokeDate__isnull=True).first()
             if initial_hod:
                 self.fields['hod'].initial = initial_hod.Faculty.id
                 self.fields['user'].initial = initial_hod.User.id
@@ -229,16 +229,16 @@ class CycleCoordinatorAssignmentForm(forms.Form):
         self.fields['coordinator'] = forms.ChoiceField(label='Coordinator',  required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         self.fields['user'] = forms.ChoiceField(label='User',  required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         if self.data.get('cycle'):
-            assigned_faculty = CycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
-            faculty= FacultyInfo.objects.filter(Working=True).exclude(id__in=assigned_faculty.values_list('Faculty_id', flat=True)) #here1
+            assigned_faculty = BTCycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
+            faculty= BTFacultyInfo.objects.filter(Working=True).exclude(id__in=assigned_faculty.values_list('Faculty_id', flat=True)) #here1
             COORDINATOR_CHOICES += [(fac.id, fac.Name) for fac in faculty]
             group = Group.objects.filter(name='Cycle-Co-ordinator').first()
-            assigned_users = CycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
+            assigned_users = BTCycleCoordinator.objects.filter(RevokeDate__isnull=True).exclude(Cycle=self.data.get('cycle'))
             users = group.user_set.exclude(id__in=assigned_users.values_list('User', flat=True))
             USER_CHOICES += [(user.id, user.username) for user in users]
             self.fields['coordinator'] = forms.ChoiceField(label='Coordinator', required=False, choices=COORDINATOR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
             self.fields['user'] = forms.ChoiceField(label='User', required=False, choices=USER_CHOICES, widget=forms.Select(attrs={'required':'True'}))
-            initial_cycle_cord = CycleCoordinator.objects.filter(Cycle=self.data.get('cycle'), RevokeDate__isnull=True).first()
+            initial_cycle_cord = BTCycleCoordinator.objects.filter(Cycle=self.data.get('cycle'), RevokeDate__isnull=True).first()
             print('Here')
             if initial_cycle_cord:
                 self.fields['coordinator'].initial = initial_cycle_cord.Faculty.id
@@ -259,6 +259,6 @@ class StudentCancellationForm(forms.Form):
     
     def clean_RegNo(self):
         regd_no = self.cleaned_data.get('RegNo')
-        if not StudentInfo.objects.filter(RegNo=regd_no).exists():
+        if not BTStudentInfo.objects.filter(RegNo=regd_no).exists():
             raise forms.ValidationError('Invalid Reg No.')
         return regd_no

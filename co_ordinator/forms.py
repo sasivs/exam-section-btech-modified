@@ -1,13 +1,13 @@
 from django import forms 
 from django.db.models import Q 
 from co_ordinator.models import BTStudentRegistrations, BTStudentRegistrations_Staging
-from hod.models import Coordinator
+from hod.models import BTCoordinator
 from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 from co_ordinator.models import BTFacultyAssignment, BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary
-from superintendent.models import CycleCoordinator, RegistrationStatus, ProgrammeModel
-from ExamStaffDB.models import StudentInfo
-from faculty.models import Marks_Staging
+from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTProgrammeModel
+from ExamStaffDB.models import BTStudentInfo
+from faculty.models import BTMarks_Staging
 import datetime
 
 from superintendent.validators import validate_file_extension
@@ -72,7 +72,7 @@ class SubjectDeletionForm(forms.Form):
             asem = int(eventDetails[4])
             regulation = int(eventDetails[5])
             mode = eventDetails[6]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
             self.myFields = []
@@ -119,7 +119,7 @@ class RollListStatusForm(forms.Form):
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
-        self.regIDs = RegistrationStatus.objects.filter(Status=1)
+        self.regIDs = BTRegistrationStatus.objects.filter(Status=1)
         self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
         myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
@@ -137,7 +137,7 @@ class RollListRegulationDifferenceForm(forms.Form):
         self.radioFields = []
         Choices = [('YES','YES'),('NO','NO')]
         for row in range(len(Options[0])):
-            stud_info = StudentInfo.objects.get(RegNo=Options[0][row]) 
+            stud_info = BTStudentInfo.objects.get(RegNo=Options[0][row]) 
             self.fields['RadioMode' + str(Options[0][row])] = forms.CharField(required = True, widget = forms.RadioSelect(choices=Choices))
             self.radioFields.append(self['RadioMode' + str(Options[0][row])])
             self.myFields.append((Options[0][row],Options[1],stud_info.Regulation,self['RadioMode' + str(Options[0][row])]))
@@ -318,7 +318,7 @@ class BacklogRegistrationForm(forms.Form):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
             
@@ -334,12 +334,12 @@ class BacklogRegistrationForm(forms.Form):
                 self.selectFields = [self.fields['RegEvent'], self.fields['RegNo']]
                 studentRegistrations_1 = []
                 if asem == 2:
-                    reg_status_1 = RegistrationStatus.objects.filter(AYear=ayear,ASem=1, Regulation=regulation)
+                    reg_status_1 = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=1, Regulation=regulation)
                     for regevent in reg_status_1:
                         studentRegistrations_1 += list(BTStudentRegistrations_Staging.objects.\
                             filter(RegNo=self.data['RegNo'],RegEventId=regevent.id))
                     studentRegistrations_1 = [row.sub_id for row in studentRegistrations_1]
-                reg_status = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
+                reg_status = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
                 studentRegistrations=[]
                 for regevent in reg_status:
                     studentRegistrations += list(BTStudentRegistrations_Staging.objects.\
@@ -349,7 +349,7 @@ class BacklogRegistrationForm(forms.Form):
                 dropped_subjects = []
                 registeredBacklogs = []
                 for regn in studentRegistrations:
-                    regEvent = RegistrationStatus.objects.get(id=regn.RegEventId)
+                    regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId)
                     if (regEvent.Mode == 'R'):
                         studentRegularRegistrations.append(regn)
                     elif regEvent.Mode == 'D':
@@ -432,7 +432,7 @@ class BacklogRegistrationForm(forms.Form):
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
-            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -447,7 +447,7 @@ class BacklogRegistrationForm(forms.Form):
     def addDroppedRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
-            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -535,7 +535,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
             dropped_regno = list(BTRollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
@@ -554,7 +554,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 for row in droppedCourses:
                     if(row.RegEventId.BYear == byear and row.RegEventId.Regulation == regulation):
                         subjects.append(row.subject)
-                reg_status = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
+                reg_status = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
                 studentRegistrations=[]
                 for regevent in reg_status:
                     studentRegistrations += list(BTStudentRegistrations_Staging.objects.filter(RegNo=self.data['RegNo'],RegEventId=regevent.id))
@@ -563,7 +563,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 studentBacklogs=[]
                 registeredDroppedCourses = []
                 for regn in studentRegistrations:
-                    regEvent = RegistrationStatus.objects.get(id=regn.RegEventId)
+                    regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId)
                     if (regEvent.Mode == 'R'):
                         studentRegularRegistrations.append(regn)
                     elif regEvent.Mode == 'D' :
@@ -582,7 +582,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
             if(len(existingSubjects)!=0):
                 if(bRow.sub_id in Selection.keys()):
                     subDetails = BTSubjects.objects.get(id=bRow.sub_id)
-                    regevent = RegistrationStatus.objects.get(id=subDetails.RegEventId)
+                    regevent = BTRegistrationStatus.objects.get(id=subDetails.RegEventId)
                     self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':True}))
                     if(bRow.Grade == 'R'):
                         self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
@@ -600,7 +600,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
-            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -614,7 +614,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
     def addDroppedRegularSubjects(self, queryset, registeredDroppedCourses,Selection):
         for bRow in queryset:
             SubjectDetails = bRow
-            regEvent = RegistrationStatus.objects.get(id=bRow.RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=bRow.RegEventId)
             print(SubjectDetails.id)
             self.fields['Check' + str(SubjectDetails.id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
@@ -661,7 +661,7 @@ class MakeupRegistrationsForm(forms.Form):
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
             studentMakeupRolls = list(BTRollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
@@ -898,7 +898,7 @@ class GradeChallengeForm(forms.Form):
     def __init__(self, co_ordinator, *args, **kwargs):
         super(GradeChallengeForm, self).__init__(*args, **kwargs)
         faculty = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__BYear=co_ordinator.BYear, RegEventId__Status=1)
-        # regIDs = RegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=faculty.BYear)
+        # regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=faculty.BYear)
         regEventIDKVs = [(fac.RegEventId.id,fac.RegEventId.__str__()) for fac in faculty]
         regEventIDKVs = [('','-- Select Registration Event --')] + regEventIDKVs
         SUBJECT_CHOICES = [('', 'Choose Subject')]
@@ -916,7 +916,7 @@ class GradeChallengeForm(forms.Form):
             self.fields['exam-type'] = forms.ChoiceField(label='Choose Exam Type', widget=forms.Select(choices=EXAM_TYPE_CHOICES))
             self.fields['mark'] = forms.CharField(label='Enter Marks', widget=forms.TextInput(attrs={'type':'number'}))
         elif self.data.get('regID') and self.data.get('subject'):
-            marks_list = Marks_Staging.objects.filter(Registration__RegEventId=self.data.get('regID'), Registration__sub_id=self.data.get('subject')).order_by('Registration__RegNo')
+            marks_list = BTMarks_Staging.objects.filter(Registration__RegEventId=self.data.get('regID'), Registration__sub_id=self.data.get('subject')).order_by('Registration__RegNo')
             ROLL_CHOICES += [(mark.id, mark.Registration.RegNo) for mark in marks_list]
             self.fields['regd_no'] = forms.ChoiceField(label='Choose Roll Number', widget=forms.Select(choices=ROLL_CHOICES, attrs={'onchange':"submit()"}))
         elif self.data.get('regID'):
@@ -959,7 +959,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
         self.fields['regEvent'] = forms.ChoiceField(label='Choose Event', required=False, choices=REGID_CHOICES, widget=forms.Select(attrs={'onchange':"submit()", 'required':'True'}))
 
         if self.data.get('regEvent'):
-            regEvent = RegistrationStatus.objects.get(id=self.data.get('regEvent'))
+            regEvent = BTRegistrationStatus.objects.get(id=self.data.get('regEvent'))
             not_registered_objs = BTNotRegistered.objects.filter(RegEventId__Dept=regEvent.Dept, RegEventId__BYear=regEvent.BYear, Registered=False).exclude(RegEventId=regEvent).order_by('Student__RegNo', '-RegEventId_id').distinct('Student__RegNo')
             REGNO_CHOICES = [('','Choose RegNo')]
             REGNO_CHOICES += [(nr_obj.id, str(nr_obj.Student.RegNo)+', '+nr_obj.RegEventId.__str__()) for nr_obj in not_registered_objs]
@@ -977,7 +977,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
                 selected_nr_object = not_registered_objs.filter(id=self.data.get('regd_no')).first()
                 regNo = selected_nr_object.Student.RegNo
                 not_registered_courses = BTSubjects.objects.filter(RegEventId=selected_nr_object.RegEventId).exclude(Q(Category='OEC')|Q(Category='DEC'))
-                reg_status_objs = RegistrationStatus.objects.filter(AYear=regEvent.AYear, ASem=regEvent.ASem, Regulation=regEvent.Regulation)
+                reg_status_objs = BTRegistrationStatus.objects.filter(AYear=regEvent.AYear, ASem=regEvent.ASem, Regulation=regEvent.Regulation)
                 student_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__in=reg_status_objs.values_list('id', flat=True), RegNo=regNo)
                 Selection={student_registrations[i].sub_id:student_registrations[i].Mode for i in range(len(student_registrations))}
                 student_regular_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='R').values_list('id', flat=True))
@@ -995,7 +995,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
             if(len(existingSubjects)!=0):
                 if(bRow.sub_id in Selection.keys()):
                     subDetails = BTSubjects.objects.get(id=bRow.sub_id)
-                    regevent = RegistrationStatus.objects.get(id=subDetails.RegEventId)
+                    regevent = BTRegistrationStatus.objects.get(id=subDetails.RegEventId)
                     self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':True}))
                     if(bRow.Grade == 'R'):
                         self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
@@ -1013,7 +1013,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
-            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId.id)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId.id)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -1027,7 +1027,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
     def addDroppedRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
-            regEvent = RegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \

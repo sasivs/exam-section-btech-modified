@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from co_ordinator.models import BTFacultyAssignment
 from superintendent.user_access_test import is_Hod
 from django.shortcuts import render
-from superintendent.models import RegistrationStatus, HOD
+from superintendent.models import BTRegistrationStatus, BTHOD
 from hod.forms import MarksFinalizeForm
-from faculty.models import Marks_Staging, Marks
+from faculty.models import BTMarks_Staging, BTMarks
 
 
 @login_required(login_url="/login/")
@@ -15,16 +15,16 @@ def marks_finalize(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'HOD' in groups:
-        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__MarksStatus=1, Subject__OfferedBy=hod.Dept)
-        regIDs = RegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
+        regIDs = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
     msg = ''
     if request.method == 'POST':
         form = MarksFinalizeForm(regIDs, request.POST)
         if form.is_valid():
             regEvent = form.cleaned_data.get('regEvent')
-            marks_objects = Marks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=subjects.values_list('Subject_id', flat=True)).order_by('Registration__RegNo')
-            final_marks_objects = Marks.objects.filter(Registration_id__in=marks_objects.values_list('Registration_id', flat=True))
+            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=subjects.values_list('Subject_id', flat=True)).order_by('Registration__RegNo')
+            final_marks_objects = BTMarks.objects.filter(Registration_id__in=marks_objects.values_list('Registration_id', flat=True))
             for mark in marks_objects:
                 final_mark = final_marks_objects.filter(Registration=mark.Registration).first()
                 if final_mark:

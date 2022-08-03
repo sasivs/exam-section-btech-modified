@@ -221,7 +221,7 @@
 # # class DBYBSAYASSelectionForm(forms.Form):
 # #     def __init__(self, *args, **kwargs):
 # #         super(DBYBSAYASSelectionForm, self).__init__(*args, **kwargs)
-# #         departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+# #         departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
 # #         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
 # #         deptChoices = [(0,'--Select Dept--')] + deptChoices
 # #         bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
@@ -374,7 +374,7 @@
 # #     def __init__(self,  *args,**kwargs):
 # #         super(BranchChangeForm, self).__init__(*args, **kwargs)
 # #         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
-# #         departments = ProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
+# #         departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
 # #         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
 # #         deptChoices = [(0,'--Select Dept--')] + deptChoices
 # #         self.fields['CurrentDept'] = forms.CharField(label='CurrentDept',widget=forms.Select(choices=deptChoices))
@@ -992,7 +992,7 @@
 # #         regulation = [(row.Regulation, row.Regulation) for row in regulation]
 # #         regulation = list(set(regulation))
 # #         reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
-# #         departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+# #         departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
 # #         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
 # #         deptChoices = [('--Select Dept--','--Select Dept--')] + deptChoices
 # #         bYearChoices = [('--Select Dept--','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
@@ -1053,7 +1053,7 @@
 # #         aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
 # #         aSemChoices = [(0,'--Select ASem--')] + [(1,1),(2,2)]
 # #         regNoChoices = [(0,'--Select RegNo--')]
-# #         departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+# #         departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
 # #         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
 # #         deptChoices = [(0,'--Select Dept--')] + deptChoices
 # #         # bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
@@ -1347,7 +1347,7 @@
 # #         self.radioFields = []
 # #         Choices = [('YES','YES'),('NO','NO')]
 # #         for row in range(len(Options[0])):
-# #             stud_info = StudentInfo.objects.get(RegNo=Options[0][row]) 
+# #             stud_info = BTStudentInfo.objects.get(RegNo=Options[0][row]) 
 # #             self.fields['RadioMode' + str(Options[0][row])] = forms.CharField(required = True, widget = forms.RadioSelect(choices=Choices))
 # #             self.radioFields.append(self['RadioMode' + str(Options[0][row])])
 # #             self.myFields.append((Options[0][row],Options[1],stud_info.Regulation,self['RadioMode' + str(Options[0][row])]))
@@ -1359,7 +1359,7 @@
 # #         super(RollListStatusForm,self).__init__(*args, **kwargs)
 # #         self.myFields=[]
 # #         aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
-# #         departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+# #         departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
 # #         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
 # #         deptChoices = [(0,'--Select Dept--')] + deptChoices
 # #         bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]

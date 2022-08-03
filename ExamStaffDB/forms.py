@@ -1,5 +1,5 @@
 from django import forms
-from superintendent.models import RegistrationStatus, Regulation, ProgrammeModel
+from superintendent.models import BTRegistrationStatus, BTRegulation, BTProgrammeModel
 from co_ordinator.models import BTStudentRegistrations, BTSubjects
 from superintendent.validators import validate_file_extension
 
@@ -33,11 +33,11 @@ class UpdateRollNumberForm(forms.Form):
 class MandatoryCreditsForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(MandatoryCreditsForm, self).__init__(*args, **kwargs)
-        regulation = Regulation.objects.all()
+        regulation = BTRegulation.objects.all()
         regulation = [(row.Regulation, row.Regulation) for row in regulation]
         regulation = list(set(regulation))
         reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
-        departments = ProgrammeModel.objects.filter(ProgrammeType='UG')
+        departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
         deptChoices = [('--Select Dept--','--Select Dept--')] + deptChoices
         bYearChoices = [('--Select Dept--','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
@@ -57,7 +57,7 @@ class IXGradeStudentsAddition(forms.Form):
             ('I', 'I'),
             ('X', 'X')
         )   
-        regs = RegistrationStatus.objects.filter(Status=1)
+        regs = BTRegistrationStatus.objects.filter(Status=1)
         REG_CHOICES = [(reg.id,  reg.__str__()) for reg in regs]
         REG_CHOICES = [(0, 'Choose Registration Event')] + REG_CHOICES
         self.fields['regId'] = forms.CharField(label='Choose Registration Event', max_length=30, widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':'submit();', 'required':'True'}))

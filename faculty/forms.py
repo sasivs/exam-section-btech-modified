@@ -1,7 +1,7 @@
 from django import forms 
 from co_ordinator.models import BTStudentRegistrations, BTRollLists, BTSubjects
-from superintendent.models import GradePoints
-from faculty.models import GradesThreshold
+from superintendent.models import BTGradePoints
+from faculty.models import BTGradesThreshold
 from superintendent.validators import validate_file_extension
 
 
@@ -32,8 +32,8 @@ class AttendanceShoratgeStatusForm(forms.Form):
 class GradeThresholdForm(forms.Form):
     def __init__(self, faculty_subject, *args,**kwargs):
         super(GradeThresholdForm, self).__init__(*args, **kwargs)
-        grades = GradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
-        prev_thresholds = GradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
+        grades = BTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
+        prev_thresholds = BTGradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
         for grade in grades:
             self.fields[str(grade.id)] = forms.CharField(label=grade.Grade, required=False, widget=forms.TextInput(attrs={'type':'number', 'max':100, 'required':'True', 'class':'threshold'}))
             if prev_thresholds.filter(Grade=grade):

@@ -1,36 +1,36 @@
 from django.db import models
-from superintendent.models import RegistrationStatus, GradePoints
+from superintendent.models import BTRegistrationStatus, BTGradePoints
 from co_ordinator.models import BTSubjects, BTStudentRegistrations
 # Create your models here.
 
-class Attendance_Shortage(models.Model):
+class BTAttendance_Shortage(models.Model):
     Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'Attendance_Shortage'
+        db_table = 'BTAttendance_Shortage'
         constraints = [
             models.UniqueConstraint(fields=['Registration'], name='unique_Attendance_shortage_registration')
         ]
         managed = True
 
-class GradesThreshold(models.Model):
-    Grade = models.ForeignKey(GradePoints, on_delete=models.CASCADE)
+class BTGradesThreshold(models.Model):
+    Grade = models.ForeignKey(BTGradePoints, on_delete=models.CASCADE)
     Subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey(BTRegistrationStatus, on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
-        db_table = 'GradesThreshold'
+        db_table = 'BTGradesThreshold'
         unique_together = (('Grade', 'Subject', 'RegEventId', 'Section'))
         managed = True
 
-class Marks_Staging(models.Model):
+class BTMarks_Staging(models.Model):
     Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
     class Meta:
-        db_table = 'Marks_Staging'
+        db_table = 'BTMarks_Staging'
         constraints = [
             models.UniqueConstraint(fields=['Registration'], name='unique_Marks_Staging_registration')
         ]
@@ -62,13 +62,13 @@ class Marks_Staging(models.Model):
         return marks_list
 
 
-class Marks(models.Model):
+class BTMarks(models.Model):
     Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
     class Meta:
-        db_table = 'Marks'
+        db_table = 'BTMarks'
         constraints = [
             models.UniqueConstraint(fields=['Registration'], name='unique_marks_registration')
         ]
@@ -92,14 +92,14 @@ class Marks(models.Model):
         return round(total/total_parts)
 
 
-class StudentGrades(models.Model):
+class BTStudentGrades(models.Model):
     RegId= models.IntegerField()
     RegEventId = models.IntegerField()
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     class Meta:
-        db_table = 'StudentGrades'
+        db_table = 'BTStudentGrades'
         constraints = [
             models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_registration')
         ]
@@ -107,14 +107,14 @@ class StudentGrades(models.Model):
 
 
 
-class StudentGrades_Staging(models.Model):
+class BTStudentGrades_Staging(models.Model):
     RegId = models.IntegerField()
     RegEventId = models.IntegerField()
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     class Meta:
-        db_table = 'StudentGrades_Staging'
+        db_table = 'BTStudentGrades_Staging'
         constraints = [
             models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_Staging_registration')
         ]

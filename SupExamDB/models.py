@@ -8,7 +8,7 @@
 # from import_export import resources
 # # Create your models here.
 
-# class ProgrammeModel(models.Model):
+# class BTProgrammeModel(models.Model):
 #     PID = models.IntegerField(primary_key=True)
 #     ProgrammeName = models.CharField(max_length=20)
 #     ProgrammeType = models.CharField(max_length=10)
@@ -61,12 +61,12 @@
 #         db_table = 'StudentGradePointsMV'
 #         managed = False
 
-# class StudentInfo(models.Model):
+# class BTStudentInfo(models.Model):
 #     RegNo = models.IntegerField()
 #     RollNo = models.IntegerField()
 #     Name = models.CharField(max_length=70)
 #     class Meta:
-#         db_table = 'StudentInfo'
+#         db_table = 'BTStudentInfo'
 #         managed = False
 
 # class StudentCGPAs(models.Model):
@@ -114,16 +114,16 @@
 #         db_table='DegreeAwardees'
 #         managed=False
 
-# class FacultyInfo(models.Model):
+# class BTFacultyInfo(models.Model):
 #     Name=models.CharField(max_length=70)
 #     PhoneNumber=models.BigIntegerField()
 #     EmailID = models.CharField(max_length=70)
 #     class Meta:
-#         db_table='FacultyInfo'
+#         db_table='BTFacultyInfo'
 #         managed=False
 
 # class FacultyResource(resources.ModelResource):
 #     class Meta:
-#         model=FacultyInfo
+#         model=BTFacultyInfo
 
  

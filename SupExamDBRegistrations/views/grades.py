@@ -39,7 +39,7 @@
 #             errorDataset = Dataset()#To store subjects rows which are not related to present registration event
 #             errorDataset.headers = ['RegNo', 'SubCode', 'Grade', 'AYear', 'ASem','OfferedYear', 'Dept', 'AttGrade','RegId']
 #             newDataset.headers = ['RegId', 'RegEventId', 'Regulation', 'Grade', 'AttGrade']
-#             currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+#             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
 #                     Dept=dept,Mode=mode,Regulation=regulation)
 #             currentRegEventId = currentRegEventId[0].id
 #             for i in range(len(dataset)):
@@ -100,7 +100,7 @@
 #                 for i in list(errorIndices):
 #                     stud_reg = StudentRegistrations.objects.get(id=newDataset[i][0])
 #                     sub = Subjects.objects.get(id=stud_reg.sub_id)
-#                     regEvent = RegistrationStatus.objects.get(id=sub.RegEventId)
+#                     regEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
 #                     newRow = (stud_reg.RegNo,sub.SubCode,newDataset[i][3],ayear,asem,regEvent.AYear,dept,newDataset[i][4],newDataset[i][0])
 #                     errorData.append(newRow)
 #                 for i in errorDataset:
@@ -122,7 +122,7 @@
 #     if(request.method=='POST'):
 #         form = GradesUpdateForm(gradesRows,request.POST)
 #         if(form.is_valid()):
-#             regevent = RegistrationStatus.objects.get(id=currentRegEventId)
+#             regevent = BTRegistrationStatus.objects.get(id=currentRegEventId)
 #             for cIndex, fRow in enumerate(gradesRows):
 #                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
 #                     if((fRow[8])!=''):
@@ -153,7 +153,7 @@
 # #                 bsem = rom2int[strs[2]]
 # #                 regulation = int(strs[5])
 # #                 mode = strs[6]
-# #                 currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+# #                 currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
 # #                     Dept=dept,Mode=mode,Regulation=regulation)
 # #                 currentRegEventId = currentRegEventId[0].id
 # #                 grades = StudentGrades_Staging.objects.filter(RegEventId=currentRegEventId)
@@ -212,7 +212,7 @@
 #             errorGrades = []
 #             errrorSameGrades = [] #if previous and updated grades are same
 #             newDataset.headers = ['RegId', 'PreviousGrade', 'UpdatedGrade']
-#             currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+#             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
 #                     Dept=dept,Mode=mode,Regulation=regulation)
 #             currentRegEventId = currentRegEventId[0].id
 #             for i in range(len(dataset)):
@@ -274,7 +274,7 @@
 #                     stud_grade = StudentGrades_Staging.objects.get(RegId=newDataset[i][0])
 #                     stud_reg = StudentRegistrations.objects.get(id=newDataset[i][0])
 #                     sub = Subjects.objects.get(id=stud_reg.sub_id)
-#                     regEvent = RegistrationStatus.objects.get(id=sub.RegEventId)
+#                     regEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
 #                     newRow = (stud_reg.RegNo,sub.SubCode,newDataset[i][1],ayear,asem,regEvent.AYear,dept,stud_grade.AttGrade,newDataset[i][2])
 #                     errorGradeChallenge.append(newRow)
 #             return render(request, 'SupExamDBRegistrations/GradeChallengeSuccess.html', {'errorGrades':errorGrades,\

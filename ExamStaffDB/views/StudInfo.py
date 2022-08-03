@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from ExamStaffDB.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm
-from ExamStaffDB.models import StudentInfo
+from ExamStaffDB.models import BTStudentInfo
 from ExamStaffDB.resources import StudentInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -77,7 +77,7 @@ def student_info_error_handler(request):
         if(form.is_valid()):
             for index, studRow in enumerate(studInfoErrRows):
                 if(form.cleaned_data.get('Check' + str(studRow[0]))):
-                    StudentInfo.objects.filter(RegNo=studRow[0]).update(RollNo = studRow[1],Name = studRow[2],\
+                    BTStudentInfo.objects.filter(RegNo=studRow[0]).update(RollNo = studRow[1],Name = studRow[2],\
                         Regulation = studRow[3], Dept = studRow[4], AdmissionYear = studRow[5], Gender = studRow[6],\
                         Category = studRow[7], GuardianName = studRow[8], Phone = studRow[9], email = studRow[10], \
                             Address1 = studRow[11], Address2 = studRow[12], Cycle = studRow[13])
@@ -101,8 +101,8 @@ def update_rollno(request):
             msg=''
             for i in range(len(dataset)):
                 row = dataset[i]
-                if StudentInfo.objects.filter(RegNo=row[0]).exists():
-                    studentRow = StudentInfo.objects.get(RegNo=row[0])
+                if BTStudentInfo.objects.filter(RegNo=row[0]).exists():
+                    studentRow = BTStudentInfo.objects.get(RegNo=row[0])
                     studentRow.RollNo = row[1]
                     studentRow.save()
                 else:
@@ -120,8 +120,8 @@ def update_rollno(request):
 def download_sample_studentinfo_sheet(request):
     from co_ordinator.utils import ModelTemplateBookGenerator
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='StudentInfo')
-    BookGenerator = ModelTemplateBookGenerator(StudentInfo)
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='BTStudentInfo')
+    BookGenerator = ModelTemplateBookGenerator(BTStudentInfo)
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)
     return response
