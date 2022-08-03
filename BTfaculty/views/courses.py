@@ -14,4 +14,4 @@ def courses_assigned(request):
     if not faculty:
         raise Http404('You are not assigned any course yet.')
     subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-    return render(request, 'faculty/CoursesAssigned.html', {'subjects':subjects})
+    return render(request, 'BTfaculty/CoursesAssigned.html', {'subjects':subjects})

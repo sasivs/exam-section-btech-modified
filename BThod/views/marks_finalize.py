@@ -37,4 +37,4 @@ def marks_finalize(request):
             # reg_status_obj.save()
     else:
         form = MarksFinalizeForm(regIDs)
-    return render(request, 'faculty/MarksFinalize.html', {'form':form, 'msg':msg})
+    return render(request, 'BTfaculty/MarksFinalize.html', {'form':form, 'msg':msg})

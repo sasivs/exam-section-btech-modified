@@ -87,11 +87,11 @@ def marks_upload(request):
                         required_obj.save()
 
                 msg = 'Marks Upload for the selected exam has been done.'
-                return render(request, 'faculty/MarksUpload.html', {'form':form, 'invalidRegNo':invalidRegNo, \
+                return render(request, 'BTfaculty/MarksUpload.html', {'form':form, 'invalidRegNo':invalidRegNo, \
                     'invalidMarks':invalidMarks, 'msg':msg})
     else:
         form = MarksUploadForm(subjects=subjects)
-    return render(request, 'faculty/MarksUpload.html', {'form':form}) 
+    return render(request, 'BTfaculty/MarksUpload.html', {'form':form}) 
 
 
 @login_required(login_url="/login/")
@@ -138,10 +138,10 @@ def marks_upload_status(request):
             for mark in marks_objects:
                 mark.Marks_list = mark.get_marks_list() 
                 mark.Status = fac_assign_obj.MarksStatus
-            return render(request, 'faculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names_list})
+            return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names_list})
     else:
         form = MarksStatusForm(subjects=subjects)
-    return render(request, 'faculty/MarksUploadStatus.html', {'form':form})
+    return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form})
     
 @login_required(login_url="/login/")
 @user_passes_test(marks_upload_access)
@@ -162,10 +162,10 @@ def marks_update(request, pk):
             mark_obj.TotalMarks = mark_obj.get_total_marks()
             mark_obj.save()
             msg = 'Marks updated successfully.'
-            return render(request, 'faculty/MarksUpdate.html', {'form':form, 'mark':mark_obj, 'msg':msg})
+            return render(request, 'BTfaculty/MarksUpdate.html', {'form':form, 'mark':mark_obj, 'msg':msg})
     else:
         form = MarksUpdateForm(mark=mark_obj)
-    return render(request, 'faculty/MarksUpdate.html', {'form':form, 'mark':mark_obj})
+    return render(request, 'BTfaculty/MarksUpdate.html', {'form':form, 'mark':mark_obj})
 
 
 @login_required(login_url="/login/")
@@ -195,7 +195,7 @@ def marks_hod_submission(request):
             msg = 'Marks have been submitted to HOD successfully.'
     else:
         form = MarksStatusForm(subjects)
-    return render(request, 'faculty/MarksFinalize.html', {'form':form, 'msg':msg})
+    return render(request, 'BTfaculty/MarksFinalize.html', {'form':form, 'msg':msg})
 
 @login_required(login_url="/login/")
 @user_passes_test(marks_upload_access)
@@ -233,4 +233,4 @@ def download_sample_excel_sheet(request):
             return response
     else:
         form = MarksStatusForm(subjects=subjects)
-    return render(request, 'faculty/MarksUploadStatus.html', {'form':form})
+    return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form})
