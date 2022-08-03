@@ -1,7 +1,7 @@
 from django.db import models
-# from ExamStaffDB.models import MTFacultyInfo
-# from superintendent.models import MTRegistrationStatus, MTMarksDistribution
-# from ExamStaffDB.models import MTStudentInfo
+# from MTExamStaffDB.models import MTFacultyInfo
+# from MTsuperintendent.models import MTRegistrationStatus, MTMarksDistribution
+# from MTExamStaffDB.models import MTStudentInfo
 
 
 class MTSubjects_Staging(models.Model):
@@ -13,9 +13,9 @@ class MTSubjects_Staging(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     OfferedBy = models.IntegerField()
-    RegEventId = models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
     ProgrammeCode = models.IntegerField()
-    MarkDistribution = models.ForeignKey('superintendent.MTMarksDistribution', on_delete=models.CASCADE)
+    MarkDistribution = models.ForeignKey('MTsuperintendent.MTMarksDistribution', on_delete=models.CASCADE)
     DistributionRatio = models.TextField()
 
     class Meta:
@@ -32,9 +32,9 @@ class MTSubjects(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     OfferedBy = models.IntegerField()
-    RegEventId = models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
     ProgrammeCode = models.IntegerField()
-    MarkDistribution = models.ForeignKey('superintendent.MTMarksDistribution', on_delete=models.CASCADE)
+    MarkDistribution = models.ForeignKey('MTsuperintendent.MTMarksDistribution', on_delete=models.CASCADE)
     DistributionRatio = models.TextField()
 
     class Meta:
@@ -46,8 +46,8 @@ class MTSubjects(models.Model):
 
 class MTRollLists_Staging(models.Model):
    
-    student = models.ForeignKey('ExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    student = models.ForeignKey('MTExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
     class Meta:
         db_table = 'MTRollLists_Staging'
         unique_together=(('student','RegEventId'))
@@ -55,16 +55,16 @@ class MTRollLists_Staging(models.Model):
 
 class MTRollLists(models.Model):
    
-    student = models.ForeignKey('ExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    student = models.ForeignKey('MTExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
     class Meta:
         db_table = 'MTRollLists'
         unique_together=(('student','RegEventId'))
         managed = True
 
 class MTRegulationChange(models.Model):
-    RegEventId= models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
-    student = models.ForeignKey('ExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
+    RegEventId= models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    student = models.ForeignKey('MTExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
     PreviousRegulation = models.IntegerField()
     PresentRegulation = models.IntegerField()
     class Meta:
@@ -72,8 +72,8 @@ class MTRegulationChange(models.Model):
         managed = True
 
 class MTNotRegistered(models.Model):
-    RegEventId= models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
-    Student = models.ForeignKey('ExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
+    RegEventId= models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    Student = models.ForeignKey('MTExamStaffDB.MTStudentInfo', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
         db_table = 'MTNotRegistered'
@@ -222,9 +222,9 @@ class MTGradeChallenge(models.Model):
 
 class MTFacultyAssignment(models.Model):
     Subject = models.ForeignKey(MTSubjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.MTRegistrationStatus', on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
-    Coordinator = models.ForeignKey('ExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
+    RegEventId = models.ForeignKey('MTsuperintendent.MTRegistrationStatus', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('MTExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
+    Coordinator = models.ForeignKey('MTExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
     MarksStatus = models.IntegerField(default=1)
 
     class Meta:

@@ -2,13 +2,13 @@ from django.db import models
 
 # Create your models here.
 from django.contrib.auth import get_user_model
-# from ExamStaffDB.models import MTFacultyInfo
+# from MTExamStaffDB.models import MTFacultyInfo
 User = get_user_model()
 
 
 class MTFaculty_user(models.Model):
     User= models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('MTExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
     class Meta:
@@ -19,7 +19,7 @@ class MTFaculty_user(models.Model):
 
 class MTCoordinator(models.Model):
     User= models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('MTExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()
     MYear = models.IntegerField()
     AssignDate = models.DateTimeField(auto_now_add=True)

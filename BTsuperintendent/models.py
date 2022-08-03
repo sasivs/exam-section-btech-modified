@@ -18,7 +18,7 @@ class BTRegulation(models.Model):
     class Meta:
         db_table = 'BTRegulation'
         constraints = [
-            models.UniqueConstraint(fields=['AdmissionYear', 'AYear', 'BYear'], name='unique_Regulation')
+            models.UniqueConstraint(fields=['AdmissionYear', 'AYear', 'BYear'], name='unique_BTRegulation')
         ]
         managed = True
 
@@ -31,7 +31,7 @@ class BTProgrammeModel(models.Model):
     class Meta:
         db_table = 'BTProgrammeModel'
         constraints = [
-            models.UniqueConstraint(fields=['PID'], name='unique_PID')
+            models.UniqueConstraint(fields=['PID'], name='unique_BTPID')
         ]
         managed = True
 
@@ -52,7 +52,7 @@ class BTRegistrationStatus(models.Model):
     class Meta:
         db_table = 'BTRegistration_Status'
         constraints = [
-            models.UniqueConstraint(fields=['AYear', 'ASem', 'BYear', 'BSem', 'Regulation', 'Dept', 'Mode'], name='unique_Registration_status')
+            models.UniqueConstraint(fields=['AYear', 'ASem', 'BYear', 'BSem', 'Regulation', 'Dept', 'Mode'], name='unique_BTRegistration_status')
         ]
         managed = True
 
@@ -70,7 +70,7 @@ class BTBranchChanges(models.Model):
     class Meta:
         db_table = 'BTBranchChanges'
         constraints = [
-            models.UniqueConstraint(fields=['AYear', 'RegNo'], name='unique_branch_change')
+            models.UniqueConstraint(fields=['AYear', 'RegNo'], name='unique_BTbranch_change')
         ]
         managed = True
 
@@ -194,8 +194,8 @@ class BTCancelledStudentInfo(models.Model):
     class Meta:
         db_table = 'BTCancelledStudentInfo'
         constraints = [
-            models.UniqueConstraint(fields=['RegNo'], name='unique_cancelled_StudentInfo_RegNo'),
-            models.UniqueConstraint(fields=['RollNo'], name='unique_cancelled_StudentInfo_RollNo'),
+            models.UniqueConstraint(fields=['RegNo'], name='unique_BTcancelled_StudentInfo_RegNo'),
+            models.UniqueConstraint(fields=['RollNo'], name='unique_BTcancelled_StudentInfo_RollNo'),
         ]
         managed = True
 
@@ -219,7 +219,7 @@ class BTCancelledStudentGrades(models.Model):
     class Meta:
         db_table = 'BTCancelledStudentGrades'
         constraints = [
-            models.UniqueConstraint(fields=['RegId'], name='unique_cancelled_StudentGrades_registration')
+            models.UniqueConstraint(fields=['RegId'], name='unique_BTcancelled_StudentGrades_registration')
         ]
         managed = True
 
@@ -275,7 +275,7 @@ class BTCancelledMarks(models.Model):
     class Meta:
         db_table = 'BTCancelledMarks'
         constraints = [
-            models.UniqueConstraint(fields=['Registration_id'], name='unique_cancelled_marks_registration')
+            models.UniqueConstraint(fields=['Registration_id'], name='unique_BTcancelled_marks_registration')
         ]
         managed = True
 

@@ -16,7 +16,7 @@ class MTRegulation(models.Model):
     class Meta:
         db_table = 'MTRegulation'
         constraints = [
-            models.UniqueConstraint(fields=['AdmissionYear', 'AYear', 'MYear'], name='unique_Regulation')
+            models.UniqueConstraint(fields=['AdmissionYear', 'AYear', 'MYear'], name='unique_MTRegulation')
         ]
         managed = True
 
@@ -30,7 +30,7 @@ class MTProgrammeModel(models.Model):
     class Meta:
         db_table = 'MTProgrammeModel'
         constraints=[
-            models.UniqueConstraint(fields=['PID'],name='unique_PID')
+            models.UniqueConstraint(fields=['PID'],name='unique_MTPID')
         ]
         managed = True
 
@@ -52,7 +52,7 @@ class MTRegistrationStatus(models.Model):
     class Meta:
         db_table = 'MTRegistrationStatus'
         constraints=[
-            models.UniqueConstraint(fields=['AYear','ASem','MYear','MSem','Regulation','Dept','Mode'],name='unique_Registration_status')
+            models.UniqueConstraint(fields=['AYear','ASem','MYear','MSem','Regulation','Dept','Mode'],name='unique_MTRegistration_status')
         ]
         managed = True
     def __str__(self):
@@ -61,7 +61,7 @@ class MTRegistrationStatus(models.Model):
         return name
 
 class MTHOD(models.Model):
-    Faculty = models.ForeignKey('ExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('MTExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()
     AssignedDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
@@ -167,7 +167,7 @@ class MTCancelledStudentInfo(models.Model):
     class Meta:
         db_table = 'MTCancelledStudentInfo'
         constraints = [
-            models.UniqueConstraint(fields=['RegNo'], name='unique_cancelled_StudentInfo_RegNo'),
+            models.UniqueConstraint(fields=['RegNo'], name='unique_MTcancelled_StudentInfo_RegNo'),
         ]
         managed = True
 
@@ -191,7 +191,7 @@ class MTCancelledStudentGrades(models.Model):
     class Meta:
         db_table = 'MTCancelledStudentGrades'
         constraints = [
-            models.UniqueConstraint(fields=['RegId'], name='unique_cancelled_StudentGrades_registration')
+            models.UniqueConstraint(fields=['RegId'], name='unique_MTcancelled_StudentGrades_registration')
         ]
         managed = True
 
@@ -221,7 +221,7 @@ class MTCancelledMarks(models.Model):
     class Meta:
         db_table = 'MTCancelledMarks'
         constraints = [
-            models.UniqueConstraint(fields=['Registration_id'], name='unique_cancelled_marks_registration')
+            models.UniqueConstraint(fields=['Registration_id'], name='unique_MTcancelled_marks_registration')
         ]
         managed = True
 

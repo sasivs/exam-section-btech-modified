@@ -29,16 +29,16 @@ def cycle_coordinator_assignment(request):
                     new_coordinator = BTCycleCoordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), Cycle=form.cleaned_data.get('cycle'))
                     new_coordinator.save()
                     msg = 'Cycle cordinator assignment is done successfully.'
-                return render(request, 'BTsuperindent/CycleCoordinatorAssignment.html', {'form':form, 'msg':msg})
+                return render(request, 'BTsuperintendent/CycleCoordinatorAssignment.html', {'form':form, 'msg':msg})
             else:
                 if assigned_coordinator:
-                    return render(request, 'BTsuperindent/CycleCoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
+                    return render(request, 'BTsuperintendent/CycleCoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
     else:
         form = CycleCoordinatorAssignmentForm()
-    return render(request, 'BTsuperindent/CycleCoordinatorAssignment.html', {'form':form})
+    return render(request, 'BTsuperintendent/CycleCoordinatorAssignment.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
 def cycle_coordinator_assignment_status(request):
     cords = BTCycleCoordinator.objects.all()
-    return render(request, 'BTsuperindent/CycleCoordinatorAssignmentStatus.html', {'cord':cords})
+    return render(request, 'BTsuperintendent/CycleCoordinatorAssignmentStatus.html', {'cord':cords})

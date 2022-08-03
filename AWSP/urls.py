@@ -20,6 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path('', views.index, name='index'),
     path('admin/', admin.site.urls),
+    path('UG/PG', views.ug_pg, name='UG/PG'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('Transcripts/', include('Transcripts.urls')),
     path('Registrations/',include('Registrations.urls')),
@@ -29,6 +30,13 @@ urlpatterns = [
     path('BTfaculty/', include('BTfaculty.urls')),
     path('BThod/', include('BThod.urls')),
     path('BTco_ordinator/', include('BTco_ordinator.urls')),
+
+    path('MTExamStaffDB/', include('MTExamStaffDB.urls')),
+    path('MTsuperintendent/', include('MTsuperintendent.urls')),
+    path('MTfaculty/', include('MTfaculty.urls')),
+    path('MThod/', include('MThod.urls')),
+    path('MTco_ordinator/', include('MTco_ordinator.urls')),
+
     path('SupExamDB/',include('SupExamDB.urls')), 
     path('SupExamDBRegistrations/',include('SupExamDBRegistrations.urls')),
     path('SupExamDBRegistrationStatus/',include('SupExamDBRegistrationStatus.urls')),

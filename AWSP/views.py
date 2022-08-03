@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse 
+from AWSP.forms import UG_PGSelectForm
 
 
 def home(request):
@@ -24,4 +25,17 @@ def home(request):
 
 # Create your views here.
 def index(request):
-    return render(request, 'BTsuperindent/index.html')
+    return render(request, 'BTsuperintendent/index.html')
+
+def ug_pg(request):
+    if request.method == 'POST':
+        form = UG_PGSelectForm(request.POST)
+        if form.is_valid():
+            program = form.cleaned_data.get('program')
+            if program == 'UG':
+                return redirect('BThome')
+            elif program == 'PG':
+                return render('MThome')
+    else:
+        form = UG_PGSelectForm()
+    return render(request, 'AWSP/UGPG.html', {'form':form})

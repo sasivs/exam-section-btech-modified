@@ -1,5 +1,4 @@
 from django.db import models
-from BTco_ordinator.models import BTStudentRegistrations
 
 # Create your models here.
 
@@ -26,8 +25,8 @@ class BTStudentInfo(models.Model):
     class Meta:
         db_table = 'BTStudentInfo'
         constraints = [
-            models.UniqueConstraint(fields=['RegNo'], name='unique_StudentInfo_RegNo'),
-            models.UniqueConstraint(fields=['RollNo'], name='unique_StudentInfo_RollNo'),
+            models.UniqueConstraint(fields=['RegNo'], name='unique_BTStudentInfo_RegNo'),
+            models.UniqueConstraint(fields=['RollNo'], name='unique_BTStudentInfo_RollNo'),
         ]
         managed = True
 
@@ -48,7 +47,7 @@ class BTIXGradeStudents(models.Model):
         ('I', 'I'),
         ('X', 'X')
     )
-    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
 
     class Meta:
@@ -67,6 +66,6 @@ class BTFacultyInfo(models.Model):
     class Meta:
         db_table = 'BTFacultyInfo'
         constraints = [
-            models.UniqueConstraint(fields=['FacultyId'], name='unique_facultyinfo_facultyid')
+            models.UniqueConstraint(fields=['FacultyId'], name='unique_BTfacultyinfo_facultyid')
         ]
         managed = True

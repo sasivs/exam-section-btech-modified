@@ -122,7 +122,7 @@ class BTStudentRegistrations_Staging(models.Model):
 
 class BTDroppedRegularCourses(models.Model):
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
-    subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
+    subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
@@ -247,7 +247,7 @@ class BTMakeupRegistrationSummary(models.Model):
 
 
 class BTGradeChallenge(models.Model):
-    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     prev_marks = models.TextField()
     updated_marks = models.TextField()
     prev_grade = models.CharField(max_length=2)

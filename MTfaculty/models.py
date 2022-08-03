@@ -9,7 +9,7 @@ class MTAttendance_Shortage(models.Model):
     class Meta:
         db_table = 'MTAttendance_Shortage'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique_Attendance_shortage_registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_MTAttendance_shortage_registration')
         ]
         managed = True
 
@@ -31,7 +31,7 @@ class MTMarks_Staging(models.Model):
     class Meta:
         db_table = 'MTMarks_Staging'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique_Marks_Staging_registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_MTMarks_Staging_registration')
         ]
         managed = True
 
@@ -68,7 +68,7 @@ class MTMarks(models.Model):
     class Meta:
         db_table = 'MTMarks'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique_marks_registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_MTmarks_registration')
         ]
         managed = True
 
@@ -103,7 +103,7 @@ class MTStudentGrades(models.Model):
     class Meta:
         db_table = 'MTStudentGrades'
         constraints = [
-            models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_registration')
+            models.UniqueConstraint(fields=['RegId'], name='unique_MTStudentGrades_registration')
         ]
         managed = True
 class MTStudentGrades_Staging(models.Model):
@@ -119,4 +119,7 @@ class MTStudentGrades_Staging(models.Model):
     RegEventId=models.IntegerField()
     class Meta:
         db_table = 'MTStudentGrades_Staging'
+        constraints = [
+            models.UniqueConstraint(fields=['RegId'], name='unique_MTStudentGrades_Staging_registration')
+        ]
         managed = True

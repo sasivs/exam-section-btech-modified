@@ -23,7 +23,7 @@ class MTStudentInfo(models.Model):
     class Meta:
         db_table = 'MTStudentInfo'
         constraints = [
-            models.UniqueConstraint(fields=['RegNo'], name='unique_StudentInfo_RegNo'),
+            models.UniqueConstraint(fields=['RegNo'], name='unique_MTStudentInfo_RegNo'),
         ]
         managed = True
 
@@ -52,7 +52,7 @@ class MTFacultyInfo(models.Model):
     class Meta:
         db_table = 'MTFacultyInfo'
         constraints = [
-            models.UniqueConstraint(fields=['FacultyId'], name='unique_facultyinfo_facultyid')
+            models.UniqueConstraint(fields=['FacultyId'], name='unique_MTfacultyinfo_facultyid')
         ]
         managed = True
 

@@ -4,19 +4,19 @@ from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
 # Create your models here.
 
 class BTAttendance_Shortage(models.Model):
-    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'BTAttendance_Shortage'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique_Attendance_shortage_registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_BTAttendance_shortage_registration')
         ]
         managed = True
 
 class BTGradesThreshold(models.Model):
-    Grade = models.ForeignKey(BTGradePoints, on_delete=models.CASCADE)
-    Subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey(BTRegistrationStatus, on_delete=models.CASCADE)
+    Grade = models.ForeignKey('BTsuperintendent.BTGradePoints', on_delete=models.CASCADE)
+    Subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
@@ -25,14 +25,14 @@ class BTGradesThreshold(models.Model):
         managed = True
 
 class BTMarks_Staging(models.Model):
-    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
     class Meta:
         db_table = 'BTMarks_Staging'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique_Marks_Staging_registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_BTMarks_Staging_registration')
         ]
         managed = True
 
@@ -63,14 +63,14 @@ class BTMarks_Staging(models.Model):
 
 
 class BTMarks(models.Model):
-    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
 
     class Meta:
         db_table = 'BTMarks'
         constraints = [
-            models.UniqueConstraint(fields=['Registration'], name='unique_marks_registration')
+            models.UniqueConstraint(fields=['Registration'], name='unique_BTmarks_registration')
         ]
         managed = True
 
@@ -101,7 +101,7 @@ class BTStudentGrades(models.Model):
     class Meta:
         db_table = 'BTStudentGrades'
         constraints = [
-            models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_registration')
+            models.UniqueConstraint(fields=['RegId'], name='unique_BTStudentGrades_registration')
         ]
         managed = True
 
@@ -116,6 +116,6 @@ class BTStudentGrades_Staging(models.Model):
     class Meta:
         db_table = 'BTStudentGrades_Staging'
         constraints = [
-            models.UniqueConstraint(fields=['RegId'], name='unique_StudentGrades_Staging_registration')
+            models.UniqueConstraint(fields=['RegId'], name='unique_BTStudentGrades_Staging_registration')
         ]
         managed = True
