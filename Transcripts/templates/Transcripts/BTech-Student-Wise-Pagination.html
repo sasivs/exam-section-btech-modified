@@ -1,0 +1,122 @@
+{% extends 'Transcripts/BTechPrinting.html' %}
+
+{% load static %}
+
+{% block sub %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+      
+     $(document).ready(function(){
+        var $admissionYearVar = $("#AYear");
+        var $departments = $("#departments");
+        var $rollnos = $('#rollnos');
+        console.log('hello world');
+        const departmentBox = document.getElementById("departments");
+        $admissionYearVar.on("change", function(){
+            //console.log("BTech Data" + progElement.options[progElement.selectedIndex].value);
+          var myRequest = new XMLHttpRequest();
+          myRequest.open('GET', "BTechGetProgrammeData");
+          myRequest.onload = function() {
+              var myData = JSON.parse(myRequest.responseText);
+              $departments.find('option').remove();
+              $departments.append('<option disabled selected="true">-- select Department -- </option>');
+              $.each(myData.data, function(key, value){
+                      $departments.append('<option value=' + value.Dept + '> ' + value.Specialization + '</option>');
+                  }
+              );
+          }
+          myRequest.onerror = function(){
+              console.log(myRequest.status);
+              console.log("Some thing is going wrong");
+          }
+          myRequest.send();
+        });
+        $departments.on("change", function(){
+          var admissionYearBox = document.getElementById('AYear');
+          var departmentBox = document.getElementById('departments');
+          var myRequest = new XMLHttpRequest();
+          myRequest.open('GET', "GetBTechIDs/"+admissionYearBox.options[admissionYearBox.selectedIndex].value+'/'+
+                departmentBox.options[departmentBox.selectedIndex].value);
+          myRequest.onload = function() {
+              var myData = JSON.parse(myRequest.responseText);
+              $rollnos.find('option').remove();
+              
+              console.log("Flag:" + myData.flag);
+              if(myData.flag){
+                $rollnos.append('<option disabled selected="true">-- select RollNo -- </option>');
+                $.each(myData.data, function(key, value){
+                      $rollnos.append('<option value=' + value.RegNo + '> ' + value.RollNo + '</option>');
+                  });
+              }else{
+                $rollnos.append('<option disabled selected="true">-- select RegNo -- </option>');
+                $.each(myData.data, function(key, value){
+                      $rollnos.append('<option value=' + value.RegNo + '> ' + value.RegNo + '</option>');
+                  });
+              }
+              
+          }
+          myRequest.onerror = function(){
+              console.log(myRequest.status);
+              console.log("Some thing is going wrong");
+          }
+          myRequest.send();      
+        });
+        $rollnos.on("change", function(){
+          var studentIDBox = document.getElementById('rollnos');
+          var anchorElement = document.getElementById("printing-form-ref");
+          var myUrl = "{% url 'BTechPrintingStudentGradePages' 8888 %}";
+          anchorElement.href = myUrl.replace('8888', studentIDBox.options[studentIDBox.selectedIndex].value);
+        });
+     });  
+            
+      
+ </script>
+
+
+
+
+<div class="container">
+    <div class="row">
+            <div class="col-sm-1">
+              <b>Admission Year</b> <br>
+              <select id="AYear">
+                  <option disabled selected="true">-- select Admission Year --</option>
+                  {% for year in admissionYears %} 
+                    <option value={{year}} >{{year}}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-1">
+                
+            </div>
+            <div class="col-sm-2">
+              <b>Department</b> <br>
+              <select id="departments">
+                  <option disabled selected="true">-- select Department --</option>
+              </select>                          
+            </div>
+            <div class="col-sm-1">
+              
+          </div>
+            <div class="col-sm-1">
+              <b>RegNo/RollNo</b> <br>
+              <select id="rollnos">
+                  <option disabled selected="true">-- select RollNo --</option>
+              </select>
+                
+            </div>
+            <div class="col-sm-2">
+
+            </div>
+            <div class="col-sm-1">
+              <b>Printing-Form</b> <br>
+            <a class="btn btn-primary" href="#" role="button" id="printing-form-ref">Go</a>
+            </div>
+        </div>
+      
+    <!-- <p id="CGPA">
+
+    </p> -->
+</div>
+  
+{% endblock %}

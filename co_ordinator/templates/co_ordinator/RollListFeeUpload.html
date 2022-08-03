@@ -1,0 +1,18 @@
+{% extends 'superintendent/rollList_home.html' %} 
+{% block title %}RollLists Fee upload{% endblock title %}
+
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <strong>
+            <br>
+            Note:
+            make sure that the roll list being uploaded is generated only after branch change(in case of II B.Tech) and not promoted procedure is done(in case of odd semester).
+        </strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'superintendent/faculty_home.html' %}
+{% block title %}Faculty Subject Assignment{% endblock title %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <table>
+            <!-- <tr>
+                <th>id</th>
+                <td>{{subject.id}}</td>
+            </tr> -->
+            <tr>
+                <th>SubCode</th>
+                <td>{{subject.SubCode}}</td>
+            </tr>
+            <tr>
+                <th>SubName</th>
+                <td>{{subject.SubName}}</td>
+            </tr>
+            <tr>
+                <th>Creditable</th>
+                <td>{{subject.Creditable}}</td>
+            </tr>
+            <tr>
+                <th>Credits</th>
+                <td>{{subject.Credits}}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{subject.Type}}</td>
+            </tr>
+            <tr>
+                <th>Category</th>
+                <td>{{subject.Category}}</td>
+            </tr>
+         
+            <form action="" method="POST">{% csrf_token %}
+                <tr>
+                    <th>Course Co-Ordinator</th>
+                    <td>
+                        <select name="course-coordinator" id="course_co-ordinator">
+                            <option value="0" selected>Select Co-ordinator</option>
+                            {% for fac in faculty %}
+                            {% if co_ordinator == fac.id %}
+                            <option value="{{fac.id}}" selected>{{ fac.Name }}</option>
+                            {% else %}
+                            <option value="{{fac.id}}">{{ fac.Name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% for sec in section %}
+                <tr>
+                    <th>Section: {{sec}}</th>
+                    <td>
+                        <select name="faculty-{{sec}}" id="faculty">
+                            <option value="0" selected>Select Faculty</option>
+                            {% for fac in faculty %}
+                            {% if fac.Section and sec in fac.Section %}
+                            <option value="{{fac.id}}" selected>{{ fac.Name }}</option>
+                            {% else %}
+                            <option value="{{fac.id}}">{{ fac.Name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}

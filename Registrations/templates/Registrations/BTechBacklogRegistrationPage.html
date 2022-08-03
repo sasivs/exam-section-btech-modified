@@ -1,0 +1,68 @@
+{% extends 'Registrations/index.html' %}
+
+{% load static %}
+
+{% block sub %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    function submitFunc(){
+     var checkboxes = document.getElementsByClassName("form-check-input");
+     var tableCells = document.getElementsByTagName("td");
+     var headerCells = document.getElementsByTagName("th");
+     console.log("The Numbe of checkboxes" + checkboxes.length); 
+     for(var ci=0;ci<checkboxes.length;ci++){
+        if(checkboxes[ci].checked){
+           var myRequest = new XMLHttpRequest();
+           var subCode = tableCells[5*ci];
+           console.log(subCode);
+           console.log(headerCells[0]);
+           myRequest.open()
+
+           var myRequest = new XMLHttpRequest();
+          myRequest.open('GET', "../gradeSheetPrinting/GetBTechIDs/"+admissionYearBox.options[admissionYearBox.selectedIndex].value+'/'+
+                departmentBox.options[departmentBox.selectedIndex].value);
+          myRequest.onload = function() {
+              var myData = JSON.parse(myRequest.responseText);
+              $rollnos.find('option').remove();
+              
+              console.log("Flag:" + myData.flag);
+              if(myData.flag){
+                $rollnos.append('<option disabled selected="true">-- select RollNo -- </option>');
+                $.each(myData.data, function(key, value){
+                      $rollnos.append('<option value=' + value.RegNo + '> ' + value.RollNo + '</option>');
+                  });
+              }else{
+                $rollnos.append('<option disabled selected="true">-- select RegNo -- </option>');
+                $.each(myData.data, function(key, value){
+                      $rollnos.append('<option value=' + value.RegNo + '> ' + value.RegNo + '</option>');
+                  });
+              }
+          }
+          myRequest.onerror = function(){
+              console.log(myRequest.status);
+              console.log("Some thing is going wrong");
+          }
+          myRequest.send();      
+        }
+     }
+     
+    }
+  </script>
+
+<div class="container">
+    
+    <div class="container">
+        <div class="row">
+            <right>
+
+            <button type="button" class="btn btn-primary" onclick="submitFunc()">Submit</button>
+            </right>
+        </div>                                                                                                                                                                                                                                                    
+    </div>
+    
+    
+    <!-- <p id="CGPA">
+
+    </p> -->
+    </div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'superintendent/faculty_home.html' %} 
+{% block title %}Faculty Subject Assignment Status{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <strong>Select the registration event to get the details of assigned faculty , course co-ordinator of all the subjects .</strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="container">
+        <div class="row">
+        <table>
+            <th>
+                <tr>
+                    <td style="border: 1px solid black;">SubCode </td>
+                    <td style="border: 1px solid black;">SubName </td>
+                    <td style="border: 1px solid black;">Course Co-Ordinator Name</td>
+                    <td style="border: 1px solid black;">Section  </td>
+                    <td style="border: 1px solid black;">Faculty Name</td>
+                </tr>
+            </th>
+            {% for field in faculty %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ field.Subject.SubCode }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.Subject.SubName }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.Coordinator.Name }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.Section }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.Faculty.Name }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    </div>
+</div>
+{% endblock %}

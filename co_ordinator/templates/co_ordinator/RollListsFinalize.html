@@ -1,0 +1,30 @@
+{% extends 'superintendent/rollList_home.html' %}
+{% block title %}Finalize RollLists{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+ 
+
+
+
+<div class="container">
+    <div class="row">
+      <strong>Roll List can be finalized here.
+        <br>Note:If the roll list is being finalized for II B.Tech Students make sure that the branch change procedure is done
+        <br>**Roll List once finalized can not be modified**
+      </strong>
+      
+        <form action="" method="post" enctype="multipart/form-data" >
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" value="submit" onclick="return confirm('Are you sure you want to finalize the roll list?')">Finalize</button> 
+        </form>
+    </div>
+    {% if success %}
+    <div class="row">
+      <strong>{{success}}</strong>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'superintendent/faculty_home.html' %} {% block sub %}
+{% block title %}Faculty Delete{% endblock title %}
+
+
+
+
+<div class="container">
+    <div class="row">
+        <strong> Faculty can be deleted here.</strong>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="container">
+                <table>
+                    <th>
+                        <tr>
+                            <td style="border: 1px solid black;">FacultyId </td>
+                            <td style="border: 1px solid black;">Name</td>
+                            <td style="border: 1px solid black;">Phone</td>
+                            <td style="border: 1px solid black;">Email</td>
+                            <td style="border: 1px solid black;">Dept</td>
+                            <td style="border: 1px solid black;">Working</td>
+                            <td style="border: 1px solid black;">Do you want to Delete(Y/N)</td>
+                        </tr>
+                    </th>
+                    {% for field in form.myFields %}
+                    <tr>
+                        <td style="border: 1px solid black;">
+                            {{ field.0 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.1 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.2 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.3 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.4 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.5 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.6 }}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </table>
+                <input type='submit' value='Submit'>
+            </div>
+        </form>
+
+
+
+    </div>
+
+    <!-- <p id="CGPA">
+
+    </p> -->
+
+</div>
+{% endblock %}

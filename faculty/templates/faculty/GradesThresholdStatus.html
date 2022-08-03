@@ -1,0 +1,50 @@
+{% extends 'superintendent/grades_home.html' %}
+{% block title %}Grades Threshold Status{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <strong>Grades threshold Status for the selected course can be viewed here </strong>
+        <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="">Submit</button> 
+          </form>
+    </div>
+    {% if thresholds %}
+    <br>
+    <div class="row">
+        <table>
+            <tr>
+                <th>SubCode</th>
+                <td>{{thresholds.0.Subject.SubCode}}</td>
+            </tr>
+            <tr>
+                <th>SubName</th>
+                <td>{{thresholds.0.Subject.SubName}}</td>
+            </tr>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Section</td>
+                    <td style="border: 1px solid black;">Grade</td>
+                    <td style="border: 1px solid black;">Threshold Mark</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for thr in thresholds %}
+                <tr>
+                    <td style="border: 1px solid black;">{{thr.Section}}</td>
+                    <td style="border: 1px solid black;">{{thr.Grade.Grade}}</td>
+                    <td style="border: 1px solid black;">{{thr.Threshold_Mark}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

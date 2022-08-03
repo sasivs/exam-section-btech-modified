@@ -1,0 +1,35 @@
+{% extends 'superintendent/rollList_home.html' %}
+{% block title %}RollLists First Year Cycle Handler{% endblock title %}
+
+
+{% block sub %}
+<div class="container">
+  <div class="row">
+      <strong> Update the cycle name for not proimoted students.</strong>
+          <form action="" method="post">
+              {% csrf_token %}
+              <div class="container">
+                  <table>
+                      <th>
+                          <tr>
+                              <td style="border: 1px solid black;">RegNo </td>
+                              <td style="border: 1px solid black;">Update Cycle</td>
+                          </tr>
+                      </th>
+                      {% for field  in form.myFields %}
+                          <tr>
+                              <td style="border: 1px solid black;">
+                                  {{ field.0 }}
+                              </td>
+                              <td style="border: 1px solid black;">
+                                  {{ field.1 }}
+                              </td>
+                          </tr>
+                      {% endfor %}
+                  </table>
+                  <input type = 'submit' value='Submit'>
+              </div>
+          </form>
+  </div>
+</div>
+{% endblock %}

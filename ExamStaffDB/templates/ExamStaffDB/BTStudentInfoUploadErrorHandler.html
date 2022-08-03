@@ -1,0 +1,88 @@
+{% extends 'superintendent/preRegistrations_home.html' %}
+{% block title %}Student Info Upload{% endblock title %}
+
+{% block sub %}
+
+
+<div class="container">
+    <div class="row">
+        <strong> Your data upload for Student Information has the following errors</strong>
+            <form action="?" method="post">
+                {% csrf_token %}
+                <div class="container">
+                    <table>
+                        <th>
+                            <tr>
+                                <td style="border: 1px solid black;">RegNo </td>
+                                <td style="border: 1px solid black;">RollNo</td>
+                                <td style="border: 1px solid black;">Name</td>
+                                <td style="border: 1px solid black;">Regulation</td>
+                                <td style="border: 1px solid black;">Dept</td>
+                                <td style="border: 1px solid black;">AdmissionYear</td>
+                                <td style="border: 1px solid black;">Gender</td>
+                                <td style="border: 1px solid black;">Category</td>
+                                <td style="border: 1px solid black;">GuardianName</td>
+                                <td style="border: 1px solid black;">Phone</td>
+                                <td style="border: 1px solid black;">email</td>
+                                <td style="border: 1px solid black;">Address1</td>
+                                <td style="border: 1px solid black;">Address2</td>
+                                <td style="border: 1px solid black;">Cycle</td>
+                                <td style="border: 1px solid black;">Do you want to update(Y/N)</td>
+                            </tr>
+                        </th>
+                        {% for field  in form.myFields %}
+                            <tr>
+                                <td style="border: 1px solid black;">
+                                    {{ field.0 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.1 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.2 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.3 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.4 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.5 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.6 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.7 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.8 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.9 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.10 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.11 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.12 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.13 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.14 }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <input type ='submit' value='Submit'>
+                </div>
+            </form>
+    </div>
+</div>
+{% endblock %}
