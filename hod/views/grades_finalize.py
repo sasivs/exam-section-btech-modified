@@ -4,7 +4,7 @@ from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, B
 from superintendent.user_access_test import grades_finalize_access
 from hod.forms import GradesFinalizeForm
 from superintendent.models import BTRegistrationStatus, BTHOD
-from faculty.models import BTStudentGrades_Staging, BTStudentGrades
+from BTfaculty.models import BTStudentGrades_Staging, BTStudentGrades
 
 import psycopg2
 

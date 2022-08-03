@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.http import HttpResponse
 from django.shortcuts import render
-from faculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
+from BTfaculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
-from faculty.models import BTAttendance_Shortage
+from BTfaculty.models import BTAttendance_Shortage
 from superintendent.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
 from import_export.formats.base_formats import XLSX
 from hod.models import BTCoordinator, BTFaculty_user

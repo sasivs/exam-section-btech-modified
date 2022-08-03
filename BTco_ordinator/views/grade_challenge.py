@@ -3,10 +3,10 @@ from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from BTco_ordinator.models import BTFacultyAssignment, BTGradeChallenge, BTRollLists 
 from hod.models import BTCoordinator
-from faculty.models import BTMarks_Staging, BTAttendance_Shortage, BTStudentGrades_Staging
+from BTfaculty.models import BTMarks_Staging, BTAttendance_Shortage, BTStudentGrades_Staging
 from BTco_ordinator.forms import GradeChallengeForm, GradeChallengeStatusForm
 from BTExamStaffDB.models import BTIXGradeStudents
-from faculty.models import BTGradesThreshold
+from BTfaculty.models import BTGradesThreshold
 
 
 @login_required(login_url="/login/")

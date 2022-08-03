@@ -1,7 +1,7 @@
 from django import forms 
 from BTco_ordinator.models import BTStudentRegistrations, BTRollLists, BTSubjects
 from superintendent.models import BTGradePoints
-from faculty.models import BTGradesThreshold
+from BTfaculty.models import BTGradesThreshold
 from superintendent.validators import validate_file_extension
 
 

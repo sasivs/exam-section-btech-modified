@@ -2,7 +2,7 @@ from django.shortcuts import render
 from superintendent.models import BTCancelledStudentInfo,BTCancelledStudentGrades,BTCancelledDroppedRegularCourses,BTCancelledNotPromoted,BTCancelledNotRegistered,BTCancelledRollLists,BTCancelledStudentRegistrations,BTCancelledMarks
 from BTco_ordinator.models import BTDroppedRegularCourses,BTNotPromoted,BTNotRegistered,BTRollLists,BTRollLists_Staging,BTStudentRegistrations,BTStudentRegistrations_Staging
 from BTExamStaffDB.models import BTStudentInfo
-from faculty.models import BTStudentGrades,BTMarks,BTMarks_Staging,BTStudentGrades_Staging
+from BTfaculty.models import BTStudentGrades,BTMarks,BTMarks_Staging,BTStudentGrades_Staging
 from superintendent.forms import StudentCancellationForm
 from SupExamDB.views import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 

@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from superintendent.user_access_test import grades_threshold_access, grades_threshold_status_access
-from faculty.models import BTGradesThreshold, BTMarks_Staging
+from BTfaculty.models import BTGradesThreshold, BTMarks_Staging
 from hod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment
 from superintendent.models import BTGradePoints, BTHOD, BTCycleCoordinator
-from faculty.forms import GradeThresholdForm, GradeThresholdStatusForm
+from BTfaculty.forms import GradeThresholdForm, GradeThresholdStatusForm
 from json import dumps
 import statistics as stat
 

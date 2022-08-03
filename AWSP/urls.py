@@ -26,7 +26,7 @@ urlpatterns = [
     #path('CoordinatorDB/',include('CoordinatorDB.urls')),
     path('BTExamStaffDB/', include('BTExamStaffDB.urls')),
     path('superintendent/', include('superintendent.urls')),
-    path('faculty/', include('faculty.urls')),
+    path('BTfaculty/', include('BTfaculty.urls')),
     path('hod/', include('hod.urls')),
     path('BTco_ordinator/', include('BTco_ordinator.urls')),
     path('SupExamDB/',include('SupExamDB.urls')), 

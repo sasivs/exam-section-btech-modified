@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
-from faculty.models import BTMarks, BTMarks_Staging
+from BTfaculty.models import BTMarks, BTMarks_Staging
 
 @receiver(post_save, sender=BTStudentRegistrations)
 def create_marks_instance(sender, instance, created, **kwargs):

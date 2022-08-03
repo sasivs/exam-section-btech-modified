@@ -8,8 +8,8 @@ from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
 from hod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment
-from faculty.models import BTMarks, BTMarks_Staging
-from faculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm
+from BTfaculty.models import BTMarks, BTMarks_Staging
+from BTfaculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm
 
 
 @login_required(login_url="/login/")
@@ -224,7 +224,7 @@ def download_sample_excel_sheet(request):
                 RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             students = BTStudentInfo.objects.filter(RegNo__in=student_registrations.values_list('RegNo', flat=True))
             
-            from faculty.utils import SampleMarksUploadExcelSheetGenerator
+            from BTfaculty.utils import SampleMarksUploadExcelSheetGenerator
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
             response['Content-Disposition'] = 'attachment; filename={subcode}({regevent}).xlsx'.format(regevent=regEvent.__str__(), subcode=subject.SubCode)
             BookGenerator = SampleMarksUploadExcelSheetGenerator(students, regEvent, subject)

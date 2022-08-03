@@ -4,7 +4,7 @@ from superintendent.user_access_test import is_Hod
 from django.shortcuts import render
 from superintendent.models import BTRegistrationStatus, BTHOD
 from hod.forms import MarksFinalizeForm
-from faculty.models import BTMarks_Staging, BTMarks
+from BTfaculty.models import BTMarks_Staging, BTMarks
 
 
 @login_required(login_url="/login/")

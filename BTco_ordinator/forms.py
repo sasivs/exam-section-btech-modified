@@ -7,7 +7,7 @@ from BTco_ordinator.models import BTFacultyAssignment, BTNotRegistered, BTSubjec
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTProgrammeModel
 from BTExamStaffDB.models import BTStudentInfo
-from faculty.models import BTMarks_Staging
+from BTfaculty.models import BTMarks_Staging
 import datetime
 
 from superintendent.validators import validate_file_extension
