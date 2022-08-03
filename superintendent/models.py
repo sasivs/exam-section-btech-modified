@@ -76,7 +76,7 @@ class BTBranchChanges(models.Model):
 
 
 class BTHOD(models.Model):
-    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()
     AssignedDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
@@ -92,7 +92,7 @@ class BTCycleCoordinator(models.Model):
         (9,'CHEMISTRY')
     )
     User =models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
     Cycle = models.IntegerField()

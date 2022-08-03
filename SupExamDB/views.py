@@ -10,12 +10,12 @@ from django.http.response import HttpResponseRedirect, JsonResponse
 from django.urls import reverse 
 from superintendent.models import BTProgrammeModel
 from BTco_ordinator.models import BTStudentGradePoints
-from ExamStaffDB.models import BTStudentInfo
+from BTExamStaffDB.models import BTStudentInfo
 from Transcripts.models import StudentExamEvents, DepartmentExamEvents, DeptExamEventStudents, StudentAdmissionYearDetails,\
      StudentCGPAs, HeldIn
-from ExamStaffDB.models import BTFacultyInfo
+from BTExamStaffDB.models import BTFacultyInfo
 from SupExamDB.forms import UploadFileForm, FacultyUpdateForm
-from ExamStaffDB.resources import FacultyInfoResource
+from BTExamStaffDB.resources import FacultyInfoResource
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.shortcuts import redirect

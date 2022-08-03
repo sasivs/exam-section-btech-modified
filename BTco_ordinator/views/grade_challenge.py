@@ -5,7 +5,7 @@ from BTco_ordinator.models import BTFacultyAssignment, BTGradeChallenge, BTRollL
 from hod.models import BTCoordinator
 from faculty.models import BTMarks_Staging, BTAttendance_Shortage, BTStudentGrades_Staging
 from BTco_ordinator.forms import GradeChallengeForm, GradeChallengeStatusForm
-from ExamStaffDB.models import BTIXGradeStudents
+from BTExamStaffDB.models import BTIXGradeStudents
 from faculty.models import BTGradesThreshold
 
 

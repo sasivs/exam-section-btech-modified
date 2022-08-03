@@ -7,7 +7,7 @@ from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, Not
 from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
     BTSubjects, BTStudentRegistrations
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
-from ExamStaffDB.models import BTMandatoryCredits
+from BTExamStaffDB.models import BTMandatoryCredits
 from BTco_ordinator.resources import NotPromotedResource
 from django.db.models import Q
 from tablib import Dataset

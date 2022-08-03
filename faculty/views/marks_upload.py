@@ -4,7 +4,7 @@ from superintendent.user_access_test import marks_upload_access, marks_status_ac
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
 from superintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
-from ExamStaffDB.models import BTStudentInfo
+from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
 from hod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment

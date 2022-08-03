@@ -5,7 +5,7 @@ from superintendent.models import BTRegistrationStatus, BTHOD
 from hod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from faculty.models import BTAttendance_Shortage, BTGradesThreshold, BTMarks_Staging, BTStudentGrades_Staging
-from ExamStaffDB.models import BTIXGradeStudents
+from BTExamStaffDB.models import BTIXGradeStudents
 from faculty.forms import MarksStatusForm
 
 

@@ -5,8 +5,8 @@ from superintendent.user_access_test import is_ExamStaff, ix_grade_student_statu
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
 from superintendent.models import BTRegistrationStatus, BTHOD
 from hod.models import BTCoordinator, BTFaculty_user
-from ExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
-from ExamStaffDB.models import BTIXGradeStudents
+from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
+from BTExamStaffDB.models import BTIXGradeStudents
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)

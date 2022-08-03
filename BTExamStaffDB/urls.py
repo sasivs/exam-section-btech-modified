@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from ExamStaffDB.views import StudInfo, IX_student, mandatory_credits, FacultyInfo
+from BTExamStaffDB.views import StudInfo, IX_student, mandatory_credits, FacultyInfo
 
 urlpatterns = [
 

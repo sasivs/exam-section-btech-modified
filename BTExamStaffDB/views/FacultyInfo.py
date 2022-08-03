@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
 from superintendent.user_access_test import is_ExamStaff, faculty_info_status_access
-from ExamStaffDB.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
+from BTExamStaffDB.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
 from hod.models import  BTCoordinator
-from ExamStaffDB.models import BTFacultyInfo
+from BTExamStaffDB.models import BTFacultyInfo
 from superintendent.models import BTHOD
-from ExamStaffDB.resources import FacultyInfoResource
+from BTExamStaffDB.resources import FacultyInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 

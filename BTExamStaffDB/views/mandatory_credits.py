@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from superintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
-from ExamStaffDB.forms import MandatoryCreditsForm
-from ExamStaffDB.models import BTMandatoryCredits
+from BTExamStaffDB.forms import MandatoryCreditsForm
+from BTExamStaffDB.models import BTMandatoryCredits
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)

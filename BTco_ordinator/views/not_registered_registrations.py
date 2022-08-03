@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from hod.models import BTCoordinator
-from ExamStaffDB.models import BTStudentInfo
+from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTNotRegistered, BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from BTco_ordinator.forms import NotRegisteredRegistrationsForm
 from superintendent.models import BTRegistrationStatus, BTCycleCoordinator

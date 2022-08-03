@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from numpy import require
 from hod.models import BTCoordinator
-from ExamStaffDB.models import BTFacultyInfo
+from BTExamStaffDB.models import BTFacultyInfo
 
 
 

@@ -4,7 +4,7 @@ from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from superintendent.forms import  BranchChangeForm, BranchChangeStausForm
 from superintendent.models import BTBranchChanges
-from ExamStaffDB.models import BTStudentInfo
+from BTExamStaffDB.models import BTStudentInfo
 
 
 @login_required(login_url="/login/")

@@ -52,7 +52,7 @@ class BTRollLists(models.Model):
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
     )
-    student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
@@ -68,7 +68,7 @@ class BTRollLists_Staging(models.Model):
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
     )
-    student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
@@ -80,7 +80,7 @@ class BTRollLists_Staging(models.Model):
 
 class BTRegulationChange(models.Model):
     RegEventId= models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
-    student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PreviousRegulation = models.IntegerField()
     PresentRegulation = models.IntegerField()
     class Meta:
@@ -91,7 +91,7 @@ class BTRegulationChange(models.Model):
 
 class BTNotRegistered(models.Model):
     RegEventId= models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
-    Student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    Student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
         db_table = 'BTNotRegistered'
@@ -121,7 +121,7 @@ class BTStudentRegistrations_Staging(models.Model):
 
 
 class BTDroppedRegularCourses(models.Model):
-    student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Registered = models.BooleanField()
@@ -261,7 +261,7 @@ class BTNotPromoted(models.Model):
     AYear = models.IntegerField()
     BYear = models.IntegerField()
     Regulation = models.IntegerField()
-    student = models.ForeignKey('ExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     class Meta:
         db_table = 'BTNotPromoted'
@@ -271,8 +271,8 @@ class BTNotPromoted(models.Model):
 class BTFacultyAssignment(models.Model):
     Subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo')
-    Coordinator = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')
+    Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo')
+    Coordinator = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')
     Section = models.CharField(max_length=2, default='NA')
     MarksStatus = models.IntegerField(default=1)
 

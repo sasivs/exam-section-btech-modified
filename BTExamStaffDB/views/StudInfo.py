@@ -3,9 +3,9 @@ from superintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from ExamStaffDB.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm
-from ExamStaffDB.models import BTStudentInfo
-from ExamStaffDB.resources import StudentInfoResource
+from BTExamStaffDB.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm
+from BTExamStaffDB.models import BTStudentInfo
+from BTExamStaffDB.resources import StudentInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 

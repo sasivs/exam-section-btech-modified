@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'hod',
     'superintendent',
     'BTco_ordinator',
-    'ExamStaffDB', 
+    'BTExamStaffDB', 
     'faculty',
 
     'django_rename_app',

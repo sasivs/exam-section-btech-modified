@@ -6,7 +6,7 @@ from superintendent.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTFacultyAssignment, BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTProgrammeModel
-from ExamStaffDB.models import BTStudentInfo
+from BTExamStaffDB.models import BTStudentInfo
 from faculty.models import BTMarks_Staging
 import datetime
 

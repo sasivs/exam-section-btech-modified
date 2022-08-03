@@ -8,7 +8,7 @@ User = get_user_model()
 
 class BTFaculty_user(models.Model):
     User= models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
     class Meta:
@@ -19,7 +19,7 @@ class BTFaculty_user(models.Model):
 
 class BTCoordinator(models.Model):
     User= models.ForeignKey(User, on_delete=models.CASCADE)
-    Faculty = models.ForeignKey('ExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
+    Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     AssignDate = models.DateTimeField(auto_now_add=True)
