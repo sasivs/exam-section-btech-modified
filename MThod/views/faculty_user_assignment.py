@@ -23,7 +23,7 @@ def faculty_user(request):
         else:
             fac.User = None
 
-    return render(request, 'hod/FacultyUser.html',{'faculty':faculty})
+    return render(request, 'MThod/FacultyUser.html',{'faculty':faculty})
 
 login_required(login_url="/login/")
 @user_passes_test(is_Hod)
@@ -46,7 +46,7 @@ def faculty_user_detail(request,pk):
             fac_user = MTFaculty_user(User_id=request.POST.get('fac_user'), Faculty_id=pk)
             fac_user.save()
         return redirect('FacultyUserAssignment')
-    return render(request, 'hod/FacultyUserdetail.html', { 'faculty':faculty,\
+    return render(request, 'MThod/FacultyUserdetail.html', { 'faculty':faculty,\
         'Users':users,'assigned_user':assigned_user})
 
 
@@ -85,14 +85,14 @@ def faculty_Coordinator(request):
                     new_coordinator = MTCoordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), MYear=form.cleaned_data.get('MYear'),Dept =hod.Dept)
                     new_coordinator.save()
                 msg = 'Coordinator assignment is done successfully'
-                return render(request, 'hod/CoordinatorAssignment.html', {'form':form, 'msg':msg})
+                return render(request, 'MThod/CoordinatorAssignment.html', {'form':form, 'msg':msg})
             else:
                 if assigned_coordinator:
-                    return render(request, 'hod/CoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
+                    return render(request, 'MThod/CoordinatorAssignment.html', {'form':form, 'initial_cord':assigned_coordinator.Faculty.id, 'initial_user':assigned_coordinator.User.id})
     else:
         form = CoordinatorAssignmentForm(hod.Dept)
         
-    return render(request, 'hod/CoordinatorAssignment.html',{'form':form})
+    return render(request, 'MThod/CoordinatorAssignment.html',{'form':form})
 
 
 @login_required(login_url="/login/")
@@ -105,5 +105,5 @@ def faculty_Coordinator_Status(request):
         user = request.user
         hod = MTHOD.objects.filter(RevokeDate__isnull=True,User=user).first()
         Coordinators = MTCoordinator.objects.filter(Dept=hod.Dept)
-    return render(request, 'hod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
+    return render(request, 'MThod/CoordinatorAssignmentStatus.html', {'Coordinators':Coordinators})
         
