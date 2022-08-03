@@ -26,10 +26,10 @@ def ix_student_assignment(request):
                     ix_row = BTIXGradeStudents(Registration=student_registration, Grade=grade)
                     ix_row.save()
                 msg = 'Student Grade Added Successfully.'
-                return render(request, 'ExamStaffDB/IXStudentAddition.html', {'form':form, 'msg':msg})
+                return render(request, 'BTExamStaffDB/IXStudentAddition.html', {'form':form, 'msg':msg})
     else:
         form = IXGradeStudentsAddition()
-    return render(request, 'ExamStaffDB/IXStudentAddition.html', {'form':form})
+    return render(request, 'BTExamStaffDB/IXStudentAddition.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(ix_grade_student_status_access)
@@ -69,5 +69,5 @@ def ix_student_status(request):
                 raise Http404('You are not authorized to view this page')
     else:
         form = IXGradeStudentsStatus(regIDs)
-    return render(request, 'ExamStaffDB/IXGradeStudentsStatus.html', {'form':form, 'students':students, 'msg':msg})
+    return render(request, 'BTExamStaffDB/IXGradeStudentsStatus.html', {'form':form, 'students':students, 'msg':msg})
 

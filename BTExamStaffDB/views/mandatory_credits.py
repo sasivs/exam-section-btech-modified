@@ -25,7 +25,7 @@ def mandatory_credits_upload(request):
                     mancred = BTMandatoryCredits(Regulation = regulation,BYear = byear, Dept= dept,Credits=credits)
                     mancred.save()
                 msg = 'The data for Mandatory Credits is uploaded succesfully'
-                return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html', {'form':form, 'msg':msg})
+                return render(request, 'BTExamStaffDB/MandatoryCreditsUpload.html', {'form':form, 'msg':msg})
     else:
         form = MandatoryCreditsForm()
-    return render(request, 'ExamStaffDB/MandatoryCreditsUpload.html',{'form':form})
+    return render(request, 'BTExamStaffDB/MandatoryCreditsUpload.html',{'form':form})
