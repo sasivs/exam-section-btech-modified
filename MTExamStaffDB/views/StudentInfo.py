@@ -35,7 +35,7 @@ def StudInfoFileUpload(request):
             if(not result.has_errors()):
                 StudInfo_resource.import_data(newDataset,dry_run=False)
                 msg = 'Student Info updated successfully.'
-                return render(request, 'ExamStaffDB/BTStudentInfoUpload.html',{'form':form, 'msg':msg})
+                return render(request, 'MTExamStaffDB/BTStudentInfoUpload.html',{'form':form, 'msg':msg})
             else:
                 errors = result.row_errors()
                 indices = set([i for i in range(len(newDataset))])
@@ -65,7 +65,7 @@ def StudInfoFileUpload(request):
             for row in form.fields.values(): print(row)
     else:
         form = StudentInfoFileUpload()
-    return  render(request, 'ExamStaffDB/BTStudentInfoUpload.html',{'form':form})
+    return  render(request, 'MTExamStaffDB/BTStudentInfoUpload.html',{'form':form})
     
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
@@ -79,11 +79,11 @@ def student_info_error_handler(request):
                     MTStudentInfo.objects.filter(RegNo=studRow[0]).update(RollNo = studRow[1],Name = studRow[2],\
                         Regulation = studRow[3], Dept = studRow[4], AdmissionYear = studRow[5], Gender = studRow[6],\
                         Category = studRow[7], GuardianName = studRow[8], Phone = studRow[9], email = studRow[10], Address1 = studRow[11], Address2 = studRow[12] )
-            return render(request, 'ExamStaffDB/BTStudentInfoUploadSuccess.html')
+            return render(request, 'MTExamStaffDB/BTStudentInfoUploadSuccess.html')
 
     else:
         form = StudentInfoUpdateForm(Options = studInfoErrRows)
-    return(render(request, 'ExamStaffDB/BTStudentInfoUploadErrorHandler.html',{'form':form}))
+    return(render(request, 'MTExamStaffDB/BTStudentInfoUploadErrorHandler.html',{'form':form}))
     
 
 @login_required(login_url="/login/")

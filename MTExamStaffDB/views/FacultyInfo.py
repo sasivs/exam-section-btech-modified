@@ -49,7 +49,7 @@ def faculty_upload(request):
                         request.session['FacInfoErrRows'] = FacInfoErrRows
                         return redirect('MTFacultyInfoUploadErrorHandler')
                     msg = 'Faculty Info Uploaded Successfully'
-                    return(render(request,'ExamStaffDB/FacultyUpload.html', {'form':form, 'msg':msg}))
+                    return(render(request,'MTExamStaffDB/FacultyUpload.html', {'form':form, 'msg':msg}))
                 else:
                     errors = result.row_errors()
                     # print(errors)
@@ -79,7 +79,7 @@ def faculty_upload(request):
                     return redirect('MTFacultyInfoUploadErrorHandler')
     else:
         form = FacultyUploadForm()
-    return (render(request, 'ExamStaffDB/FacultyUpload.html', {'form':form}))
+    return (render(request, 'MTExamStaffDB/FacultyUpload.html', {'form':form}))
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
@@ -92,10 +92,10 @@ def FacultyInfo_upload_error_handler(request):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     MTFacultyInfo.objects.filter(FacultyId=fRow[0]).update(\
                         Name=fRow[1],Phone=fRow[2],Email=fRow[3],Dept=fRow[4],Working=fRow[5])
-            return render(request, 'ExamStaffDB/FacultyInfoUploadSuccess.html')
+            return render(request, 'MTExamStaffDB/FacultyInfoUploadSuccess.html')
     else:
         form = FacultyInfoUpdateForm(Options=FacultyInfoRows)
-    return(render(request, 'ExamStaffDB/FacultyInfoUploadErrorHandler.html',{'form':form}))
+    return(render(request, 'MTExamStaffDB/FacultyInfoUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
 @user_passes_test(faculty_info_status_access)
@@ -110,7 +110,7 @@ def FacultyInfo_upload_status(request):
     elif 'Co-ordinator' in groups:
         co_ordinator = MTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         fac_info = MTFacultyInfo.objects.filter(Dept=co_ordinator.Dept)
-    return render(request, 'ExamStaffDB/FacultyInfoStatus.html',{'fac_info': fac_info})
+    return render(request, 'MTExamStaffDB/FacultyInfoStatus.html',{'fac_info': fac_info})
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
@@ -124,11 +124,11 @@ def Faculty_delete(request):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     fac =MTFacultyInfo.objects.filter(FacultyId=fRow[0])
                     fac.update(Working = False)
-            return render(request, 'ExamStaffDB/FacultyInfoDeletionSuccess.html')
+            return render(request, 'MTExamStaffDB/FacultyInfoDeletionSuccess.html')
                 
     else:
         form = FacultyDeletionForm(Options=fac_info)
-    return render(request, 'ExamStaffDB/FacultyInfoDeletion.html',{'form':form})
+    return render(request, 'MTExamStaffDB/FacultyInfoDeletion.html',{'form':form})
 
 
 
