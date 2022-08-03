@@ -53,10 +53,10 @@ def faculty_subject_assignment(request):
                 student_Registrations = BTStudentRegistrations.objects.filter(RegEventId=regEventId.id).values_list('sub_id', flat=True)
                 subjects = BTSubjects.objects.filter(OfferedBy=current_user.Dept, id__in=student_Registrations.values_list('sub_id', flat=True))
             request.session['currentRegEvent']=regEventId.id
-            return render(request, 'co_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
+            return render(request, 'BTco_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
     else:
         form = FacultySubjectAssignmentForm(regIDs)
-    return render(request, 'co_ordinator/FacultyAssignment.html',{'form':form})
+    return render(request, 'BTco_ordinator/FacultyAssignment.html',{'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(faculty_subject_assignment_access)
@@ -93,7 +93,7 @@ def faculty_subject_assignment_detail(request, pk):
                         Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=request.session['currentRegEvent'])
                     faculty_row.save()
         return redirect('BTFacultySubjectAssignment')
-    return render(request, 'co_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
+    return render(request, 'BTco_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
         'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_assigned})
 
 @login_required(login_url="/login/")
@@ -137,7 +137,7 @@ def faculty_assignment_status(request):
                 faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept).order_by('Section')
             elif current_user.group == 'Cycle-Co-ordinator':
                 faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
-            return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
+            return render(request, 'BTco_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
     else:
         form = FacultyAssignmentStatusForm(regIDs)
-    return render(request, 'co_ordinator/FacultyAssignmentStatus.html',{'form':form})
+    return render(request, 'BTco_ordinator/FacultyAssignmentStatus.html',{'form':form})

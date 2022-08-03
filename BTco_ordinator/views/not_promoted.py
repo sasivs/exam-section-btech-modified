@@ -101,10 +101,10 @@ def not_promoted_list(request):
                     workbook = BookGenerator.generate_workbook()
                     workbook.save(response)
                     return response
-            return render(request, 'co_ordinator/NotPromotedList.html', {'form':form, 'notPromoted':np})
+            return render(request, 'BTco_ordinator/NotPromotedList.html', {'form':form, 'notPromoted':np})
     else:
         form = NotPromotedListForm(regIDs)
-    return render(request, 'co_ordinator/NotPromotedList.html', {'form':form})
+    return render(request, 'BTco_ordinator/NotPromotedList.html', {'form':form})
 
 
 @login_required(login_url="/login/")
@@ -158,7 +158,7 @@ def not_promoted_upload(request):
                     request.session['npErrRows'] = npErrRows
                     request.session['RegEvent'] = regEvent
                     return redirect('BTNotPromotedUploadErrorHandler' )
-                return(render(request,'co_ordinator/NotPromotedUploadSuccess.html'))
+                return(render(request,'BTco_ordinator/NotPromotedUploadSuccess.html'))
             else:
                 errors = result.row_errors()
                 indices = set([i for i in range(len(newDataset))])    
@@ -186,7 +186,7 @@ def not_promoted_upload(request):
                 return redirect('BTNotPromotedUploadErrorHandler')
     else:
         form = NotPromotedUploadForm(regIDs)
-    return render(request, 'co_ordinator/NotPromotedUpload.html', {'form':form})
+    return render(request, 'BTco_ordinator/NotPromotedUpload.html', {'form':form})
 
 
 @login_required(login_url="/login/")
@@ -200,10 +200,10 @@ def not_promoted_upload_error_handler(request):
             for cIndex, fRow in enumerate(npErrRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
                     BTNotPromoted.objects.filter(student_id=fRow[0],AYear=fRow[2], BYear=fRow[3], Regulation=fRow[4]).update(PoA=fRow[5])
-            return render(request, 'co_ordinator/NotPromotedUploadSuccess.html')
+            return render(request, 'BTco_ordinator/NotPromotedUploadSuccess.html')
     else:
         form = NotPromotedUpdateForm(Options=npErrRows)
-    return(render(request, 'co_ordinator/NotPromotedUploadErrorHandler.html',{'form':form}))
+    return(render(request, 'BTco_ordinator/NotPromotedUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
 @user_passes_test(not_promoted_status_access)
@@ -236,10 +236,10 @@ def not_promoted_status(request):
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
             notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
-            return render(request, 'co_ordinator/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
+            return render(request, 'BTco_ordinator/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
     else:
         form = NotPromotedStatusForm(regIDs)
-    return render(request, 'co_ordinator/NotPromotedStatus.html', {'form':form})
+    return render(request, 'BTco_ordinator/NotPromotedStatus.html', {'form':form})
 
 
 # @login_required(login_url="/login/")
@@ -298,7 +298,7 @@ def not_promoted_status(request):
 #                         if(len(studentInfo)!=0):
 #                             context['RollNo'] = studentInfo[0].RollNo
 #                             context['Name'] = studentInfo[0].Name  
-#                         return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+#                         return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
 #             if((studyModeCredits+examModeCredits<=34) and(studyModeCredits<=32)):
 #                 for sub in form.myFields:
 #                     if sub[6] == 'D':
@@ -320,7 +320,7 @@ def not_promoted_status(request):
 #                                 newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
 #                                 Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
 #                                 newRegistration.save()                   
-#                 return(render(request,'co_ordinator/BTBacklogRegistrationSuccess.html'))
+#                 return(render(request,'BTco_ordinator/BTBacklogRegistrationSuccess.html'))
 #             else:
 #                 form = NotPromotedBacklogRegistrationForm(request.POST)
 #                 context = {'form':form, 'msg':1}
@@ -329,7 +329,7 @@ def not_promoted_status(request):
 #                 if(len(studentInfo)!=0):
 #                     context['RollNo'] = studentInfo[0].RollNo
 #                     context['Name'] = studentInfo[0].Name  
-#                 return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+#                 return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
 #         else:
 #             print("form validation failed")   
 #             print(form.errors.as_data())          
@@ -339,4 +339,4 @@ def not_promoted_status(request):
 #     if(len(studentInfo)!=0):
 #         context['RollNo'] = studentInfo[0].RollNo
 #         context['Name'] = studentInfo[0].Name  
-#     return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+#     return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)

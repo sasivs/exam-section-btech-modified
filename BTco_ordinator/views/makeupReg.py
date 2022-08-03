@@ -62,9 +62,9 @@ def makeup_registrations(request):
                 else:
                     if len(already_registered) != 0:
                         BTStudentRegistrations_Staging.objects.get(id=already_registered[0].id).delete()
-            return render(request, 'co_ordinator/MakeupRegistrationsSuccess.html')
+            return render(request, 'BTco_ordinator/MakeupRegistrationsSuccess.html')
     elif request.method == 'POST':
         form = MakeupRegistrationsForm(regIDs,request.POST)
     else:
         form = MakeupRegistrationsForm(regIDs)
-    return render(request, 'co_ordinator/MakeupRegistrations.html', {'form':form})
+    return render(request, 'BTco_ordinator/MakeupRegistrations.html', {'form':form})

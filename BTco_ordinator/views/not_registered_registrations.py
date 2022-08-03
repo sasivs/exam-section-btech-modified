@@ -98,7 +98,7 @@ def not_registered_registrations(request):
                                     Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()
                     msg = 'Registrations have been done successfully'
-                return render(request,'co_ordinator/NotRegisteredRegistrations.html', {'msg':msg})
+                return render(request,'BTco_ordinator/NotRegisteredRegistrations.html', {'msg':msg})
             else:
                 form = NotRegisteredRegistrationsForm(regIDs, request.POST)
                 context = {'form':form, 'msg':1}
@@ -107,7 +107,7 @@ def not_registered_registrations(request):
                 if(studentInfo):
                     context['RollNo'] = studentInfo.Student.RollNo
                     context['Name'] = studentInfo.Student.Name  
-                return render(request, 'co_ordinator/NotRegisteredRegistrations.html',context)
+                return render(request, 'BTco_ordinator/NotRegisteredRegistrations.html',context)
   
     else:
         form = NotRegisteredRegistrationsForm(regIDs)
@@ -115,4 +115,4 @@ def not_registered_registrations(request):
     if(studentInfo):
         context['RollNo'] = studentInfo.Student.RollNo
         context['Name'] = studentInfo.Student.Name  
-    return render(request, 'co_ordinator/NotRegisteredRegistrations.html',context)
+    return render(request, 'BTco_ordinator/NotRegisteredRegistrations.html',context)

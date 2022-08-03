@@ -71,7 +71,7 @@ def btech_regular_registration_status(request):
                 studentRegistrations = list(studentRegistrations.values())
     else:
         form = RegularRegistrationsStatusForm(regIDs)
-    return render(request, 'co_ordinator/BTRegularRegistrationStatus.html',
+    return render(request, 'BTco_ordinator/BTRegularRegistrationStatus.html',
                     { 'studentRegistrations':studentRegistrations ,'form':form}  )
 
 @login_required(login_url="/login/")
@@ -121,7 +121,7 @@ def btech_backlog_registration_status(request):
                 studentRegistrations = list(studentRegistrations.values())
     else:
         form = BacklogRegistrationSummaryForm(regIDs)
-    return render(request, 'co_ordinator/BTBacklogRegistrationStatus.html',
+    return render(request, 'BTco_ordinator/BTBacklogRegistrationStatus.html',
                     { 'studentRegistrations':studentRegistrations ,'form':form, 'heading' :heading }  )
 
 @login_required(login_url="/login/")
@@ -170,7 +170,7 @@ def btech_makeup_registration_status(request):
                 studentRegistrations = list(studentRegistrations.values())
     else:
         form = MakeupRegistrationSummaryForm(regIDs)
-    return render(request, 'co_ordinator/BTMakeupRegistrationStatus.html',
+    return render(request, 'BTco_ordinator/BTMakeupRegistrationStatus.html',
                     { 'studentRegistrations':studentRegistrations ,'form':form, 'heading' :heading }  )
 
 

@@ -72,7 +72,7 @@ def generateRollList(request):
                         request.session['ayasbybsr'] = ayasbybsr
                         request.session['currentRegEventId'] = request.session.get('currentRegEventId')
                         return HttpResponseRedirect(reverse('BTFirstYearRollListsCycleHandler' ))
-                return (render(request, 'co_ordinator/RollListGenerateSuccess.html')) 
+                return (render(request, 'BTco_ordinator/RollListGenerateSuccess.html')) 
             
         else:
             form = GenerateRollListForm(regIDs, request.POST)
@@ -124,8 +124,8 @@ def generateRollList(request):
                                 request.session['not_promoted_regno_firstyear'] = not_prom_regs
                                 request.session['ayasbybsr'] = ayasbybsr
                                 request.session['currentRegEventId'] = currentRegEventId
-                                return render(request, 'co_ordinator/generateRollList.html',{'form':form, 'regulation_form':regulation_form})
-                            return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
+                                return render(request, 'BTco_ordinator/generateRollList.html',{'form':form, 'regulation_form':regulation_form})
+                            return (render(request, 'BTco_ordinator/RollListGenerateSuccess.html'))
 
                                 
                         else:
@@ -163,7 +163,7 @@ def generateRollList(request):
                                 request.session['ayasbybsr'] = ayasbybsr
                                 request.session['currentRegEventId'] = currentRegEventId
                                 regulation_form = RollListRegulationDifferenceForm(Options = (not_promoted_regno,regulation))
-                                return render(request, 'co_ordinator/generateRollList.html',{'form':form,'regulation_form':regulation_form })
+                                return render(request, 'BTco_ordinator/generateRollList.html',{'form':form,'regulation_form':regulation_form })
 
                     elif mode == 'B':
 
@@ -226,11 +226,11 @@ def generateRollList(request):
                             if not initial_roll_list.filter(student=student).exists():
                                 roll = BTRollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                                 roll.save()
-                    return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
+                    return (render(request, 'BTco_ordinator/RollListGenerateSuccess.html'))
 
     else:
         form = GenerateRollListForm(regIDs)
-    return  render(request, 'co_ordinator/generateRollList.html',{'form':form})
+    return  render(request, 'BTco_ordinator/generateRollList.html',{'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
@@ -249,10 +249,10 @@ def first_year_rollLists_cycle_handler(request):
                     s_info.Cycle=cycle
                     s_info.save()
                     roll.save()
-            return (render(request, 'co_ordinator/RollListGenerateSuccess.html'))
+            return (render(request, 'BTco_ordinator/RollListGenerateSuccess.html'))
     else:
         form = RollListsCycleHandlerForm(Options=not_prom_regs)
-    return (render(request, 'co_ordinator/RollListsCycleHandlerForm.html',{'form':form}))
+    return (render(request, 'BTco_ordinator/RollListsCycleHandlerForm.html',{'form':form}))
 
 
 
@@ -289,11 +289,11 @@ def UploadSectionInfo(request):
                     else:
                         errData.append(row)
                 msg = 'Section Information has been updated successfully.'
-                return (render(request, 'co_ordinator/SectionUpload.html', {'form':form, 'errorRows':errData, 'msg':msg}))
+                return (render(request, 'BTco_ordinator/SectionUpload.html', {'form':form, 'errorRows':errData, 'msg':msg}))
                   
     else:
         form = UploadSectionInfoForm(regIDs)
-    return  render(request, 'co_ordinator/SectionUpload.html',{'form':form})
+    return  render(request, 'BTco_ordinator/SectionUpload.html',{'form':form})
 
 
 
@@ -345,9 +345,9 @@ def RollList_Status(request):
                     workbook.save(response)
                     return response
 
-                return (render(request, 'co_ordinator/RollListStatus.html',{'form':form,'rolls': rollListStatus}))            
+                return (render(request, 'BTco_ordinator/RollListStatus.html',{'form':form,'rolls': rollListStatus}))            
     form = RollListStatusForm(regIDs)
-    return render(request, 'co_ordinator/RollListStatus.html', {'form':form})
+    return render(request, 'BTco_ordinator/RollListStatus.html', {'form':form})
 
 
 @login_required(login_url="/login/")
@@ -387,10 +387,10 @@ def RollListFeeUpload(request):
                 currentRegEvent = BTRegistrationStatus.objects.get(id=regeventid)
                 currentRegEvent.RollListFeeStatus = 1
                 currentRegEvent.save()
-                return render(request, 'co_ordinator/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
+                return render(request, 'BTco_ordinator/RollListFeeUploadSuccess.html', {'errors':error_regd_no})      
     else:
         form = RollListFeeUploadForm(regIDs)
-    return  render(request, 'co_ordinator/RollListFeeUpload.html',{'form':form})
+    return  render(request, 'BTco_ordinator/RollListFeeUpload.html',{'form':form})
 
 
 @login_required(login_url="/login/")
@@ -415,10 +415,10 @@ def NotRegisteredStatus(request):
         if(form.is_valid):
             regEventId=request.POST.get('regID')
             not_regd_status=BTNotRegistered.objects.filter(RegEventId_id=regEventId) 
-            return (render(request, 'co_ordinator/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
+            return (render(request, 'BTco_ordinator/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
     else:
         form = NotRegisteredStatusForm(regIDs)
-    return render(request, 'co_ordinator/NotRegisteredStatus.html', {'form':form})
+    return render(request, 'BTco_ordinator/NotRegisteredStatus.html', {'form':form})
 
 
 
@@ -444,9 +444,9 @@ def rolllist_finalize(request):
             reg_status_obj = BTRegistrationStatus.objects.filter(id=regEvent).first()
             reg_status_obj.RollListStatus = 0
             reg_status_obj.save()
-            return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
+            return render(request, 'BTco_ordinator/RollListsFinalize.html', {'form':form, 'success':'Roll List has been successfully finalized.'})
     else:
         form = RollListFinalizeForm(regIDs)
-    return render(request, 'co_ordinator/RollListsFinalize.html', {'form':form})
+    return render(request, 'BTco_ordinator/RollListsFinalize.html', {'form':form})
 
 

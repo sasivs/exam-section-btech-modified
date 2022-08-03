@@ -83,7 +83,7 @@ def dropped_regular_registrations(request):
                         if(len(studentInfo)!=0):
                             context['RollNo'] = studentInfo[0].RollNo
                             context['Name'] = studentInfo[0].Name  
-                        return render(request, 'co_ordinator/DroppedRegularReg.html',context)
+                        return render(request, 'BTco_ordinator/DroppedRegularReg.html',context)
             if((studyModeCredits+examModeCredits<=34) and(studyModeCredits<=32)):
                 for sub in form.myFields:
                     if(sub[6]=='R'): #Handling Regular Subjects
@@ -116,7 +116,7 @@ def dropped_regular_registrations(request):
                         elif(sub[5]):
                             #delete record from registration table
                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).delete()  
-                return(render(request,'co_ordinator/DroppedRegularRegSuccess.html'))
+                return(render(request,'BTco_ordinator/DroppedRegularRegSuccess.html'))
             else:
                 form = DroppedRegularRegistrationsForm(regIDs,request.POST)
                 context = {'form':form, 'msg':1}
@@ -125,7 +125,7 @@ def dropped_regular_registrations(request):
                 if(len(studentInfo)!=0):
                     context['RollNo'] = studentInfo[0].RollNo
                     context['Name'] = studentInfo[0].Name  
-                return render(request, 'co_ordinator/DroppedRegularReg.html',context)
+                return render(request, 'BTco_ordinator/DroppedRegularReg.html',context)
         else:
             print("form validation failed")             
     else:
@@ -134,4 +134,4 @@ def dropped_regular_registrations(request):
     if(len(studentInfo)!=0):
         context['RollNo'] = studentInfo[0].RollNo
         context['Name'] = studentInfo[0].Name  
-    return render(request, 'co_ordinator/DroppedRegularReg.html',context)
+    return render(request, 'BTco_ordinator/DroppedRegularReg.html',context)

@@ -72,7 +72,7 @@ def btech_backlog_registration(request):
                         if(len(studentInfo)!=0):
                             context['RollNo'] = studentInfo[0].RollNo
                             context['Name'] = studentInfo[0].Name  
-                        return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+                        return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
             if((studyModeCredits+examModeCredits<=34) and(studyModeCredits<=32)):
                 for sub in form.myFields:
                     if(sub[6]=='R'): #Handling Regular Subjects
@@ -101,7 +101,7 @@ def btech_backlog_registration(request):
                                 newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
                                 Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()                   
-                return(render(request,'co_ordinator/BTBacklogRegistrationSuccess.html'))
+                return(render(request,'BTco_ordinator/BTBacklogRegistrationSuccess.html'))
             else:
                 form = BacklogRegistrationForm(regIDs, request.POST)
                 context = {'form':form, 'msg':1}
@@ -110,7 +110,7 @@ def btech_backlog_registration(request):
                 if(len(studentInfo)!=0):
                     context['RollNo'] = studentInfo[0].RollNo
                     context['Name'] = studentInfo[0].Name  
-                return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+                return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
   
     else:
         form = BacklogRegistrationForm(regIDs)
@@ -118,6 +118,6 @@ def btech_backlog_registration(request):
     if(len(studentInfo)!=0):
         context['RollNo'] = studentInfo[0].RollNo
         context['Name'] = studentInfo[0].Name  
-    return render(request, 'co_ordinator/BTBacklogRegistration.html',context)
+    return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
 
 
