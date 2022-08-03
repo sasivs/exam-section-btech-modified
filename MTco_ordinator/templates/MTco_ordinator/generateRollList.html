@@ -1,0 +1,22 @@
+{% extends 'superintendent/rollList_home.html' %} {% block title %}Generate RollList{% endblock title %}{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong>
+      Choose the event for which you want to generate the roll list
+      <br>
+     
+      Everytime you generate the roll list, roll list fee upload should be done. 
+      <br>
+      Reminder: <br>
+      Before doing the registrations for the particular event,make sure you upload all the required subjects and
+      finalize them.
+
+    </strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Generate</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

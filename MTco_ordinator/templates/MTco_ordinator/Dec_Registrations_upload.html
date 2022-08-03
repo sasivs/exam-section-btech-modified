@@ -1,0 +1,26 @@
+{% extends 'superintendent/registrationhome.html' %} {% block title %}DEC Registrations{% endblock title %}{% load static %} {% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong>If a Department elective course has been given to choice of the students,registrations can be done here by uploading the file in .xlsx format.
+            <br> Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below
+            <br> 
+            RegNo
+            <br>
+            Sample file for download has been provided below. 
+            </strong> {% if msg %}
+        <p>**Please select all fields**</p>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Submit</button>
+            <br><br>
+            <hr>
+            <label for="download-sample">Download template sheet:</label>
+            <a href="{% url 'MTDownloadSampleAttendanceShortageSheet' %}" name="download-sample" class="btn btn-primary">Download</a>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

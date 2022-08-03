@@ -1,0 +1,105 @@
+{% extends 'superintendent/suphome.html' %} {% block title %}Grades Home{% endblock title %}{% block content %} {% load user_check_tag %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+
+            <ul class="nav flex-column">
+                {% if user|has_group:'Superintendent' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradePointsUpload' %}">Upload Grade Points</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradePointsStatus' %}">Grade Points Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTCGPA' %}">CGPA</a>
+                </li>
+                {% elif user|has_group:'HOD' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesFinalize' %}">Finalize Grades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTCGPA' %}">CGPA</a>
+                </li>
+                {% elif user|has_group:'ExamStaff' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsAdd' %}">Add IX grade students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|has_group:'Faculty' %} {% if user|has_group:'Course-Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesThreshold' %}">Grades Threshold</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTAttendanceShoratgeUpload' %}">Upload Attendance Shortage</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesGenerate' %}">Generate Grades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|has_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradeChallengeUpdate' %}">Grade Challenge Update</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradeChallengeStatus' %}">Grade Challenge Status</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

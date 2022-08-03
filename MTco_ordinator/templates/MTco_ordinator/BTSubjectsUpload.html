@@ -1,0 +1,197 @@
+{% extends 'superintendent/subjecthome.html' %} {% block title %}Subjects Upload{% endblock title %} {% block sub %} {% with url_name=request.resolver_match.url_name %}
+<div class="container">
+    {% if not validRows and not errorRows and not errorRows1 %}
+    <div class="row">
+        {% if url_name == 'MTSupBTSubjectUpload' %}
+        <strong>
+      **DEC(Department Elective Courses) must be uploaded here only**   <br>
+      **OEC(Open Elective Courses) must be uploaded only at Open Elective Subjects Upload option**
+      <br>
+      Upload the subjects information file for the corresponding event  in .xlsx format  having the following fields 
+      <br>
+      Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below:
+      <br>
+      (SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable, OfferedBy, ProgrammeCode)
+      <br>
+      Sample file for download has been provided below. 
+      <br>
+      Select the marks distribution for the course and enter the distribution ratio in the text field.
+      <br>
+      The distribution ratio should be 1 if the selected marks distribution consists of a single distribution(Ex:10+30+10+50).
+      <br>
+      If the selected distribution consists of sub distributions(Ex: 10+30+10+50, 60+40), then ratio should contain as many parts as the distributions(Ex: 1:2)
+      <br>
+      In the above example, there are two distributions, so the ratio consists of three parts.
+      <br>
+
+      </strong> {% endif %} {% if url_name == 'MTSupBTOpenSubjectUpload' %}
+        <strong>
+      **OEC(Open Elective Courses) must be uploaded here only**  <br>
+      **DEC(Department Elective Courses) must be uploaded only at Subjects Upload option**
+
+      <br>
+      Upload the subjects information file for the corresponding event  in .xlsx format  having the following fields 
+      <br>
+      Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below:
+      <br>
+      (SubCode,SubName,Credits,BYear,BSem,Dept,OfferedYear,Type,Category,Regulation,Creditable, OfferedBy, ProgrammeCode)
+      <br>
+      Sample file for download has been provided below. 
+      <br>
+      Select the marks distribution for the course and enter the distribution ratio in the text field.
+      <br>
+      The distribution ratio should be 1 if the selected marks distribution consists of a single distribution(Ex:10+30+10+50).
+      <br>
+      If the selected distribution consists of sub distributions(Ex: 10+30+10+50, 60+40), then ratio should contain as many parts as the distributions(Ex: 1:2).
+      <br>
+      In the above example, there are two distributions, so the ratio consists of three parts.
+      <br>
+      </strong> 
+      {% endif %}
+    </div>
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="upload_file_submit" value="upload_file_submit">Upload</button>
+            <br><br>
+            <hr>
+            <label for="download-sample">Download template sheet:</label>
+            <a href="{% url 'MTDownloadSampleSubjectSheet' %}" name="download-sample" class="btn btn-primary">Download</a>
+        </form>
+    </div>
+    {% endif %} {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %} {% if validRows %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <br>
+        <div class="row">
+            <table>
+                <thead>
+                    <tr>
+                        {% for header in validRows.headers %}
+                        <td style="border: 1px solid black;">{{header}}</td>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in validRows %}
+                    <tr>
+                        <td style="border: 1px solid black">{{row.0}}</td>
+                        <td style="border: 1px solid black">{{row.1}}</td>
+                        <td style="border: 1px solid black">{{row.2}}</td>
+                        <td style="border: 1px solid black">{{row.3}}</td>
+                        <td style="border: 1px solid black">{{row.4}}</td>
+                        <td style="border: 1px solid black">{{row.5}}</td>
+                        <td style="border: 1px solid black">{{row.6}}</td>
+                        <td style="border: 1px solid black">{{row.7}}</td>
+                        <td style="border: 1px solid black">{{row.8}}</td>
+                        <td style="border: 1px solid black">
+                            <input type="text" name="ratio_distribution_{{row.0}}" id="ratio_distribution_{{row.0}}" onkeypress="return isNumberKey(event);">
+                        </td>
+                        <td style="border: 1px solid black">
+                            <select name="mark_distribution_{{row.0}}" id="mark_distribution_{{row.0}}">
+                <option value="">------------</option>
+                {% for dis in marks_distribution %}
+                <option value="{{dis.id}}">{{dis.Distribution}}</option>
+                {% endfor %}
+              </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <button type="submit" name="mark_dis_submit" value="mark_dis_submit">Submit</button>
+    </form>
+    {% endif %} {% if errorRows %}
+    <div class="row">
+        <strong>These subjects are not in respect to the selected event.</strong>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black">SubCode</td>
+                    <td style="border: 1px solid black">SubName</td>
+                    <td style="border: 1px solid black">MYear</td>
+                    <td style="border: 1px solid black">MSem</td>
+                    <td style="border: 1px solid black">Dept</td>
+                    <td style="border: 1px solid black">OfferedYear</td>
+                    <td style="border: 1px solid black">Regulation</td>
+                    <td style="border: 1px solid black">ProgrammeCode</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in errorRows %}
+                <tr>
+                    <td style="border: 1px solid black">{{row.0}}</td>
+                    <td style="border: 1px solid black">{{row.1}}</td>
+                    <td style="border: 1px solid black">{{row.2}}</td>
+                    <td style="border: 1px solid black">{{row.3}}</td>
+                    <td style="border: 1px solid black">{{row.4}}</td>
+                    <td style="border: 1px solid black">{{row.5}}</td>
+                    <td style="border: 1px solid black">{{row.6}}</td>
+                    <td style="border: 1px solid black">{{row.7}}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %} {% if errorRows1 %}
+    <div class="row">
+        <strong>These rows have dissimilar marks distribution and distribution ratio</strong>
+    </div>
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black">SubCode</td>
+                    <td style="border: 1px solid black">SubName</td>
+                    <td style="border: 1px solid black">Creditable</td>
+                    <td style="border: 1px solid black">Credits</td>
+                    <td style="border: 1px solid black">Type</td>
+                    <td style="border: 1px solid black">Category</td>
+                    <td style="border: 1px solid black">RegEventId</td>
+                    <td style="border: 1px solid black">OfferedBy</td>
+                    <td style="border: 1px solid black">ProgrammeCode</td>
+                    <td style="border: 1px solid black">DistributionRatio</td>
+                    <td style="border: 1px solid black">MarkDistribution</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in errorRows1 %}
+                <tr>
+                    <td style="border: 1px solid black">{{row.0}}</td>
+                    <td style="border: 1px solid black">{{row.1}}</td>
+                    <td style="border: 1px solid black">{{row.2}}</td>
+                    <td style="border: 1px solid black">{{row.3}}</td>
+                    <td style="border: 1px solid black">{{row.4}}</td>
+                    <td style="border: 1px solid black">{{row.5}}</td>
+                    <td style="border: 1px solid black">{{row.6}}</td>
+                    <td style="border: 1px solid black">{{row.7}}</td>
+                    <td style="border: 1px solid black">{{row.8}}</td>
+                    <td style="border: 1px solid black">{{row.9}}</td>
+                    <td style="border: 1px solid black">{{row.10}}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endwith %}
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode != 58 && charCode > 31 &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+{% endblock %}

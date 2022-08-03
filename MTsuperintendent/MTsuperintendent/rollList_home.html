@@ -1,0 +1,44 @@
+{% extends 'superintendent/suphome.html' %}{% block title %}RollList Home{% endblock title %}{% load user_check_tag %} {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                {% if user|has_group:'Superintendent' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTRollListStatus' %}">RollList Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTNotRegisteredStatus' %}">NotRegistered Status</a>
+                </li>
+                {% elif user|has_group:'HOD' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTRollListStatus' %}">RollList Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTNotRegisteredStatus' %}">NotRegistered Status</a>
+                </li>
+                {% elif user|has_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGenerateRollList' %}">Generate Roll List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTRollListFeeUpload' %}">RollList Fee Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTRollListStatus' %}">RollList Status</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'MTFinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTNotRegisteredStatus' %}">NotRegistered Status</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,21 @@
+{% extends 'superintendent/faculty_home.html' %}{% block title %}Faculty Info Upload{% endblock title %} {% block sub %}
+
+
+
+
+<div class="container">
+    <div class="row">
+        <strong>Upload the faculty information file in .xlsx format having the following fields <br>
+            Note:Make sure that the order of the fields in the file being uploaded is same as mentioned below:<br>(FacultyId, Name, Phone, Email, Dept)</strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'superintendent/suphome.html' %}{% block title %}Marks Home{% endblock title %} {% block content %} {% load user_check_tag %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                {% if user|has_group:'Superintendent' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                {% elif user|has_group:'Faculty' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksUpload' %}">Marks Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksHodSubmission' %}">Marks Hod Submission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTSampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
+                </li>
+                {% elif user|has_group:'HOD' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksFinalize' %}">Marks Finalize</a>
+                </li>
+                {% elif user|has_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

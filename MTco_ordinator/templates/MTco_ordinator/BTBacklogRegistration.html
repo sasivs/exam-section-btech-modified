@@ -1,0 +1,90 @@
+{% extends 'superintendent/registrationhome.html' %} {% block title %}Backlog Registration{% endblock title %} {% load static %} {% block sub %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+</script>
+
+<div class="container">
+    <div class="row">
+        <strong>**Make Sure you upload grades for the previous required events**
+          <br>
+          By choosing a event ,the list of students eligible for the particular event will be displayed beside
+          <br>
+          After opting the RegNo,the list of subjects for which the student is eligible will be displayed and then the mode(Exam/Study) should be selected
+          </strong>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form.RegEvent }}
+                </div>
+                <div class="col-sm-2">
+                    {{ form.RegNo }}
+                </div>
+            </div>
+            {% if RegNo %}
+            <div>
+                {% if msg == 2 %}
+                <p><strong>**Please select mode of study for selected subjects**</strong></p>
+                {% endif %} {% if msg == 1 %}
+                <p><strong>**Number of credits exceeded**</strong></p>
+                <p><strong>**Study mode({{ study }}) + Exam mode({{ exam }}) credits should be less than 34 while Study mode ({{ study }}) credits should be less than 32**</strong></p>
+                {% endif %}
+                <p> Students who have R grade in a previous offfering of the course should attend in study mode. By default the option that gets selected is Study mode for those cases. You are requested to not change that. </p>
+                <p> This is the registration page for {{RegNo}} : {{Name}} </p>
+            </div>
+            {% endif %}
+            <div class="container">
+                <table>
+                    <th>
+                        <tr>
+                            <td style="border: 1px solid black;">SubCode </td>
+                            <td style="border: 1px solid black;">SubName</td>
+                            <td style="border: 1px solid black;">Credits</td>
+                            <td style="border: 1px solid black;">Mode of Registration</td>
+                            <td style="border: 1px solid black;">Selection(Y/N)</td>
+                            <td style="border: 1px solid black;">Mode(Study)</td>
+                            <td style="border: 1px solid black;">Mode(Exam)</td>
+                        </tr>
+                    </th>
+                    {% for field in form.myFields %}
+                    <tr>
+                        <td style="border: 1px solid black;">
+                            {{ field.0 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.1 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.2 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.6 }}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {{ field.3 }}
+                        </td>
+                        {% for choice in field.4 %}
+                        <td style="border: 1px solid black;">
+                            <div class='form-check form-check-inline'>{{choice.tag}}
+                                <span>{{ choice.choice_label }}</span>
+                            </div>
+
+                        </td>
+                        {% if forloop.last and not forloop.counter0 %}
+                        <td style="border: 1px solid black;">
+                            <div> &nbsp; </div>
+                        </td>
+                        {% endif %} {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+                <input type='submit' name="Submit" value='Submit'>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+{% endblock %}

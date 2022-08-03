@@ -1,0 +1,32 @@
+{% extends 'superintendent/userassignment_home.html' %}{% block title %}HOD Assignment Status{% endblock title %} {% block sub %}
+
+<div class="container">
+    <div class="row">
+        <strong>Status of the Assigned HOD's can be seen here.</strong>
+        <table>
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Id</td>
+                    <td style="border: 1px solid black;">Dept</td>
+                    <td style="border: 1px solid black;">Faculty Name</td>
+                    <td style="border: 1px solid black;">Assign Date</td>
+                    <td style="border: 1px solid black;">Revoke Date</td>
+                    <td style="border: 1px solid black;">user</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hod %}
+                <tr>
+                    <td style="border: 1px solid black;">{{h.id}}</td>
+                    <td style="border: 1px solid black;">{{h.Dept}}</td>
+                    <td style="border: 1px solid black;">{{h.Faculty.Name}}</td>
+                    <td style="border: 1px solid black;">{{h.AssignedDate}}</td>
+                    <td style="border: 1px solid black;">{{h.RevokeDate}}</td>
+                    <td style="border: 1px solid black;">{{h.User.username}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

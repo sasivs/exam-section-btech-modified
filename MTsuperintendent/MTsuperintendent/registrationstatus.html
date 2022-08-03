@@ -1,0 +1,24 @@
+{% extends 'superintendent/suphome.html' %}{% block title %}Registration Status{% endblock title %}{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTSupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTSupBTBacklogRegistrationStatus' %}">Backlog Registration Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTSupBTMakeupRegistrationStatus' %}">Makeup Registration Status</a>
+                </li>
+
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
+    </div>
+    {% endblock %}
