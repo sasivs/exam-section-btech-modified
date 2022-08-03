@@ -182,15 +182,15 @@
 #         db_table='CurrentAcademicYear'
 #         managed=False
 
-# class SubjectBTFacultyInfo(models.Model):
+# class SubjectFacultyInfo(models.Model):
 #     SubId = models.IntegerField()
 #     Section = models.CharField(max_length=10)
 #     FacultyId = models.IntegerField()
 #     class Meta:
-#         db_table = 'SubjectBTFacultyInfo'
+#         db_table = 'SubjectFacultyInfo'
 #         managed = False
 
-# class BTFacultyInfo(models.Model):
+# class FacultyInfo(models.Model):
 #     FacultyId = models.IntegerField(default=100)
 #     Name = models.CharField(max_length=100)
 #     Phone = models.IntegerField()
@@ -198,7 +198,7 @@
 #     Dept = models.IntegerField()
 #     Working = models.BooleanField()
 #     class Meta:
-#         db_table = 'BTFacultyInfo'
+#         db_table = 'FacultyInfo'
 #         managed = False
 
 
@@ -261,8 +261,8 @@
 # class FacultyAssignment(models.Model):
 #     subject = models.ForeignKey(Subjects, on_delete=models.CASCADE, default=1)
 #     Section = models.CharField(max_length=2, default='NA')
-#     faculty = models.ForeignKey(BTFacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
-#     co_ordinator = models.ForeignKey(BTFacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
+#     faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='faculty_facultyInfo', default=0)
+#     co_ordinator = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo', default=0)
 
 #     class Meta:
 #         db_table = 'FacultyAssignment'
@@ -313,24 +313,24 @@
 #         db_table = 'CancelledStudentInfo'
 #         managed = False
 
-# class BTStudentGrades(models.Model):
+# class StudentGrades(models.Model):
 #     RegId= models.IntegerField()
 #     RegEventId = models.IntegerField()
 #     Regulation = models.IntegerField()
 #     Grade = models.CharField(max_length=2)
 #     AttGrade = models.CharField(max_length=2)
 #     class Meta:
-#         db_table = 'BTStudentGrades'
+#         db_table = 'StudentGrades'
 #         managed = False
 
-# class BTStudentGrades_Staging(models.Model):
+# class StudentGrades_Staging(models.Model):
 #     RegId = models.IntegerField()
 #     RegEventId = models.IntegerField()
 #     Regulation = models.IntegerField()
 #     Grade = models.CharField(max_length=2)
 #     AttGrade = models.CharField(max_length=2)
 #     class Meta:
-#         db_table = 'BTStudentGrades_Staging'
+#         db_table = 'StudentGrades_Staging'
 #         managed = False
 
 
@@ -522,20 +522,20 @@
 
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
-# class BTFaculty_user(models.Model):
+# class Faculty_user(models.Model):
 #     User= models.ForeignKey(User, on_delete=models.CASCADE)
-#     Faculty = models.ForeignKey(BTFacultyInfo, on_delete=models.CASCADE)
+#     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
 #     AssignDate = models.DateField(auto_now_add=True)
 #     RevokeDate = models.DateField(null=True)
 #     class Meta:
-#         db_table = 'BTFaculty_user'
+#         db_table = 'Faculty_user'
 #         managed = True
 
 
 # class Faculty_Coordinator(models.Model):
 #     User= models.ForeignKey(User, on_delete=models.CASCADE
 #     )
-#     Faculty = models.ForeignKey(BTFacultyInfo, on_delete=models.CASCADE)
+#     Faculty = models.ForeignKey(FacultyInfo, on_delete=models.CASCADE)
 #     AssignDate = models.DateField(auto_now_add=True)
 #     RevokeDate = models.DateField(null=True)
 #     class Meta:
@@ -544,13 +544,13 @@
 #         managed = True
 
 
-# class BTAttendance_Shortage(models.Model):
+# class Attendance_Shortage(models.Model):
 #     Student = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
 #     RegEventId =models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
 #     Subject = models.ForeignKey(Subjects,on_delete=models.CASCADE)
 
 #     class Meta:
-#         db_table = 'BTAttendance_Shortage'
+#         db_table = 'Attendance_Shortage'
 #         managed = True
 
 # class PartialSeatCancellation(models.Model):

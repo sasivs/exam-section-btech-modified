@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render
-from co_ordinator.models import FacultyAssignment
-from hod.models import BTFaculty_user 
+from co_ordinator.models import BTFacultyAssignment
+from hod.models import Faculty_user 
 from superintendent.user_access_test import grades_threshold_access
 
 
@@ -10,8 +10,8 @@ from superintendent.user_access_test import grades_threshold_access
 @user_passes_test(grades_threshold_access)
 def courses_assigned(request):
     user = request.user
-    faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
+    faculty = Faculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
     if not faculty:
         raise Http404('You are not assigned any course yet.')
-    subjects = FacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
+    subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
     return render(request, 'faculty/CoursesAssigned.html', {'subjects':subjects})

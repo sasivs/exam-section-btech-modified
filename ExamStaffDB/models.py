@@ -1,9 +1,9 @@
 from django.db import models
-from co_ordinator.models import StudentRegistrations
+from co_ordinator.models import BTStudentRegistrations
 
 # Create your models here.
 
-class BTStudentInfo(models.Model):
+class StudentInfo(models.Model):
     CYCLE_CHOICES = (
         (10,'PHYSICS'),
         (9,'CHEMISTRY')
@@ -24,7 +24,7 @@ class BTStudentInfo(models.Model):
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
 
     class Meta:
-        db_table = 'BTStudentInfo'
+        db_table = 'StudentInfo'
         constraints = [
             models.UniqueConstraint(fields=['RegNo'], name='unique_StudentInfo_RegNo'),
             models.UniqueConstraint(fields=['RollNo'], name='unique_StudentInfo_RollNo'),
@@ -32,32 +32,32 @@ class BTStudentInfo(models.Model):
         managed = True
 
 
-class BTMandatoryCredits(models.Model):
+class MandatoryCredits(models.Model):
     Regulation = models.IntegerField()
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     Credits = models.IntegerField()
     class Meta:
-        db_table = 'BTMandatoryCredits'
+        db_table = 'MandatoryCredits'
         unique_together = (('Regulation', 'Dept', 'BYear'))
         managed = True
 
 
-class BTIXGradeStudents(models.Model):
+class IXGradeStudents(models.Model):
     GRADE_CHOICES = (
         ('I', 'I'),
         ('X', 'X')
     )
-    Registration = models.ForeignKey(StudentRegistrations, on_delete=models.CASCADE)
+    Registration = models.ForeignKey(BTStudentRegistrations, on_delete=models.CASCADE)
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
 
     class Meta:
-        db_table = 'BTIXGradeStudents'
+        db_table = 'IXGradeStudents'
         unique_together = (('Registration', 'Grade'))
         managed = True
 
 
-class BTFacultyInfo(models.Model):
+class FacultyInfo(models.Model):
     FacultyId = models.IntegerField(default=100)
     Name = models.CharField(max_length=100)
     Phone = models.IntegerField()
@@ -65,7 +65,7 @@ class BTFacultyInfo(models.Model):
     Dept = models.IntegerField()
     Working = models.BooleanField()
     class Meta:
-        db_table = 'BTFacultyInfo'
+        db_table = 'FacultyInfo'
         constraints = [
             models.UniqueConstraint(fields=['FacultyId'], name='unique_facultyinfo_facultyid')
         ]

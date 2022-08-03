@@ -61,7 +61,7 @@
 #         db_table = 'StudentGradePointsMV'
 #         managed = False
 
-# class BTStudentInfo(models.Model):
+# class StudentInfo(models.Model):
 #     RegNo = models.IntegerField()
 #     RollNo = models.IntegerField()
 #     Name = models.CharField(max_length=70)
@@ -114,16 +114,16 @@
 #         db_table='DegreeAwardees'
 #         managed=False
 
-# class BTFacultyInfo(models.Model):
+# class FacultyInfo(models.Model):
 #     Name=models.CharField(max_length=70)
 #     PhoneNumber=models.BigIntegerField()
 #     EmailID = models.CharField(max_length=70)
 #     class Meta:
-#         db_table='BTFacultyInfo'
+#         db_table='FacultyInfo'
 #         managed=False
 
 # class FacultyResource(resources.ModelResource):
 #     class Meta:
-#         model=BTFacultyInfo
+#         model=FacultyInfo
 
  

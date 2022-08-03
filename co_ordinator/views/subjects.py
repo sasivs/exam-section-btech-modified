@@ -6,7 +6,7 @@ from django.urls import reverse
 from SupExamDB.views import is_Superintendent
 from co_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm
-from co_ordinator.models import Subjects_Staging, Subjects
+from co_ordinator.models import BTSubjects_Staging, BTSubjects
 from co_ordinator.resources import SubjectStagingResource
 from superintendent.models import BTRegistrationStatus, BTHOD, BTMarksDistribution, BTCycleCoordinator
 from hod.models import BTCoordinator
@@ -78,7 +78,7 @@ def subject_upload(request):
                     errorRows.append(newRow)
                 else:
                     newDataset.append(newRow)
-            Subject_resource = SubjectStagingResource()
+            Subject_resource = BTSubjectStagingResource()
             result = Subject_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 Subject_resource.import_data(newDataset, dry_run=False)
@@ -107,7 +107,7 @@ def subject_upload(request):
                 request.session['subErrRows'] = subErrRows
                 request.session['errorRows'] = errorRows
                 # request.session['currentRegEventId'] = currentRegEventId              
-                return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
+                return HttpResponseRedirect(reverse('BTSupBTSubjectsUploadErrorHandler'))
             if errorRows:
                 return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
             msg = 'Subjects Uploaded successfully.'
@@ -127,7 +127,7 @@ def subject_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(subjectRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    Subjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
+                    BTSubjects_Staging.objects.filter(SubCode=fRow[0],RegEventId=currentRegEventId).update(SubName=fRow[1],\
                         Creditable=fRow[2],Credits=fRow[3],Type=fRow[4],Category=fRow[5],OfferedBy=fRow[7],\
                              DistributionRatio=fRow[8], MarkDistribution=fRow[9])
             return render(request, 'co_ordinator/BTSubjectsUploadSuccess.html')
@@ -175,9 +175,9 @@ def subject_upload_status(request):
                 currentRegEventId = currentRegEventId[0].id
                 subjects = []
                 if(mode=='R' or mode=='D'):
-                    subjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
+                    subjects = BTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
                 else:
-                    subjects = Subjects.objects.filter(RegEventId=currentRegEventId)
+                    subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId)
                 return render(request, 'co_ordinator/BTSubjectsUploadStatus.html',{'subjects':subjects,'form':form})
     else:
         form = RegistrationsEventForm(regIDs)
@@ -220,7 +220,7 @@ def subject_delete(request):
                     deletedSubjects = []
                     for sub in form.myFields:
                         if(form.cleaned_data['Check'+sub[0]]==True):
-                            subject = Subjects_Staging.objects.filter(SubCode=sub[0],RegEventId=currentRegEventId)
+                            subject = BTSubjects_Staging.objects.filter(SubCode=sub[0],RegEventId=currentRegEventId)
                             subject.delete()
                             deletedSubjects.append(sub[0]+':' + str(sub[4]))
                         else:
@@ -269,9 +269,9 @@ def subject_finalize(request):
                     Dept=dept,Mode=mode,Regulation=regulation)
                 currentRegEventId = currentRegEventId[0].id
                 subjects = []
-                subjects = Subjects_Staging.objects.filter(RegEventId=currentRegEventId)
+                subjects = BTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
                 for sub in subjects:
-                   s=Subjects(SubCode=sub.SubCode,SubName=sub.SubName,Creditable=sub.Creditable,Credits=sub.Credits,\
+                   s=BTSubjects(SubCode=sub.SubCode,SubName=sub.SubName,Creditable=sub.Creditable,Credits=sub.Credits,\
                            OfferedBy=sub.OfferedBy,Type=sub.Type,Category=sub.Category,RegEventId=sub.RegEventId, \
                             DistributionRatio=sub.DistributionRatio, MarkDistribution=sub.MarkDistribution)
                    s.save() 
@@ -339,7 +339,7 @@ def open_subject_upload(request):
                     errorRows.append(newRow)
                 else:
                     newDataset.append(newRow)
-            Subject_resource = SubjectStagingResource()
+            Subject_resource = BTSubjectStagingResource()
             result = Subject_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 Subject_resource.import_data(newDataset, dry_run=False)
@@ -368,7 +368,7 @@ def open_subject_upload(request):
                 request.session['subErrRows'] = subErrRows
                 request.session['errorRows'] = errorRows
                 # request.session['currentRegEventId'] = currentRegEventId              
-                return HttpResponseRedirect(reverse('SupBTSubjectsUploadErrorHandler'))
+                return HttpResponseRedirect(reverse('BTSupBTSubjectsUploadErrorHandler'))
             if errorRows:
                 return render(request, 'co_ordinator/BTSubjectsUpload.html', {'form':form, 'errorRows1':errorRows})
             msg = 'Subjects Uploaded successfully.'
@@ -383,7 +383,7 @@ def open_subject_upload(request):
 def download_sample_subject_sheet(request):
     from co_ordinator.utils import SubjectsTemplateBookGenerator
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='Subjects')
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='BTSubjects')
     BookGenerator = SubjectsTemplateBookGenerator()
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)

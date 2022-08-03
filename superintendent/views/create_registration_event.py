@@ -2,7 +2,7 @@ from venv import create
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
-from superintendent.models import BTRegistrationStatus, BTProgrammeModel
+from superintendent.models import RegistrationStatus, ProgrammeModel
 from superintendent.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
 
 # Create your views here.
@@ -23,26 +23,26 @@ def create_registration_event(request):
 
             if form.cleaned_data.get('dept')!='all':
                 Dept = int(Dept)
-                if BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
+                if RegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode).exists():
                     msg = 'Registration event already created.'
                     return render(request, 'superintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
                 else:
-                    rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
+                    rg_status_obj = RegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                         Mode=Mode, RollListStatus=1, RegistrationStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
                     rg_status_obj.save()
                     msg = 'The Event {} has been created successfully'.format(rg_status_obj.__str__())
             else:
                 if form.cleaned_data.get('bYear') == 1: 
-                    departments = BTProgrammeModel.objects.filter(ProgrammeType='UG', Dept__in=[10,9])
+                    departments = ProgrammeModel.objects.filter(ProgrammeType='UG', Dept__in=[10,9])
                 else:
-                    departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
+                    departments = ProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
                 created_dept = []
                 for department in departments:
                     dept = department.Dept
-                    if not BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
+                    if not RegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
                         Mode=Mode).exists():
-                        rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
+                        rg_status_obj = RegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
                             Mode=Mode, RollListStatus=1, RegistrationStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
                         rg_status_obj.save()
                         created_dept.append(department.Specialization)
@@ -79,10 +79,10 @@ def update_manage_registrations(request):
             gradesStatus = int(request.POST['grades-status'])
             Mode = request.POST['mode']
             regulation = request.POST['regulation']
-            rg_status = BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
+            rg_status = RegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode)
             if(len(rg_status)==0):
-                rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
+                rg_status_obj = RegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode, RollListStatus=rollStatus, RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus, Status=Status)
                 msg = f'The event {rg_status_obj.AYear}:{rg_status_obj.ASem}:{rg_status_obj.BYear}:{rg_status_obj.BSem}:\
                         {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \
@@ -92,7 +92,7 @@ def update_manage_registrations(request):
                 
             else:
                 rg_status.update(Status=Status,RollListStatus=rollStatus,RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus)
-                rg_status_obj = BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
+                rg_status_obj = RegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode).first()
                 msg = f'The event {rg_status_obj.AYear}:{rg_status_obj.ASem}:{rg_status_obj.BYear}:{rg_status_obj.BSem}:\
                     {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \

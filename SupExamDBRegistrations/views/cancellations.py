@@ -1,7 +1,7 @@
 # from operator import itemgetter
 # from django.shortcuts import render
 # from SupExamDBRegistrations.forms import BacklogRegistrationForm, StudentCancellationForm, StudentSemesterCancellationForm
-# from SupExamDBRegistrations.models import CancelledStudentInfo, NotPromoted, StudentBacklogs, StudentCancellation, StudentGradePoints, BTStudentGrades, StudentInfo,StudentRegistrations, CancelledStudentInfo, Subjects_Staging
+# from SupExamDBRegistrations.models import CancelledStudentInfo, NotPromoted, StudentBacklogs, StudentCancellation, StudentGradePoints, StudentGrades, StudentInfo,StudentRegistrations, CancelledStudentInfo, Subjects_Staging
 # from .home import is_Superintendent
 # from django.contrib.auth.decorators import login_required, user_passes_test 
 # from django.contrib.auth import logout 
@@ -21,7 +21,7 @@
 #         if(form.is_valid()):
 #             print(request.POST)
 #             regno = int(form.cleaned_data['RegNo'])
-#             studentInfo = BTStudentInfo.objects.filter(RegNo=regno)
+#             studentInfo = StudentInfo.objects.filter(RegNo=regno)
 #             context = {'form':form}
 #             if(len(studentInfo)!=0):
 #                 if studentInfo[0].RollNo:
@@ -29,14 +29,14 @@
 #                 else:
 #                     context['RegNo'] = studentInfo[0].RegNo
 #                 context['Name'] = studentInfo[0].Name
-#             entries = BTStudentGrades.objects.filter(RegNo=regno).values()
+#             entries = StudentGrades.objects.filter(RegNo=regno).values()
 #             for entry in entries:
 #                 newRow = StudentCancellation(RegNo=entry['RegNo'],AYear=entry['AYear'],ASem=entry['ASem'],SubCode=entry['SubCode'],OfferedYear=entry['OfferedYear'],Dept=entry['Dept'],Regulation=entry['Regulation'],Grade=entry['Grade'],AttGrade=entry['AttGrade'])
 #                 newRow.save()
-#             BTStudentGrades.objects.filter(RegNo=regno).delete()
+#             StudentGrades.objects.filter(RegNo=regno).delete()
 #             newRow = CancelledStudentInfo(RegNo = StudentInfo[0].RegNo,RollNo = StudentInfo[0].RollNo,Name = StudentInfo[0].Name,Regulation = StudentInfo[0].Regulation,Dept = StudentInfo[0].Dept,Gender = StudentInfo[0].Gender,Category = StudentInfo[0].Category,GaurdianName = StudentInfo[0].GaurdianName,Phone = StudentInfo[0].Phone,email = StudentInfo[0].email,Address1 = StudentInfo[0].Address1,Address2 = StudentInfo[0].Address2)
 #             newRow.save()
-#             BTStudentInfo.objects.filter(RegNo = regno).delete()
+#             StudentInfo.objects.filter(RegNo = regno).delete()
 #             return render(request,'SupExamDBRegistrations/BTStudentCancellation.html',context)
 #         else:
 #             print('form validation failed')
@@ -60,14 +60,14 @@
 #             print(request.POST)
 #             regno = int(request.POST['RegNo'])
 #             byear = int(request.POST['BYear'])
-#             studentInfo = BTStudentInfo.objects.filter(RegNo=regno)
+#             studentInfo = StudentInfo.objects.filter(RegNo=regno)
 #             if(len(studentInfo)!=0):
 #                 if studentInfo[0].RollNo:
 #                     context['RollNo'] = studentInfo[0].RollNo
 #                 else:
 #                     context['RegNo'] = studentInfo[0].RegNo
 #                 context['Name'] = studentInfo[0].Name
-#             entries = BTStudentGrades.objects.filter(RegNo=regno).values()
+#             entries = StudentGrades.objects.filter(RegNo=regno).values()
 #             dept = entries.filter(RegNo = regno).values('Dept').distinct()
 #             print(dept)
 #             dept = dept[0]['Dept']
@@ -89,8 +89,8 @@
 #             #     newRow = StudentCancellation(RegNo=entry['RegNo'],AYear=entry['AYear'],ASem=entry['ASem'],SubCode=entry['SubCode'],OfferedYear=entry['OfferedYear'],Dept=entry['Dept'],Regulation=entry['Regulation'],Grade=entry['Grade'],AttGrade=entry['AttGrade'])
 #             #     newRow.save()
 #             for sub in SubCodes:
-#                 # BTStudentGrades.objects.filter(RegNo=regno,SubCode=sub['SubCode']).delete()
-#                 l = BTStudentGrades.objects.filter(RegNo=regno,SubCode=sub['SubCode']).values()
+#                 # StudentGrades.objects.filter(RegNo=regno,SubCode=sub['SubCode']).delete()
+#                 l = StudentGrades.objects.filter(RegNo=regno,SubCode=sub['SubCode']).values()
 #                 print(l)
 #             # NotPromoted.objects.filter(RegNo = regno).update(PoA = 'R')
             

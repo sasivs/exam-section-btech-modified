@@ -3,7 +3,7 @@ from django.shortcuts import render
 from hod.models import BTCoordinator
 from superintendent.user_access_test import is_Superintendent, registration_status_access
 from co_ordinator.forms import  RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
-from co_ordinator.models import BacklogRegistrationSummary, RegularRegistrationSummary, MakeupRegistrationSummary
+from co_ordinator.models import BTBacklogRegistrationSummary, BTRegularRegistrationSummary, BTMakeupRegistrationSummary
 from superintendent.models import BTCycleCoordinator, BTProgrammeModel, BTRegistrationStatus, BTHOD
 
 
@@ -18,7 +18,7 @@ from superintendent.models import BTCycleCoordinator, BTProgrammeModel, BTRegist
 # @login_required(login_url="/login/")
 # @user_passes_test(is_Superintendent)
 # def btech_makeup_registration_status(request,dept,year):
-#     studentMakeupBacklogsVsRegistrations = StudentMakeupBacklogsVsRegistrations.objects.filter(BYear=year).filter(Dept=dept)
+#     studentMakeupBacklogsVsRegistrations = BTStudentMakeupBacklogsVsRegistrations.objects.filter(BYear=year).filter(Dept=dept)
 #     return render(request, 'SupExamDBRegistrations/DeptYearRegistrationStatus.html',
 #                     { 'studentMakeupBacklogsVsRegistrations':studentMakeupBacklogsVsRegistrations }  )
 
@@ -63,7 +63,7 @@ def btech_regular_registration_status(request):
                 studymode = strs[6]
                 deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
-                studentRegistrations = RegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                studentRegistrations = BTRegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept).order_by('RegNo')
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
@@ -113,7 +113,7 @@ def btech_backlog_registration_status(request):
                 studymode = strs[6]
                 deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
-                studentRegistrations = BacklogRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                studentRegistrations = BTBacklogRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept)
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
@@ -162,7 +162,7 @@ def btech_makeup_registration_status(request):
                 mode = strs[5]
                 deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
-                studentRegistrations = MakeupRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
+                studentRegistrations = BTMakeupRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, Dept=dept)
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:

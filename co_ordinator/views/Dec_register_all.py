@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import DeptElectiveRegsForm
-from co_ordinator.models import RollLists_Staging, Subjects, StudentRegistrations_Staging
+from co_ordinator.models import BTRollLists_Staging, BTSubjects, BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
 from hod.models import BTCoordinator
 
@@ -14,7 +14,7 @@ def dept_elective_regs_all(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
     if 'Co-ordinator' in groups:
-        coordinator = BTCoordinator.octs.filter(User=user, RevokeDate__isnull=True).first()
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -45,12 +45,12 @@ def dept_elective_regs_all(request):
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
 
-            rolls = RollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
+            rolls = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
             for i in rolls:
-                reg = StudentRegistrations_Staging(RegNo=i.student.RegNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
+                reg = BTStudentRegistrations_Staging(RegNo=i.student.RegNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                 reg.save()
             rolls = rolls.values_list('student__RegNo', flat=True)
-            StudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(RegNo__in=rolls).delete()
+            BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(RegNo__in=rolls).delete()
             return render(request, 'co_ordinator/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
@@ -64,7 +64,7 @@ def dept_elective_regs_all(request):
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
-            subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
+            subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
             form = DeptElectiveRegsForm(regIDs,subjects,data)
     else:

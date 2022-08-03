@@ -1,6 +1,6 @@
 from import_export import resources
-from superintendent.models import BTGradePoints
+from superintendent.models import GradePoints
 
 class GradePointsResource(resources.ModelResource):
     class Meta:
-        model = BTGradePoints
+        model = GradePoints

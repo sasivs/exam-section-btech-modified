@@ -2,8 +2,8 @@
 # from django.shortcuts import render
 # from django.urls import reverse
 # from SupExamDBRegistrations.forms import GradesUploadForm, GradesFinalizeForm, GradeChallengeForm, GradesUpdateForm
-# from SupExamDBRegistrations.models import RegistrationStatus, BTStudentGrades,BTStudentGrades_Staging, StudentRegistrations, Subjects
-# from SupExamDBRegistrations.resources import BTStudentGrades_StagingResource, GradeChallengeResource
+# from SupExamDBRegistrations.models import RegistrationStatus, StudentGrades,StudentGrades_Staging, StudentRegistrations, Subjects
+# from SupExamDBRegistrations.resources import StudentGrades_StagingResource, GradeChallengeResource
 # from .home import is_Superintendent
 # from django.contrib.auth.decorators import login_required, user_passes_test 
 # from tablib import Dataset
@@ -65,7 +65,7 @@
 #                     newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],'')
 #                     errorDataset.append(newRow)
 #             # print(errorDataset)
-#             Grades_resource = BTStudentGrades_StagingResource()
+#             Grades_resource = StudentGrades_StagingResource()
 #             result = Grades_resource.import_data(newDataset, dry_run=True)
 #             if not result.has_errors():
 #                 Grades_resource.import_data(newDataset, dry_run=False)
@@ -126,7 +126,7 @@
 #             for cIndex, fRow in enumerate(gradesRows):
 #                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
 #                     if((fRow[8])!=''):
-#                         BTStudentGrades_Staging.objects.filter(RegId=fRow[8]).update(Regulation=regevent.Regulation,\
+#                         StudentGrades_Staging.objects.filter(RegId=fRow[8]).update(Regulation=regevent.Regulation,\
 #                             Grade=fRow[2],AttGrade=fRow[7])
 #             return render(request, 'SupExamDBRegistrations/GradesUploadSuccess.html')
 #     else:
@@ -156,9 +156,9 @@
 # #                 currentRegEventId = RegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
 # #                     Dept=dept,Mode=mode,Regulation=regulation)
 # #                 currentRegEventId = currentRegEventId[0].id
-# #                 grades = BTStudentGrades_Staging.objects.filter(RegEventId=currentRegEventId)
+# #                 grades = StudentGrades_Staging.objects.filter(RegEventId=currentRegEventId)
 # #                 for g in grades:
-# #                     gr = BTStudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
+# #                     gr = StudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
 # #                     gr.save()
 # #                 RefreshMaterializedViews()
 # #                 return render(request, 'SupExamDBRegistrations/GradesFinalizeSuccess.html')
@@ -226,14 +226,14 @@
 #                             regid = reg.id
 #                             break
 #                     if regid != '':
-#                         if BTStudentGrades_Staging.objects.filter(RegId=regid, RegEventId=currentRegEventId, Regulation=regulation,\
+#                         if StudentGrades_Staging.objects.filter(RegId=regid, RegEventId=currentRegEventId, Regulation=regulation,\
 #                              Grade=row[2], AttGrade=row[7]).exists():
 #                             if row[2]==row[8]:
 #                                 errrorSameGrades.append(row)
 #                             else:
 #                                 newRow = (regid, row[2], row[8])
 #                                 newDataset.append(newRow)
-#                                 grade = BTStudentGrades_Staging.objects.get(RegId=regid, RegEventId=currentRegEventId, Regulation=regulation,\
+#                                 grade = StudentGrades_Staging.objects.get(RegId=regid, RegEventId=currentRegEventId, Regulation=regulation,\
 #                                     Grade=row[2], AttGrade=row[7])
 #                                 grade.Grade = row[8]
 #                                 grade.save() 
@@ -271,7 +271,7 @@
 #                 else:
 #                     print('Something went wrong in plain import')
 #                 for i in list(errorIndices):
-#                     stud_grade = BTStudentGrades_Staging.objects.get(RegId=newDataset[i][0])
+#                     stud_grade = StudentGrades_Staging.objects.get(RegId=newDataset[i][0])
 #                     stud_reg = StudentRegistrations.objects.get(id=newDataset[i][0])
 #                     sub = Subjects.objects.get(id=stud_reg.sub_id)
 #                     regEvent = RegistrationStatus.objects.get(id=sub.RegEventId)

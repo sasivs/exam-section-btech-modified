@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
 from superintendent.user_access_test import is_ExamStaff, faculty_info_status_access
 from ExamStaffDB.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
-from hod.models import  BTCoordinator
-from ExamStaffDB.models import BTFacultyInfo
-from superintendent.models import BTHOD
+from hod.models import  Coordinator
+from ExamStaffDB.models import FacultyInfo
+from superintendent.models import HOD
 from ExamStaffDB.resources import FacultyInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -26,7 +26,7 @@ def faculty_upload(request):
                 errorDataset = Dataset()#To store subjects rows which are not related to present registration event
                 errorDataset.headers = ['FacultyId','Name','Phone','Email','Dept','Working']
                 newDataset.headers = ['FacultyId','Name','Phone','Email','Dept','Working']
-                fac_id =  BTFacultyInfo.objects.all()
+                fac_id =  FacultyInfo.objects.all()
                 fac_id = [row.FacultyId for row in fac_id]
                 for i in range(len(dataset)):
                     row = dataset[i]
@@ -90,7 +90,7 @@ def FacultyInfo_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(FacultyInfoRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    BTFacultyInfo.objects.filter(FacultyId=fRow[0]).update(\
+                    FacultyInfo.objects.filter(FacultyId=fRow[0]).update(\
                         Name=fRow[1],Phone=fRow[2],Email=fRow[3],Dept=fRow[4],Working=fRow[5])
             return render(request, 'ExamStaffDB/FacultyInfoUploadSuccess.html')
     else:
@@ -103,26 +103,26 @@ def FacultyInfo_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'ExamStaff' in groups:
-        fac_info = BTFacultyInfo.objects.all()
+        fac_info = FacultyInfo.objects.all()
     elif 'HOD' in groups:
-        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        fac_info = BTFacultyInfo.objects.filter(Dept=hod.Dept)
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        fac_info = FacultyInfo.objects.filter(Dept=hod.Dept)
     elif 'Co-ordinator' in groups:
-        co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        fac_info = BTFacultyInfo.objects.filter(Dept=co_ordinator.Dept)
+        co_ordinator = Coordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        fac_info = FacultyInfo.objects.filter(Dept=co_ordinator.Dept)
     return render(request, 'ExamStaffDB/FacultyInfoStatus.html',{'fac_info': fac_info})
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def Faculty_delete(request):
-    fac_info = BTFacultyInfo.objects.filter(Working =True)
+    fac_info = FacultyInfo.objects.filter(Working =True)
     fac_info = [(row.FacultyId,row.Name,row.Phone,row.Email,row.Dept,row.Working) for row in fac_info]
     if(request.method=='POST'):
         form = FacultyDeletionForm(fac_info,request.POST)
         if(form.is_valid()):
             for cIndex, fRow in enumerate(fac_info):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    fac =BTFacultyInfo.objects.filter(FacultyId=fRow[0])
+                    fac =FacultyInfo.objects.filter(FacultyId=fRow[0])
                     fac.update(Working = False)
             return render(request, 'ExamStaffDB/FacultyInfoDeletionSuccess.html')
                 
@@ -166,7 +166,7 @@ def Faculty_delete(request):
 # @user_passes_test(is_Superintendent)
 # def faculty_assignment_detail(request,pk):
 #     subject = Subjects.objects.get(id=pk)
-#     faculty = BTFacultyInfo.objects.all()
+#     faculty = FacultyInfo.objects.all()
 #     sections = RollLists.objects.filter(RegEventId_id=request.session.get('currentRegEventId')).values_list('Section', flat=True).distinct()
 #     faculty_assigned = FacultyAssignment.objects.filter(subject=subject)
 #     co_ordinator=''

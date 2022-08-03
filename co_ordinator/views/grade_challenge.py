@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from superintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
-from co_ordinator.models import FacultyAssignment, GradeChallenge, RollLists 
+from co_ordinator.models import BTFacultyAssignment, BTGradeChallenge, BTRollLists 
 from hod.models import BTCoordinator
 from faculty.models import BTMarks_Staging, BTAttendance_Shortage, BTStudentGrades_Staging
 from co_ordinator.forms import GradeChallengeForm, GradeChallengeStatusForm
@@ -24,11 +24,11 @@ def grade_challenge(request):
                 required_grade_obj = BTStudentGrades_Staging.objects.filter(Registration=required_marks_obj.Registration).first()
                 exam_outer_index = request.POST.get('exam-type').split(',')[0]
                 exam_inner_index = request.POST.get('exam-type').split(',')[1]
-                grade_challenge_obj = GradeChallenge.objects.filter(Registration=required_marks_obj.Registration)
+                grade_challenge_obj = BTGradeChallenge.objects.filter(Registration=required_marks_obj.Registration)
                 if grade_challenge_obj:
                     grade_challenge_obj = grade_challenge_obj.first()
                 else:
-                    grade_challenge_obj = GradeChallenge(Registration=required_marks_obj.Registration, prev_marks=required_marks_obj.Marks, \
+                    grade_challenge_obj = BTGradeChallenge(Registration=required_marks_obj.Registration, prev_marks=required_marks_obj.Marks, \
                         prev_grade=required_grade_obj.Grade)
                 marks_string = required_marks_obj.Marks.split(',')
                 marks = [mark.split('+') for mark in marks_string]
@@ -42,7 +42,7 @@ def grade_challenge(request):
 
                 attendance_shortage = BTAttendance_Shortage.objects.filter(Registration=required_marks_obj.Registration)
 
-                ix_grades = BTIXGradeStudents.objects.filter(Registration=required_marks_obj.Registration)
+                ix_grades = IXGradeStudents.objects.filter(Registration=required_marks_obj.Registration)
 
 
                 if attendance_shortage:
@@ -58,9 +58,9 @@ def grade_challenge(request):
                 
                 else:
                     if BTGradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), uniform_grading=True).exists():
-                        thresholds = BTGradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), uniform_grading=True).order_by('-ThresholdMark')
+                        thresholds = GradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), uniform_grading=True).order_by('-ThresholdMark')
                     else:
-                        roll_list_obj = RollLists.objects.filter(Student__RegNo=request.POST.get('regd_no'), RegEventId_id=request.POST.get('regID'))
+                        roll_list_obj = BTRollLists.objects.filter(Student__RegNo=request.POST.get('regd_no'), RegEventId_id=request.POST.get('regID'))
                         thresholds = BTGradesThreshold.objects.filter(Subject_id=request.POST.get('subject'), RegEventId_id=request.POST.get('regEvent'), unifrom_grading=False, Section=roll_list_obj.Section).order_by('-ThresholdMark')
 
                     for threshold in thresholds:
@@ -87,7 +87,7 @@ def grade_challenge(request):
 def grade_challenge_status(request):
     user = request.user
     co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True)
-    subjects = FacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__BYear=co_ordinator.BYear, RegEventId__Status=1)
+    subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__BYear=co_ordinator.BYear, RegEventId__Status=1)
     if request.method == 'POST':
         form = GradeChallengeStatusForm(subjects, request.POST)
         if form.is_valid():
@@ -95,11 +95,11 @@ def grade_challenge_status(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             if request.POST.get('submit'):
-                grade_challenge_objs = GradeChallenge.objects.filter(Registration__sub_id=subject, Registration__RegEventId=regEvent)
+                grade_challenge_objs = BTGradeChallenge.objects.filter(Registration__sub_id=subject, Registration__RegEventId=regEvent)
             elif request.POST.get('delete'):
                 grade_challenge_id = request.POST.get('delete').split('-')[1]
-                GradeChallenge.objects.filter(id=grade_challenge_id).delete()
-                grade_challenge_objs = GradeChallenge.objects.filter(Registration__sub_id=subject, Registration__RegEventId=regEvent)
+                BTGradeChallenge.objects.filter(id=grade_challenge_id).delete()
+                grade_challenge_objs = BTGradeChallenge.objects.filter(Registration__sub_id=subject, Registration__RegEventId=regEvent)
                 msg = 'Grade Challenge object is deleted successfully.'
             return render(request, 'co_ordinator/GradeChallengeStatus.html', {'form':form, 'grade_challenge':grade_challenge_objs, 'msg':msg})
     else:

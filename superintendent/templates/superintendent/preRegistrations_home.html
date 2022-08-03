@@ -1,4 +1,9 @@
-{% extends 'superintendent/suphome.html' %} {% block title %}Pre-Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
+{% extends 'superintendent/suphome.html' %}
+{% block title %}Pre-Registrations Home{% endblock title %}
+
+
+{% block content %}
+{% load user_check_tag %}
 
 <div class="container">
     <div class="row">
@@ -6,20 +11,20 @@
             <ul class="nav flex-column">
                 {% if user|has_group:"Superintendent" %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'AddRegulation' %}">Add Regulation</a>
+                    <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'CreateRegistrationEvent' %}">Create Registration Event</a>
+                    <a class="nav-link" href="{% url 'BTCreateRegistrationEvent' %}">Create Registration Event</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'UpdateManageRegistrations' %}">Update Registration Event</a>
+                    <a class="nav-link" href="{% url 'BTUpdateManageRegistrations' %}">Update Registration Event</a>
                 </li>
                 {% elif user|has_group:"ExamStaff" %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'StudentInfoFileUpload' %}">Upload Student Info</a>
+                    <a class="nav-link" href="{% url 'BTStudentInfoFileUpload' %}">Upload Student Info</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'UpdateRollNumber' %}">Update Roll Number</a>
+                    <a class="nav-link" href="{% url 'BTUpdateRollNumber' %}">Update Roll Number</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMandatoryCredits' %}">Mandatory Credits</a>

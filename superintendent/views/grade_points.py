@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
 from superintendent.user_access_test import is_Superintendent
 from superintendent.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
-from superintendent.models import BTGradePoints
+from superintendent.models import GradePoints
 from superintendent.resources import GradePointsResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -84,7 +84,7 @@ def grade_points_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(errRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    BTGradePoints.objects.filter(Regulation=fRow[0], Grade=fRow[1]).update(Points=fRow[2])
+                    GradePoints.objects.filter(Regulation=fRow[0], Grade=fRow[1]).update(Points=fRow[2])
             return render(request, 'superintendent/GradePointsUploadSuccess.html')
     else:
         form = GradePointsUpdateForm(Options=errRows)
@@ -98,7 +98,7 @@ def grade_points_status(request):
         form = GradePointsStatusForm(request.POST)
         if form.is_valid():
             regulation = form.cleaned_data.get('Regulation')
-            grade_points_obj = BTGradePoints.objects.filter(Regulation=regulation)
+            grade_points_obj = GradePoints.objects.filter(Regulation=regulation)
             return render(request, 'superintendent/GradePointsStatus.html', {'form':form, 'grade_points':grade_points_obj})
     form = GradePointsStatusForm()
     return render(request, 'superintendent/GradePointsStatus.html', {'form':form})

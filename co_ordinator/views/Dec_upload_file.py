@@ -4,7 +4,7 @@ from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import OpenElectiveRegistrationsForm
 from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
-from co_ordinator.models import Subjects, StudentRegistrations_Staging
+from co_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
 from import_export.formats.base_formats import XLSX
 from hod.models import BTCoordinator
 
@@ -16,7 +16,7 @@ def dept_elective_regs_upload(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
     if 'Co-ordinator' in groups:
-        coordinator = BTCoordinator.octs.filter(User=user, RevokeDate__isnull=True).first()
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='R')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -56,7 +56,7 @@ def dept_elective_regs_upload(request):
             currentRegEventId = currentRegEventId[0].id
             for i in range(len(dataset)):
                 regNo = int(dataset[i][0])
-                reg = StudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId,Mode=1,sub_id=subId)
+                reg = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId,Mode=1,sub_id=subId)
                 reg.save()
             return render(request, 'co_ordinator/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
@@ -71,7 +71,7 @@ def dept_elective_regs_upload(request):
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
-            subjects = Subjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
+            subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId, Category='DEC')
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:

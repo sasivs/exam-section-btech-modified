@@ -11,10 +11,10 @@
       <ul class="nav flex-column">
         {% if user|has_group:"Superintendent" %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
+          <a class="nav-link" href="{% url 'BTSupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'AddMarkDistribution' %}">Add Mark Distribution</a>
@@ -24,33 +24,33 @@
         </li>
         {% elif user|has_group:"HOD" %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
         </li>
         {% elif user|has_group:"Co-ordinator" %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectUpload' %}">Subjects Upload</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectDelete' %}">Subjects Delete</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectFinalize' %}">Finalize Subjects</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
         </li>
         {% elif user|has_group:"Cycle-Co-ordinator" %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectUpload' %}">Subjects Upload</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectDelete' %}">Subjects Delete</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'SupBTSubjectFinalize' %}">Finalize Subjects</a>
+          <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
         </li>
         {% endif %}
       </ul>

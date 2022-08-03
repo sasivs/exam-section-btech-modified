@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import MakeupRegistrationsForm
-from co_ordinator.models import StudentRegistrations_Staging
+from co_ordinator.models import BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
-from hod.models import BTCoordinator
+from hod.models import Coordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
@@ -52,16 +52,16 @@ def makeup_registrations(request):
             pass
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' in request.POST.keys() and form.is_valid():
             for sub in form.myFields:
-                already_registered = StudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
+                already_registered = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
                         sub_id=sub[8], RegEventId=currentRegEventId)
                 if form.cleaned_data['Check'+str(sub[8])]:
                     if len(already_registered) == 0:
-                        newReg = StudentRegistrations_Staging(RegNo=request.POST['RegNo'], sub_id=sub[8],\
+                        newReg = BTStudentRegistrations_Staging(RegNo=request.POST['RegNo'], sub_id=sub[8],\
                             Mode=form.cleaned_data['RadioMode'+str(sub[8])], RegEventId=currentRegEventId)
                         newReg.save()
                 else:
                     if len(already_registered) != 0:
-                        StudentRegistrations_Staging.objects.get(id=already_registered[0].id).delete()
+                        BTStudentRegistrations_Staging.objects.get(id=already_registered[0].id).delete()
             return render(request, 'co_ordinator/MakeupRegistrationsSuccess.html')
     elif request.method == 'POST':
         form = MakeupRegistrationsForm(regIDs,request.POST)

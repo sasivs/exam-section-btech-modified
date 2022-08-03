@@ -56,7 +56,7 @@
 #         db_table = 'StudentGradePointsMV'
 #         managed = False
 
-# class BTStudentInfo(models.Model):
+# class StudentInfo(models.Model):
 #     RegNo = models.IntegerField()
 #     RollNo = models.IntegerField()
 #     Name = models.CharField(max_length=70)

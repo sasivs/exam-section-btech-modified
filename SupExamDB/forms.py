@@ -1,7 +1,7 @@
 from django import forms
 # from django import forms
 # from Transcripts.models import ProgrammeModel
-# from .models import BTFacultyInfo
+# from .models import FacultyInfo
 # from import_export import resources
 # from django.forms.widgets import CheckboxInput, RadioSelect
 

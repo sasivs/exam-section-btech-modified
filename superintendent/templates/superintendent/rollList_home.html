@@ -10,55 +10,55 @@
             <ul class="nav flex-column">
                 {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListStatus' %}">RollList Status</a>
+                    <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'NotRegisteredStatus' %}">NotRegistered Status</a>
+                    <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
                 {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListStatus' %}">RollList Status</a>
+                    <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'NotRegisteredStatus' %}">NotRegistered Status</a>
+                    <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'GenerateRollList' %}">Generate Roll List</a>
+                    <a class="nav-link" href="{% url 'BTGenerateRollList' %}">Generate Roll List</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListSectionUpload' %}">RollList Section Upload</a>
+                    <a class="nav-link" href="{% url 'BTRollListSectionUpload' %}">RollList Section Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListFeeUpload' %}">RollList Fee Upload</a>
+                    <a class="nav-link" href="{% url 'BTRollListFeeUpload' %}">RollList Fee Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListStatus' %}">RollList Status</a>
+                    <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'FinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
+                    <a href="{% url 'BTFinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'NotRegisteredStatus' %}">NotRegistered Status</a>
+                    <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
                 {% elif user|has_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'GenerateRollList' %}">Generate Roll List</a>
+                    <a class="nav-link" href="{% url 'BTGenerateRollList' %}">Generate Roll List</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListSectionUpload' %}">RollList Section Upload</a>
+                    <a class="nav-link" href="{% url 'BTRollListSectionUpload' %}">RollList Section Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListFeeUpload' %}">RollList Fee Upload</a>
+                    <a class="nav-link" href="{% url 'BTRollListFeeUpload' %}">RollList Fee Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'RollListStatus' %}">RollList Status</a>
+                    <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'FinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
+                    <a href="{% url 'BTFinalizeRollLists' %}" class="nav-link">Finalize RollList</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'NotRegisteredStatus' %}">NotRegistered Status</a>
+                    <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
                 {% endif %}
             </ul>

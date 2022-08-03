@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from co_ordinator.models import FacultyAssignment, StudentRegistrations, Subjects
+from co_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects
 from superintendent.user_access_test import grades_finalize_access
 from hod.forms import GradesFinalizeForm
-from superintendent.models import BTRegistrationStatus, BTHOD
-from faculty.models import BTStudentGrades_Staging, BTStudentGrades
+from superintendent.models import RegistrationStatus, HOD
+from faculty.models import StudentGrades_Staging, StudentGrades
 
 import psycopg2
 
@@ -16,24 +16,24 @@ def grades_finalize(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'HOD' in groups:
-        hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = FacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Subject__OfferedBy=hod.Dept)
-        regIDs = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
+        hod = HOD.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Subject__OfferedBy=hod.Dept)
+        regIDs = RegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
     if request.method == 'POST':
         form = GradesFinalizeForm(regIDs, request.POST)
         if form.is_valid():
             regEvent = form.cleaned_data['regEvent']
-            student_registrations = StudentRegistrations.objects.filter(RegEventId=regEvent, sub_id__in=subjects.values_list('Subject_id', flat=True))
-            grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True))
-            if BTStudentGrades.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True)).exists():
+            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id__in=subjects.values_list('Subject_id', flat=True))
+            grades = StudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True))
+            if StudentGrades.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True)).exists():
                 msg = 'Grades Have already been finalized.'
             else:
                 for g in grades:
-                    gr = BTStudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
+                    gr = StudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
                     gr.save()
                 RefreshMaterializedViews()
                 msg = 'Grades have been finalized.'
-            # reg_status_obj = BTRegistrationStatus.objects.get(id=regEvent)
+            # reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
             # reg_status_obj.GradeStatus = 0
             # reg_status_obj.save()
             return render(request, 'hod/GradesFinalize.html', {'form':form, 'msg':msg})

@@ -44,7 +44,7 @@
 #             regNo = request.POST['RegNo']
 #             event = (request.POST['RegEvent'])
 #             print(regNo, event)
-#             studentInfo = BTStudentInfo.objects.filter(RegNo=regNo)
+#             studentInfo = StudentInfo.objects.filter(RegNo=regNo)
 #             #return render(request, 'SupExamDBRegistrations/BTBacklogRegistration.html', {'form': form, 'Name':studentInfo[0].Name, 'RollNo':studentInfo[0].RollNo})
 #         elif('RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST and form.is_valid()):
 #             print(form.cleaned_data['RegEvent'])

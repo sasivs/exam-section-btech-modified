@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
 from co_ordinator.forms import BacklogRegistrationForm
-from co_ordinator.models import Subjects, StudentRegistrations_Staging, DroppedRegularCourses
+from co_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
 from hod.models import BTCoordinator
 from ExamStaffDB.models import BTStudentInfo
@@ -15,7 +15,7 @@ def btech_backlog_registration(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Co-ordinator' in groups:
-        coordinator = BTCoordinator.octs.filter(User=user, RevokeDate__isnull=True).first()
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='B')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -78,27 +78,27 @@ def btech_backlog_registration(request):
                     if(sub[6]=='R'): #Handling Regular Subjects
                         # for regular and dropped there is no need to check if it is selected!!!
                         if form.cleaned_data['Check'+str(sub[9])] == False:   #delete regular_record from the registration table
-                            reg = StudentRegistrations_Staging.objects.filter(id=sub[10])
+                            reg = BTStudentRegistrations_Staging.objects.filter(id=sub[10])
                             if len(reg) != 0:
-                                StudentRegistrations_Staging.objects.get(id=sub[10]).delete()
-                                new_dropped_course = DroppedRegularCourses(student=studentInfo[0], subject_id=sub[9], RegEventId_id=reg.RegEventId, Registered=False)
+                                BTStudentRegistrations_Staging.objects.get(id=sub[10]).delete()
+                                new_dropped_course = BTDroppedRegularCourses(student=studentInfo[0], subject_id=sub[9], RegEventId_id=reg.RegEventId, Registered=False)
                                 new_dropped_course.save()
                     elif sub[6] == 'D':
                         if form.cleaned_data['Check'+str(sub[9])] == False:
-                            StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
-                            DroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=False)
+                            BTStudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                            BTDroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=False)
                     else:   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
-                            StudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
+                            BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
                                 sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
                         elif(sub[5]):
                             #delete record from registration table
-                            StudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
+                            BTStudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
                         elif(form.cleaned_data['Check'+str(sub[9])]):
                             #insert backlog registration
                             if sub[10]=='':
-                                newRegistration = StudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
+                                newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
                                 Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()                   
                 return(render(request,'co_ordinator/BTBacklogRegistrationSuccess.html'))

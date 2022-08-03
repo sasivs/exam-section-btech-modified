@@ -8,12 +8,12 @@ from django.shortcuts import render
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http.response import HttpResponseRedirect, JsonResponse
 from django.urls import reverse 
-from superintendent.models import BTProgrammeModel
-from co_ordinator.models import StudentGradePoints
-from ExamStaffDB.models import BTStudentInfo
+from superintendent.models import ProgrammeModel
+from co_ordinator.models import BTStudentGradePoints
+from ExamStaffDB.models import StudentInfo
 from Transcripts.models import StudentExamEvents, DepartmentExamEvents, DeptExamEventStudents, StudentAdmissionYearDetails,\
      StudentCGPAs, HeldIn
-from ExamStaffDB.models import BTFacultyInfo
+from ExamStaffDB.models import FacultyInfo
 from SupExamDB.forms import UploadFileForm, FacultyUpdateForm
 from ExamStaffDB.resources import FacultyInfoResource
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -69,7 +69,7 @@ def phd_printing(request):
 @user_passes_test(is_Superintendent)
 
 def get_programme_json(request):
-    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     progQS = list(programmeList.values())
     return JsonResponse({'data': progQS }, safe=False)
 
@@ -103,7 +103,7 @@ def get_event_regNos(request, department, event):
 @user_passes_test(is_Superintendent)
 
 def get_student_regno_grades(request, regno, ayasbybs):
-    studentGrades = StudentGradePoints.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs))
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs))
     studentGradesQS = list(studentGrades.values())
     return JsonResponse({'data':studentGradesQS}, safe=False)
 
@@ -112,9 +112,9 @@ def get_student_regno_grades(request, regno, ayasbybs):
 @user_passes_test(is_Superintendent)
 
 def get_student_rollno_grades(request, rollno, ayasbybs):
-    studInfo = BTStudentInfo.objects.filter(RollNo=int(rollno))
+    studInfo = StudentInfo.objects.filter(RollNo=int(rollno))
     regNo = studInfo[0].RegNo
-    studentGrades = StudentGradePoints.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs))
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs))
     studentGradesQS = list(studentGrades.values())
     return JsonResponse({'data':studentGradesQS,'regNo':regNo}, safe=False)
 
@@ -141,7 +141,7 @@ def get_student_cgpa(request, option, regno, ayasbybs):
         eventStatus = StudentExamEvents.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs))
         cgpa = StudentCGPAs.objects.filter(RegNo=int(regno)).filter(AYASBYBS_G=int(ayasbybs))
     else:
-        studInfo = BTStudentInfo.objects.filter(RollNo=int(regno))
+        studInfo = StudentInfo.objects.filter(RollNo=int(regno))
         tRegNo = studInfo[0].RegNo
         eventStatus = StudentExamEvents.objects.filter(RegNo=int(tRegNo)).filter(AYASBYBS=int(ayasbybs))
         cgpa = StudentCGPAs.objects.filter(RegNo=int(tRegNo)).filter(AYASBYBS_G=int(ayasbybs))
@@ -155,7 +155,7 @@ def get_student_cgpa(request, option, regno, ayasbybs):
 @user_passes_test(is_Superintendent)
 
 def btech_printing_deptwise(request):
-    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     #progQS = list(programmeList.values())
     #return JsonResponse({'data': progQS} , safe=False)
     deptExamEventList = DepartmentExamEvents.objects.all()
@@ -173,7 +173,7 @@ def btech_printing_deptwise(request):
 #     makeupSummaryStats = MakeupSummaryStats.objects.all()  
 #     summaryStats = {}
 #     years = ['II B.Tech.','III B.Tech.','IV B.Tech.']
-#     programmeDetails = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+#     programmeDetails = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
 #     deptDetails = [ prog.Specialization for prog in programmeDetails]
     
 #     for dept in range(1,9):
@@ -187,7 +187,7 @@ def btech_printing_deptwise(request):
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
 def btech_printing_deptwise_paginated(request):
-    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     deptExamEventList = DepartmentExamEvents.objects.all()
     deptExamEventStudentList = DeptExamEventStudents.objects.all()
     return render(request, 'SupExamDB/BTech-Dept-Wise-Pagination.html',{
@@ -216,11 +216,11 @@ def btech_printing_dept_wise_studentpage(request, idtype, dept, event):
         # If page is out of range deliver last page of results
         deptExamEventStudentPage = paginator.page(paginator.num_pages)
     studentDetails = deptExamEventStudentPage.object_list[0]
-    studentGrades = StudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=event)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=event)[0]
     heldInStr = heldInDetails.HeldIn + ' ' + str(heldInDetails.AYear)
-    programmeDetails = BTProgrammeModel.objects.filter(Dept=dept).filter(ProgrammeName='B.Tech.')[0]
+    programmeDetails = ProgrammeModel.objects.filter(Dept=dept).filter(ProgrammeName='B.Tech.')[0]
     romans = {1:'I',2:'II',3:'III',4:'IV'}
     yearSemStr = romans[heldInDetails.BYear] + ' Yr '+ romans[heldInDetails.BSem] + ' Sem'
     eventStatus = StudentExamEvents.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=event)[0]
@@ -243,7 +243,7 @@ def btech_printing_dept_wise_studentpage(request, idtype, dept, event):
 def btech_printing_studentpages(request, regNo):
     StudentExamEventsList = StudentExamEvents.objects.filter(RegNo=regNo)
     if(StudentExamEventsList.count()==0):
-        programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+        programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
         admissionYears = StudentAdmissionYearDetails.objects.values_list('AdmissionYear', flat=True).distinct()
         return render(request, 'SupExamDB/BTech-Student-Wise.html',{ 'programmeList':programmeList, 'admissionYears': admissionYears,}  )
 
@@ -260,12 +260,12 @@ def btech_printing_studentpages(request, regNo):
         studentGradePage = paginator.page(paginator.num_pages)
 
     studentDetails = studentGradePage.object_list[0]
-    studentGrades = StudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)
+    studentGrades = BTStudentGradePoints.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)
     studentCGPA = StudentCGPAs.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS_G=studentDetails.AYASBYBS)[0]
     heldInDetails = HeldIn.objects.filter(AYASBYBS=studentDetails.AYASBYBS)[0]
     heldInStr = heldInDetails.HeldIn + ' ' + str(heldInDetails.AYear)
     deptExamEvent = DeptExamEventStudents.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)[0]
-    programmeDetails = BTProgrammeModel.objects.filter(Dept=deptExamEvent.Dept).filter(ProgrammeName='B.Tech.')[0]
+    programmeDetails = ProgrammeModel.objects.filter(Dept=deptExamEvent.Dept).filter(ProgrammeName='B.Tech.')[0]
     romans = {1:'I',2:'II',3:'III',4:'IV'}
     yearSemStr = romans[heldInDetails.BYear] + ' Yr '+ romans[heldInDetails.BSem] + ' Sem'
     eventStatus = StudentExamEvents.objects.filter(RegNo=studentDetails.RegNo).filter(AYASBYBS=studentDetails.AYASBYBS)[0]
@@ -286,7 +286,7 @@ def btech_printing_studentpages(request, regNo):
 @user_passes_test(is_Superintendent)
 
 def btech_printing_studentwise(request):
-    programmeList = BTProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
+    programmeList = ProgrammeModel.objects.filter(ProgrammeName='B.Tech.')
     admissionYears = StudentAdmissionYearDetails.objects.values_list('AdmissionYear', flat=True).distinct()
     return render(request, 'SupExamDB/BTech-Student-Wise.html',{ 'programmeList':programmeList, 'admissionYears': admissionYears,}  )
 
@@ -374,7 +374,7 @@ def ca_fi_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(facultyRows):
                 if(form.cleaned_data.get('Check'+fRow[0])):
-                    BTFacultyInfo.objects.filter(PhoneNumber=fRow[1]).update(Name=fRow[0],EmailID=fRow[2])
+                    FacultyInfo.objects.filter(PhoneNumber=fRow[1]).update(Name=fRow[0],EmailID=fRow[2])
             return render(request, 'SupExamDB/FacultyInfoUploadSuccess.html')
     else:
         form = FacultyUpdateForm(Options=facultyRows)

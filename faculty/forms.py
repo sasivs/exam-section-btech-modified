@@ -1,7 +1,7 @@
 from django import forms 
-from co_ordinator.models import StudentRegistrations, RollLists, Subjects
-from superintendent.models import BTGradePoints
-from faculty.models import BTGradesThreshold
+from co_ordinator.models import BTStudentRegistrations, BTRollLists, BTSubjects
+from superintendent.models import GradePoints
+from faculty.models import GradesThreshold
 from superintendent.validators import validate_file_extension
 
 
@@ -32,8 +32,8 @@ class AttendanceShoratgeStatusForm(forms.Form):
 class GradeThresholdForm(forms.Form):
     def __init__(self, faculty_subject, *args,**kwargs):
         super(GradeThresholdForm, self).__init__(*args, **kwargs)
-        grades = BTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
-        prev_thresholds = BTGradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
+        grades = GradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
+        prev_thresholds = GradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
         for grade in grades:
             self.fields[str(grade.id)] = forms.CharField(label=grade.Grade, required=False, widget=forms.TextInput(attrs={'type':'number', 'max':100, 'required':'True', 'class':'threshold'}))
             if prev_thresholds.filter(Grade=grade):
@@ -107,7 +107,7 @@ class MarksUploadForm(forms.Form):
         self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, required=False, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
         if self.data.get('subject'):
             subject = self.data.get('subject').split(':')[0]
-            subject = Subjects.objects.get(id=subject)
+            subject = BTSubjects.objects.get(id=subject)
             EXAM_CHOICES += subject.MarkDistribution.distributions() + [('all', 'All')]
             self.fields['exam-type'] = forms.CharField(label='Select Exam Type', required=False, max_length=26, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
             self.fields['file'] = forms.FileField(required=False, validators=[validate_file_extension])
@@ -127,7 +127,7 @@ class MarksStatusForm(forms.Form):
 class MarksUpdateForm(forms.Form):
     def __init__(self, mark, *args,**kwargs):
         super(MarksUpdateForm, self).__init__(*args, **kwargs)
-        subject = Subjects.objects.get(id=mark.Registration.sub_id)
+        subject = BTSubjects.objects.get(id=mark.Registration.sub_id)
         EXAM_CHOICES = [('', '----------')]
         EXAM_CHOICES += subject.MarkDistribution.distributions()
         self.subject = subject
