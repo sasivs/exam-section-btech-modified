@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from co_ordinator.views import faculty_subject_assignment, grade_challenge, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
     dropped_regular_regs, makeupReg, not_promoted, status
-from superintendent.views import open_elective_registrations
 
 # create your urls here
 

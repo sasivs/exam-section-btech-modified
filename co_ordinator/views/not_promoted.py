@@ -8,7 +8,7 @@ from co_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists
     BTSubjects, BTStudentRegistrations
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from ExamStaffDB.models import BTMandatoryCredits
-from co_ordinator.resources import BTNotPromotedResource
+from co_ordinator.resources import NotPromotedResource
 from django.db.models import Q
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
