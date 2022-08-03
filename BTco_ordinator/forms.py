@@ -2,15 +2,15 @@ from django import forms
 from django.db.models import Q 
 from BTco_ordinator.models import BTStudentRegistrations, BTStudentRegistrations_Staging
 from BThod.models import BTCoordinator
-from superintendent.constants import DEPARTMENTS, YEARS, SEMS
+from BTsuperintendent.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTFacultyAssignment, BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary
-from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTProgrammeModel
+from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTProgrammeModel
 from BTExamStaffDB.models import BTStudentInfo
 from BTfaculty.models import BTMarks_Staging
 import datetime
 
-from superintendent.validators import validate_file_extension
+from BTsuperintendent.validators import validate_file_extension
 
 #Create your forms here
 

@@ -1,9 +1,9 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from superintendent.user_access_test import registration_access
+from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
-from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
+from BTsuperintendent.models import BTRegistrationStatus,BTCycleCoordinator
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator

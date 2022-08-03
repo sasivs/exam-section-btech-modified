@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'CoordinatorDB',
     'import_export',
     'BThod',
-    'superintendent',
+    'BTsuperintendent',
     'BTco_ordinator',
     'BTExamStaffDB', 
     'BTfaculty',

@@ -4,13 +4,13 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q 
-from superintendent.user_access_test import faculty_subject_assignment_access, faculty_assignment_status_access
+from BTsuperintendent.user_access_test import faculty_subject_assignment_access, faculty_assignment_status_access
 from BTExamStaffDB.models import BTFacultyInfo
-from superintendent.constants import DEPT_DICT, ROMAN_TO_INT
+from BTsuperintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from BTco_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects, BTRollLists
 from BThod.models import BTCoordinator
-from superintendent.models import BTHOD, BTCycleCoordinator, BTRegistrationStatus
+from BTsuperintendent.models import BTHOD, BTCycleCoordinator, BTRegistrationStatus
 
 
 @login_required(login_url="/login/")

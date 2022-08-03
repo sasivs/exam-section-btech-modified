@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import render
 from BTco_ordinator.models import BTFacultyAssignment
 from BThod.models import BTFaculty_user 
-from superintendent.user_access_test import grades_threshold_access
+from BTsuperintendent.user_access_test import grades_threshold_access
 
 
 @login_required(login_url="/login/")

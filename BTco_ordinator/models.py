@@ -17,8 +17,8 @@ class BTSubjects_Staging(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     OfferedBy = models.IntegerField()
-    RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
-    MarkDistribution = models.ForeignKey('superintendent.BTMarksDistribution', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    MarkDistribution = models.ForeignKey('BTsuperintendent.BTMarksDistribution', on_delete=models.CASCADE)
     DistributionRatio = models.TextField()
 
     class Meta:
@@ -36,8 +36,8 @@ class BTSubjects(models.Model):
     Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
     OfferedBy = models.IntegerField()
-    RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
-    MarkDistribution = models.ForeignKey('superintendent.BTMarksDistribution', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    MarkDistribution = models.ForeignKey('BTsuperintendent.BTMarksDistribution', on_delete=models.CASCADE)
     DistributionRatio = models.TextField()
     
     class Meta:
@@ -53,7 +53,7 @@ class BTRollLists(models.Model):
         (9,'CHEMISTRY')
     )
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
@@ -69,7 +69,7 @@ class BTRollLists_Staging(models.Model):
         (9,'CHEMISTRY')
     )
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
     class Meta:
@@ -79,7 +79,7 @@ class BTRollLists_Staging(models.Model):
 
 
 class BTRegulationChange(models.Model):
-    RegEventId= models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId= models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PreviousRegulation = models.IntegerField()
     PresentRegulation = models.IntegerField()
@@ -90,7 +90,7 @@ class BTRegulationChange(models.Model):
 
 
 class BTNotRegistered(models.Model):
-    RegEventId= models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId= models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
@@ -123,7 +123,7 @@ class BTStudentRegistrations_Staging(models.Model):
 class BTDroppedRegularCourses(models.Model):
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Registered = models.BooleanField()
     class Meta:
         db_table = 'BTDroppedRegularCourses'
@@ -270,7 +270,7 @@ class BTNotPromoted(models.Model):
 
 class BTFacultyAssignment(models.Model):
     Subject = models.ForeignKey(BTSubjects, on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('superintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
     Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='faculty_facultyInfo')
     Coordinator = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')
     Section = models.CharField(max_length=2, default='NA')

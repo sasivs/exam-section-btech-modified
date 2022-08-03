@@ -1,9 +1,9 @@
 from venv import create
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from superintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
-from superintendent.models import BTRegistrationStatus, BTProgrammeModel
-from superintendent.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
+from BTsuperintendent.models import BTRegistrationStatus, BTProgrammeModel
+from BTsuperintendent.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
 
 # Create your views here.
 @login_required(login_url="/login/")

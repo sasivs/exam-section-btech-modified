@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
-from superintendent.user_access_test import is_Superintendent
-from superintendent.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
-from superintendent.models import BTGradePoints
-from superintendent.resources import GradePointsResource
+from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
+from BTsuperintendent.models import BTGradePoints
+from BTsuperintendent.resources import GradePointsResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 

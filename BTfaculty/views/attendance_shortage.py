@@ -4,10 +4,10 @@ from django.shortcuts import render
 from BTfaculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from BTfaculty.models import BTAttendance_Shortage
-from superintendent.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
+from BTsuperintendent.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator, BTFaculty_user
-from superintendent.models import BTCycleCoordinator, BTHOD
+from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Faculty)

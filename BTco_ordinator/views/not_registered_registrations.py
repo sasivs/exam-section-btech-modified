@@ -4,8 +4,8 @@ from BThod.models import BTCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTNotRegistered, BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from BTco_ordinator.forms import NotRegisteredRegistrationsForm
-from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
-from superintendent.user_access_test import registration_access
+from BTsuperintendent.models import BTRegistrationStatus, BTCycleCoordinator
+from BTsuperintendent.user_access_test import registration_access
 
 
 @login_required(login_url="/login/")

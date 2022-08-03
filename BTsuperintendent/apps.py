@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SuperintendentConfig(AppConfig):
+class BTSuperintendentConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'superintendent'
+    name = 'BTsuperintendent'

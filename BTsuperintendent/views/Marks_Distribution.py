@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404 
-from superintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
-from superintendent.forms import MarksDistributionForm
-from superintendent.models import BTMarksDistribution
+from BTsuperintendent.forms import MarksDistributionForm
+from BTsuperintendent.models import BTMarksDistribution
 
 
 @login_required(login_url="/login/")

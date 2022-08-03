@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BTco_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
-from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
+from BTsuperintendent.models import BTRegistrationStatus, BTCycleCoordinator
 from BTco_ordinator.models import BTRollLists_Staging, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects
 from BThod.models import BTCoordinator
 from django.db.models import Q
-from superintendent.user_access_test import registration_access
+from BTsuperintendent.user_access_test import registration_access
 
 
 @login_required(login_url="/login/")

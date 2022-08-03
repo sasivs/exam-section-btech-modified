@@ -1,9 +1,9 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from superintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
-from superintendent.forms import  BranchChangeForm, BranchChangeStausForm
-from superintendent.models import BTBranchChanges
+from BTsuperintendent.forms import  BranchChangeForm, BranchChangeStausForm
+from BTsuperintendent.models import BTBranchChanges
 from BTExamStaffDB.models import BTStudentInfo
 
 

@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from superintendent.user_access_test import is_Superintendent
-from superintendent.models import BTRegulation
-from superintendent.forms import AddRegulationForm
+from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.models import BTRegulation
+from BTsuperintendent.forms import AddRegulationForm
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)

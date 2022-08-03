@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from superintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from django.utils import timezone
-from superintendent.models import BTCycleCoordinator
-from superintendent.forms import CycleCoordinatorAssignmentForm
+from BTsuperintendent.models import BTCycleCoordinator
+from BTsuperintendent.forms import CycleCoordinatorAssignmentForm
 
 
 @login_required(login_url="/login/")

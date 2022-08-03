@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse 
-from superintendent.user_access_test import marks_upload_access, marks_status_access
+from BTsuperintendent.user_access_test import marks_upload_access, marks_status_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from superintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
+from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
 from BThod.models import BTFaculty_user, BTCoordinator

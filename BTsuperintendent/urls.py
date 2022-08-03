@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from superintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
+from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
     cycle_coordinator_assignment, home, open_elective_registrations
 
 

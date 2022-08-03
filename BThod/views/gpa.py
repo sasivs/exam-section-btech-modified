@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BTco_ordinator.models import BTRollLists
-from superintendent.user_access_test import gpa_staging_access
-from superintendent.models import BTRegistrationStatus, BTHOD, BTStudentCGPAs_Staging, BTGradePoints
+from BTsuperintendent.user_access_test import gpa_staging_access
+from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTStudentCGPAs_Staging, BTGradePoints
 from BThod.forms import GpaStagingForm
 
 @login_required(login_url="/login/")

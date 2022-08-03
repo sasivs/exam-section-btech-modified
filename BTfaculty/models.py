@@ -1,5 +1,5 @@
 from django.db import models
-from superintendent.models import BTRegistrationStatus, BTGradePoints
+from BTsuperintendent.models import BTRegistrationStatus, BTGradePoints
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
 # Create your models here.
 

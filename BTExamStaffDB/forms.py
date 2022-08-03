@@ -1,7 +1,7 @@
 from django import forms
-from superintendent.models import BTRegistrationStatus, BTRegulation, BTProgrammeModel
+from BTsuperintendent.models import BTRegistrationStatus, BTRegulation, BTProgrammeModel
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
-from superintendent.validators import validate_file_extension
+from BTsuperintendent.validators import validate_file_extension
 
 
 class StudentInfoFileUpload(forms.Form):

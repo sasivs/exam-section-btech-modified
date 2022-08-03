@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from superintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.shortcuts import render
 from django.utils import timezone
-from superintendent.models import BTHOD
-from superintendent.forms import HODAssignmentForm
+from BTsuperintendent.models import BTHOD
+from BTsuperintendent.forms import HODAssignmentForm
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)

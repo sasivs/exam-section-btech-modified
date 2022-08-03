@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BThod.models import BTCoordinator
-from superintendent.user_access_test import is_Superintendent, registration_status_access
+from BTsuperintendent.user_access_test import is_Superintendent, registration_status_access
 from BTco_ordinator.forms import  RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
 from BTco_ordinator.models import BTBacklogRegistrationSummary, BTRegularRegistrationSummary, BTMakeupRegistrationSummary
-from superintendent.models import BTCycleCoordinator, BTProgrammeModel, BTRegistrationStatus, BTHOD
+from BTsuperintendent.models import BTCycleCoordinator, BTProgrammeModel, BTRegistrationStatus, BTHOD
 
 
 # def is_Superintendent(user):

@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from BThod.models import BTCoordinator 
-from superintendent.user_access_test import is_Superintendent, not_promoted_access, not_promoted_status_access
+from BTsuperintendent.user_access_test import is_Superintendent, not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
 from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
     BTSubjects, BTStudentRegistrations
-from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
+from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from BTExamStaffDB.models import BTMandatoryCredits
 from BTco_ordinator.resources import NotPromotedResource
 from django.db.models import Q

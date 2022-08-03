@@ -9,13 +9,13 @@ from BTco_ordinator.forms import RollListStatusForm, RollListRegulationDifferenc
      RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
 from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTRollLists_Staging, BTRegulationChange, BTStudentBacklogs, BTNotRegistered
-from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
+from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from BTExamStaffDB.models import BTStudentInfo 
 from BThod.models import BTCoordinator
 from BTco_ordinator.models import BTNotPromoted, BTStudentRegistrations_Staging,  BTStudentMakeups, BTDroppedRegularCourses
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
-from superintendent.user_access_test import roll_list_access, roll_list_status_access
+from BTsuperintendent.user_access_test import roll_list_access, roll_list_status_access
 
 @login_required(login_url="/login/")
 @user_passes_test(roll_list_access)
