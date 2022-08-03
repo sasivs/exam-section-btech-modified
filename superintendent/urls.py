@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from superintendent.views import HOD_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
+from superintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
     cycle_coordinator_assignment, home, open_elective_registrations
 
 
@@ -40,8 +40,8 @@ urlpatterns = [
     path('BTSupBTBranchChange',branch_change.branch_change, name='BTSupBTBranchChange'),
     path('BTSupBTBranchChangeStatus',branch_change.branch_change_status, name='BTSupBTBranchChangeStatus'),
 
-    path('BTHodAssignment', HOD_assignment.hod_assignment, name='BTHodAssignment'),
-    path('BTHodAssignmentStatus', HOD_assignment.hod_assignment_status, name='BTHodAssignmentStatus'),
+    path('BTHodAssignment', hod_assignment.hod_assignment, name='BTHodAssignment'),
+    path('BTHodAssignmentStatus', hod_assignment.hod_assignment_status, name='BTHodAssignmentStatus'),
 
     path('BTCycleCoordinatorAssignment', cycle_coordinator_assignment.cycle_coordinator_assignment, name='BTCycleCoordinatorAssignment'),
     path('BTCycleCoordinatorAssignmentStatus', cycle_coordinator_assignment.cycle_coordinator_assignment_status, name='BTCycleCoordinatorAssignmentStatus'),
