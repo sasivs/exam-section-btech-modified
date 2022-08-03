@@ -7,8 +7,8 @@ from django.db.models import Q
 from superintendent.user_access_test import faculty_subject_assignment_access, faculty_assignment_status_access
 from ExamStaffDB.models import BTFacultyInfo
 from superintendent.constants import DEPT_DICT, ROMAN_TO_INT
-from co_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
-from co_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects, BTRollLists
+from BTco_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
+from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects, BTRollLists
 from hod.models import BTCoordinator
 from superintendent.models import BTHOD, BTCycleCoordinator, BTRegistrationStatus
 

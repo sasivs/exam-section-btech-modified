@@ -1,6 +1,6 @@
 from django import forms
 from superintendent.models import BTRegistrationStatus, BTRegulation, BTProgrammeModel
-from co_ordinator.models import BTStudentRegistrations, BTSubjects
+from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
 from superintendent.validators import validate_file_extension
 
 

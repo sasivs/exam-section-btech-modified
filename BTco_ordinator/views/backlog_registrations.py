@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
-from co_ordinator.forms import BacklogRegistrationForm
-from co_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
+from BTco_ordinator.forms import BacklogRegistrationForm
+from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from superintendent.models import BTRegistrationStatus, BTCycleCoordinator
 from hod.models import BTCoordinator
 from ExamStaffDB.models import BTStudentInfo

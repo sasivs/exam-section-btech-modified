@@ -1,6 +1,6 @@
 from openpyxl import Workbook
 from openpyxl import styles
-from co_ordinator.models import BTSubjects
+from BTco_ordinator.models import BTSubjects
 
 class RollListBookGenerator:
     def __init__(self, rollList, regEventId):

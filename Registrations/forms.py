@@ -1,6 +1,6 @@
 from django.db.models.enums import Choices
 from django.forms.widgets import CheckboxInput, RadioSelect
-from co_ordinator.models import BTStudentMakeups
+from BTco_ordinator.models import BTStudentMakeups
 from django import forms 
 from django.forms import models 
 from django.forms.fields import MultipleChoiceField

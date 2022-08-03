@@ -5,14 +5,14 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 
-from co_ordinator.forms import RollListStatusForm, RollListRegulationDifferenceForm,\
+from BTco_ordinator.forms import RollListStatusForm, RollListRegulationDifferenceForm,\
      RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
-from co_ordinator.models import BTRollLists_Staging, BTRollLists, BTRollLists_Staging, BTRegulationChange, BTStudentBacklogs, BTNotRegistered
+from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTRollLists_Staging, BTRegulationChange, BTStudentBacklogs, BTNotRegistered
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from ExamStaffDB.models import BTStudentInfo 
 from hod.models import BTCoordinator
-from co_ordinator.models import BTNotPromoted, BTStudentRegistrations_Staging,  BTStudentMakeups, BTDroppedRegularCourses
+from BTco_ordinator.models import BTNotPromoted, BTStudentRegistrations_Staging,  BTStudentMakeups, BTDroppedRegularCourses
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from superintendent.user_access_test import roll_list_access, roll_list_status_access
@@ -337,7 +337,7 @@ def RollList_Status(request):
                 currentRegEventId = currentRegEventId[0].id
                 rollListStatus=BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).order_by('student__RegNo')
                 if request.POST.get('download'):
-                    from co_ordinator.utils import RollListBookGenerator
+                    from BTco_ordinator.utils import RollListBookGenerator
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=RollList({event}).xlsx'.format(event=regEvent)
                     BookGenerator = RollListBookGenerator(rollListStatus, regEvent)

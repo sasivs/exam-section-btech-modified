@@ -28,7 +28,7 @@ urlpatterns = [
     path('superintendent/', include('superintendent.urls')),
     path('faculty/', include('faculty.urls')),
     path('hod/', include('hod.urls')),
-    path('co_ordinator/', include('co_ordinator.urls')),
+    path('BTco_ordinator/', include('BTco_ordinator.urls')),
     path('SupExamDB/',include('SupExamDB.urls')), 
     path('SupExamDBRegistrations/',include('SupExamDBRegistrations.urls')),
     path('SupExamDBRegistrationStatus/',include('SupExamDBRegistrationStatus.urls')),

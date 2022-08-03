@@ -1,5 +1,5 @@
 from import_export import resources
-from co_ordinator.models import BTSubjects_Staging, BTNotPromoted
+from BTco_ordinator.models import BTSubjects_Staging, BTNotPromoted
 
 
 

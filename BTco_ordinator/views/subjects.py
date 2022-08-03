@@ -4,10 +4,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from SupExamDB.views import is_Superintendent
-from co_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
+from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm
-from co_ordinator.models import BTSubjects_Staging, BTSubjects
-from co_ordinator.resources import SubjectStagingResource
+from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
+from BTco_ordinator.resources import SubjectStagingResource
 from superintendent.models import BTRegistrationStatus, BTHOD, BTMarksDistribution, BTCycleCoordinator
 from hod.models import BTCoordinator
 from tablib import Dataset
@@ -78,7 +78,7 @@ def subject_upload(request):
                     errorRows.append(newRow)
                 else:
                     newDataset.append(newRow)
-            Subject_resource = BTSubjectStagingResource()
+            Subject_resource = SubjectStagingResource()
             result = Subject_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 Subject_resource.import_data(newDataset, dry_run=False)
@@ -339,7 +339,7 @@ def open_subject_upload(request):
                     errorRows.append(newRow)
                 else:
                     newDataset.append(newRow)
-            Subject_resource = BTSubjectStagingResource()
+            Subject_resource = SubjectStagingResource()
             result = Subject_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 Subject_resource.import_data(newDataset, dry_run=False)
@@ -381,7 +381,7 @@ def open_subject_upload(request):
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
 def download_sample_subject_sheet(request):
-    from co_ordinator.utils import SubjectsTemplateBookGenerator
+    from BTco_ordinator.utils import SubjectsTemplateBookGenerator
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
     response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='BTSubjects')
     BookGenerator = SubjectsTemplateBookGenerator()

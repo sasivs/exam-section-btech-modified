@@ -1,5 +1,5 @@
 from django.db import models
-from co_ordinator.models import BTStudentRegistrations
+from BTco_ordinator.models import BTStudentRegistrations
 
 # Create your models here.
 

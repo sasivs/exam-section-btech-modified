@@ -3,12 +3,12 @@ from hod.models import BTCoordinator
 from superintendent.user_access_test import is_Superintendent, not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from co_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
-from co_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
+from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
+from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
     BTSubjects, BTStudentRegistrations
 from superintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from ExamStaffDB.models import BTMandatoryCredits
-from co_ordinator.resources import NotPromotedResource
+from BTco_ordinator.resources import NotPromotedResource
 from django.db.models import Q
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -94,7 +94,7 @@ def not_promoted_list(request):
                                     np.append(d)
             np.sort(key=get_regd_no)
             if request.POST.get('download'):
-                    from co_ordinator.utils import NotPromotedBookGenerator
+                    from BTco_ordinator.utils import NotPromotedBookGenerator
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=NotPromoted({regevent}).xlsx'.format(regevent=event)
                     BookGenerator = NotPromotedBookGenerator(np, regulation, event)

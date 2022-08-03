@@ -9,7 +9,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http.response import HttpResponseRedirect, JsonResponse
 from django.urls import reverse 
 from superintendent.models import BTProgrammeModel
-from co_ordinator.models import BTStudentGradePoints
+from BTco_ordinator.models import BTStudentGradePoints
 from ExamStaffDB.models import BTStudentInfo
 from Transcripts.models import StudentExamEvents, DepartmentExamEvents, DeptExamEventStudents, StudentAdmissionYearDetails,\
      StudentCGPAs, HeldIn

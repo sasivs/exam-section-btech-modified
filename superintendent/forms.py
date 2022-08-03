@@ -4,7 +4,7 @@ from django.db.models import Q
 from superintendent.models import BTHOD, BTCycleCoordinator
 from ExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from superintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
-from co_ordinator.models import BTStudentBacklogs
+from BTco_ordinator.models import BTStudentBacklogs
 from superintendent.validators import validate_file_extension
 import datetime
 

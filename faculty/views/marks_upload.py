@@ -5,9 +5,9 @@ from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
 from superintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
 from ExamStaffDB.models import BTStudentInfo
-from co_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
+from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
 from hod.models import BTFaculty_user, BTCoordinator
-from co_ordinator.models import BTFacultyAssignment
+from BTco_ordinator.models import BTFacultyAssignment
 from faculty.models import BTMarks, BTMarks_Staging
 from faculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm
 

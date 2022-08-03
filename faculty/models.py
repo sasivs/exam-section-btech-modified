@@ -1,6 +1,6 @@
 from django.db import models
 from superintendent.models import BTRegistrationStatus, BTGradePoints
-from co_ordinator.models import BTSubjects, BTStudentRegistrations
+from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
 # Create your models here.
 
 class BTAttendance_Shortage(models.Model):

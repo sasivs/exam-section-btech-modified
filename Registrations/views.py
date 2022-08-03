@@ -1,7 +1,7 @@
 from django.http.response import HttpResponse, HttpResponseRedirect
 from Registrations.models import CoordinatorBacklogRegNos, CoordinatorMakeupRegNos, CoordinatorMakeupSubCodesV, StudentMakeupBacklogsVsRegistrations, StudentMakeupMarksDetails, CurrentAcademicYear,CoordinatorInfo, StudentMakeupMarks, Coordinator1Info
 from django.urls import reverse 
-from co_ordinator.models import BTStudentRegistrations, BTStudentMakeups, BTStudentBacklogs
+from BTco_ordinator.models import BTStudentRegistrations, BTStudentMakeups, BTStudentBacklogs
 from Registrations.forms  import MarksForm, RegistrationForm1, RegistrationsInsertionForm, SimpleForm, StudentIDForm, RegistrationForm, TestForm
 from django.shortcuts import render
 from Transcripts.models import BTProgrammeModel, StudentCGPAs, BTStudentInfo, BTProgrammeModel

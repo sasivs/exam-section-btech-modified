@@ -49,9 +49,11 @@ INSTALLED_APPS = [
     'import_export',
     'hod',
     'superintendent',
-    'co_ordinator',
+    'BTco_ordinator',
     'ExamStaffDB', 
     'faculty',
+
+    'django_rename_app',
 ]
 
 MIDDLEWARE = [

@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class CoOrdinatorConfig(AppConfig):
+class BTCoOrdinatorConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'co_ordinator'
+    name = 'BTco_ordinator'
 
     def ready(self):
-        import co_ordinator.signals
+        import BTco_ordinator.signals

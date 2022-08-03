@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from superintendent.user_access_test import registration_access
-from co_ordinator.forms import MakeupRegistrationsForm
-from co_ordinator.models import BTStudentRegistrations_Staging
+from BTco_ordinator.forms import MakeupRegistrationsForm
+from BTco_ordinator.models import BTStudentRegistrations_Staging
 from superintendent.models import BTRegistrationStatus,BTCycleCoordinator
 from hod.models import BTCoordinator
 

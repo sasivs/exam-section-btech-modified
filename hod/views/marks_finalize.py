@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from co_ordinator.models import BTFacultyAssignment
+from BTco_ordinator.models import BTFacultyAssignment
 from superintendent.user_access_test import is_Hod
 from django.shortcuts import render
 from superintendent.models import BTRegistrationStatus, BTHOD

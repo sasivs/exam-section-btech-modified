@@ -118,7 +118,7 @@ def update_rollno(request):
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def download_sample_studentinfo_sheet(request):
-    from co_ordinator.utils import ModelTemplateBookGenerator
+    from BTco_ordinator.utils import ModelTemplateBookGenerator
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
     response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='BTStudentInfo')
     BookGenerator = ModelTemplateBookGenerator(BTStudentInfo)

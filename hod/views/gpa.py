@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from co_ordinator.models import BTRollLists
+from BTco_ordinator.models import BTRollLists
 from superintendent.user_access_test import gpa_staging_access
 from superintendent.models import BTRegistrationStatus, BTHOD, BTStudentCGPAs_Staging, BTGradePoints
 from hod.forms import GpaStagingForm

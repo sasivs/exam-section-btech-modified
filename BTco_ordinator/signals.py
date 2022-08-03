@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from co_ordinator.models import BTStudentRegistrations, BTSubjects
+from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
 from faculty.models import BTMarks, BTMarks_Staging
 
 @receiver(post_save, sender=BTStudentRegistrations)

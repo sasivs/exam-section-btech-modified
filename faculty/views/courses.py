@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render
-from co_ordinator.models import BTFacultyAssignment
+from BTco_ordinator.models import BTFacultyAssignment
 from hod.models import BTFaculty_user 
 from superintendent.user_access_test import grades_threshold_access
 
