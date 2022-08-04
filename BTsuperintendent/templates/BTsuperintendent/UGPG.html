@@ -1,4 +1,4 @@
-% load static %}
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -38,10 +38,13 @@
 {% block content %}
 <div class="container">
     <center>
-        <div class="row">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
             {{ form.as_p }}
-        </div>
-        <button type="submit">Submit</button>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
     </center>
 </div>
 {% endblock %}

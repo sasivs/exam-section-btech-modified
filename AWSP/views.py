@@ -35,7 +35,7 @@ def ug_pg(request):
             if program == 'UG':
                 return redirect('BThome')
             elif program == 'PG':
-                return render('MThome')
+                return redirect('MThome')
     else:
         form = UG_PGSelectForm()
-    return render(request, 'AWSP/UGPG.html', {'form':form})
+    return render(request, 'BTsuperintendent/UGPG.html', {'form':form})
