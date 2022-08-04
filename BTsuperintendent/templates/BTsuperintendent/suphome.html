@@ -25,7 +25,10 @@
 <body>
     <div class="container">
         {% if user.is_authenticated %}
-        <p class="text-center">Logged in as <strong>{{ user.username }}</strong></p>
+        <p class="text-center">
+            Logged in as <strong>{{ user.username }}</strong>
+            <a style="float:right;" href="{% url 'logout' %}" class="btn btn-danger">Log out</a>
+        </p>
         {% endif %}
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="{% url 'BThome' %}">
@@ -357,12 +360,8 @@
                             </ul>
                         </li>
                         {% endif %}
-                        <!-- <li class="nav-item">
-          <a class="nav-link" href="#">GradesProcessing</a>
-        </li>  -->
-
                         <ul class="nav navbar-nav navbar-right navbar-text" float='right'>
-                            <a style="display: inline; float: right;" href="{% url 'logout' %}">Log out</a>
+                            <a style="display: inline; float: right;" href="" class="btn btn-secondary">Switch</a>
                         </ul>
 
 

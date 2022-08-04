@@ -15,3 +15,7 @@ border-collapse: collapse;
     width: 11%;
     text-align: center;
 }
+
+.nav.flex-column{
+    background-color: #f8f9fa;
+}

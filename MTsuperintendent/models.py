@@ -50,7 +50,7 @@ class MTRegistrationStatus(models.Model):
     MarksStatus = models.IntegerField()
     GradeStatus = models.IntegerField()
     class Meta:
-        db_table = 'MTRegistrationStatus'
+        db_table = 'MTRegistration_Status'
         constraints=[
             models.UniqueConstraint(fields=['AYear','ASem','MYear','MSem','Regulation','Dept','Mode'],name='unique_MTRegistration_status')
         ]

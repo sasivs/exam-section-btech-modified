@@ -9,7 +9,7 @@ urlpatterns =[
     path('BTGradesFinalize', grades_finalize.grades_finalize, name='BTGradesFinalize'),
     path('BTMarksFinalize', marks_finalize.marks_finalize, name='BTMarksFinalize'),
 
-    path('BTCGPA', gpa.gpa_staging, name='CGPA'),
+    path('BTCGPA', gpa.gpa_staging, name='BTCGPA'),
 
     path('BTFacultyUserAssignment', faculty_user_assignment.faculty_user, name = 'BTFacultyUserAssignment'),
     path('BTFacultyUserDetail/<int:pk>', faculty_user_assignment.faculty_user_detail, name='BTFacultyUserDetail'),

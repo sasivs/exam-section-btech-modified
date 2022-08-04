@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse 
 from AWSP.forms import UG_PGSelectForm
+from django.contrib.auth.decorators import login_required 
+
 
 
 def home(request):
@@ -27,6 +29,7 @@ def home(request):
 def index(request):
     return render(request, 'BTsuperintendent/index.html')
 
+@login_required(login_url="/login/")
 def ug_pg(request):
     if request.method == 'POST':
         form = UG_PGSelectForm(request.POST)
@@ -39,3 +42,7 @@ def ug_pg(request):
     else:
         form = UG_PGSelectForm()
     return render(request, 'BTsuperintendent/UGPG.html', {'form':form})
+
+# @login_required(login_url="/login/")
+# def switch_programme(request):
+    

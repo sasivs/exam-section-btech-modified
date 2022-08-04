@@ -21,6 +21,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('admin/', admin.site.urls),
     path('UGPG', views.ug_pg, name='UGPG'),
+    # path('switch', views.switch_programme, name='switch'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('Transcripts/', include('Transcripts.urls')),
     path('Registrations/',include('Registrations.urls')),
