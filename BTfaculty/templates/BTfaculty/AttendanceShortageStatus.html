@@ -14,13 +14,13 @@
     <strong> List of Attendance Shortade Students</strong>
     <div class="row">
         <br>
-        <table>
-            <th>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
                 <tr>
                     <td style="border: 1px solid black;">RegNo </td>
                     <td style="border: 1px solid black;">Delete</td>
                 </tr>
-            </th>
+            </thead>
             {% for field in att_short %}
             <tr>
                 <td style="border: 1px solid black;">
@@ -28,7 +28,6 @@
                 </td>
                 <td style="border: 1px solid black;">
                     <button type="submit" name="delete" value="{{field.id}}" onclick="return confirm('Are you sure you want to delete attendance shortage record of {{field.Registration.RegNo}}?')">Delete</button>
-                    <!-- <a href="{% url 'AttendanceShoratgeDelete' field.id %}" onclick="return confirm('Are you sure you want to delete attendance shortage record ?')">Delete</a> -->
                 </td>
             </tr>
             {% endfor %}
@@ -44,3 +43,23 @@
     {% endif %}
 </div>
 {% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

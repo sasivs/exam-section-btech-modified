@@ -7,6 +7,7 @@ from MTExamStaffDB.models import MTFacultyInfo
 from MTsuperintendent.models import MTHOD
 from MTExamStaffDB.resources import FacultyInfoResource
 from tablib import Dataset
+from django.http import HttpResponse
 from import_export.formats.base_formats import XLSX
 
 
@@ -130,7 +131,16 @@ def Faculty_delete(request):
         form = FacultyDeletionForm(Options=fac_info)
     return render(request, 'MTExamStaffDB/FacultyInfoDeletion.html',{'form':form})
 
-
+@login_required(login_url="/login/")
+@user_passes_test(is_ExamStaff)
+def download_sample_facultyInfo_sheet(request):
+    from BTExamStaffDB.utils import FacultyInfoTemplateBookGenerator
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='FacultyInfoTemplate')
+    BookGenerator = FacultyInfoTemplateBookGenerator()
+    workbook = BookGenerator.generate_workbook()
+    workbook.save(response)
+    return response
 
 # @login_required(login_url="/login/")
 # @user_passes_test(is_Superintendent)

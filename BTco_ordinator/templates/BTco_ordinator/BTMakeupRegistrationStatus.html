@@ -17,8 +17,8 @@
             </div>
             <div class="row"> <strong> {{heading}}  </strong></div>
             <div class = "row">
-                <table>
-                    <th>
+                <table class="table table-hover table-muted table-striped">
+                    <thead>
                         <tr>
                             <td style="border: 1px solid black;">RegNo</td>
                             <td style="border: 1px solid black;">RollNo</td>
@@ -26,7 +26,7 @@
                             <td style="border: 1px solid black;">BYear</td>
                             <!-- <td style="border: 1px solid black;">BSem</td> -->
                             <td style="border: 1px solid black;">Registered Subjects</td>
-                    </th>
+                    </thead>
                     {% for registration  in studentRegistrations %}
                     <tr>
                         <td style="border: 1px solid black;">

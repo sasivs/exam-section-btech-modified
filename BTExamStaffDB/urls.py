@@ -8,6 +8,7 @@ urlpatterns = [
 
     path('BTStudentInfoFileUpload',StudInfo.StudInfoFileUpload, name = 'BTStudentInfoFileUpload'),
     path('BTDownloadSampleStudentInfoSheet', StudInfo.download_sample_studentinfo_sheet, name='BTDownloadSampleStudentInfoSheet'),
+    path('BTDownloadSampleRollNoUpdateSheet', StudInfo.download_sample_rollnoupdate_sheet, name='BTDownloadSampleRollNoUpdateSheet'),
 
     path('BTStudentInfoUploadErrorHandler', StudInfo.student_info_error_handler, name = 'BTStudentInfoUploadErrorHandler'),
     path('BTUpdateRollNumber', StudInfo.update_rollno, name='BTUpdateRollNumber'),
@@ -22,6 +23,8 @@ urlpatterns = [
     path('BTFacultyInfoUploadErrorHandler', FacultyInfo.FacultyInfo_upload_error_handler, name = 'BTFacultyInfoUploadErrorHandler'),
     path('BTFacultyInfoStatus', FacultyInfo.FacultyInfo_upload_status, name = 'BTFacultyInfoStatus'),
     path('BTFacultyInfoDeletion', FacultyInfo.Faculty_delete, name = 'BTFacultyInfoDeletion'),
+    path('BTDownloadSampleFacultyInfoSheet', FacultyInfo.download_sample_facultyInfo_sheet, name='BTDownloadSampleFacultyInfoSheet'),
+
 
 ]
 

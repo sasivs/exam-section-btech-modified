@@ -18,6 +18,8 @@ urlpatterns = [
     path('MTFacultyInfoUploadErrorHandler', FacultyInfo.FacultyInfo_upload_error_handler, name = 'MTFacultyInfoUploadErrorHandler'),
     path('MTFacultyInfoStatus', FacultyInfo.FacultyInfo_upload_status, name = 'MTFacultyInfoStatus'),
     path('MTFacultyInfoDeletion', FacultyInfo.Faculty_delete, name = 'MTFacultyInfoDeletion'),
+    path('MTDownloadSampleFacultyInfoSheet', FacultyInfo.download_sample_facultyInfo_sheet, name='MTDownloadSampleFacultyInfoSheet'),
+
 
 ]
 if settings.DEBUG:

@@ -8,6 +8,29 @@ from BThod.forms import GpaStagingForm
 @login_required(login_url="/login/")
 @user_passes_test(gpa_staging_access)
 def gpa_staging(request):
+    import psycopg2
+    conn = psycopg2.connect(
+    host="localhost",
+    database="public",
+    user="postgres",
+    password="postgresql")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePointsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePoints_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentExamEventsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentExamEvents_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentPresentPastResults_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentPresentPastResultsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentSGPAs_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentSGPAsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentCGPAs_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentCGPAsMV\" WITH DATA;")
+        
+    finally:
+        cursor.close()
+        conn.commit()
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIds = None

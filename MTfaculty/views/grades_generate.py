@@ -45,8 +45,7 @@ def grades_generate(request):
                     grade = MTStudentGrades_Staging(RegId=att.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
                         Grade='R', AttGrade='X') 
                     grade.save()
-                mark_obj = marks_objects.filter(Registration__RegNo=att.Student.RegNo).first()
-                marks_objects = marks_objects.exclude(mark_obj)
+                marks_objects = marks_objects.exclude(Registration=att.Registration)
             
             ix_grades = MTIXGradeStudents.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
 

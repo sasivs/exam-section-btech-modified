@@ -45,7 +45,7 @@ def faculty_user_detail(request,pk):
         else:
             fac_user = BTFaculty_user(User_id=request.POST.get('fac_user'), Faculty_id=pk)
             fac_user.save()
-        return redirect('FacultyUserAssignment')
+        return redirect('BTFacultyUserAssignment')
     return render(request, 'BThod/FacultyUserdetail.html', { 'faculty':faculty,\
         'Users':users,'assigned_user':assigned_user})
 

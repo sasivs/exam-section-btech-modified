@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD
+from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator, BTFaculty_user
 from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from BTExamStaffDB.models import BTIXGradeStudents
@@ -47,6 +47,9 @@ def ix_student_status(request):
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept)
+    elif 'Cycle-Co-ordinator' in groups:
+        co_ordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle)
     elif 'Faculty' in groups:
         faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         faculty_assign = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
@@ -60,11 +63,13 @@ def ix_student_status(request):
             else:
                 students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
         elif request.POST.get('delete'):
+            print('Here')
             if 'ExamStaff' in groups:
                 BTIXGradeStudents.objects.filter(id=request.POST.get('delete')).delete()
                 regEvent = request.POST.get('regId')
                 students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
                 msg = 'Record Deleted Successfully.'
+                print('Here')
             else:
                 raise Http404('You are not authorized to view this page')
     else:

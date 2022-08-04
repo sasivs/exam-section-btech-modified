@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import grades_threshold_access, grades_status_access
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD
+from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from BTfaculty.models import BTAttendance_Shortage, BTGradesThreshold, BTMarks_Staging, BTStudentGrades_Staging
@@ -46,8 +46,7 @@ def grades_generate(request):
                     grade = BTStudentGrades_Staging(RegId=att.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
                         Grade='R', AttGrade='X') 
                     grade.save()
-                mark_obj = marks_objects.filter(Registration__RegNo=att.Student.RegNo).first()
-                marks_objects = marks_objects.exclude(mark_obj)
+                marks_objects = marks_objects.exclude(Registration=att.Registration)
             
             ix_grades = BTIXGradeStudents.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
 
@@ -109,6 +108,9 @@ def grades_status(request):
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
+    elif 'Cycle-Co-ordinator' in groups:
+        cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__BYear=1, RegEventId__Dept=cycle_cord.Cycle)
     if request.method == 'POST':
         form = MarksStatusForm(subjects, request.POST)
         if form.is_valid():

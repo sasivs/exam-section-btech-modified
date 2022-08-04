@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
+from django.http import HttpResponse
 from BTsuperintendent.user_access_test import is_ExamStaff, faculty_info_status_access
 from BTExamStaffDB.forms import FacultyDeletionForm, FacultyInfoUpdateForm, FacultyUploadForm
 from BThod.models import  BTCoordinator
@@ -130,7 +131,16 @@ def Faculty_delete(request):
         form = FacultyDeletionForm(Options=fac_info)
     return render(request, 'BTExamStaffDB/FacultyInfoDeletion.html',{'form':form})
 
-
+@login_required(login_url="/login/")
+@user_passes_test(is_ExamStaff)
+def download_sample_facultyInfo_sheet(request):
+    from BTExamStaffDB.utils import FacultyInfoTemplateBookGenerator
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='FacultyInfoTemplate')
+    BookGenerator = FacultyInfoTemplateBookGenerator()
+    workbook = BookGenerator.generate_workbook()
+    workbook.save(response)
+    return response
 
 # @login_required(login_url="/login/")
 # @user_passes_test(is_Superintendent)

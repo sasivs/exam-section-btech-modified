@@ -839,7 +839,7 @@ class MakeupRegistrationSummaryForm(forms.Form):
         sems = {1:'I',2:'II', 3:'III'}
         self.regIDs = []
         if regIDs:
-            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.Dept, row.Mode, row.Regulation) for row in self.regIDs]
+            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.Dept, row.Mode, row.Regulation) for row in regIDs]
         self.regIDs = list(set(self.regIDs))
         myChoices = [(depts[option[3]-1]+':'+ years[option[2]]+':'+ \
             str(option[0])+ ':'+str(option[1])+':'+str(option[5])+':'+str(option[4]), depts[option[3]-1]+':'+ years[option[2]]\

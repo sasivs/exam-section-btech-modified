@@ -50,9 +50,10 @@ def RefreshMaterializedViews():
     cursor = conn.cursor()
 
     try:
-        cursor.execute("REFRESH MATERIALIZED VIEW public.\"StudentGradePointsMV\" WITH DATA;")
-        cursor.execute("REFRESH MATERIALIZED VIEW public.\"StudentBacklogsMV\" WITH DATA;")
-        cursor.execute("REFRESH MATERIALIZED VIEW public.\"StudentMakeupBacklogsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePointsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePoints_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentBacklogsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentMakeupBacklogsMV\" WITH DATA;")
     finally:
         cursor.close()
         conn.commit()

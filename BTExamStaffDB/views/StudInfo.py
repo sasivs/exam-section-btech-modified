@@ -60,7 +60,7 @@ def StudInfoFileUpload(request):
                         errorData[i][9], errorData[i][10], errorData[i][11],errorData[i][12], errorData[i][13])\
                              for i in range(len(errorData))]
                 request.session['studInfoErrRows'] = studInfoErrRows
-                return redirect('StudentInfoUploadErrorHandler')
+                return redirect('BTStudentInfoUploadErrorHandler')
         else:
             print(form.errors)
             for row in form.fields.values(): print(row)
@@ -122,6 +122,17 @@ def download_sample_studentinfo_sheet(request):
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
     response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='BTStudentInfo')
     BookGenerator = ModelTemplateBookGenerator(BTStudentInfo)
+    workbook = BookGenerator.generate_workbook()
+    workbook.save(response)
+    return response
+
+@login_required(login_url="/login/")
+@user_passes_test(is_ExamStaff)
+def download_sample_rollnoupdate_sheet(request):
+    from BTExamStaffDB.utils import RollNoUpdateTemplateBookGenerator
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+    response['Content-Disposition'] = 'attachment; filename=sample-{model}.xlsx'.format(model='RollNoUpdateTemplate')
+    BookGenerator = RollNoUpdateTemplateBookGenerator()
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)
     return response

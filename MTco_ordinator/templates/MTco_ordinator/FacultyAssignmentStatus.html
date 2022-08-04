@@ -10,15 +10,15 @@
     </div>
     <div class="container">
         <div class="row">
-            <table>
-                <th>
+            <table class="table table-hover table-muted table-striped">
+                <thead>
                     <tr>
                         <td style="border: 1px solid black;">SubCode </td>
                         <td style="border: 1px solid black;">SubName </td>
                         <td style="border: 1px solid black;">Course Co-Ordinator Info</td>
                         <td style="border: 1px solid black;">Faculty Info</td>
                     </tr>
-                </th>
+                </thead>
                 {% for field in faculty %}
                 <tr>
                     <td style="border: 1px solid black;">
@@ -40,3 +40,23 @@
     </div>
 </div>
 {% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

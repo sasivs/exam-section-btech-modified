@@ -97,6 +97,7 @@ def grades_threshold_assign(request, pk):
 
     else:
         form = GradeThresholdForm(subject_faculty)
+        no_of_students = None
         if prev_thresholds:
             grades_data = [grade.Grade for grade in grades]
             no_of_students = {grade.Grade:0 for grade in grades}

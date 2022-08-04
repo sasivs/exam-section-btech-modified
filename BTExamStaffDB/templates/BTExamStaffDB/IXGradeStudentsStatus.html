@@ -1,24 +1,25 @@
-{% extends 'BTsuperintendent/grades_home.html' %} 
+{% extends 'BTsuperintendent/grades_home.html' %}
 {% load user_check_tag %}
 {% block title %}I,X grade Students Status{% endblock title %}
 {% block sub %}
 
 <div class="container">
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %} 
     <div class="row">
         <strong>Choose the registration event to view the list of I and X grade students.</strong>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %} {{ form.as_p }}
-            <button type="submit" name='submit' value="submit">Submit</button>
+        {{ form.as_p }}
+        <button type="submit" name='submit' value="submit" style="width:fit-content">Submit</button>
     </div>
-    {%if msg %}
+    {% if msg %}
     <div class="row">
         <strong>
             {{msg}}
         </strong>
     </div>
-    {%endif%}
+    {% endif %}
     <div class="row">
-        <table>
+        <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
                     <td style="border: 1px solid black;">Id</td>
@@ -35,11 +36,12 @@
                 <tr>
                     <td style="border: 1px solid black;">{{student.id}}</td>
                     <td style="border: 1px solid black;">{{student.Registration.RegNo}}</td>
-                    <td style="border: 1px solid black;">{{student.Registration.sub_i}}d</td>
+                    <td style="border: 1px solid black;">{{student.Registration.sub_id}}</td>
                     <td style="border: 1px solid black;">{{student.Grade}}</td>
                     {% if user|has_group:'ExamStaff' %}
                     <td style="border: 1px solid black;">
-                        <button type="submit" name="delete" value="{{student.id}}" onclick="return confirm('Are you sure you want to delete {{student.id}}\'s record?')">
+                        <button type="submit" name="delete" value="{{student.id}}"
+                            onclick="return confirm('Are you sure you want to delete {{student.id}}\'s record?')">
                             Delete
                         </button>
                     </td>
@@ -52,3 +54,26 @@
     </form>
 </div>
 {% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, -1],
+                [10, 25, 50, 100, 250, "All"]
+            ],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function () {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}
