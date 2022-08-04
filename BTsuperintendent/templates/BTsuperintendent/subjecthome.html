@@ -17,10 +17,10 @@
           <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'AddMarkDistribution' %}">Add Mark Distribution</a>
+          <a class="nav-link" href="{% url 'BTAddMarkDistribution' %}">Add Mark Distribution</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'MarkDistributionStatus' %}">Mark Distribution Status</a>
+          <a class="nav-link" href="{% url 'BTMarkDistributionStatus' %}">Mark Distribution Status</a>
         </li>
         {% elif user|has_group:"HOD" %}
         <li class="nav-item">

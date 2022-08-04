@@ -8,14 +8,14 @@
             <ul class="nav flex-column">
                 {% if user|has_group:'Superintendent' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTFacultyAssignmentStatus' %}">Faculty Assignment Status</a>
                 </li>
                 {% elif user|has_group:'Co-ordinator' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTFacultySubjectAssignment' %}">Faculty Subject Assignment</a>
@@ -25,17 +25,17 @@
                 </li>
                 {% elif user|has_group:'ExamStaff' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyInfoUpload' %}">Faculty Info Upload</a>
+                    <a class="nav-link" href="{% url 'BTFacultyInfoUpload' %}">Faculty Info Upload</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyInfoDeletion' %}">Faculty Info Deletion</a>
+                    <a class="nav-link" href="{% url 'BTFacultyInfoDeletion' %}">Faculty Info Deletion</a>
                 </li>
                 {% elif user|has_group:'HOD' %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'FacultyInfoStatus' %}">Faculty Info Status</a>
+                    <a class="nav-link" href="{% url 'BTFacultyInfoStatus' %}">Faculty Info Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTFacultySubjectAssignment' %}">Faculty Subject Assignment</a>
@@ -49,7 +49,7 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'CoursesAssigned' %}">Courses Assigned</a>
+                    <a class="nav-link" href="{% url 'BTCoursesAssigned' %}">Courses Assigned</a>
                 </li>
 
                 {% endif %}
