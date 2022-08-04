@@ -4,6 +4,7 @@ from openpyxl import styles
 class SampleMarksUploadExcelSheetGenerator:
     def __init__(self, students, regEvent, subject):
         self.students = students
+        print(self.students)
         self.regEvent = regEvent
         self.subject = subject
     

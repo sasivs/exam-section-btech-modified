@@ -1,0 +1,1 @@
+default_app_config = 'MTco_ordinator.apps.MtcoOrdinatorConfig'

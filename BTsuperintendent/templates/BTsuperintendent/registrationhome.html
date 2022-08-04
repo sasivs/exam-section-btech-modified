@@ -1,75 +1,69 @@
-{% extends 'BTsuperintendent/suphome.html' %}
-
-{% block title %}Registrations Home{% endblock title %}
-
-{% block content %}
-{% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
 
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-              {% if user|has_group:"Co-ordinator" %}
+                {% if user|BThas_group:"Co-ordinator" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTRegistrations' %}">Regular Registrations</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTDepartmentElectiveRegistrationsAll' %}">DEC Register all</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTDepartmentElectiveRegistrationsUpload' %}">DEC Registrations File Upload</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMakeupRegistrations' %}">Makeup Registrations</a>
-                  </li>  
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrations' %}">Backlog Registrations</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTDroppedRegularRegistrations' %}">Dropped Regular Courses Registrations</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTNotRegisteredRegistrations' %}">Not Registered Registrations</a>
-                  </li> 
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTRegistrationsFinalize' %}">Finalize Registrations</a>
-                  </li>
-                {% elif user|has_group:"Cycle-Co-ordinator" %}
+                </li>
+                {% elif user|BThas_group:"Cycle-Co-ordinator" %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTSupBTRegistrations' %}">Regular Registrations</a>
+                    <a class="nav-link" href="{% url 'BTSupBTRegistrations' %}">Regular Registrations</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTDepartmentElectiveRegistrationsAll' %}">DEC Register all</a>
+                    <a class="nav-link" href="{% url 'BTDepartmentElectiveRegistrationsAll' %}">DEC Register all</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTDepartmentElectiveRegistrationsUpload' %}">DEC Registrations File Upload</a>
+                    <a class="nav-link" href="{% url 'BTDepartmentElectiveRegistrationsUpload' %}">DEC Registrations File Upload</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTMakeupRegistrations' %}">Makeup Registrations</a>
-                </li>  
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrations' %}">Backlog Registrations</a>
+                    <a class="nav-link" href="{% url 'BTMakeupRegistrations' %}">Makeup Registrations</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTDroppedRegularRegistrations' %}">Dropped Regular Courses Registrations</a>
+                    <a class="nav-link" href="{% url 'BTSupBTBacklogRegistrations' %}">Backlog Registrations</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTNotRegisteredRegistrations' %}">Not Registered Registrations</a>
-                </li> 
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTSupBTRegistrationsFinalize' %}">Finalize Registrations</a>
+                    <a class="nav-link" href="{% url 'BTDroppedRegularRegistrations' %}">Dropped Regular Courses Registrations</a>
                 </li>
-                {% elif user|has_group:"Superintendent" %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'BTOpenElectiveRegistrations' %}">Open Elective Registrations</a>
+                    <a class="nav-link" href="{% url 'BTNotRegisteredRegistrations' %}">Not Registered Registrations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTRegistrationsFinalize' %}">Finalize Registrations</a>
+                </li>
+                {% elif user|BThas_group:"Superintendent" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTOpenElectiveRegistrations' %}">Open Elective Registrations</a>
                 </li>
                 {% endif %}
-              </ul>
+            </ul>
         </div>
         <div class="col-md-10">
-            {% block sub %}
-            {% endblock %}
+            {% block sub %} {% endblock %}
         </div>
-       </div>
+    </div>
 </div>
 {% endblock %}

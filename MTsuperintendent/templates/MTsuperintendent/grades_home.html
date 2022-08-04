@@ -4,7 +4,7 @@
         <div class="col-md-2">
 
             <ul class="nav flex-column">
-                {% if user|has_group:'Superintendent' %}
+                {% if user|MThas_group:'Superintendent' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGradePointsUpload' %}">Upload Grade Points</a>
                 </li>
@@ -26,7 +26,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTCGPA' %}">CGPA</a>
                 </li>
-                {% elif user|has_group:'HOD' %}
+                {% elif user|MThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
                 </li>
@@ -45,14 +45,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTCGPA' %}">CGPA</a>
                 </li>
-                {% elif user|has_group:'ExamStaff' %}
+                {% elif user|MThas_group:'ExamStaff' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTIXGradeStudentsAdd' %}">Add IX grade students</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
-                {% elif user|has_group:'Faculty' %} {% if user|has_group:'Course-Co-ordinator' %}
+                {% elif user|MThas_group:'Faculty' %} {% if user|MThas_group:'Course-Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGradesThreshold' %}">Grades Threshold</a>
                 </li>
@@ -75,7 +75,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
-                {% elif user|has_group:'Co-ordinator' %}
+                {% elif user|MThas_group:'Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
                 </li>

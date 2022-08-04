@@ -1,14 +1,8 @@
-{% extends 'superintendent/grades_home.html' %}
-{% block title %}CGPA{% endblock title %}
-
-{% load static %}
-
-{% block sub %}
+{% extends 'MTsuperintendent/grades_home.html' %} {% block title %}CGPA{% endblock title %} {% load static %} {% block sub %}
 <div class="container">
     <div class="row">
         <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{form.as_p}}
+            {% csrf_token %} {{form.as_p}}
             <button type="submit" name="submit-form" value="submit">Submit</button>
         </form>
     </div>
@@ -48,23 +42,22 @@
         </div>
     </div>
 </div>
-{% endblock %}
-{% block script_links %}
+{% endblock %} {% block script_links %}
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
 <script>
     const ctx = document.getElementById('histogram').getContext('2d');
     var data = JSON.parse("{{gpa_data|escapejs}}");
     const chart_labels = [];
     const n_students = [];
-    for (var key in data){
+    for (var key in data) {
         chart_labels.push(key)
         n_students.push(data[key])
     }
     const chart = new Chart(ctx, {
         type: 'line',
         data: {
-                labels: chart_labels,
-                datasets: [{
+            labels: chart_labels,
+            datasets: [{
                 label: 'Number of Students',
                 data: n_students,
                 fill: false,
@@ -77,14 +70,17 @@
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.table').DataTable({
-            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, -1],
+                [10, 25, 50, 100, 250, "All"]
+            ],
             "info": false,
             "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
-            "initComplete": function ()  {
+            "initComplete": function() {
                 var column = this.api().columns(2);
-                $('#floor_select').on('change', function () {
+                $('#floor_select').on('change', function() {
                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
                     column.search(val ? '^' + val : '', true, false).draw();
                 });

@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                {% if user|has_group:"Superintendent" %}
+                {% if user|MThas_group:"Superintendent" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTAddRegulation' %}">Add Regulation</a>
                 </li>
@@ -14,7 +14,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTUpdateManageRegistrations' %}">Update Registration Event</a>
                 </li>
-                {% elif user|has_group:"ExamStaff" %}
+                {% elif user|MThas_group:"ExamStaff" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTStudentInfoFileUpload' %}">Upload Student Info</a>
                 </li>

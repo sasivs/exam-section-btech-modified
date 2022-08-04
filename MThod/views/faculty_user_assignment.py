@@ -76,7 +76,7 @@ def faculty_Coordinator(request):
             if form.cleaned_data.get('MYear') and form.cleaned_data.get('coordinator') and form.cleaned_data.get('user') and 'submit-form' in request.POST.keys():
                 initial_coodinator = MTCoordinator.objects.filter(RevokeDate__isnull=True, Dept=hod.Dept).first()
                 if initial_coodinator:
-                    if (initial_coodinator.Faculty.id != int(form.cleaned_data.get('hod'))) or (initial_coodinator.User.id != int(form.cleaned_data.get('user'))):
+                    if (initial_coodinator.Faculty.id != int(form.cleaned_data.get('coordinator'))) or (initial_coodinator.User.id != int(form.cleaned_data.get('user'))):
                         initial_coodinator.RevokeDate = timezone.now()
                         initial_coodinator.save()
                         new_coordinator = MTCoordinator(Faculty_id=form.cleaned_data.get('coordinator'), User_id=form.cleaned_data.get('user'), MYear=form.cleaned_data.get('MYear'),Dept =hod.Dept)
@@ -101,7 +101,7 @@ def faculty_Coordinator_Status(request):
     if(request.user.groups.filter(name='Superintendent').exists()):
         user = request.user
         Coordinators = MTCoordinator.objects.all()
-    elif(request.user.groups.filter(name='MTHOD').exists()):
+    elif(request.user.groups.filter(name='HOD').exists()):
         user = request.user
         hod = MTHOD.objects.filter(RevokeDate__isnull=True,User=user).first()
         Coordinators = MTCoordinator.objects.filter(Dept=hod.Dept)

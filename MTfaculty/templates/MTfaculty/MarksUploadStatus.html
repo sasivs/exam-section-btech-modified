@@ -1,4 +1,4 @@
-{% extends 'superintendent/marks_home.html' %} {% block title %}Marks Status{% endblock title %} {% load static %} {% block sub %} {% load user_check_tag %}
+{% extends 'MTsuperintendent/marks_home.html' %} {% block title %}Marks Status{% endblock title %} {% load static %} {% block sub %} {% load user_check_tag %}
 
 <div class="container">
     <div class="row">
@@ -20,9 +20,9 @@
                     <td style="border: 1px solid black;">RegNo</td>
                     {% for name in names %}
                     <td style="border: 1px solid black;">{{name}}</td>
-                    {% endfor %} 
+                    {% endfor %}
                     <td style="border: 1px solid black;">Total</td>
-                    {% if user|has_group:'Faculty' %}
+                    {% if user|MThas_group:'Faculty' %}
                     <td style="border: 1px solid black;">Action</td>
                     {% endif %}
                 </tr>
@@ -33,13 +33,12 @@
                     <td style="border: 1px solid black;">{{mark.Registration.RegNo}}</td>
                     {% for exam_mark in mark.Marks_list %}
                     <td style="border: 1px solid black;">{{exam_mark}}</td>
-                    {% endfor %} 
+                    {% endfor %}
                     <td style="border: 1px solid black;">{{mark.TotalMarks}}</td>
-                    {% if user|has_group:'Faculty' %}
+                    {% if user|MThas_group:'Faculty' %}
                     <td style="border: 1px solid black;">
                         {% if mark.Status == 1 %}
-                        <a href="{% url 'MTMarksUpdate' mark.id %}" class="btn btn-primary">Update</a>
-                        {% endif %}
+                        <a href="{% url 'MTMarksUpdate' mark.id %}" class="btn btn-primary">Update</a> {% endif %}
                     </td>
                     {% endif %}
                 </tr>
@@ -49,19 +48,21 @@
     </div>
     {% endif %}
 </div>
-{% endblock %}
-{% block script_links %}
+{% endblock %} {% block script_links %}
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.table').DataTable({
-            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, -1],
+                [10, 25, 50, 100, 250, "All"]
+            ],
             "info": false,
             "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
-            "initComplete": function ()  {
+            "initComplete": function() {
                 var column = this.api().columns(2);
-                $('#floor_select').on('change', function () {
+                $('#floor_select').on('change', function() {
                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
                     column.search(val ? '^' + val : '', true, false).draw();
                 });

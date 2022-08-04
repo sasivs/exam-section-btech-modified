@@ -1,64 +1,58 @@
-{% extends 'BTsuperintendent/grades_home.html' %}
-{% load user_check_tag %}
-{% block title %}I,X grade Students Status{% endblock title %}
-{% block sub %}
+{% extends 'BTsuperintendent/grades_home.html' %} {% load user_check_tag %} {% block title %}I,X grade Students Status{% endblock title %} {% block sub %}
 
 <div class="container">
     <form method="post" enctype="multipart/form-data">
-    {% csrf_token %} 
-    <div class="row">
-        <strong>Choose the registration event to view the list of I and X grade students.</strong>
-        {{ form.as_p }}
-        <button type="submit" name='submit' value="submit" style="width:fit-content">Submit</button>
-    </div>
-    {% if msg %}
-    <div class="row">
-        <strong>
+        {% csrf_token %}
+        <div class="row">
+            <strong>Choose the registration event to view the list of I and X grade students.</strong> {{ form.as_p }}
+            <button type="submit" name='submit' value="submit" style="width:fit-content">Submit</button>
+        </div>
+        {% if msg %}
+        <div class="row">
+            <strong>
             {{msg}}
         </strong>
-    </div>
-    {% endif %}
-    <div class="row">
-        <table class="table table-hover table-muted table-striped">
-            <thead>
-                <tr>
-                    <td style="border: 1px solid black;">Id</td>
-                    <td style="border: 1px solid black;">RegNo</td>
-                    <td style="border: 1px solid black;">sub_id</td>
-                    <td style="border: 1px solid black;">Grade</td>
-                    {% if user|has_group:'ExamStaff' %}
-                    <td style="border: 1px solid black;">Action</td>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td style="border: 1px solid black;">{{student.id}}</td>
-                    <td style="border: 1px solid black;">{{student.Registration.RegNo}}</td>
-                    <td style="border: 1px solid black;">{{student.Registration.sub_id}}</td>
-                    <td style="border: 1px solid black;">{{student.Grade}}</td>
-                    {% if user|has_group:'ExamStaff' %}
-                    <td style="border: 1px solid black;">
-                        <button type="submit" name="delete" value="{{student.id}}"
-                            onclick="return confirm('Are you sure you want to delete {{student.id}}\'s record?')">
+        </div>
+        {% endif %}
+        <div class="row">
+            <table class="table table-hover table-muted table-striped">
+                <thead>
+                    <tr>
+                        <td style="border: 1px solid black;">Id</td>
+                        <td style="border: 1px solid black;">RegNo</td>
+                        <td style="border: 1px solid black;">sub_id</td>
+                        <td style="border: 1px solid black;">Grade</td>
+                        {% if user|BThas_group:'ExamStaff' %}
+                        <td style="border: 1px solid black;">Action</td>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td style="border: 1px solid black;">{{student.id}}</td>
+                        <td style="border: 1px solid black;">{{student.Registration.RegNo}}</td>
+                        <td style="border: 1px solid black;">{{student.Registration.sub_id}}</td>
+                        <td style="border: 1px solid black;">{{student.Grade}}</td>
+                        {% if user|BThas_group:'ExamStaff' %}
+                        <td style="border: 1px solid black;">
+                            <button type="submit" name="delete" value="{{student.id}}" onclick="return confirm('Are you sure you want to delete {{student.id}}\'s record?')">
                             Delete
                         </button>
-                    </td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </form>
 </div>
-{% endblock %}
-{% block script_links %}
+{% endblock %} {% block script_links %}
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.table').DataTable({
             "lengthMenu": [
                 [10, 25, 50, 100, 250, -1],
@@ -66,9 +60,9 @@
             ],
             "info": false,
             "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
-            "initComplete": function () {
+            "initComplete": function() {
                 var column = this.api().columns(2);
-                $('#floor_select').on('change', function () {
+                $('#floor_select').on('change', function() {
                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
                     column.search(val ? '^' + val : '', true, false).draw();
                 });

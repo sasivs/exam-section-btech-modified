@@ -1,4 +1,4 @@
-{% extends 'superintendent/subjecthome.html' %} {% block title %}Subjects Upload{% endblock title %} {% block sub %} {% with url_name=request.resolver_match.url_name %}
+{% extends 'MTsuperintendent/subjecthome.html' %} {% block title %}Subjects Upload{% endblock title %} {% block sub %} {% with url_name=request.resolver_match.url_name %}
 <div class="container">
     {% if not validRows and not errorRows and not errorRows1 %}
     <div class="row">
@@ -46,8 +46,7 @@
       <br>
       In the above example, there are two distributions, so the ratio consists of three parts.
       <br>
-      </strong> 
-      {% endif %}
+      </strong> {% endif %}
     </div>
     <div class="row">
         <form method="post" enctype="multipart/form-data">

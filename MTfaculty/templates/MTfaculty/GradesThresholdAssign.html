@@ -1,4 +1,4 @@
-{% extends 'superintendent/grades_home.html' %}{% block title %}Grades Threshold{% endblock title %} {% load static %} {% block sub %}
+{% extends 'MTsuperintendent/grades_home.html' %}{% block title %}Grades Threshold{% endblock title %} {% load static %} {% block sub %}
 <div class="container">
     <div class="row">
         <table>
@@ -38,7 +38,7 @@
             <div class="row">
                 <p>Maximum Marks: {{max}}</p>
             </div>
-            <canvas id="histogram" ></canvas>
+            <canvas id="histogram"></canvas>
         </div>
     </div>
     {% if msg %}
@@ -49,24 +49,25 @@
 </div>
 <script>
 </script>
-{% endblock %}
-{% block script_links %}
+{% endblock %} {% block script_links %}
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
 <script>
-    {% if students %}
+    { %
+        if students %
+    }
     const ctx = document.getElementById('histogram').getContext('2d');
     var data = JSON.parse("{{students|escapejs}}");
     const chart_labels = [];
     const n_students = [];
-    for (var key in data){
+    for (var key in data) {
         chart_labels.push(key)
         n_students.push(data[key])
     }
     const chart = new Chart(ctx, {
         type: 'line',
         data: {
-                labels: chart_labels,
-                datasets: [{
+            labels: chart_labels,
+            datasets: [{
                 label: 'Number of Students',
                 data: n_students,
                 fill: false,
@@ -74,16 +75,17 @@
                 tension: 0.5
             }]
         },
-    });
-    {% endif %}
-    function submitForm(){
+    }); { % endif %
+    }
+
+    function submitForm() {
         let flag = 1;
         document.querySelectorAll('.threshold').forEach(item => {
-            if (item.value == ''){
+            if (item.value == '') {
                 flag = 0;
             }
         });
-        if (flag == 1){
+        if (flag == 1) {
             document.getElementById('threshold-form').submit();
         }
     }

@@ -1,4 +1,4 @@
-{% extends 'superintendent/rollList_home.html' %}{% block title %}Not Registered Registration Status{% endblock title %} {% block sub %}
+{% extends 'MTsuperintendent/rollList_home.html' %}{% block title %}Not Registered Registration Status{% endblock title %} {% block sub %}
 
 <div class="container">
     <div class="row">
@@ -58,19 +58,21 @@
         </div>
     </div>
 </div>
-{% endblock %}
-{% block script_links %}
+{% endblock %} {% block script_links %}
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.table').DataTable({
-            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, -1],
+                [10, 25, 50, 100, 250, "All"]
+            ],
             "info": false,
             "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
-            "initComplete": function ()  {
+            "initComplete": function() {
                 var column = this.api().columns(2);
-                $('#floor_select').on('change', function () {
+                $('#floor_select').on('change', function() {
                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
                     column.search(val ? '^' + val : '', true, false).draw();
                 });

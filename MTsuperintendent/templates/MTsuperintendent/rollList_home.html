@@ -3,21 +3,21 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                {% if user|has_group:'Superintendent' %}
+                {% if user|MThas_group:'Superintendent' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
-                {% elif user|has_group:'HOD' %}
+                {% elif user|MThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
-                {% elif user|has_group:'Co-ordinator' %}
+                {% elif user|MThas_group:'Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGenerateRollList' %}">Generate Roll List</a>
                 </li>

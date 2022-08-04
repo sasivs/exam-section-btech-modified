@@ -1,63 +1,57 @@
-{% extends 'BTsuperintendent/suphome.html' %}
-{% block title %}Subjects Home{% endblock title %}
-
-
-{% block content %}
-{% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Subjects Home{% endblock title %} {% block content %} {% load user_check_tag %}
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-2">
-      <ul class="nav flex-column">
-        {% if user|has_group:"Superintendent" %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTAddMarkDistribution' %}">Add Mark Distribution</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTMarkDistributionStatus' %}">Mark Distribution Status</a>
-        </li>
-        {% elif user|has_group:"HOD" %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
-        </li>
-        {% elif user|has_group:"Co-ordinator" %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
-        </li>
-        {% elif user|has_group:"Cycle-Co-ordinator" %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
-        </li>
-        {% endif %}
-      </ul>
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column">
+                {% if user|BThas_group:"Superintendent" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAddMarkDistribution' %}">Add Mark Distribution</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMarkDistributionStatus' %}">Mark Distribution Status</a>
+                </li>
+                {% elif user|BThas_group:"HOD" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+                </li>
+                {% elif user|BThas_group:"Co-ordinator" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
+                </li>
+                {% elif user|BThas_group:"Cycle-Co-ordinator" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
     </div>
-    <div class="col-md-10">
-      {% block sub %}
-      {% endblock %}
-    </div>
-  </div>
-  {% endblock %}
+    {% endblock %}

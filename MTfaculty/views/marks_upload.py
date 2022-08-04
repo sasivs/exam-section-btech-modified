@@ -215,6 +215,11 @@ def download_sample_excel_sheet(request):
             student_registrations = MTStudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject.id, \
                 RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             students = MTStudentInfo.objects.filter(RegNo__in=student_registrations.values_list('RegNo', flat=True))
+            print(regEvent)
+            print(subject)
+            print(student_registrations)
+            print(students)
+
             
             from MTfaculty.utils import SampleMarksUploadExcelSheetGenerator
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)

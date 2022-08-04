@@ -1,15 +1,13 @@
-{% extends 'BTsuperintendent/suphome.html' %} 
-{% block title %}Marks Home{% endblock title %}
-{% block content %} {% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Marks Home{% endblock title %} {% block content %} {% load user_check_tag %}
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                {% if user|has_group:'Superintendent' %}
+                {% if user|BThas_group:'Superintendent' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
-                {% elif user|has_group:'Faculty' %}
+                {% elif user|BThas_group:'Faculty' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUpload' %}">Marks Upload</a>
                 </li>
@@ -22,18 +20,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSampleMarksExcelSheetDownload' %}">Sample Marks Excel sheet Download</a>
                 </li>
-                {% elif user|has_group:'HOD' %}
+                {% elif user|BThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksFinalize' %}">Marks Finalize</a>
                 </li>
-                {% elif user|has_group:'Co-ordinator' %}
+                {% elif user|BThas_group:'Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
-                {% elif user|has_group:'Cycle-Co-ordinator' %}
+                {% elif user|BThas_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>

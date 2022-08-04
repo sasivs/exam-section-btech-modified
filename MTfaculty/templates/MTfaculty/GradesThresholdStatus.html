@@ -1,4 +1,4 @@
-{% extends 'superintendent/grades_home.html' %} {% load static %}{% block title %}Grades Threshold{% endblock title %} {% block sub %}
+{% extends 'MTsuperintendent/grades_home.html' %} {% load static %}{% block title %}Grades Threshold{% endblock title %} {% block sub %}
 <div class="container">
     <div class="row">
         <strong>Grades threshold Status for the selected course can be viewed here </strong>
@@ -40,19 +40,21 @@
     </div>
     {% endif %}
 </div>
-{% endblock %}
-{% block script_links %}
+{% endblock %} {% block script_links %}
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.table').DataTable({
-            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, -1],
+                [10, 25, 50, 100, 250, "All"]
+            ],
             "info": false,
             "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
-            "initComplete": function ()  {
+            "initComplete": function() {
                 var column = this.api().columns(2);
-                $('#floor_select').on('change', function () {
+                $('#floor_select').on('change', function() {
                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
                     column.search(val ? '^' + val : '', true, false).draw();
                 });

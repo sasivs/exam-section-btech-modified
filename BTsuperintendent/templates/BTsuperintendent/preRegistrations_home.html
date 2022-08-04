@@ -1,15 +1,10 @@
-{% extends 'BTsuperintendent/suphome.html' %}
-{% block title %}Pre-Registrations Home{% endblock title %}
-
-
-{% block content %}
-{% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Pre-Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
 
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                {% if user|has_group:"Superintendent" %}
+                {% if user|BThas_group:"Superintendent" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
                 </li>
@@ -19,7 +14,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTUpdateManageRegistrations' %}">Update Registration Event</a>
                 </li>
-                {% elif user|has_group:"ExamStaff" %}
+                {% elif user|BThas_group:"ExamStaff" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTStudentInfoFileUpload' %}">Upload Student Info</a>
                 </li>
