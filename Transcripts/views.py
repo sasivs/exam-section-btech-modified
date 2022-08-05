@@ -10,6 +10,7 @@ from MTco_ordinator.models import MTStudentGradePoints
 from Transcripts.models import BTDepartmentExamEvents, MTDepartmentExamEvents, BTDeptExamEventStudents, MTDeptExamEventStudents, \
     BTStudentExamEvents, BTStudentCGPAs, MTStudentExamEvents, MTStudentCGPAs, BTHeldIn, MTHeldIn, BTDegreeAwardees, MTDegreeAwardees,\
     BTStudentBestGrades, BTStudentFinalSGPAs, BTStudentFinalCGPA
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -40,6 +41,11 @@ def my_view(request):
     # itemList = ItemModel.objects.all()
     return render(request, 'Transcripts/index.html')
     # return render(request, 'index2.html',{'productList': productList, 'itemList': itemList})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def btech_printing_home(request):
+    return render(request, 'Transcripts/printinghome.html')
 
 @login_required(login_url="/login/")
 def btech_printing(request):
