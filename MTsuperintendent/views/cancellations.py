@@ -4,7 +4,7 @@ from MTco_ordinator.models import MTNotRegistered,MTRollLists,MTRollLists_Stagin
 from MTExamStaffDB.models import MTStudentInfo
 from MTfaculty.models import MTStudentGrades,MTMarks,MTMarks_Staging,MTStudentGrades_Staging
 from MTsuperintendent.forms import StudentCancellationForm
-from SupExamDB.views import is_Superintendent
+from MTsuperintendent.user_access_test import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
     
 

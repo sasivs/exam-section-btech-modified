@@ -1,21 +1,13 @@
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http.response import HttpResponse
 from Registrations.models import CoordinatorBacklogRegNos, CoordinatorMakeupRegNos, CoordinatorMakeupSubCodesV, StudentMakeupBacklogsVsRegistrations, StudentMakeupMarksDetails, CurrentAcademicYear,CoordinatorInfo, StudentMakeupMarks, Coordinator1Info
-from django.urls import reverse 
 from BTco_ordinator.models import BTStudentRegistrations, BTStudentMakeups, BTStudentBacklogs
-from Registrations.forms  import MarksForm, RegistrationForm1, RegistrationsInsertionForm, SimpleForm, StudentIDForm, RegistrationForm, TestForm
+from Registrations.forms  import MarksForm, RegistrationForm1, RegistrationsInsertionForm, RegistrationForm, TestForm
 from django.shortcuts import render
-from Transcripts.models import BTProgrammeModel, StudentCGPAs, BTStudentInfo, BTProgrammeModel
-from Transcripts.models import DepartmentExamEvents
-from Transcripts.models import DeptExamEventStudents
-from Transcripts.models import BTStudentGradePoints
-from Transcripts.models import StudentCGPAs
-from Transcripts.models import HeldIn
-from Transcripts.models import StudentExamEvents
-from Transcripts.models import StudentAdmissionYearDetails
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
-from django.shortcuts import redirect
 from django.db.models import Q
+from BTExamStaffDB.models import BTStudentInfo
+from BTsuperintendent.models import BTProgrammeModel
 
 @login_required(login_url="/login/")
 

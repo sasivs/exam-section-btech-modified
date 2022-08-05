@@ -7,39 +7,53 @@ from django.db.models.base import Model
 
 # Create your models here.
 
-class BTProgrammeModel(models.Model):
-    PID = models.IntegerField(primary_key=True)
-    ProgrammeName = models.CharField(max_length=20)
-    ProgrammeType = models.CharField(max_length=10)
-    Specialization = models.CharField(max_length=100)
-    Dept = models.IntegerField()
+
+class BTHeldIn(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    AYASBYBS = models.IntegerField()
+    HeldInMonth = models.CharField(max_length=10)
+    HeldInYear = models.IntegerField()
     class Meta:
-        db_table = 'BTProgrammeModel'
-        managed = False
+        db_table = 'BTHeldIn'
+        managed = True
 
+class BTDegreeAwardees(models.Model):
+    RegNo=models.IntegerField()
+    RollNo=models.IntegerField()
+    Dept=models.IntegerField()
+    Name=models.CharField(max_length=70)
+    PassingYear=models.IntegerField()
+    Regulation = models.IntegerField()
+    Degree = models.CharField(max_length=30)
+    class Meta:
+        db_table = 'BTDegreeAwardees'
+        managed = True
 
-class DepartmentExamEvents(models.Model):
+class BTDepartmentExamEvents(models.Model):
     Dept = models.IntegerField()
     AYASBYBS = models.IntegerField()
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     class Meta:
-        db_table = 'DeptExamEventsMV'
+        db_table = 'BTDeptExamEventsMV'
         managed = False
 
 
-class StudentExamEvents(models.Model):
+class BTStudentExamEvents(models.Model):
     RegNo = models.IntegerField()
     AYASBYBS = models.IntegerField()
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     IsRegular = models.IntegerField()
     class Meta:
-        db_table = 'StudentExamEventsMV'
+        db_table = 'BTStudentExamEventsMV'
         managed = False
 
 
-class DeptExamEventStudents(models.Model):
+class BTDeptExamEventStudents(models.Model):
     Dept = models.IntegerField()
     AYASBYBS = models.IntegerField()
     BYear = models.IntegerField()
@@ -48,46 +62,12 @@ class DeptExamEventStudents(models.Model):
     RollNo = models.IntegerField()
     Name = models.CharField(max_length=70)
     class Meta:
-        db_table = 'DeptExamEventStudentsMV'
+        db_table = 'BTDeptExamEventStudentsMV'
         managed = False
 
 
-class BTStudentGradePoints(models.Model):
-    RegNo = models.IntegerField()
-    SubCode = models.CharField(max_length=10)
-    SubName = models.CharField(max_length=100)
-    Grade = models.CharField(max_length=2)
-    Credits = models.IntegerField()
-    AYASBYBS = models.IntegerField()
-    Type = models.CharField(max_length=10)
-    class Meta:
-        db_table = 'StudentGradePointsMV'
-        managed = False
 
-class StudentGradePointsV(models.Model):
-    RegNo = models.IntegerField()
-    SubCode = models.CharField(max_length=10)
-    SubName = models.CharField(max_length=100)
-    Grade = models.CharField(max_length=2)
-    Credits = models.IntegerField()
-    AYASBYBS = models.IntegerField()
-    Type = models.CharField(max_length=10)
-    Order = models.IntegerField()
-    class Meta:
-        db_table = 'StudentGradePointsV'
-        managed = False
-
-class BTStudentInfo(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    Name = models.CharField(max_length=70)
-    Dept = models.IntegerField()
-    class Meta:
-        db_table = 'BTStudentInfo'
-        managed = False
-
-
-class StudentCGPAs(models.Model):
+class BTStudentCGPAs(models.Model):
     RegNo = models.IntegerField()
     AYASBYBS_G = models.IntegerField()
     CGP = models.IntegerField()
@@ -97,88 +77,172 @@ class StudentCGPAs(models.Model):
     SC = models.IntegerField()
     SGPA = models.FloatField()
     class Meta:
-        db_table = 'StudentCGPAsMV'
+        db_table = 'BTStudentCGPAsMV'
         managed = False
 
 
-class HeldIn(models.Model):
+class BTStudentBestGrades(models.Model):
+    RegNo = models.IntegerField()
+    sub_id = models.IntegerField()
+    SubCode = models.CharField(max_length=10)
+    SubName = models.CharField(max_length=100)
     AYear = models.IntegerField()
     ASem = models.IntegerField()
     BYear = models.IntegerField()
     BSem = models.IntegerField()
-    AYASBYBS = models.IntegerField()
-    HeldInMonth = models.CharField(max_length=10)
-    HeldInYear = models.IntegerField()
-    class Meta:
-        db_table = 'HeldIn'
-        managed = False 
-
-
-
-class StudentAdmissionYearDetails(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
-    Name = models.CharField(max_length=70)
+    OfferedYear = models.IntegerField()
     Dept = models.IntegerField()
-    AdmissionYear = models.IntegerField()
-    class Meta:
-        db_table = 'StudentAdmissionInfoV'
-        managed = False 
-
-
-class StudentSemSubCounts(models.Model):
-    RegNo=models.IntegerField()
-    BYBS=models.IntegerField()
-    SemSubCount=models.IntegerField()
-    class Meta:
-        db_table = 'StudentSemSubCountsV'
-        managed = False
-
-
-class StudentBestGrades(models.Model):
-    RegNo = models.IntegerField()
-    SubCode = models.CharField(max_length=10)
-    SubName = models.CharField(max_length=100)
     Grade = models.CharField(max_length=2)
-    Credits = models.IntegerField()
+    AttGrade = models.CharField(max_length=2)
+    Regulation = models.IntegerField()
     Creditable = models.IntegerField()
+    Credits = models.IntegerField()
+    Type = models.CharField(max_length=10)
     Category = models.CharField(max_length=10)
+    Points = models.IntegerField()
+    GP = models.IntegerField()
     AYASBYBS = models.IntegerField()
-    BYBS = models.IntegerField()
     Required = models.IntegerField()
-    Order = models.IntegerField()
+    # Order = models.IntegerField()
     class Meta:
-        db_table = 'StudentBestGradesV'
+        db_table = 'BTStudentBestGradesV'
         managed = False
 
-class StudentFinalSGPAs(models.Model):
+class BTStudentFinalSGPAs(models.Model):
     RegNo = models.IntegerField()
     BYBS = models.IntegerField()
     SGP = models.IntegerField()
     SC = models.IntegerField()
     SGPA = models.FloatField()
     class Meta:
-        db_table = 'StudentFinalSGPAsV'
+        db_table = 'BTStudentFinalSGPAsV'
         managed = False
 
-class StudentFinalCGPA(models.Model):
+class BTStudentFinalCGPA(models.Model):
     RegNo = models.IntegerField()
     CGP = models.IntegerField()
     TotalCredits = models.IntegerField()
     CGPA = models.FloatField()
     class Meta:
-        db_table = 'StudentFinalCGPAV'
+        db_table = 'BTStudentFinalCGPAV'
         managed = False
 
-class DegreeAwardees(models.Model):
+
+
+
+#MTech Models
+
+class MTHeldIn(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    MYear = models.IntegerField()
+    MSem = models.IntegerField()
+    AYASMYMS = models.IntegerField()
+    HeldInMonth = models.CharField(max_length=10)
+    HeldInYear = models.IntegerField()
+    class Meta:
+        db_table = 'MTHeldIn'
+        managed = True
+
+class MTDegreeAwardees(models.Model):
     RegNo=models.IntegerField()
-    RollNo=models.IntegerField()
     Dept=models.IntegerField()
     Name=models.CharField(max_length=70)
     PassingYear=models.IntegerField()
     Regulation = models.IntegerField()
     Degree = models.CharField(max_length=30)
     class Meta:
-        db_table='DegreeAwardees'
-        managed=False
+        db_table = 'MTDegreeAwardees'
+        managed = True
+
+class MTDepartmentExamEvents(models.Model):
+    Dept = models.IntegerField()
+    AYASMYMS = models.IntegerField()
+    MYear = models.IntegerField()
+    MSem = models.IntegerField()
+    class Meta:
+        db_table = 'MTDeptExamEventsMV'
+        managed = False
+
+
+class MTStudentExamEvents(models.Model):
+    RegNo = models.IntegerField()
+    AYASMYMS = models.IntegerField()
+    MYear = models.IntegerField()
+    MSem = models.IntegerField()
+    IsRegular = models.IntegerField()
+    class Meta:
+        db_table = 'MTStudentExamEventsMV'
+        managed = False
+
+
+class MTDeptExamEventStudents(models.Model):
+    Dept = models.IntegerField()
+    AYASMYMS = models.IntegerField()
+    MYear = models.IntegerField()
+    MSem = models.IntegerField()
+    RegNo = models.IntegerField()
+    Name = models.CharField(max_length=70)
+    class Meta:
+        db_table = 'MTDeptExamEventStudentsMV'
+        managed = False
+
+
+
+class MTStudentCGPAs(models.Model):
+    RegNo = models.IntegerField()
+    AYASMYMS_G = models.IntegerField()
+    CGP = models.IntegerField()
+    CC = models.IntegerField()
+    CGPA = models.FloatField()
+    SGP = models.IntegerField()
+    SC = models.IntegerField()
+    SGPA = models.FloatField()
+    class Meta:
+        db_table = 'MTStudentCGPAsMV'
+        managed = False
+
+###########################################################
+
+
+# class StudentGradePointsV(models.Model):
+#     RegNo = models.IntegerField()
+#     SubCode = models.CharField(max_length=10)
+#     SubName = models.CharField(max_length=100)
+#     Grade = models.CharField(max_length=2)
+#     Credits = models.IntegerField()
+#     AYASBYBS = models.IntegerField()
+#     Type = models.CharField(max_length=10)
+#     Order = models.IntegerField()
+#     class Meta:
+#         db_table = 'StudentGradePointsV'
+#         managed = False
+
+# class BTStudentInfo(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     Dept = models.IntegerField()
+#     class Meta:
+#         db_table = 'BTStudentInfo'
+#         managed = False
+
+
+# class StudentAdmissionYearDetails(models.Model):
+#     RegNo = models.IntegerField()
+#     RollNo = models.IntegerField()
+#     Name = models.CharField(max_length=70)
+#     Dept = models.IntegerField()
+#     AdmissionYear = models.IntegerField()
+#     class Meta:
+#         db_table = 'StudentAdmissionInfoV'
+#         managed = False 
+
+# class StudentSemSubCounts(models.Model):
+#     RegNo=models.IntegerField()
+#     BYBS=models.IntegerField()
+#     SemSubCount=models.IntegerField()
+#     class Meta:
+#         db_table = 'StudentSemSubCountsV'
+#         managed = False
 

@@ -4,7 +4,7 @@ from BTco_ordinator.models import BTDroppedRegularCourses,BTNotPromoted,BTNotReg
 from BTExamStaffDB.models import BTStudentInfo
 from BTfaculty.models import BTStudentGrades,BTMarks,BTMarks_Staging,BTStudentGrades_Staging
 from BTsuperintendent.forms import StudentCancellationForm
-from SupExamDB.views import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
     
 

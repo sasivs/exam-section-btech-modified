@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
-from SupExamDB.views import is_Superintendent
 from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm
 from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
@@ -12,7 +11,7 @@ from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTMarksDistribu
 from BThod.models import BTCoordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
-from BTsuperintendent.user_access_test import subject_access, subject_home_access
+from BTsuperintendent.user_access_test import subject_access, subject_home_access, is_Superintendent
 
 
 @login_required(login_url="/login/")

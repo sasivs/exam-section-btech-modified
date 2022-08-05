@@ -1,12 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from SupExamDB.views import is_Superintendent
-from BTsuperintendent.user_access_test import registration_access
+from BTsuperintendent.user_access_test import is_Superintendent
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
-from BTsuperintendent.models import BTRegistrationStatus,BTCycleCoordinator
+from BTsuperintendent.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
-from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Superintendent)
