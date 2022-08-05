@@ -39,7 +39,7 @@ def grades_finalize(request):
 
     else:
         form = GradesFinalizeForm(regIDs)
-    return render(request, 'SupExamDBRegistrations/GradesFinalize.html', {'form':form})
+    return render(request, 'MThod/GradesFinalize.html', {'form':form})
 
 
 def RefreshMaterializedViews():

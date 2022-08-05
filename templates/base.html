@@ -19,7 +19,7 @@
        <img src="{% static 'gradeSheetPrinting/images/logo.jpg' %}" alt="" width="80" height="80">
     </a>
   
-    <center><p><strong><b>Automated Academic Portal</strong></p><p> <strong> NIT Andhra Pradesh</strong></b></p>
+    <center><p><strong><b>Academic Portal</strong></p><p> <strong> NIT Andhra Pradesh</strong></b></p>
      {% if user.is_authenticated %}
       <li>Logged in as <strong>{{ user.username }}</strong></li>
       {% endif %}
@@ -27,7 +27,7 @@
     <a href="{% url 'logout' %}">Log out</a>  
   </div>
 </nav>
-    <center><p><strong><b>Automated Academic Portal</strong></p><p> <strong> NIT Andhra Pradesh</strong></b></p>
+    <center><p><strong><b>Academic Portal</strong></p><p> <strong> NIT Andhra Pradesh</strong></b></p>
      {% if user.is_authenticated %}
       <li>Logged in as <strong>{{ user.username }}</strong></li>
       {% endif %}

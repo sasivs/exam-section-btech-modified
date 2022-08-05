@@ -73,6 +73,9 @@
                     <a class="nav-link" href="{% url 'MTGradesStatus' %}">Grades Status</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesHodSubmission' %}">Grades HOD Submission</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
                 {% elif user|MThas_group:'Co-ordinator' %}

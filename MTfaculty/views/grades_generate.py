@@ -129,3 +129,31 @@ def grades_status(request):
     else:
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'MTfaculty/GradesStatus.html', {'form':form})
+
+@login_required(login_url="/login/")
+@user_passes_test(grades_threshold_access)
+def grades_hod_submission(request):
+    
+    '''
+    Using MarkStatusForm, as the required fields are same in this case and for marks status view. 
+    '''
+
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    faculty = None
+    if 'Faculty' in groups:
+        faculty = MTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
+    subjects = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, GradesStatus=1, RegEventId__Status=1, RegEventId__GradeStatus=1)
+    msg = ''
+    if request.method == 'POST':
+        form = MarksStatusForm(subjects, request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data.get('subject').split(':')[0]
+            regEvent = form.cleaned_data.get('subject').split(':')[1]
+            fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent).first()
+            fac_assign_obj.GradesStatus = 0
+            fac_assign_obj.save()
+            msg = 'Grades have been submitted to HOD successfully.'
+    else:
+        form = MarksStatusForm(subjects)
+    return render(request, 'MThod/GradesFinalize.html', {'form':form, 'msg':msg})

@@ -18,6 +18,7 @@ urlpatterns =[
     path('MTSampleMarksExcelSheetDownload', marks_upload.download_sample_excel_sheet, name='MTSampleMarksExcelSheetDownload'),
     path('MTGradesGenerate', grades_generate.grades_generate, name='MTGradesGenerate'),
     path('MTGradesStatus', grades_generate.grades_status, name='MTGradesStatus'),
+    path('MTGradesHodSubmission', grades_generate.grades_hod_submission, name='MTGradesHodSubmission'),
 ]
 
 

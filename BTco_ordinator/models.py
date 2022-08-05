@@ -275,6 +275,7 @@ class BTFacultyAssignment(models.Model):
     Coordinator = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE, related_name='co_ordinator_facultyInfo')
     Section = models.CharField(max_length=2, default='NA')
     MarksStatus = models.IntegerField(default=1)
+    GradesStatus = models.IntegerField(default=1)
 
     class Meta:
         db_table = 'BTFacultyAssignment'

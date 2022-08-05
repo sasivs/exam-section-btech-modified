@@ -18,6 +18,8 @@ urlpatterns =[
     path('BTSampleMarksExcelSheetDownload', marks_upload.download_sample_excel_sheet, name='BTSampleMarksExcelSheetDownload'),
     path('BTGradesGenerate', grades_generate.grades_generate, name='BTGradesGenerate'),
     path('BTGradesStatus', grades_generate.grades_status, name='BTGradesStatus'),
+    path('BTGradesHodSubmission', grades_generate.grades_hod_submission, name='BTGradesHodSubmission'),
+
 ]
 
 

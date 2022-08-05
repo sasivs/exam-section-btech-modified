@@ -36,6 +36,7 @@ class BTMandatoryCredits(models.Model):
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     Credits = models.IntegerField()
+    NumberOfSubjects = models.IntegerField()
     class Meta:
         db_table = 'BTMandatoryCredits'
         unique_together = (('Regulation', 'Dept', 'BYear'))
