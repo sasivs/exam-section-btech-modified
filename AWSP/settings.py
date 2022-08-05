@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'MTExamStaffDB', 
     'MTfaculty',
 
-    'django_rename_app',
 ]
 
 MIDDLEWARE = [
