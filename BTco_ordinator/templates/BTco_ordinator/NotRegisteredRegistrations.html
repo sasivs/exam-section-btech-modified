@@ -46,18 +46,17 @@
             </div>
             {% endif %}
             <div class="container">
-                <table>
-                    <th>
+                <table class="table table-hover table-muted table-striped">
+                    <thead>
                         <tr>
                             <td style="border: 1px solid black;">SubCode </td>
                             <td style="border: 1px solid black;">SubName</td>
                             <td style="border: 1px solid black;">Credits</td>
                             <td style="border: 1px solid black;">Mode of Registration</td>
                             <td style="border: 1px solid black;">Selection(Y/N)</td>
-                            <td style="border: 1px solid black;">Mode(Study)</td>
-                            <td style="border: 1px solid black;">Mode(Exam)</td>
+                            <td style="border: 1px solid black;">Mode(Study/Exam)</td>
                         </tr>
-                    </th>
+                    </thead>
                     {% for field  in form.myFields %}
                     <tr>
                         <td style="border: 1px solid black;">
@@ -75,21 +74,9 @@
                         <td style="border: 1px solid black;">
                             {{ field.3 }}
                         </td>
-                        {% for choice in field.4 %}
                         <td style="border: 1px solid black;">
-                            <div class='form-check form-check-inline'>{{choice.tag}}
-                                <span>{{ choice.choice_label }}</span>
-                            </div>
-
+                            {{ field.4 }}
                         </td>
-                        {% if forloop.last and not forloop.counter0  %}
-                        <td style="border: 1px solid black;">
-                            <div> &nbsp; </div>
-                        </td>
-                        {% endif %}
-
-
-                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </table>
@@ -105,6 +92,18 @@
     </div>
     {% endif %}
 </div>
-
+<script>
+{% if modes %}
+var modes = JSON.parse("{{modes|escapejs}}");
+for (const [key, value] of Object.entries(modes)){
+    var radios = document.getElementsByName(key);
+    for (let i=0; i<radios.length; i++){
+    if (radios[i].value == value){
+        radios[i].checked = true;
+    }
+    }
+}
+{% endif %}
+</script>
 
 {% endblock %}

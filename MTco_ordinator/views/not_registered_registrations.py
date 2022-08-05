@@ -25,15 +25,25 @@ def not_registered_registrations(request):
         form = NotRegisteredRegistrationsForm(regIDs, request.POST)
         if not request.POST.get('regd_no'):
             pass 
-        elif not 'submit-form' in request.POST.keys():
+        elif(request.POST.get('regEvent') and request.POST.get('regd_no') and not 'submit-form' in request.POST.keys()):
             regNo = request.POST['regd_no']
             event = request.POST['regEvent']
-            studentInfo = MTNotRegistered.objects.filter(id=regNo).first()
+            event = MTRegistrationStatus.objects.get(id=event)
+            regEvents = MTRegistrationStatus.objects.filter(AYear=event.AYear, ASem=event.ASem, Regulation=event.Regulation)
+            studentRegistrations = MTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId__in=regEvents.values_list('id', flat=True))
+            mode_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in studentRegistrations}
+            student_obj = MTStudentInfo.objects.get(RegNo=regNo)
+            context = {'form':form, 'msg':0}
+            context['RollNo'] = student_obj.RegNo
+            context['Name'] = student_obj.Name  
+            from json import dumps
+            context['modes'] = dumps(mode_selection)
+            return render(request, 'MTco_ordinator/NotRegisteredRegistrations.html',context)
         elif(request.POST.get('regEvent') and request.POST.get('regd_no') and 'submit-form' in request.POST.keys() and form.is_valid()):
             regNo = request.POST['regd_no']
             event = request.POST['regEvent']
             studentInfo = MTNotRegistered.objects.filter(id=regNo).first()
-            regNo = MTstudentInfo.Student.RegNo
+            regNo = studentInfo.Student.RegNo
             # studyModeCredits = 0
             # examModeCredits = 0
             # for sub in form.myFields:

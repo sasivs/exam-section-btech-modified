@@ -389,9 +389,8 @@ class BacklogRegistrationForm(forms.Form):
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                     else:
                         mode = Selection[bRow.sub_id]
-                        print(type(mode), mode=='1')
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=1,\
-                            widget=forms.RadioSelect(attrs={'required':'True'}))
+                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode,\
+                            widget=forms.RadioSelect())
                         # self.fields['RadioMode' + str(bRow.sub_id)].initial = str(mode)
                     self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
                                     self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
@@ -420,9 +419,8 @@ class BacklogRegistrationForm(forms.Form):
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                 else:
                     mode = Selection[bRow.sub_id] 
-                    print(Selection[bRow.sub_id])
                     self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
-                        widget=forms.RadioSelect(),choices=[('1', 'Study Mode'), ('0', 'Exam Mode')], initial=str(mode))
+                        choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode, widget=forms.RadioSelect(),)
                 self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
                                     self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
                                         bRow.Regulation, bRow.sub_id, row.id))
@@ -506,8 +504,6 @@ class DeptElectiveRegsForm(forms.Form):
 class DroppedRegularRegistrationsForm(forms.Form):
     def __init__(self,regIDs, *args,**kwargs):
         super(DroppedRegularRegistrationsForm, self).__init__(*args, **kwargs)
-        print(*args)
-        print(**kwargs)
         depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
@@ -515,12 +511,10 @@ class DroppedRegularRegistrationsForm(forms.Form):
             str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
                     for oIndex, option in enumerate(regIDs)]
-        print(regEventIDKVs)
         regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
         self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs,\
             attrs={'onchange':"submit();"}))
         if 'RegEvent' in self.data and self.data['RegEvent']!= '-- Select Registration Event --':
-            print("In if")
             regId = self.data.get('RegEvent')
             strs = regId.split(':')
             depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']

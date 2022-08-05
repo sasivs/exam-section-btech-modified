@@ -60,10 +60,17 @@ def dropped_regular_registrations(request):
         form = DroppedRegularRegistrationsForm(regIDs,con)
         if not 'RegNo' in request.POST.keys():
             pass 
-        elif not 'Submit' in request.POST.keys():
-            regNo = request.POST['RegNo']
-            event = (request.POST['RegEvent'])
-            studentInfo = BTStudentInfo.objects.filter(RegNo=regNo)
+        elif 'RegEvent' in request.POST and 'RegNo' in request.POST and not 'Submit' in request.POST:
+            regEvents = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=asem, Regulation=regulation)
+            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
+            mode_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in studentRegistrations}
+            student_obj = BTStudentInfo.objects.get(RegNo=request.POST.get('RegNo'))
+            context = {'form':form, 'msg':0}
+            context['RollNo'] = student_obj.RollNo
+            context['Name'] = student_obj.Name  
+            from json import dumps
+            context['modes'] = dumps(mode_selection)
+            return render(request, 'BTco_ordinator/DroppedRegularReg.html',context)
         elif('RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST and form.is_valid()):
             regNo = request.POST['RegNo']
             event = (request.POST['RegEvent'])

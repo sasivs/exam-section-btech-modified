@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import BacklogRegistrationForm
-from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
+from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from BTsuperintendent.models import BTRegistrationStatus, BTCycleCoordinator
 from BThod.models import BTCoordinator
 from BTExamStaffDB.models import BTStudentInfo
@@ -49,10 +49,17 @@ def btech_backlog_registration(request):
             form = BacklogRegistrationForm(regIDs, request.POST)
         if not 'RegNo' in request.POST.keys():
             pass 
-        elif not 'Submit' in request.POST.keys():
-            regNo = request.POST['RegNo']
-            event = (request.POST['RegEvent'])
-            studentInfo = BTStudentInfo.objects.filter(RegNo=regNo)
+        elif 'RegEvent' in request.POST and 'RegNo' in request.POST and not 'Submit' in request.POST:
+            regEvents = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=asem, Regulation=regulation)
+            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
+            mode_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in studentRegistrations}
+            student_obj = BTStudentInfo.objects.get(RegNo=request.POST.get('RegNo'))
+            context = {'form':form, 'msg':0}
+            context['RollNo'] = student_obj.RollNo
+            context['Name'] = student_obj.Name  
+            from json import dumps
+            context['modes'] = dumps(mode_selection)
+            return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
         elif('RegEvent' in request.POST and 'RegNo' in request.POST and 'Submit' in request.POST and form.is_valid()):
             regNo = request.POST['RegNo']
             event = request.POST['RegEvent']
@@ -111,7 +118,7 @@ def btech_backlog_registration(request):
                     context['RollNo'] = studentInfo[0].RollNo
                     context['Name'] = studentInfo[0].Name  
                 return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
-  
+        
     else:
         form = BacklogRegistrationForm(regIDs)
     context = {'form':form, 'msg':0}

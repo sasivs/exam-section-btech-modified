@@ -35,8 +35,8 @@
             </div>
             {% endif %}
             <div class="container">
-                <table>
-                    <th>
+                <table class="table table-hover table-muted table-striped">
+                    <thead>
                         <tr>
                             <td style="border: 1px solid black;">SubCode </td>
                             <td style="border: 1px solid black;">SubName</td>
@@ -46,7 +46,7 @@
                             <td style="border: 1px solid black;">Mode(Study/Exam)</td>
                             <!-- <td style="border: 1px solid black;">Mode(Exam)</td> -->
                         </tr>
-                    </th>
+                    </thead>
                     {% for field in form.myFields %}
                     <tr>
                         <td style="border: 1px solid black;">
