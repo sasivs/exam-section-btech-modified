@@ -53,8 +53,11 @@ urlpatterns = [
     path('MTechGetStudentEvents/<int:regno>/',views.get_MT_regno_events, name='MTechGetStudentEvents'),
 
     
-    # path('StudentRegNoGrades/<int:regno>/<int:ayasbybs>', views.get_student_regno_grades, name = 'StudentRegNoGrades'),
-    # path('StudentRollNoGrades/<int:rollno>/<int:ayasbybs>', views.get_student_rollno_grades, name = 'StudentRollNoGrades'),
+    path('BTStudentRegNoGrades/<int:regno>/<int:ayasbybs>', views.get_BT_student_regno_grades, name = 'BTStudentRegNoGrades'),
+    path('MTStudentRegNoGrades/<int:regno>/<int:ayasmyms>', views.get_MT_student_regno_grades, name = 'MTStudentRegNoGrades'),
+
+
+    path('BTStudentRollNoGrades/<int:rollno>/<int:ayasbybs>', views.get_BT_student_rollno_grades, name = 'BTStudentRollNoGrades'),
 
 
     path('GetBTechIDs/<int:admissionYear>/<int:dept>', views.get_btech_ids, name='GetBTechIDs'),

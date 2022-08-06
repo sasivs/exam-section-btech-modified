@@ -1,15 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from BTsuperintendent.models import BTProgrammeModel
-from MTsuperintendent.models import MTProgrammeModel
+from BTsuperintendent.models import BTProgrammeModel, BTHeldIn
+from MTsuperintendent.models import MTProgrammeModel, MTHeldIn
 from BTExamStaffDB.models import BTStudentInfo
 from MTExamStaffDB.models import MTStudentInfo
 from BTco_ordinator.models import BTStudentGradePoints
 from MTco_ordinator.models import MTStudentGradePoints
 from Transcripts.models import BTDepartmentExamEvents, MTDepartmentExamEvents, BTDeptExamEventStudents, MTDeptExamEventStudents, \
-    BTStudentExamEvents, BTStudentCGPAs, MTStudentExamEvents, MTStudentCGPAs, BTHeldIn, MTHeldIn, BTDegreeAwardees, MTDegreeAwardees,\
-    BTStudentBestGrades, BTStudentFinalSGPAs, BTStudentFinalCGPA
+    BTStudentExamEvents, BTStudentCGPAs, MTStudentExamEvents, MTStudentCGPAs, BTDegreeAwardees, MTDegreeAwardees,\
+    BTStudentBestGrades, BTStudentFinalSGPAs, BTStudentFinalCGPA, BTStudentGradePointsV, MTStudentGradePointsV
 from BTsuperintendent.user_access_test import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
@@ -421,6 +421,31 @@ def btech_cmm(request):
  
 
 @login_required(login_url="/login/")
+def get_BT_student_regno_grades(request, regno, ayasbybs):
+    studentGrades = BTStudentGradePointsV.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs)).order_by('Order','SubCode')
+    
+    studentGradesQS = list(studentGrades.values())
+    return JsonResponse({'data':studentGradesQS}, safe=False)
+
+
+@login_required(login_url="/login/")
+def get_MT_student_regno_grades(request, regno, ayasmyms):
+    studentGrades = MTStudentGradePointsV.objects.filter(RegNo=int(regno)).filter(AYASMYMS=int(ayasmyms)).order_by('Order','SubCode')
+    
+    studentGradesQS = list(studentGrades.values())
+    return JsonResponse({'data':studentGradesQS}, safe=False)
+
+
+@login_required(login_url="/login/")
+def get_BT_student_rollno_grades(request, rollno, ayasbybs):
+    studInfo = BTStudentInfo.objects.filter(RollNo=int(rollno))
+    regNo = studInfo[0].RegNo
+    studentGrades = BTStudentGradePointsV.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs)).order_by('Order','SubCode')
+    studentGradesQS = list(studentGrades.values())
+    return JsonResponse({'data':studentGradesQS,'regNo':regNo}, safe=False)
+
+
+@login_required(login_url="/login/")
 def btech_get_cmmdata_dept(request,department):
     deptRollList = BTDegreeAwardees.objects.filter(Dept=department)
     deptQS = list(deptRollList.values())
@@ -496,18 +521,3 @@ def get_MT_heldin_info(request, ayasmyms):
 #     deptExamEventsQS = list(deptExamEventsList.values())
 #     return JsonResponse({'data': deptExamEventsQS}, safe=False)
 
-# @login_required(login_url="/login/")
-# def get_student_regno_grades(request, regno, ayasbybs):
-#     studentGrades = StudentGradePointsV.objects.filter(RegNo=int(regno)).filter(AYASBYBS=int(ayasbybs)).order_by('Order','SubCode')
-    
-#     studentGradesQS = list(studentGrades.values())
-#     return JsonResponse({'data':studentGradesQS}, safe=False)
-
-
-# @login_required(login_url="/login/")
-# def get_student_rollno_grades(request, rollno, ayasbybs):
-#     studInfo = BTStudentInfo.objects.filter(RollNo=int(rollno))
-#     regNo = studInfo[0].RegNo
-#     studentGrades = StudentGradePointsV.objects.filter(RegNo=int(regNo)).filter(AYASBYBS=int(ayasbybs)).order_by('Order','SubCode')
-#     studentGradesQS = list(studentGrades.values())
-#     return JsonResponse({'data':studentGradesQS,'regNo':regNo}, safe=False)

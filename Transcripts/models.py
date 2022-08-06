@@ -8,17 +8,6 @@ from django.db.models.base import Model
 # Create your models here.
 
 
-class BTHeldIn(models.Model):
-    AYear = models.IntegerField()
-    ASem = models.IntegerField()
-    BYear = models.IntegerField()
-    BSem = models.IntegerField()
-    AYASBYBS = models.IntegerField()
-    HeldInMonth = models.CharField(max_length=10)
-    HeldInYear = models.IntegerField()
-    class Meta:
-        db_table = 'BTHeldIn'
-        managed = True
 
 class BTDegreeAwardees(models.Model):
     RegNo=models.IntegerField()
@@ -31,6 +20,19 @@ class BTDegreeAwardees(models.Model):
     class Meta:
         db_table = 'BTDegreeAwardees'
         managed = True
+
+class BTStudentGradePointsV(models.Model):
+    RegNo = models.IntegerField()
+    SubCode = models.CharField(max_length=10)
+    SubName = models.CharField(max_length=100)
+    Grade = models.CharField(max_length=2)
+    Credits = models.IntegerField()
+    AYASBYBS = models.IntegerField()
+    Type = models.CharField(max_length=10)
+    Order = models.IntegerField()
+    class Meta:
+        db_table = 'BTStudentGradePointsV'
+        managed = False
 
 class BTDepartmentExamEvents(models.Model):
     Dept = models.IntegerField()
@@ -132,17 +134,6 @@ class BTStudentFinalCGPA(models.Model):
 
 #MTech Models
 
-class MTHeldIn(models.Model):
-    AYear = models.IntegerField()
-    ASem = models.IntegerField()
-    MYear = models.IntegerField()
-    MSem = models.IntegerField()
-    AYASMYMS = models.IntegerField()
-    HeldInMonth = models.CharField(max_length=10)
-    HeldInYear = models.IntegerField()
-    class Meta:
-        db_table = 'MTHeldIn'
-        managed = True
 
 class MTDegreeAwardees(models.Model):
     RegNo=models.IntegerField()
@@ -154,6 +145,19 @@ class MTDegreeAwardees(models.Model):
     class Meta:
         db_table = 'MTDegreeAwardees'
         managed = True
+
+class MTStudentGradePointsV(models.Model):
+    RegNo = models.IntegerField()
+    SubCode = models.CharField(max_length=10)
+    SubName = models.CharField(max_length=100)
+    Grade = models.CharField(max_length=2)
+    Credits = models.IntegerField()
+    AYASMYMS = models.IntegerField()
+    Type = models.CharField(max_length=10)
+    Order = models.IntegerField()
+    class Meta:
+        db_table = 'MTStudentGradePointsV'
+        managed = False
 
 class MTDepartmentExamEvents(models.Model):
     Dept = models.IntegerField()

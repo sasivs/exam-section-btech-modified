@@ -103,7 +103,7 @@
           }
           // Obtain HeldIn, Year Sem details from HeldIn table
           var heldInRequest = new XMLHttpRequest();
-          heldInRequest.open('GET','../Transcripts/HeldIn/'+yearSemStr,true);
+          heldInRequest.open('GET','../Transcripts/BTHeldIn/'+yearSemStr,true);
           var years = {1:"I", 2:"II",3:"III", 4:"IV"};
           var sems = {1: "I", 2:"II"};
           heldInRequest.onload = function(){
@@ -143,11 +143,11 @@
           var cgpaRequest = new XMLHttpRequest();
           
           if(progElement.options[progElement.selectedIndex].value<9){
-            rollNoRequest.open('GET', "../Transcripts/StudentRollNoGrades/"+regNosBox.options[regNosBox.selectedIndex].text+"/"+ yearSemStr, true);
-            cgpaRequest.open("GET","../Transcripts/StudentCGPA/rollNo/"+studRegNo +'/'+yearSemStr,true);
+            rollNoRequest.open('GET', "../Transcripts/BTStudentRollNoGrades/"+regNosBox.options[regNosBox.selectedIndex].text+"/"+ yearSemStr, true);
+            cgpaRequest.open("GET","../Transcripts/BTStudentCGPA/rollNo/"+studRegNo +'/'+yearSemStr,true);
           }else{
-            rollNoRequest.open('GET', "../Transcripts/StudentRegNoGrades/"+regNosBox.options[regNosBox.selectedIndex].text+"/"+ yearSemStr, true);
-            cgpaRequest.open("GET","../Transcripts/StudentCGPA/regno/"+studRegNo +'/'+yearSemStr,true);
+            rollNoRequest.open('GET', "../Transcripts/BTStudentRegNoGrades/"+regNosBox.options[regNosBox.selectedIndex].text+"/"+ yearSemStr, true);
+            cgpaRequest.open("GET","../Transcripts/BTStudentCGPA/regno/"+studRegNo +'/'+yearSemStr,true);
           }
           rollNoRequest.onload = function(){
             var myData = JSON.parse(rollNoRequest.responseText);
