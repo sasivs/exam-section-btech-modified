@@ -26,6 +26,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTCGPA' %}">CGPA</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTHeldIn' %}">Update End Exam Yr and Month</a>
+                </li>
                 {% elif user|BThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>

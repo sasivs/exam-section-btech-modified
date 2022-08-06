@@ -308,3 +308,18 @@ class BTStudentCGPAs_Staging(models.Model):
     class Meta:
         db_table = 'BTStudentCGPAs_StagingMV'
         managed = False
+
+class BTHeldIn(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    AYASBYBS = models.IntegerField()
+    HeldInMonth = models.CharField(max_length=10)
+    HeldInYear = models.IntegerField()
+    class Meta:
+        db_table = 'BTHeldIn'
+        constraints = [
+            models.UniqueConstraint(fields=['AYASBYBS'], name='unique_ayasbybs_btheldin')
+        ]
+        managed = True

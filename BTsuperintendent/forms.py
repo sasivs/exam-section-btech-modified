@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
-from BTsuperintendent.models import BTHOD, BTCycleCoordinator
+from BTsuperintendent.models import BTHOD, BTCycleCoordinator, BTRegistrationStatus
 from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from BTsuperintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
 from BTco_ordinator.models import BTStudentBacklogs
@@ -262,3 +262,23 @@ class StudentCancellationForm(forms.Form):
         if not BTStudentInfo.objects.filter(RegNo=regd_no).exists():
             raise forms.ValidationError('Invalid Reg No.')
         return regd_no
+
+
+class HeldInForm(forms.Form):
+    def __init__ (self,*args, **kwargs):
+        super(HeldInForm, self).__init__(*args, **kwargs)
+        regEvents = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
+        AYASBYBS_CHOICES = [('', '---------')] + [(((((((reg.AYear*10)+reg.ASem)*10)+reg.BYear)*10)+reg.BSem), ((((((reg.AYear*10)+reg.ASem)*10)+reg.BYear)*10)+reg.BSem))for reg in regEvents]
+        self.fields['ayasbybs'] = forms.ChoiceField(label='AYASBYBS', required=False, choices=AYASBYBS_CHOICES, widget=forms.Select(attrs={'required':'True', 'onchange':'submit()'}))
+        MONTH_CHOICES = [('', '---------')]
+        self.fields['held_in_month'] = forms.ChoiceField(label='Held In Month', choices=MONTH_CHOICES, required=False, widget=forms.Select(attrs={'required':'True'}))
+        YEAR_CHOICES = [('', '--------')]
+        self.fields['held_in_year'] = forms.ChoiceField(label='Held In Year', required=False, choices=YEAR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+        if self.data.get('ayasbybs'):
+            import calendar
+            months_list = list(calendar.month_name)
+            months_list.pop(0)
+            MONTH_CHOICES += [(month,month) for month in months_list]
+            self.fields['held_in_month'] = forms.ChoiceField(label='Held In Month', choices=MONTH_CHOICES, required=False, widget=forms.Select(attrs={'required':'True'}))
+            YEAR_CHOICES += [(i,i) for i in range(int(self.data.get('ayasbybs')[:4]),datetime.datetime.now().year+1)]
+            self.fields['held_in_year'] = forms.ChoiceField(label='Held In Year', required=False, choices=YEAR_CHOICES, widget=forms.Select(attrs={'required':'True'}))

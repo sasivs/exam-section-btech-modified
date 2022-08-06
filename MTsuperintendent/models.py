@@ -254,3 +254,19 @@ class MTStudentCGPAs_Staging(models.Model):
     class Meta:
         db_table = 'MTStudentCGPAs_StagingMV'
         managed = False
+
+
+class MTHeldIn(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    MYear = models.IntegerField()
+    MSem = models.IntegerField()
+    AYASMYMS = models.IntegerField()
+    HeldInMonth = models.CharField(max_length=10)
+    HeldInYear = models.IntegerField()
+    class Meta:
+        db_table = 'MTHeldIn'
+        constraints = [
+            models.UniqueConstraint(fields=['AYASMYMS'], name='unique_ayasmyms_mtheldin')
+        ]
+        managed = True

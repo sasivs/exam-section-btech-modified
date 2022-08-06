@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
-    cycle_coordinator_assignment, home, open_elective_registrations
+    cycle_coordinator_assignment, home, open_elective_registrations, heldin
 
 
 
@@ -51,6 +51,8 @@ urlpatterns = [
     path('BTMarkDistributionStatus', Marks_Distribution.mark_distribution_status, name='BTMarkDistributionStatus'),
 
     path('BTSupBTSeatCancellation',cancellations.seat_cancellation,name='BTSupBTSeatCancellation'),
+
+    path('BTHeldIn', heldin.update_heldin, name='BTHeldIn'),
 ]
 
 if settings.DEBUG:

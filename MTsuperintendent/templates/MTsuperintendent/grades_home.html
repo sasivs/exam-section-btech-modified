@@ -26,6 +26,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTCGPA' %}">CGPA</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTHeldIn' %}">Update End Exam Yr and Month</a>
+                </li>
                 {% elif user|MThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
