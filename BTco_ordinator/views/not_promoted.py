@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
 from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
-    BTSubjects, BTStudentRegistrations
+    BTSubjects
 from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
 from BTExamStaffDB.models import BTMandatoryCredits
 from BTco_ordinator.resources import NotPromotedResource
@@ -70,37 +70,46 @@ def not_promoted_list(request):
                             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
                         else:
-                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
-                            for course in dropped_courses:
-                                sub = BTSubjects.objects.get(id=course.sub_id)
-                                offeredEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
-                                if offeredEvent.BYear == byear-1:
-                                    check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
-                                    if len(check_registration) == 0:
-                                        d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
-                                        np.append(d)
+                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo, Registered=False, subject__RegEventId__BYear=byear-1)
+                            # for course in dropped_courses:
+                            #     sub = BTSubjects.objects.get(id=course.sub_id)
+                            #     offeredEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
+                            #     if offeredEvent.BYear == byear-1:
+                            #         check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
+                            #         if len(check_registration) == 0:
+                            #             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
+                            #             np.append(d)
+                            if dropped_courses:
+                                d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
+                                np.append(d)
+                            # else:
+                            #     regEvents = BTRegistrationStatus.objects.filter(BYear=byear-1, Regulation=regulation, Mode='R')
+
                     elif byear == 4:
                         backlogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo)
                         if len(backlogs) != 0:
                             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
                         else:
-                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo)
-                            for course in dropped_courses:
-                                sub = BTSubjects.objects.get(id=course.sub_id)
-                                check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
-                                if len(check_registration) == 0:
-                                    d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
-                                    np.append(d)
+                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo, Registered=False)
+                            # for course in dropped_courses:
+                            #     sub = BTSubjects.objects.get(id=course.sub_id)
+                            #     check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
+                            #     if len(check_registration) == 0:
+                            #         d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
+                            #         np.append(d)
+                            if dropped_courses:
+                                d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
+                                np.append(d)
             np.sort(key=get_regd_no)
             if request.POST.get('download'):
-                    from BTco_ordinator.utils import NotPromotedBookGenerator
-                    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-                    response['Content-Disposition'] = 'attachment; filename=NotPromoted({regevent}).xlsx'.format(regevent=event)
-                    BookGenerator = NotPromotedBookGenerator(np, regulation, event)
-                    workbook = BookGenerator.generate_workbook()
-                    workbook.save(response)
-                    return response
+                from BTco_ordinator.utils import NotPromotedBookGenerator
+                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+                response['Content-Disposition'] = 'attachment; filename=NotPromoted({regevent}).xlsx'.format(regevent=event)
+                BookGenerator = NotPromotedBookGenerator(np, regulation, event)
+                workbook = BookGenerator.generate_workbook()
+                workbook.save(response)
+                return response
             return render(request, 'BTco_ordinator/NotPromotedList.html', {'form':form, 'notPromoted':np})
     else:
         form = NotPromotedListForm(regIDs)
