@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from BTsuperintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from BTExamStaffDB.forms import MandatoryCreditsForm
-from BTExamStaffDB.models import BTMandatoryCredits
+from BTExamStaffDB.models import BTYearMandatoryCredits
 
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
@@ -17,12 +17,12 @@ def mandatory_credits_upload(request):
                 byear =  form.cleaned_data['BYear']
                 dept = form.cleaned_data['Dept']
                 credits = int(form.cleaned_data['Credits'])
-                mancred = BTMandatoryCredits.objects.filter(Regulation = regulation,BYear = byear, Dept= dept)
+                mancred = BTYearMandatoryCredits.objects.filter(Regulation = regulation,BYear = byear, Dept= dept)
                 
                 if(len(mancred) != 0):
                     mancred.update(Credits = credits)
                 else:
-                    mancred = BTMandatoryCredits(Regulation = regulation,BYear = byear, Dept= dept,Credits=credits)
+                    mancred = BTYearMandatoryCredits(Regulation = regulation,BYear = byear, Dept= dept,Credits=credits)
                     mancred.save()
                 msg = 'The data for Mandatory Credits is uploaded succesfully'
                 return render(request, 'BTExamStaffDB/MandatoryCreditsUpload.html', {'form':form, 'msg':msg})

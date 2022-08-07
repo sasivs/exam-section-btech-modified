@@ -7,7 +7,7 @@ from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, Not
 from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator, BTHOD
-from BTExamStaffDB.models import BTMandatoryCredits
+from BTExamStaffDB.models import BTYearMandatoryCredits
 from BTco_ordinator.resources import NotPromotedResource
 from django.db.models import Q
 from tablib import Dataset
@@ -51,7 +51,7 @@ def not_promoted_list(request):
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
             rolls = BTRollLists.objects.filter(RegEventId__in=currentRegEventId)
             
-            mandatory_credits = BTMandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
+            mandatory_credits = BTYearMandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
             mandatory_credits = mandatory_credits[0].Credits
             np = []
             for roll in rolls:

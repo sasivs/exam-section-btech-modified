@@ -31,14 +31,13 @@ class BTStudentInfo(models.Model):
         managed = True
 
 
-class BTMandatoryCredits(models.Model):
+class BTYearMandatoryCredits(models.Model):
     Regulation = models.IntegerField()
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     Credits = models.IntegerField()
-    NumberOfSubjects = models.IntegerField()
     class Meta:
-        db_table = 'BTMandatoryCredits'
+        db_table = 'BTYearMandatoryCredits'
         unique_together = (('Regulation', 'Dept', 'BYear'))
         managed = True
 

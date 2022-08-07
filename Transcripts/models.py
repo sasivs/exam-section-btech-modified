@@ -21,6 +21,18 @@ class BTDegreeAwardees(models.Model):
         db_table = 'BTDegreeAwardees'
         managed = True
 
+class BTMandatoryCredits(models.Model):
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    BYear = models.IntegerField()
+    Credits = models.IntegerField()
+    Category = models.CharField(max_length=10)
+    NumberOfSubjects = models.IntegerField()
+    class Meta:
+        db_table = 'BTMandatoryCredits'
+        unique_together = (('Regulation', 'Dept', 'BYear'))
+        managed = True
+
 class BTStudentGradePointsV(models.Model):
     RegNo = models.IntegerField()
     SubCode = models.CharField(max_length=10)
