@@ -1,13 +1,13 @@
-from venv import create
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Associate_Dean
 from django.shortcuts import render
-from BTsuperintendent.models import BTRegistrationStatus, BTProgrammeModel
-from BTsuperintendent.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
+from BTsuperintendent.models import BTProgrammeModel
+from ADUGDB.models import BTRegistrationStatus
+from ADUGDB.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
 
 # Create your views here.
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean)
 def create_registration_event(request):
     msg = ''
     if request.method == 'POST':
@@ -26,7 +26,7 @@ def create_registration_event(request):
                 if BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode).exists():
                     msg = 'Registration event already created.'
-                    return render(request, 'BTsuperintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
+                    return render(request, 'ADUGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
                 else:
                     rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                         Mode=Mode, RollListStatus=1, RegistrationStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
@@ -50,11 +50,11 @@ def create_registration_event(request):
                 msg = 'The Event has been created successfully for {} departments'.format(created_dept)
     else:
         form = CreateRegistrationEventForm()
-    return render(request, 'BTsuperintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
+    return render(request, 'ADUGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean)
 def update_manage_registrations(request):
     if(request.method=='POST'):
         form = DBYBSAYASSelectionForm(request.POST)
@@ -64,7 +64,7 @@ def update_manage_registrations(request):
             AYear = request.POST['aYear']
         else:
             form = DBYBSAYASSelectionForm(data)
-            return render(request, 'BTsuperintendent/BTRegistrationStatus.html',{'form':form})
+            return render(request, 'ADUGDB/BTRegistrationStatus.html',{'form':form})
 
         if(request.POST['dept']!='0' and request.POST['bSem']!='0' and request.POST['aSem']!='0'):
             AYear = request.POST['aYear']
@@ -98,7 +98,7 @@ def update_manage_registrations(request):
                     {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \
                        (RegistrationStatus:{rg_status_obj.RegistrationStatus}), (MarksStatus:{rg_status_obj.MarksStatus}), (GradesStatus:{rg_status_obj.GradeStatus}) \
                         for {rg_status_obj.Mode} mode.'
-            return render(request, 'BTsuperintendent/BTRegistrationStatus.html',{'form':form, 'msg':msg}) 
+            return render(request, 'ADUGDB/BTRegistrationStatus.html',{'form':form, 'msg':msg}) 
     else:
         form = DBYBSAYASSelectionForm()
-    return render(request, 'BTsuperintendent/BTRegistrationStatus.html',{'form':form})
+    return render(request, 'ADUGDB/BTRegistrationStatus.html',{'form':form})

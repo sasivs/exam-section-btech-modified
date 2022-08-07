@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from MTsuperintendent.user_access_test import registration_access
 from MTco_ordinator.forms import OpenElectiveRegistrationsForm
-from MTsuperintendent.models import MTRegistrationStatus
+from ADPGDB.models import MTRegistrationStatus
 from MTco_ordinator.models import MTSubjects, MTStudentRegistrations_Staging
 from import_export.formats.base_formats import XLSX
 from MThod.models import MTCoordinator

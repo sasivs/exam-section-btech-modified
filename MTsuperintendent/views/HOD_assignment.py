@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from MTsuperintendent.user_access_test import is_Superintendent
+from MTsuperintendent.user_access_test import is_Superintendent, hod_assignment_status_access
 from django.shortcuts import render
 from django.utils import timezone
 from MTsuperintendent.models import MTHOD
@@ -38,7 +38,7 @@ def hod_assignment(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(hod_assignment_status_access)
 def hod_assignment_status(request):
     hods = MTHOD.objects.all()
     return render(request, 'MTsuperintendent/HodAssignmentStatus.html', {'hod':hods})

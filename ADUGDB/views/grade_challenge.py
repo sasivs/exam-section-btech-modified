@@ -1,16 +1,17 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Associate_Dean, grade_challenge_status_access
 from django.shortcuts import render
-from BTco_ordinator.models import BTFacultyAssignment, BTGradeChallenge, BTRollLists 
+from BTco_ordinator.models import BTFacultyAssignment, BTRollLists 
 from BThod.models import BTCoordinator
 from BTfaculty.models import BTMarks_Staging, BTAttendance_Shortage, BTStudentGrades_Staging
-from BTco_ordinator.forms import GradeChallengeForm, GradeChallengeStatusForm
+from ADUGDB.forms import GradeChallengeForm, GradeChallengeStatusForm
 from BTExamStaffDB.models import BTIXGradeStudents
 from BTfaculty.models import BTGradesThreshold
+from ADUGDB.models import BTGradeChallenge
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean)
 def grade_challenge(request):
     user = request.user
     co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True)
@@ -73,17 +74,17 @@ def grade_challenge(request):
 
                 msg = 'Grade Challenge result for {} is updated successfully'.format(request.POST.get('regd_no'))
 
-                return render(request, 'BTco_ordinator/GradeChallenge.html', {'form':form, 'msg':msg})
+                return render(request, 'ADUGDB/GradeChallenge.html', {'form':form, 'msg':msg})
                 
         elif request.POST.get('regID') and request.POST.get('subject') and request.POST.get('regd_no'):
             mark_obj = BTMarks_Staging.objects.filter(Registration__RegEventId=request.POST.get('regID'), Registration__subject=request.POST.get('subject'))
-            return render(request, 'BTco_ordinator/GradeChallenge.html', {'form':form, 'mark':mark_obj})
+            return render(request, 'ADUGDB/GradeChallenge.html', {'form':form, 'mark':mark_obj})
     else:
         form = GradeChallengeForm(co_ordinator=co_ordinator)
-    return render(request, 'BTco_ordinator/GradeChallenge.html', {'form':form})
+    return render(request, 'ADUGDB/GradeChallenge.html', {'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(grade_challenge_status_access)
 def grade_challenge_status(request):
     user = request.user
     co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True)
@@ -101,7 +102,7 @@ def grade_challenge_status(request):
                 BTGradeChallenge.objects.filter(id=grade_challenge_id).delete()
                 grade_challenge_objs = BTGradeChallenge.objects.filter(Registration__sub_id=subject, Registration__RegEventId=regEvent)
                 msg = 'Grade Challenge object is deleted successfully.'
-            return render(request, 'BTco_ordinator/GradeChallengeStatus.html', {'form':form, 'grade_challenge':grade_challenge_objs, 'msg':msg})
+            return render(request, 'ADUGDB/GradeChallengeStatus.html', {'form':form, 'grade_challenge':grade_challenge_objs, 'msg':msg})
     else:
         form = GradeChallengeStatusForm(subjects=subjects)
-    return render(request, 'BTco_ordinator/GradeChallengeStatus.html', {'form':form})
+    return render(request, 'ADUGDB/GradeChallengeStatus.html', {'form':form})

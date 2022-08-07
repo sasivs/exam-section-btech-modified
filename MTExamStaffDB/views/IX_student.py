@@ -3,7 +3,8 @@ from django.http import Http404
 from django.shortcuts import render
 from MTsuperintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from MTco_ordinator.models import MTStudentRegistrations, MTFacultyAssignment
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD
 from MThod.models import MTCoordinator, MTFaculty_user
 from MTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from MTExamStaffDB.models import MTIXGradeStudents
@@ -39,7 +40,7 @@ def ix_student_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     students = None
-    if 'Superintendent' in groups or 'ExamStaff' in groups:
+    if 'Superintendent' in groups or 'ExamStaff' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

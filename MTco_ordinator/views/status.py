@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from MThod.models import MTCoordinator
-from MTsuperintendent.user_access_test import is_Superintendent, registration_status_access
+from MTsuperintendent.user_access_test import registration_status_access
 from MTco_ordinator.forms import  RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
 from MTco_ordinator.models import MTBacklogRegistrationSummary, MTRegularRegistrationSummary, MTMakeupRegistrationSummary
-from MTsuperintendent.models import  MTProgrammeModel, MTRegistrationStatus, MTHOD
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import  MTProgrammeModel, MTHOD
 
 
 
@@ -14,7 +15,7 @@ from MTsuperintendent.models import  MTProgrammeModel, MTRegistrationStatus, MTH
 def mtech_regular_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -61,7 +62,7 @@ def mtech_regular_registration_status(request):
 def mtech_backlog_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='B')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -108,7 +109,7 @@ def mtech_backlog_registration_status(request):
 def mtech_makeup_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='M')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

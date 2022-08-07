@@ -9,7 +9,8 @@ from BTco_ordinator.forms import RollListStatusForm, RollListRegulationDifferenc
      RollListFinalizeForm, GenerateRollListForm, RollListsCycleHandlerForm, RollListStatusForm, UpdateSectionInfoForm, UploadSectionInfoForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
 from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTRollLists_Staging, BTRegulationChange, BTStudentBacklogs, BTNotRegistered
-from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 from BTExamStaffDB.models import BTStudentInfo 
 from BThod.models import BTCoordinator
 from BTco_ordinator.models import BTNotPromoted, BTStudentRegistrations_Staging,  BTStudentMakeups, BTDroppedRegularCourses
@@ -304,7 +305,7 @@ def RollList_Status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -399,7 +400,7 @@ def NotRegisteredStatus(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

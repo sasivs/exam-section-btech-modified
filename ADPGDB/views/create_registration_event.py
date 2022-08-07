@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test 
 
-from MTsuperintendent.forms import DMYMSAYASSelectionForm, CreateRegistrationEventForm
-from MTsuperintendent.models import MTRegistrationStatus, MTProgrammeModel
-from MTsuperintendent.user_access_test import is_Superintendent
+from ADPGDB.forms import DMYMSAYASSelectionForm, CreateRegistrationEventForm
+from MTsuperintendent.models import MTProgrammeModel
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.user_access_test import is_Associate_Dean
 
 # Create your views here.
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean)
 def create_registration_event(request):
     msg = ''
     if request.method == 'POST':
@@ -27,7 +28,7 @@ def create_registration_event(request):
                 if MTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, MYear=MYear, MSem=MSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode).exists():
                     msg = 'Registration event already created.'
-                    return render(request, 'MTsuperintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
+                    return render(request, 'ADPGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
                 else:
                     rg_status_obj = MTRegistrationStatus(AYear=AYear, ASem=ASem, MYear=MYear, MSem=MSem, Dept=Dept, Regulation=regulation, \
                         Mode=Mode, RollListStatus=1, RegistrationStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
@@ -48,12 +49,12 @@ def create_registration_event(request):
                 msg = 'The Event has been created successfully for {} departments'.format(created_dept)
     else:
         form = CreateRegistrationEventForm()
-    return render(request, 'MTsuperintendent/BTRegistrationStatus.html', {'form':form, 'msg':msg})
+    return render(request, 'ADPGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
 
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean)
 def update_manage_registrations(request):
     if(request.method=='POST'):
         form = DMYMSAYASSelectionForm(request.POST)
@@ -63,7 +64,7 @@ def update_manage_registrations(request):
             AYear = request.POST['aYear']
         else:
             form = DMYMSAYASSelectionForm(data)
-            return render(request, 'MTsuperintendent/BTRegistrationStatus.html',{'form':form})
+            return render(request, 'ADPGDB/BTRegistrationStatus.html',{'form':form})
 
         if(request.POST['dept']!='0' and request.POST['mSem']!='0' and request.POST['aSem']!='0'):
             AYear = request.POST['aYear']
@@ -99,10 +100,10 @@ def update_manage_registrations(request):
                         for {rg_status_obj.Mode} mode.'
                 
 
-            return render(request, 'MTsuperintendent/BTRegistrationStatus.html',{'form':form, 'msg':msg}) 
+            return render(request, 'ADPGDB/BTRegistrationStatus.html',{'form':form, 'msg':msg}) 
 
             
     else:
         form = DMYMSAYASSelectionForm()
-    return render(request, 'MTsuperintendent/BTRegistrationStatus.html',{'form':form})
+    return render(request, 'ADPGDB/BTRegistrationStatus.html',{'form':form})
     

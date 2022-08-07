@@ -1,5 +1,5 @@
 from django import forms
-from MTsuperintendent.models import MTRegistrationStatus, MTRegulation, MTProgrammeModel
+from ADPGDB.models import MTRegistrationStatus
 from MTco_ordinator.models import MTStudentRegistrations, MTSubjects
 from MTsuperintendent.validators import validate_file_extension
 

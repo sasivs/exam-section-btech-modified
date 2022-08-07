@@ -17,6 +17,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarkDistributionStatus' %}">Mark Distribution Status</a>
                 </li>
+                {% elif user|BThas_group:"Associate-Dean" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMarkDistributionStatus' %}">Mark Distribution Status</a>
+                </li>
                 {% elif user|BThas_group:"HOD" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>

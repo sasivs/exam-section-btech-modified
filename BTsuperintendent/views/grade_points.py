@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
-from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent, grade_points_status_access
 from BTsuperintendent.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
 from BTsuperintendent.models import BTGradePoints
 from BTsuperintendent.resources import GradePointsResource
@@ -67,10 +67,6 @@ def grade_points_upload(request):
                     errRows = [ (errorData[i][0],errorData[i][1],errorData[i][2]) for i in range(len(errorData))]
                     request.session['errRows'] = errRows
                     return redirect('GradePointsUploadErrorHandler')
-        else:
-            print("Invalid")
-            print(form.errors)
-            for row in form.fields.values(): print(row)
     else:
         form = GradePointsUploadForm()
     return render(request, 'BTsuperintendent/GradePointsUpload.html', {'form':form})
@@ -92,7 +88,7 @@ def grade_points_upload_error_handler(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(grade_points_status_access)
 def grade_points_status(request):
     if request.method == 'POST':
         form = GradePointsStatusForm(request.POST)

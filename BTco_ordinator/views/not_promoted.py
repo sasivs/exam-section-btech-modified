@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from BThod.models import BTCoordinator 
-from BTsuperintendent.user_access_test import is_Superintendent, not_promoted_access, not_promoted_status_access
+from BTsuperintendent.user_access_test import not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
-from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, \
-    BTSubjects
-from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
+from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 from BTExamStaffDB.models import BTMandatoryCredits
 from BTco_ordinator.resources import NotPromotedResource
 from django.db.models import Q
@@ -220,7 +220,7 @@ def not_promoted_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

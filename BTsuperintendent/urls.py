@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, create_registration_event, grade_points, branch_change,\
+from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, grade_points, branch_change,\
     cycle_coordinator_assignment, home, open_elective_registrations, heldin
 
 
@@ -26,9 +26,9 @@ urlpatterns = [
 
     path('BTAddRegulation', add_regulation.addRegulation, name = 'BTAddRegulation'),
 
-    path('BTCreateRegistrationEvent', create_registration_event.create_registration_event, name='BTCreateRegistrationEvent'),
+    # path('BTCreateRegistrationEvent', create_registration_event.create_registration_event, name='BTCreateRegistrationEvent'),
 
-    path('BTUpdateManageRegistrations', create_registration_event.update_manage_registrations,name='BTUpdateManageRegistrations'),
+    # path('BTUpdateManageRegistrations', create_registration_event.update_manage_registrations,name='BTUpdateManageRegistrations'),
 
     path('BTOpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='BTOpenElectiveRegistrations'),
 

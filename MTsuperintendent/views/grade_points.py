@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
-from MTsuperintendent.user_access_test import is_Superintendent
+from MTsuperintendent.user_access_test import is_Superintendent, grade_points_status_access
 from MTsuperintendent.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
 from MTsuperintendent.models import MTGradePoints
 from MTsuperintendent.resources import GradePointsResource
@@ -92,7 +92,7 @@ def grade_points_upload_error_handler(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(grade_points_status_access)
 def grade_points_status(request):
     if request.method == 'POST':
         form = GradePointsStatusForm(request.POST)

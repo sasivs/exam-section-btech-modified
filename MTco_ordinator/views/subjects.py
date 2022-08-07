@@ -7,7 +7,8 @@ from MTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm,StudentRegistrationUpdateForm
 from MTco_ordinator.models import MTSubjects_Staging, MTSubjects
 from MTco_ordinator.resources import SubjectStagingResource
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD, MTMarksDistribution
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD, MTMarksDistribution
 from MThod.models import MTCoordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -140,7 +141,7 @@ def subject_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

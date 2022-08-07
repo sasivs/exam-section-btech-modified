@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from MTco_ordinator.views import faculty_subject_assignment, grade_challenge, not_registered_registrations, subjects, RollList,\
+from MTco_ordinator.views import faculty_subject_assignment, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
      makeupReg, status
 
@@ -44,8 +44,8 @@ urlpatterns = [
     path('MTSupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'MTSupBTRegistrationsFinalize'),
 
 
-    path('MTGradeChallengeUpdate', grade_challenge.grade_challenge, name='MTGradeChallengeUpdate'),
-    path('MTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='MTGradeChallengeStatus'),
+    # path('MTGradeChallengeUpdate', grade_challenge.grade_challenge, name='MTGradeChallengeUpdate'),
+    # path('MTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='MTGradeChallengeStatus'),
  
     path('MTSupBTRegularRegistrationStatus', status.mtech_regular_registration_status, name = 'MTSupBTRegularRegistrationStatus'),
     path('MTSupBTBacklogRegistrationStatus', status.mtech_backlog_registration_status, name = 'MTSupBTBacklogRegistrationStatus'),

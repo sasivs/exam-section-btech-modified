@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from BTco_ordinator.views import faculty_subject_assignment, grade_challenge, not_registered_registrations, subjects, RollList,\
+from BTco_ordinator.views import faculty_subject_assignment, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
     dropped_regular_regs, makeupReg, not_promoted, status
 
@@ -46,11 +46,11 @@ urlpatterns = [
     path('BTSupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'BTSupBTRegistrationsFinalize'),
 
 
-    path('BTGradeChallengeUpdate', grade_challenge.grade_challenge, name='BTGradeChallengeUpdate'),
-    path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
+    # path('BTGradeChallengeUpdate', grade_challenge.grade_challenge, name='BTGradeChallengeUpdate'),
+    # path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
 
     
-    path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
+    # path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
     path('BTNotPromotedList', not_promoted.not_promoted_list, name='BTNotPromotedList'),
     path('BTNotPromotedUpload', not_promoted.not_promoted_upload, name='BTNotPromotedUpload'),
     path('BTNotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='BTNotPromotedUploadErrorHandler'),

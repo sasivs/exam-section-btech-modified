@@ -8,7 +8,8 @@ from django.db.models import Q
 from MTco_ordinator.forms import RollListStatusForm,RollListFinalizeForm, GenerateRollListForm,  RollListStatusForm,\
         RollListFeeUploadForm, NotRegisteredStatusForm
 from MTco_ordinator.models import MTRollLists_Staging, MTRollLists, MTRollLists_Staging, MTRegulationChange, MTStudentBacklogs, MTNotRegistered
-from MTsuperintendent.models import  MTRegistrationStatus, MTHOD
+from MTsuperintendent.models import MTHOD
+from ADPGDB.models import MTRegistrationStatus
 from MTExamStaffDB.models import MTStudentInfo 
 from MThod.models import MTCoordinator
 from MTco_ordinator.models import MTStudentRegistrations_Staging,  MTStudentMakeups
@@ -183,7 +184,7 @@ def RollList_Status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -231,7 +232,7 @@ def NotRegisteredStatus(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

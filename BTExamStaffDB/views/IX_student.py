@@ -3,7 +3,8 @@ from django.http import Http404
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator, BTFaculty_user
 from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from BTExamStaffDB.models import BTIXGradeStudents
@@ -39,7 +40,7 @@ def ix_student_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     students = None
-    if 'Superintendent' in groups or 'ExamStaff' in groups:
+    if 'Superintendent' in groups or 'ExamStaff' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

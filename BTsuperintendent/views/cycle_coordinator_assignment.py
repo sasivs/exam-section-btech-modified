@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent, cycle_coordinator_assignment_status_access
 from django.shortcuts import render
 from django.utils import timezone
 from BTsuperintendent.models import BTCycleCoordinator
@@ -38,7 +38,7 @@ def cycle_coordinator_assignment(request):
     return render(request, 'BTsuperintendent/CycleCoordinatorAssignment.html', {'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(cycle_coordinator_assignment_status_access)
 def cycle_coordinator_assignment_status(request):
     cords = BTCycleCoordinator.objects.all()
     return render(request, 'BTsuperintendent/CycleCoordinatorAssignmentStatus.html', {'cord':cords})

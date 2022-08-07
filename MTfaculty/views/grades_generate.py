@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from MTsuperintendent.user_access_test import grades_threshold_access, grades_status_access
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD
 from MThod.models import MTFaculty_user, MTCoordinator
 from MTco_ordinator.models import MTFacultyAssignment, MTRollLists, MTStudentRegistrations
 from MTfaculty.models import MTAttendance_Shortage, MTGradesThreshold, MTMarks_Staging, MTStudentGrades_Staging
@@ -100,7 +101,7 @@ def grades_status(request):
     if 'Faculty' in groups:
         faculty = MTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-    elif 'Superintendent' in groups:
+    elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = MTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

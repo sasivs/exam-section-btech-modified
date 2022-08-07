@@ -3,7 +3,7 @@ from django.shortcuts import render
 from MTsuperintendent.user_access_test import is_Superintendent
 from MTco_ordinator.forms import OpenElectiveRegistrationsForm
 from MTco_ordinator.models import MTSubjects, MTStudentRegistrations_Staging
-from MTsuperintendent.models import MTRegistrationStatus
+from ADPGDB.models import MTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 from MThod.models import MTCoordinator
 

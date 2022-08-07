@@ -8,7 +8,9 @@ from MTsuperintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from MTco_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from MTco_ordinator.models import MTFacultyAssignment, MTStudentRegistrations, MTSubjects, MTRollLists
 from MThod.models import MTCoordinator
-from MTsuperintendent.models import MTHOD, MTRegistrationStatus
+from MTsuperintendent.models import MTHOD
+from ADPGDB.models import MTRegistrationStatus
+
 
 
 @login_required(login_url="/login/")
@@ -121,22 +123,20 @@ def faculty_assignment_status(request):
         current_user = user
         current_user.group = 'Superintendent'
         regIDs = MTRegistrationStatus.objects.filter(Status=1)
-    # elif 'Cycle-Co-ordinator' in groups:
-    #     current_user = MTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-    #     current_user.group = 'Cycle-Co-ordinator'
-    #     regIDs = MTRegistrationStatus.objects.filter(Status=1, MYear=1, Dept=current_user.Cycle)
+    elif 'Associate-Dean' in groups:
+        current_user = user
+        current_user.group = 'Associate-Dean'
+        regIDs = MTRegistrationStatus.objects.filter(Status=1)
     else:
         raise Http404("You are not authorized to view this page")
     if(request.method =='POST'):
         form = FacultyAssignmentStatusForm(regIDs, request.POST)
         if(form.is_valid()):
             regeventid=form.cleaned_data['regID']
-            if current_user.group == 'Superintendent':
+            if current_user.group == 'Superintendent' or current_user.group == 'Associate-Dean':
                 faculty = MTFacultyAssignment.objects.filter(RegEventId__id=regeventid)
             elif current_user.group == 'Co-ordinator' or current_user.group == 'HOD':
                 faculty = MTFacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept)
-            # elif current_user.group == 'Cycle-Co-ordinator':
-            #     faculty = MTFacultyAssignment.objects.filter(Subject__RegEventId__id=regeventid)
             return render(request, 'MTco_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
     else:
         form = FacultyAssignmentStatusForm(regIDs)

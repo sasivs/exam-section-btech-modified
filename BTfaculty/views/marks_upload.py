@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from BTsuperintendent.user_access_test import marks_upload_access, marks_status_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTCycleCoordinator
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTHOD, BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
 from BThod.models import BTFaculty_user, BTCoordinator
@@ -104,7 +105,7 @@ def marks_upload_status(request):
     if 'Faculty' in groups:
         faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-    elif 'Superintendent' in groups:
+    elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

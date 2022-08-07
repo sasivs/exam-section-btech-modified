@@ -7,7 +7,8 @@ from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, Stu
     SubjectDeletionForm, SubjectFinalizeEventForm
 from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
 from BTco_ordinator.resources import SubjectStagingResource
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTMarksDistribution, BTCycleCoordinator
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTHOD, BTMarksDistribution, BTCycleCoordinator
 from BThod.models import BTCoordinator
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
@@ -140,7 +141,7 @@ def subject_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

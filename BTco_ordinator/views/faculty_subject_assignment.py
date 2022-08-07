@@ -10,7 +10,8 @@ from BTsuperintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from BTco_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects, BTRollLists
 from BThod.models import BTCoordinator
-from BTsuperintendent.models import BTHOD, BTCycleCoordinator, BTRegistrationStatus
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTHOD, BTCycleCoordinator
 
 
 @login_required(login_url="/login/")
@@ -121,6 +122,10 @@ def faculty_assignment_status(request):
         current_user = user
         current_user.group = 'Superintendent'
         regIDs = BTRegistrationStatus.objects.filter(Status=1)
+    elif 'Associate-Dean' in groups:
+        current_user = user
+        current_user.group = 'Associate-Dean'
+        regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'Cycle-Co-ordinator' in groups:
         current_user = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         current_user.group = 'Cycle-Co-ordinator'
@@ -131,7 +136,7 @@ def faculty_assignment_status(request):
         form = FacultyAssignmentStatusForm(regIDs, request.POST)
         if(form.is_valid()):
             regeventid=form.cleaned_data['regID']
-            if current_user.group == 'Superintendent':
+            if current_user.group == 'Superintendent' or current_user.group == 'Associate-Dean':
                 faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
             elif current_user.group == 'Co-ordinator' or current_user.group == 'HOD':
                 faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept).order_by('Section')

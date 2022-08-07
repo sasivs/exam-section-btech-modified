@@ -1,6 +1,5 @@
 from django.db import models
-from BTsuperintendent.models import BTRegistrationStatus, BTGradePoints
-from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
+from BTco_ordinator.models import BTSubjects
 # Create your models here.
 
 class BTAttendance_Shortage(models.Model):
@@ -16,7 +15,7 @@ class BTAttendance_Shortage(models.Model):
 class BTGradesThreshold(models.Model):
     Grade = models.ForeignKey('BTsuperintendent.BTGradePoints', on_delete=models.CASCADE)
     Subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
-    RegEventId = models.ForeignKey('BTsuperintendent.BTRegistrationStatus', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
     Section = models.CharField(max_length=2, default='NA')
     class Meta:

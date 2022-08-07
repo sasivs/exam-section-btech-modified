@@ -1,9 +1,7 @@
 from django import forms 
 from django.contrib.auth.models import Group
-from MTsuperintendent.models import MTRegistrationStatus
 from MThod.models import MTCoordinator
 from MTExamStaffDB.models import MTFacultyInfo
-from MTsuperintendent.validators import validate_file_extension
 
 
 

@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
-from BTsuperintendent.models import BTRegistrationStatus,BTCycleCoordinator
+from BTsuperintendent.models import BTCycleCoordinator
+from ADUGDB.models import BTRegistrationStatus
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator

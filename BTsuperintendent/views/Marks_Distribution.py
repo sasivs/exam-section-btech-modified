@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404 
-from BTsuperintendent.user_access_test import is_Superintendent
+from BTsuperintendent.user_access_test import is_Superintendent, mark_distribution_status_access
 from django.shortcuts import render
 from BTsuperintendent.forms import MarksDistributionForm
 from BTsuperintendent.models import BTMarksDistribution
@@ -23,7 +23,7 @@ def mark_distribution_add(request):
     return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(mark_distribution_status_access)
 def mark_distribution_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)

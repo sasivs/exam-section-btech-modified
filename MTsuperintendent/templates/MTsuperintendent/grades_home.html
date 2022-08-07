@@ -29,6 +29,31 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTHeldIn' %}">Update End Exam Yr and Month</a>
                 </li>
+                {% elif user|BThas_group:'Associate-Dean' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradePointsStatus' %}">Grade Points Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTCGPA' %}">CGPA</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradeChallengeUpdate' %}">Grade Challenge Update</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTGradeChallengeStatus' %}">Grade Challenge Status</a>
+                </li>
                 {% elif user|MThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTGradesThresholdStatus' %}">Grades Threshold Status</a>
@@ -93,12 +118,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTIXGradeStudentsStatus' %}">IX grade students status</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'MTGradeChallengeUpdate' %}">Grade Challenge Update</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'MTGradeChallengeStatus' %}">Grade Challenge Status</a>
                 </li>
                 {% endif %}
             </ul>

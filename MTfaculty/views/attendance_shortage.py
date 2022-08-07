@@ -59,7 +59,7 @@ def attendance_shortage_status(request):
     if 'Faculty' in groups:
         faculty = MTFaculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
         subjects  = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
-    elif 'Superintendent' in groups:
+    elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

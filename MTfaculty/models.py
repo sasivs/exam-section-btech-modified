@@ -1,5 +1,6 @@
 from django.db import models
-from MTsuperintendent.models import MTRegistrationStatus, MTGradePoints
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTGradePoints
 from MTco_ordinator.models import MTSubjects, MTStudentRegistrations
 # Create your models here.
 

@@ -8,6 +8,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
                 </li>
+                {% elif user|BThas_group:"Associate-Dean" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTCreateRegistrationEvent' %}">Create Registration Event</a>
                 </li>

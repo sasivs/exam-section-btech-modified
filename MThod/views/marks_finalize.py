@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from MTco_ordinator.models import MTFacultyAssignment
 from MTsuperintendent.user_access_test import is_Hod
 from django.shortcuts import render
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD
 from MThod.forms import MarksFinalizeForm
 from MTfaculty.models import MTMarks_Staging, MTMarks
 

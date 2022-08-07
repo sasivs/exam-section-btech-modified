@@ -3,7 +3,8 @@ from django.shortcuts import render
 from MTco_ordinator.models import MTFacultyAssignment, MTStudentRegistrations, MTSubjects
 from MTsuperintendent.user_access_test import grades_finalize_access
 from MThod.forms import GradesFinalizeForm
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD
 from MTfaculty.models import MTStudentGrades_Staging, MTStudentGrades
 
 import psycopg2

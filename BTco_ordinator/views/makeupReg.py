@@ -3,7 +3,8 @@ from django.shortcuts import render
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import MakeupRegistrationsForm
 from BTco_ordinator.models import BTStudentRegistrations_Staging
-from BTsuperintendent.models import BTRegistrationStatus,BTCycleCoordinator
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTCycleCoordinator
 from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")

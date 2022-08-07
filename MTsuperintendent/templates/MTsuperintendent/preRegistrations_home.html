@@ -8,6 +8,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTAddRegulation' %}">Add Regulation</a>
                 </li>
+                {% elif user|MThas_group:"Associate-Dean" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTCreateRegistrationEvent' %}">Create Registration Event</a>
                 </li>

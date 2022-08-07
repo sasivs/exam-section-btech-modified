@@ -1,18 +1,24 @@
 {% extends 'BTsuperintendent/suphome.html' %}
 {% block title %}Branch Change Home{% endblock title %}
 
-
+{% load user_check_tag %}
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
+                {% if user|BThas_group:'Superintendent' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTBranchChange' %}">Branch Change</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTBranchChangeStatus' %}">Branch Change Status</a>
                   </li>
+                {% elif user|BThas_group:'Associate-Dean' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTBranchChangeStatus' %}">Branch Change Status</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-10">

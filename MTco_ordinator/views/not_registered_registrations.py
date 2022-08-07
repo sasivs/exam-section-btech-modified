@@ -4,7 +4,7 @@ from MThod.models import MTCoordinator
 from MTExamStaffDB.models import MTStudentInfo
 from MTco_ordinator.models import MTNotRegistered, MTSubjects, MTStudentRegistrations_Staging
 from MTco_ordinator.forms import NotRegisteredRegistrationsForm
-from MTsuperintendent.models import MTRegistrationStatus
+from ADPGDB.models import MTRegistrationStatus
 from MTsuperintendent.user_access_test import registration_access
 
 

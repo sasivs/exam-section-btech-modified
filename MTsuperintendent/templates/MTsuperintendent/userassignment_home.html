@@ -14,6 +14,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTCoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
                 </li>
+                {% elif user|MThas_group:"Associate-Dean" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTHodAssignmentStatus' %}">Hod Assignment Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTCoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
+                </li>
                 {% elif user|MThas_group:"HOD" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTFacultyUserAssignment' %}">Faculty User Assignment</a>

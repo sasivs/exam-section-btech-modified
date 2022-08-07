@@ -3,7 +3,7 @@ from django.shortcuts import render
 from MTsuperintendent.user_access_test import registration_access
 from MTco_ordinator.forms import MakeupRegistrationsForm
 from MTco_ordinator.models import MTStudentRegistrations_Staging
-from MTsuperintendent.models import MTRegistrationStatus
+from ADPGDB.models import MTRegistrationStatus
 from MThod.models import MTCoordinator
 
 @login_required(login_url="/login/")

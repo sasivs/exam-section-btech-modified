@@ -7,6 +7,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
+                {% if user|MThas_group:'Associate-Dean' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'MTMarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
                 {% elif user|MThas_group:'Faculty' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'MTMarksUpload' %}">Marks Upload</a>

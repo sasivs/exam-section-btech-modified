@@ -1,14 +1,11 @@
 from django import forms 
 from django.db.models import Q 
-from BTco_ordinator.models import BTStudentRegistrations, BTStudentRegistrations_Staging
-from BThod.models import BTCoordinator
+from BTco_ordinator.models import  BTStudentRegistrations_Staging
 from BTsuperintendent.constants import DEPARTMENTS, YEARS, SEMS
-from BTco_ordinator.models import BTFacultyAssignment, BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
+from BTco_ordinator.models import BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary
-from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTProgrammeModel
+from ADUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
-from BTfaculty.models import BTMarks_Staging
-import datetime
 
 from BTsuperintendent.validators import validate_file_extension
 
@@ -888,61 +885,6 @@ class FacultyAssignmentStatusForm(forms.Form):
         regEventIDKVs = [('','-- Select Registration Event --')] + regEventIDKVs
         self.fields['regID'] = forms.CharField(label='Registration Event', required=False, widget = forms.Select(choices=regEventIDKVs, attrs={'required':'True'}))
 
-class GradeChallengeForm(forms.Form):
-    def __init__(self, co_ordinator, *args, **kwargs):
-        super(GradeChallengeForm, self).__init__(*args, **kwargs)
-        faculty = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__BYear=co_ordinator.BYear, RegEventId__Status=1)
-        # regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=faculty.BYear)
-        regEventIDKVs = [(fac.RegEventId.id,fac.RegEventId.__str__()) for fac in faculty]
-        regEventIDKVs = [('','-- Select Registration Event --')] + regEventIDKVs
-        SUBJECT_CHOICES = [('', 'Choose Subject')]
-        ROLL_CHOICES = [('', '--------')]
-        EXAM_TYPE_CHOICES = [('', '--------')]
-        self.fields['regID'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs, attrs={'onchange':"submit()"}))
-        self.fields['subject'] = forms.CharField(label='Choose Subject', widget = forms.Select(choices=SUBJECT_CHOICES))
-        self.fields['regd_no'] = forms.ChoiceField(label='Choose Roll Number', widget=forms.Select(choices=ROLL_CHOICES))
-        self.fields['exam-type'] = forms.ChoiceField(label='Choose Exam Type', widget=forms.Select(choices=EXAM_TYPE_CHOICES))
-
-        if self.data.get('regID') and self.data.get('subject') and self.data.get('regd_no'):
-            subject = BTSubjects.objects.get(id=self.data.get('subject'))
-            self.subject = subject
-            EXAM_TYPE_CHOICES += subject.MarkDistribution.distributions()
-            self.fields['exam-type'] = forms.ChoiceField(label='Choose Exam Type', widget=forms.Select(choices=EXAM_TYPE_CHOICES))
-            self.fields['mark'] = forms.CharField(label='Enter Marks', widget=forms.TextInput(attrs={'type':'number'}))
-        elif self.data.get('regID') and self.data.get('subject'):
-            marks_list = BTMarks_Staging.objects.filter(Registration__RegEventId=self.data.get('regID'), Registration__sub_id=self.data.get('subject')).order_by('Registration__RegNo')
-            ROLL_CHOICES += [(mark.id, mark.Registration.RegNo) for mark in marks_list]
-            self.fields['regd_no'] = forms.ChoiceField(label='Choose Roll Number', widget=forms.Select(choices=ROLL_CHOICES, attrs={'onchange':"submit()"}))
-        elif self.data.get('regID'):
-            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regID'))
-            self.regs = student_registrations
-            subjects = BTSubjects.objects.filter(id__in=student_registrations.values_list('sub_id', flat=True))
-            SUBJECT_CHOICES += [(sub.id, sub.SubCode) for sub in subjects]
-            self.fields['subject'] = forms.CharField(label='Choose Subject', widget = forms.Select(choices=SUBJECT_CHOICES, attrs={'onchange':"submit()"}))
-    
-    def clean_mark(self):
-        if 'mark' in self.cleaned_data.keys():
-            mark = self.cleaned_data.get('mark')
-            exam_type = self.cleaned_data.get('exam-type')
-            exam_inner_index = exam_type.split(',')[1]
-            exam_outer_index = exam_type.split(',')[0]
-            mark_dis_limit = self.subject.MarkDistribution.get_mark_limit(exam_outer_index, exam_inner_index)
-            if mark > mark_dis_limit:
-                raise forms.ValidationError('Entered mark is greater than the maximum marks.')
-            return mark
-        return None
-
-    
-class GradeChallengeStatusForm(forms.Form):
-    def __init__(self, subjects, *args, **kwargs):
-        super(GradeChallengeStatusForm, self).__init__(*args, **kwargs)
-        subject_Choices=[]
-        for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+\
-                str(sub.Subject.SubCode))]
-        subject_Choices = list(set(subject_Choices))
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
-        self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
 class NotRegisteredRegistrationsForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):

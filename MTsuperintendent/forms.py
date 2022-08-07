@@ -3,7 +3,8 @@ from django.contrib.auth.models import Group
 from django.db.models import Q
 from MTsuperintendent.models import MTHOD
 from MTExamStaffDB.models import MTFacultyInfo, MTStudentInfo
-from MTsuperintendent.models import MTProgrammeModel, MTDepartments, MTRegulation, MTRegistrationStatus
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTDepartments, MTRegulation
 from MTco_ordinator.models import MTStudentBacklogs
 import datetime
 from MTsuperintendent.validators import validate_file_extension
@@ -25,92 +26,6 @@ class AddRegulationForm(forms.Form):
         self.fields['aYear'] = aYearBox 
         self.fields['mYear'] = mYearBox 
         self.fields['regulation'] = forms.CharField(label='Regulation Code',min_length=1)
-
-
-class CreateRegistrationEventForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(CreateRegistrationEventForm, self).__init__(*args, **kwargs)
-        departments = MTProgrammeModel.objects.filter(ProgrammeType='PG')
-        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        deptChoices += [('all', 'All Departments')]
-        deptChoices = [('','--Select Dept--')] + deptChoices
-        mYearChoices = [('','--Select MYear--'),(1,1), (2, 2)]
-        mSemChoices = [('','--Select MSem--'),(1,1),(2,2)]
-        aYearChoices = [('','--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
-        aSemChoices = [('','--Select ASem--')] + [(1,1),(2,2),(3,3)]
-        aYearBox = forms.IntegerField(label='Select AYear', required=False, widget=forms.Select(choices=aYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
-        aSemBox = forms.IntegerField(label='Select ASem', required=False, widget=forms.Select(choices=aSemChoices, attrs={'required':'True'}))
-        mYearBox = forms.IntegerField(label='Select MYear', required=False, widget=forms.Select(choices=mYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
-        mSemBox = forms.IntegerField(label='Select MSem', required=False, widget=forms.Select(choices=mSemChoices, attrs={'required':'True'}))
-        deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
-        rChoices = [('','--Select Regulation--')]
-        regulationBox = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
-        modeBox = forms.ChoiceField(label='Select Mode', required=False, widget=forms.RadioSelect(attrs={'required':'True'}),choices = [('R', 'Regular'),('B','Backlog'),('M','Makeup')])
-        self.fields['aYear'] = aYearBox
-        self.fields['aSem'] = aSemBox
-        self.fields['mYear'] = mYearBox
-        self.fields['mSem'] = mSemBox
-        self.fields['dept'] = deptBox
-        self.fields['regulation'] = regulationBox
-        self.fields['mode'] = modeBox
-        if self.data.get('aYear') and self.data.get('mYear'):
-            regulations = MTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(MYear = self.data.get('mYear'))
-            backlog_course_regulations = MTStudentBacklogs.objects.filter(MYear=self.data.get('mYear'))
-            backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
-            regulations = [(regu.Regulation,regu.Regulation) for regu in regulations]
-            regulations += backlog_course_regulations
-            regulations = list(set(regulations))
-            rChoices += regulations
-            self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
-
-
-
-class DMYMSAYASSelectionForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(DMYMSAYASSelectionForm, self).__init__(*args, **kwargs)
-        departments = MTProgrammeModel.objects.filter(ProgrammeType='PG')
-        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        deptChoices = [(0,'--Select Dept--')] + deptChoices
-        mYearChoices = [(0,'--Select MYear--'),(1,1), (2, 2)]
-        mSemChoices = [(0,'--Select MSem--'),(1,1),(2,2)]
-        aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
-        aSemChoices = [(0,'--Select ASem--')] + [(1,1),(2,2),(3,3)]
-        aYearBox = forms.IntegerField(label='Select AYear', required=False, widget=forms.Select(choices=aYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
-        aSemBox = forms.IntegerField(label='Select ASem', required=False, widget=forms.Select(choices=aSemChoices))
-        mYearBox = forms.IntegerField(label='Select MYear', required=False, widget=forms.Select(choices=mYearChoices,attrs={'onchange':'submit();', 'required':'True'}))
-        mSemBox = forms.IntegerField(label='Select MSem', required=False, widget=forms.Select(choices=mSemChoices, attrs={'required':'True'}))
-        deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
-        rChoices = [(0,'--Select Regulation--')]
-        statusBox = forms.ChoiceField(label='Enable/Disable', required=False, widget=forms.RadioSelect(), choices=[(0, 'Disable'), (1, 'Enable')])
-        rollBox = forms.ChoiceField(label='RollList Status', required=False, widget=forms.RadioSelect(), choices=[(0, 'Disable'), (1, 'Enable')])
-        regBox = forms.ChoiceField(label='Registration Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
-        marksBox = forms.ChoiceField(label='Marks Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
-        gradesBox = forms.ChoiceField(label='Grades Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
-        modeBox = forms.ChoiceField(label='Regular/Backlog', required=False, widget=forms.RadioSelect(attrs={'required':'True'}),choices = [('R', 'Regular'),('B','Backlog'),('M','Makeup')] )
-        regulationBox = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
-        self.fields['aYear'] = aYearBox
-        self.fields['aSem'] = aSemBox
-        self.fields['mYear'] = mYearBox
-        self.fields['mSem'] = mSemBox
-        self.fields['dept'] = deptBox
-        self.fields['regulation'] = regulationBox
-        self.fields['status'] = statusBox
-        self.fields['roll-status'] = rollBox
-        self.fields['reg-status'] = regBox
-        self.fields['marks-status'] = marksBox
-        self.fields['grades-status'] = gradesBox
-        self.fields['mode'] = modeBox
-        if 'aYear' in self.data and 'mYear' in self.data and self.data['aYear']!='' and \
-            self.data['mYear']!='' and self.data['aYear']!='0' and \
-            self.data['mYear']!='0':
-            regulations = MTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(MYear = self.data.get('mYear'))
-            backlog_course_regulations = MTStudentBacklogs.objects.filter(MYear=self.data.get('mYear'))
-            backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
-            regulations = [(regu.Regulation,regu.Regulation) for regu in regulations]
-            regulations += backlog_course_regulations
-            regulations = list(set(regulations))
-            rChoices += regulations
-            self.fields['regulation'] = forms.IntegerField(label='Select MTRegulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
 
 
 class GradePointsUploadForm(forms.Form):

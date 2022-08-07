@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import grades_threshold_access, grades_status_access
-from BTsuperintendent.models import BTCycleCoordinator, BTRegistrationStatus, BTHOD
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from BTfaculty.models import BTAttendance_Shortage, BTGradesThreshold, BTMarks_Staging, BTStudentGrades_Staging
@@ -100,7 +101,7 @@ def grades_status(request):
     if 'Faculty' in groups:
         faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-    elif 'Superintendent' in groups:
+    elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

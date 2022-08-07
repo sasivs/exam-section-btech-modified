@@ -3,7 +3,7 @@ from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_Superintendent
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
-from BTsuperintendent.models import BTRegistrationStatus
+from ADUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 
 @login_required(login_url="/login/")

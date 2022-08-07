@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTco_ordinator.models import BTRollLists
 from BTsuperintendent.user_access_test import gpa_staging_access
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD, BTStudentCGPAs_Staging, BTGradePoints
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTHOD, BTStudentCGPAs_Staging
 from BThod.forms import GpaStagingForm
 
 @login_required(login_url="/login/")
@@ -34,7 +35,7 @@ def gpa_staging(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIds = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIds = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

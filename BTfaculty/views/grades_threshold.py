@@ -121,7 +121,7 @@ def grades_threshold_status(request):
     if 'Faculty' in groups:
         faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1).distinct('Subject')
-    elif 'Superintendent' in groups:
+    elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1).distinct('Subject')
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from BTco_ordinator.models import BTFacultyAssignment
 from BTsuperintendent.user_access_test import is_Hod
 from django.shortcuts import render
-from BTsuperintendent.models import BTRegistrationStatus, BTHOD
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTHOD
 from BThod.forms import MarksFinalizeForm
 from BTfaculty.models import BTMarks_Staging, BTMarks
 

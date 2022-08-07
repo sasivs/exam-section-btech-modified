@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from MTco_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
-from MTsuperintendent.models import MTRegistrationStatus
+from ADPGDB.models import MTRegistrationStatus
 from MTco_ordinator.models import MTRollLists_Staging, MTStudentRegistrations_Staging, MTStudentRegistrations, MTSubjects
 from MThod.models import MTCoordinator
 from django.db.models import Q

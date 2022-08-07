@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from MTco_ordinator.models import MTSubjects
-from MTsuperintendent.constants import DEPARTMENTS, YEARS, SEMS
 
 # Create your models here.
 User = get_user_model()
@@ -34,31 +33,6 @@ class MTProgrammeModel(models.Model):
         ]
         managed = True
 
-
-class MTRegistrationStatus(models.Model):
-    AYear = models.IntegerField()
-    ASem = models.IntegerField()
-    MYear = models.IntegerField()
-    MSem = models.IntegerField()
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    Mode = models.CharField(max_length=1) # R for Regular B for Backlog
-    Status = models.IntegerField()
-    RollListStatus = models.IntegerField()
-    RollListFeeStatus = models.IntegerField(default=0)
-    RegistrationStatus = models.IntegerField()
-    MarksStatus = models.IntegerField()
-    GradeStatus = models.IntegerField()
-    class Meta:
-        db_table = 'MTRegistration_Status'
-        constraints=[
-            models.UniqueConstraint(fields=['AYear','ASem','MYear','MSem','Regulation','Dept','Mode'],name='unique_MTRegistration_status')
-        ]
-        managed = True
-    def __str__(self):
-        name =  str(DEPARTMENTS[self.Dept-1]) + ':' + str(YEARS[self.MYear]) + ':' + str(SEMS[self.MSem]) + ':' + \
-            str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
-        return name
 
 class MTHOD(models.Model):
     Faculty = models.ForeignKey('MTExamStaffDB.MTFacultyInfo', on_delete=models.CASCADE)

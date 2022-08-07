@@ -29,6 +29,31 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTHeldIn' %}">Update End Exam Yr and Month</a>
                 </li>
+                {% elif user|BThas_group:'Associate-Dean' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradePointsStatus' %}">Grade Points Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCGPA' %}">CGPA</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradeChallengeUpdate' %}">Grade Challenge Update</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradeChallengeStatus' %}">Grade Challenge Status</a>
+                </li>
                 {% elif user|BThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
@@ -94,12 +119,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTGradeChallengeUpdate' %}">Grade Challenge Update</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTGradeChallengeStatus' %}">Grade Challenge Status</a>
-                </li>
                 {% elif user|BThas_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
@@ -112,12 +131,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTGradeChallengeUpdate' %}">Grade Challenge Update</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTGradeChallengeStatus' %}">Grade Challenge Status</a>
                 </li>
                 {% endif %}
             </ul>

@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from MTco_ordinator.models import MTRollLists
 from MTsuperintendent.user_access_test import gpa_staging_access
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD, MTStudentCGPAs_Staging, MTGradePoints
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD, MTStudentCGPAs_Staging
 from MThod.forms import GpaStagingForm
 
 @login_required(login_url="/login/")
@@ -34,7 +35,7 @@ def gpa_staging(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIds = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIds = MTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

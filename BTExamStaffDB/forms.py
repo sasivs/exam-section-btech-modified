@@ -1,5 +1,6 @@
 from django import forms
-from BTsuperintendent.models import BTRegistrationStatus, BTRegulation, BTProgrammeModel
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTRegulation, BTProgrammeModel
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
 from BTsuperintendent.validators import validate_file_extension
 

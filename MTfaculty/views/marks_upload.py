@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from MTsuperintendent.user_access_test import marks_upload_access, marks_status_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from MTsuperintendent.models import MTRegistrationStatus, MTHOD
+from ADPGDB.models import MTRegistrationStatus
+from MTsuperintendent.models import MTHOD
 from MTExamStaffDB.models import MTStudentInfo
 from MTco_ordinator.models import MTRollLists, MTSubjects, MTStudentRegistrations
 from MThod.models import MTFaculty_user, MTCoordinator
@@ -102,7 +103,7 @@ def marks_upload_status(request):
     if 'Faculty' in groups:
         faculty = MTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1)
-    elif 'Superintendent' in groups:
+    elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = MTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()

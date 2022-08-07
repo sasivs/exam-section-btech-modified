@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BThod.models import BTCoordinator
-from BTsuperintendent.user_access_test import is_Superintendent, registration_status_access
+from BTsuperintendent.user_access_test import registration_status_access
 from BTco_ordinator.forms import  RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
 from BTco_ordinator.models import BTBacklogRegistrationSummary, BTRegularRegistrationSummary, BTMakeupRegistrationSummary
-from BTsuperintendent.models import BTCycleCoordinator, BTProgrammeModel, BTRegistrationStatus, BTHOD
+from ADUGDB.models import BTRegistrationStatus
+from BTsuperintendent.models import BTCycleCoordinator, BTProgrammeModel, BTHOD
 
 
 # def is_Superintendent(user):
@@ -30,7 +31,7 @@ def btech_regular_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -80,7 +81,7 @@ def btech_backlog_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='B')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -130,7 +131,7 @@ def btech_makeup_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='M')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
