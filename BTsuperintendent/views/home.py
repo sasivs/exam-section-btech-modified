@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.contrib.auth import logout 
@@ -6,7 +5,7 @@ from django.shortcuts import redirect
 
 from BTsuperintendent.user_access_test import registration_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
     user_management_home_access, is_Superintendent, roll_list_status_access, marks_home_access, not_promoted_home_access, subject_home_access,\
-        registration_status_access, registration_home_access
+        registration_status_access, registration_home_access, branch_change_home_access
 
 @login_required(login_url="/login/")
 def sup_home(request):
@@ -33,7 +32,7 @@ def pre_registrations_home(request):
     return render(request, 'BTsuperintendent/preRegistrations_home.html')
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(branch_change_home_access)
 def branch_change_home(request):
     return render(request, 'BTsuperintendent/branchChange_home.html')
 

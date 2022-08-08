@@ -1,5 +1,3 @@
-
-
 def is_Superintendent(user):
     return user.groups.filter(name='Superintendent').exists()
 def is_Hod(user):
@@ -15,7 +13,7 @@ def is_Associate_Dean(user):
 
 def user_management_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'HOD' in groups:
+    if 'Superintendent' in groups or 'HOD' in groups or 'Associate-Dean' in groups:
         return True
     return False
 def roll_list_access(user):
@@ -94,14 +92,14 @@ def attendance_shortage_status_access(user):
 
 def pre_registrations_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'ExamStaff' in groups:
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'ExamStaff' in groups or 'Associate-Dean' in groups:
         return True
     return  False
 
 def grades_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'ExamStaff' in groups or 'Cycle-Co-ordinator' in groups or\
-        'Faculty' in groups:
+        'Faculty' in groups or 'Associate-Dean' in groups:
         return True
     return  False
 
@@ -123,7 +121,7 @@ def grades_status_access(user):
 def faculty_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'Faculty' in groups or 'ExamStaff' in groups\
-        or 'Cycle-Co-ordinator' in groups:
+        or 'Cycle-Co-ordinator' in groups or 'Associate-Dean' in groups:
         return True
     return  False
 
@@ -154,7 +152,7 @@ def faculty_assignment_status_access(user):
 
 def marks_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'Cycle-Co-ordinator' in groups or 'Faculty' in groups:
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'HOD' in groups or 'Cycle-Co-ordinator' in groups or 'Faculty' in groups or 'Associate-Dean' in groups:
         return True
     return  False
 
@@ -179,7 +177,7 @@ def not_promoted_status_access(user):
 
 def not_promoted_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'HOD' in groups or 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
+    if 'HOD' in groups or 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups or 'Associate-Dean' in groups:
         return True
     return  False
 
@@ -229,6 +227,12 @@ def hod_assignment_status_access(user):
 
 
 def mark_distribution_status_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+        return True
+    return  False
+
+def branch_change_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'Associate-Dean' in groups:
         return True
