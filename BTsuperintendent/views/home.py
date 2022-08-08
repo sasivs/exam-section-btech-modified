@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 
 from BTsuperintendent.user_access_test import registration_access, pre_registrations_home_access, grades_home_access, faculty_home_access, \
     user_management_home_access, is_Superintendent, roll_list_status_access, marks_home_access, not_promoted_home_access, subject_home_access,\
-        registration_status_access
+        registration_status_access, registration_home_access
 
 @login_required(login_url="/login/")
 def sup_home(request):
@@ -18,7 +18,7 @@ def logout_request(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(registration_access)
+@user_passes_test(registration_home_access)
 def registration_home(request):
     return render(request,'BTsuperintendent/registrationhome.html')
 

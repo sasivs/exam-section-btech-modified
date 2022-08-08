@@ -42,6 +42,12 @@ def subject_home_access(user):
         return True
     return False
 
+def registration_home_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups or 'HOD' in groups or 'Associate-Dean' in groups:
+        return True
+    return False
+
 def registration_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
