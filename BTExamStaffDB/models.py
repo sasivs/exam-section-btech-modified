@@ -58,9 +58,9 @@ class BTIXGradeStudents(models.Model):
 
 class BTFacultyInfo(models.Model):
     FacultyId = models.IntegerField(default=100)
-    Name = models.CharField(max_length=100)
-    Phone = models.IntegerField()
-    Email = models.CharField(max_length=50)
+    Name = models.CharField(max_length=255)
+    Phone = models.TextField()
+    Email = models.CharField(max_length=255)
     Dept = models.IntegerField()
     Working = models.BooleanField()
     class Meta:
