@@ -27,7 +27,7 @@
     {% if invalidRegNo %}
     <div class="row">
         <strong>These rows do not have corresponding marks rows.</strong>
-        <table>
+        <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
                     <td style="border: 1px solid black;">RegNo</td>
@@ -48,7 +48,7 @@
     {% if invalidMarks %}
     <div class="row">
         <strong>These rows have marks greater than total marks for that exam type.</strong>
-        <table>
+        <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
                     <td style="border: 1px solid black;">RegNo</td>

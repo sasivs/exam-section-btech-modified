@@ -314,7 +314,7 @@ $(document).ready(function(){
         </div>
     </div>
     <div class="container">
-    <table>
+    <table class="table table-hover table-muted table-striped">
         <tr><td colspan="9" text-align="right"> <img src="{% static 'gradeSheetPrinting/images/logo.jpg' %}" alt="" height="100" width="100" id="photo2" align="right"></td> </tr>
     </table>
     </div>    

@@ -75,7 +75,7 @@
       {% csrf_token %}
     <br>
     <div class="row">
-      <table>
+      <table class="table table-hover table-muted table-striped">
         <thead>
           <tr>
             {% for header in validRows.headers %}
@@ -117,7 +117,7 @@
   {% if errorRows %}
   <div class="row">
     <strong>These subjects are not in respect to the selected event.</strong>
-    <table>
+    <table class="table table-hover table-muted table-striped">
       <thead>
         <tr>
           <td style="border: 1px solid black">SubCode</td>
@@ -150,7 +150,7 @@
     <strong>These rows have dissimilar marks distribution and distribution ratio</strong>
   </div>
   <div class="row">
-    <table>
+    <table class="table table-hover table-muted table-striped">
       <thead>
         <tr>
           <td style="border: 1px solid black">SubCode</td>
