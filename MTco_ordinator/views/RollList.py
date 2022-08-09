@@ -245,7 +245,7 @@ def NotRegisteredStatus(request):
         form = NotRegisteredStatusForm(regIDs,request.POST)
         if(form.is_valid):
             regEventId=request.POST.get('regID')
-            not_regd_status=MTNotRegistered.objects.filter(RegEventId_id=regEventId) 
+            not_regd_status=MTNotRegistered.objects.filter(RegEventId_id=regEventId).order_by('Student__RegNo')
             return (render(request, 'MTco_ordinator/NotRegisteredStatus.html',{'form': form, 'not_regd':not_regd_status}))            
     else:
         form = NotRegisteredStatusForm(regIDs)
