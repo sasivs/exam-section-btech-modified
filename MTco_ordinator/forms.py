@@ -463,13 +463,13 @@ class MakeupRegistrationsForm(forms.Form):
                         widget=forms.CheckboxInput())
                     if(mk.Grade == 'I'):
                         self.fields['RadioMode' + str(mk.sub_id)] = forms.ChoiceField(required=False, \
-                            widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
+                            widget=forms.RadioSelect(), choices=[('1', 'Study Mode'),('0', 'Exam Mode')])
                     elif mk.Grade == 'F':
                         self.fields['RadioMode' + str(mk.sub_id)] = forms.ChoiceField(required=False, \
-                            widget=forms.RadioSelect(attrs={'checked': True}), choices=[('0', 'Exam Mode')])
+                            widget=forms.RadioSelect(), choices=[('1', 'Study Mode'),('0', 'Exam Mode')])
                     elif mk.Grade == 'X':
                         self.fields['RadioMode' + str(mk.sub_id)] = forms.ChoiceField(required=False, \
-                            widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode'),('0', 'Exam Mode')])
+                            widget=forms.RadioSelect(), choices=[('1', 'Study Mode'),('0', 'Exam Mode')])
                     self.checkFields.append(self['Check' + str(mk.sub_id)])
                     self.radioFields.append(self['RadioMode' + str(mk.sub_id)])
                     self.myFields.append((mk.SubCode, mk.SubName, mk.Credits, self['Check' + str(mk.sub_id)],\
