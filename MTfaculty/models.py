@@ -49,7 +49,7 @@ class MTMarks_Staging(models.Model):
             marks_row = marks_dis[index]
             sub_total = 0
             for mark in marks_row:
-                sub_total += int(mark)
+                sub_total += float(mark)
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
     
@@ -86,7 +86,7 @@ class MTMarks(models.Model):
             marks_row = marks_dis[index]
             sub_total = 0
             for mark in marks_row:
-                sub_total += int(mark)
+                sub_total += float(mark)
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
 
