@@ -95,7 +95,7 @@ def faculty_subject_assignment_detail(request, pk):
                     Faculty_id=request.POST.get('faculty'), RegEventId_id=request.session['currentRegEvent'])
                 faculty_row.save()
         return redirect('MTFacultySubjectAssignment')
-    return render(request, 'MTco_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
+    return render(request, 'MTco_ordinator/FacultyAssignmentDetail.html', {'subject':subject, 'faculty':faculty,\
         'co_ordinator':co_ordinator, 'faculty_id':faculty_selected})
 
 @login_required(login_url="/login/")

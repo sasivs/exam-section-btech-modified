@@ -94,7 +94,7 @@ def faculty_subject_assignment_detail(request, pk):
                         Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=request.session['currentRegEvent'])
                     faculty_row.save()
         return redirect('BTFacultySubjectAssignment')
-    return render(request, 'BTco_ordinator/FacultyAssignmentdetail.html', {'subject':subject, 'faculty':faculty,\
+    return render(request, 'BTco_ordinator/FacultyAssignmentDetail.html', {'subject':subject, 'faculty':faculty,\
         'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_assigned})
 
 @login_required(login_url="/login/")
