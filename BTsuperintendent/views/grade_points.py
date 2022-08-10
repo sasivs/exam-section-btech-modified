@@ -66,7 +66,7 @@ def grade_points_upload(request):
                         errorData.append(i)
                     errRows = [ (errorData[i][0],errorData[i][1],errorData[i][2]) for i in range(len(errorData))]
                     request.session['errRows'] = errRows
-                    return redirect('GradePointsUploadErrorHandler')
+                    return redirect('BTGradePointsUploadErrorHandler')
     else:
         form = GradePointsUploadForm()
     return render(request, 'BTsuperintendent/GradePointsUpload.html', {'form':form})
