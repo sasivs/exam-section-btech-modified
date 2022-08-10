@@ -52,7 +52,6 @@ class MandatoryCreditsForm(forms.Form):
 class IXGradeStudentsAddition(forms.Form):
     def __init__(self, *args, **kwargs):
         super(IXGradeStudentsAddition, self).__init__(*args, **kwargs) 
-        print('hi')
         GRADE_CHOICES = (
             ('', 'Choose Grade'),
             ('I', 'I'),
@@ -64,11 +63,11 @@ class IXGradeStudentsAddition(forms.Form):
         self.fields['regId'] = forms.CharField(label='Choose Registration Event', max_length=30, widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':'submit();', 'required':'True'}))
         if self.data.get('regId'):
             registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regId'))
-            subjects = BTSubjects.objects.filter(id__in=registrations.values_list('sub_id', flat=True))
+            subjects = BTSubjects.objects.filter(id__in=registrations.values_list('sub_id', flat=True)).order_by('SubCode')
             SUBJECT_CHOICES = [(sub.id, sub.SubCode) for sub in subjects]
             SUBJECT_CHOICES = [('', 'Select Subject')] + SUBJECT_CHOICES
             self.fields['subject'] = forms.CharField(label='Select Subject', max_length=30, required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
-            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True'}))
+            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True',  "onkeypress":"return isNumberKey(event);"}))
             self.fields['grade'] = forms.CharField(label='Select Grade', required=False, max_length=30, widget=forms.Select(choices=GRADE_CHOICES, attrs={'required':'True'}))
 
     

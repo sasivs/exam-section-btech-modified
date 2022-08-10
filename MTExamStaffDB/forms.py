@@ -45,7 +45,7 @@ class IXGradeStudentsAddition(forms.Form):
             SUBJECT_CHOICES = [(sub.id, sub.SubCode) for sub in subjects]
             SUBJECT_CHOICES = [('', 'Select Subject')] + SUBJECT_CHOICES
             self.fields['subject'] = forms.CharField(label='Select Subject', max_length=30, required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
-            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True'}))
+            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True',  'onkeypress':"return isNumberKey(event);"}))
             self.fields['grade'] = forms.CharField(label='Select Grade', required=False, max_length=30, widget=forms.Select(choices=GRADE_CHOICES, attrs={'required':'True'}))
 
     

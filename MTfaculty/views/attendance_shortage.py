@@ -15,7 +15,7 @@ from MThod.models import MTFaculty_user
 def attendance_shortage_upload(request):
     user = request.user
     faculty = MTFaculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-    subjects  = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+    subjects  = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1).order_by('Subject__SubCode','Section')
     if(request.method == 'POST'):
             form = AttendanceShoratgeUploadForm(subjects, request.POST, request.FILES)
         # if(form.is_valid()):
@@ -42,7 +42,7 @@ def attendance_shortage_upload(request):
                 if len(att_short) == 0 :
                     att_short = MTAttendance_Shortage(Registration=student_registration.first())
                     att_short.save()
-                msg = 'Attendance Shortage Updated successfully.'
+            msg = 'Attendance Shortage Updated successfully.'
             return render(request, 'MTfaculty/AttendanceShortageUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
     else:
         
@@ -58,15 +58,15 @@ def attendance_shortage_status(request):
     subjects  = None
     if 'Faculty' in groups:
         faculty = MTFaculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-        subjects  = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+        subjects  = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1).order_by('Subject__SubCode','Section')
     elif 'Superintendent' in groups or 'Associate-Dean' in groups:
         subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = MTFacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1)
+        subjects = MTFacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1).order_by('Subject__SubCode','Section')
     elif 'Co-ordinator' in groups:
         coordinator = MTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = MTFacultyAssignment.objects.filter(RegEventId__MYear=coordinator.MYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1)
+        subjects = MTFacultyAssignment.objects.filter(RegEventId__MYear=coordinator.MYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1).order_by('Subject__SubCode','Section')
     if(request.method == 'POST'):
         form = AttendanceShoratgeStatusForm(subjects,request.POST)
         sub = request.POST['Subjects'].split(':')[0]

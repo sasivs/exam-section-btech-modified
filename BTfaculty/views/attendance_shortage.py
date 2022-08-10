@@ -14,7 +14,7 @@ from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 def attendance_shortage_upload(request):
     user = request.user
     faculty = BTFaculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-    subjects  = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+    subjects  = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1).order_by('Subject__SubCode','Section')
     if(request.method == 'POST'):
             form = AttendanceShoratgeUploadForm(subjects, request.POST, request.FILES)
         # if(form.is_valid()):
@@ -41,7 +41,7 @@ def attendance_shortage_upload(request):
                 if len(att_short) == 0 :
                     att_short = BTAttendance_Shortage(Registration=student_registration.first())
                     att_short.save()
-                msg = 'Attendance Shortage Updated successfully.'
+            msg = 'Attendance Shortage Updated successfully.'
             return render(request, 'BTfaculty/AttendanceShortageUpload.html', {'form':form, 'error':errorRegNo, 'msg':msg})
     else:
         
@@ -57,18 +57,18 @@ def attendance_shortage_status(request):
     subjects = None
     if 'Faculty' in groups:
         faculty = BTFaculty_user.objects.filter(RevokeDate__isnull=True,User=user).first()
-        subjects  = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1)
+        subjects  = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty,RegEventId__Status=1).order_by('Subject__SubCode','Section')
     elif 'Superintendent' in groups or 'Associate-Dean' in groups:
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1).order_by('Subject__SubCode','Section')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(Subject__OfferedBy=hod.Dept, RegEventId__Status=1).order_by('Subject__SubCode','Section')
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=coordinator.BYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=coordinator.BYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1).order_by('Subject__SubCode','Section')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1).order_by('Subject__SubCode','Section')
     if(request.method == 'POST'):
         form = AttendanceShoratgeStatusForm(subjects,request.POST)
         sub = request.POST['Subjects'].split(':')[0]

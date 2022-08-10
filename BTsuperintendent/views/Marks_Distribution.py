@@ -14,10 +14,11 @@ def mark_distribution_add(request):
         if(form.is_valid()):
             Distribution = form.cleaned_data['Distribution']
             marksDistribution = form.cleaned_data['DistributionName']
-            mark_distribution = BTMarksDistribution(Distribution=Distribution, DistributionNames=marksDistribution)
+            promote_threshold = form.cleaned_data['PromoteThreshold']
+            mark_distribution = BTMarksDistribution(Distribution=Distribution, DistributionNames=marksDistribution, PromoteThreshold=promote_threshold)
             mark_distribution.save()
             msg = 'Mark Distribution Added Successfully'
-        return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})
+            return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})
     else:
         form = MarksDistributionForm()
     return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form})
@@ -35,5 +36,26 @@ def mark_distribution_status(request):
             id = request.POST['delete']
             mark_distribution.filter(id=id).delete()
             mark_distribution = BTMarksDistribution.objects.all()
-
     return render(request, 'BTsuperintendent/MarkDistributionStatus.html', {'distributions':mark_distribution})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def mark_distribution_update(request, pk):
+    mark_distribution_obj = BTMarksDistribution.objects.get(id=pk)
+    if request.method == 'POST':
+        form = MarksDistributionForm(request.POST)
+        if form.is_valid():
+            Distribution = form.cleaned_data['Distribution']
+            marksDistribution = form.cleaned_data['DistributionName']
+            promote_threshold = form.cleaned_data['PromoteThreshold']
+            mark_distribution_obj.Distribution = Distribution
+            mark_distribution_obj.DistributionNames = marksDistribution
+            mark_distribution_obj.PromoteThreshold = promote_threshold
+            mark_distribution_obj.save()
+            msg = 'Mark Distribution Updated Successfully'
+            return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})
+    else:
+        initial_data = {'Distribution':mark_distribution_obj.Distribution, 'DistributionName':mark_distribution_obj.DistributionNames, \
+            'PromoteThreshold':mark_distribution_obj.PromoteThreshold}
+        form = MarksDistributionForm(initial=initial_data)
+    return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form})

@@ -134,6 +134,26 @@ class MarksDistributionForm(forms.Form):
         super(MarksDistributionForm, self).__init__(*args, **kwargs)
         self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
         self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
+        self.fields['PromoteThreshold'] = forms.CharField(label='Promotion Thresholds', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        distribution = cleaned_data.get('Distribution')
+        distribution_name = cleaned_data.get('DistributionName')
+        promote_threshold = cleaned_data.get('PromoteThreshold')
+        distribution = distribution.split(',')
+        distribution_name = distribution_name.split(',')
+        promote_threshold = promote_threshold.split(',')
+        distribution = [dis.split('+') for dis in distribution]
+        distribution_name = [dis.split('+') for dis in distribution_name]
+        promote_threshold = [dis.split('+') for dis in promote_threshold]
+        if len(distribution) == len(distribution_name) and len(distribution) == len(promote_threshold):
+            for index in range(len(distribution)):
+                if (len(distribution[index]) != len(distribution_name[index])) or (len(distribution[index]) != len(promote_threshold[index])):
+                    raise forms.ValidationError("All fields of distribution are not given in the strings.")
+        else:
+            raise forms.ValidationError("All fields of distribution are not given in the strings.")
+        return cleaned_data
 
 
 class StudentCancellationForm(forms.Form):

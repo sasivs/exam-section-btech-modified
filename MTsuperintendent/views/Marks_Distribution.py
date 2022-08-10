@@ -37,3 +37,25 @@ def mark_distribution_status(request):
             mark_distribution = MTMarksDistribution.objects.all()
 
     return render(request, 'MTsuperintendent/MarkDistributionStatus.html', {'distributions':mark_distribution})
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def mark_distribution_update(request, pk):
+    mark_distribution_obj = MTMarksDistribution.objects.get(id=pk)
+    if request.method == 'POST':
+        form = MarksDistributionForm(request.POST)
+        if form.is_valid():
+            Distribution = form.cleaned_data['Distribution']
+            marksDistribution = form.cleaned_data['DistributionName']
+            promote_threshold = form.cleaned_data['PromoteThreshold']
+            mark_distribution_obj.Distribution = Distribution
+            mark_distribution_obj.DistributionNames = marksDistribution
+            mark_distribution_obj.PromoteThreshold = promote_threshold
+            mark_distribution_obj.save()
+            msg = 'Mark Distribution Updated Successfully'
+            return render(request, 'MTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})
+    else:
+        initial_data = {'Distribution':mark_distribution_obj.Distribution, 'DistributionName':mark_distribution_obj.DistributionNames, \
+            'PromoteThreshold':mark_distribution_obj.PromoteThreshold}
+        form = MarksDistributionForm(initial=initial_data)
+    return render(request, 'MTsuperintendent/MarksDistribution.html', {'form':form})

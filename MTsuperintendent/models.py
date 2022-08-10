@@ -61,6 +61,7 @@ class MTDepartments(models.Model):
 class MTMarksDistribution(models.Model):
     Distribution = models.TextField()
     DistributionNames=models.TextField()
+    PromoteThreshold = models.TextField()
 
     class Meta:
         db_table = 'MTMarksDistribution'

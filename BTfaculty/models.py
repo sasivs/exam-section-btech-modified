@@ -18,6 +18,7 @@ class BTGradesThreshold(models.Model):
     RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
     Section = models.CharField(max_length=2, default='NA')
+    Exam_Mode = models.BooleanField(default=False) 
     class Meta:
         db_table = 'BTGradesThreshold'
         unique_together = (('Grade', 'Subject', 'RegEventId', 'Section'))

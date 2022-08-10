@@ -90,6 +90,7 @@ class BTDepartments(models.Model):
 class BTMarksDistribution(models.Model):
     Distribution = models.TextField()
     DistributionNames=models.TextField()
+    PromoteThreshold = models.TextField()
 
     class Meta:
         db_table = 'BTMarksDistribution'

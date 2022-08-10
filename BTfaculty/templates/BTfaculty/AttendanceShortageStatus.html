@@ -7,7 +7,7 @@
  <strong>Choose the subject corresponding to required registration event to view the list of attendance shortage students.</strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
-            <button type="submit" name="submit-form" value="submit">Generate</button>
+            <button type="submit" name="submit-form" value="submit">Submit</button>
         
     </div>
     {% if att_short %}

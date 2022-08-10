@@ -99,9 +99,9 @@ class BTNotRegistered(models.Model):
 
 class BTStudentRegistrations(models.Model):
     RegNo = models.IntegerField()
-    RegEventId = models.IntegerField()
+    RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', db_column='RegEventId', on_delete=models.CASCADE)
     Mode = models.IntegerField()
-    sub_id = models.IntegerField()
+    sub_id = models.ForeignKey('BTco_ordinator.BTSubjects', db_column='sub_id', on_delete=models.CASCADE)
     class Meta:
         db_table = 'BTStudentRegistrations'
         unique_together = (('RegNo', 'RegEventId', 'sub_id'))
@@ -109,9 +109,9 @@ class BTStudentRegistrations(models.Model):
 
 class BTStudentRegistrations_Staging(models.Model):
     RegNo = models.IntegerField()
-    RegEventId = models.IntegerField()
+    RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', db_column='RegEventId', on_delete=models.CASCADE)
     Mode = models.IntegerField()
-    sub_id = models.IntegerField()
+    sub_id = models.ForeignKey('BTco_ordinator.BTSubjects', db_column='sub_id', on_delete=models.CASCADE)
     class Meta:
         db_table = 'BTStudentRegistrations_Staging'
         unique_together = (('RegNo', 'RegEventId', 'sub_id'))

@@ -44,7 +44,12 @@ def grades_threshold_assign(request, pk):
                     #     if form.cleaned_data.get('uniform_grading')=='1':
                     for grade in grades:
                         if form.cleaned_data[str(grade.id)]:
-                            prev_thresholds.filter(Grade=grade).update(Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                            prev_thresholds.filter(Grade=grade, Exam_Mode=False).update(Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                    
+                    exam_mode_grade = grades.filter(Grade__in=['P','F'])
+                    for grade in exam_mode_grade:
+                        if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
+                            prev_thresholds.filter(Grade=grade, Exam_Mode=True).update(Threshold_Mark=int(form.cleaned_data[str('exam_mode_')+str(grade.id)]))
                         # else:
                         #     section = form.cleaned_data.get('section')
                         #     for grade in grades:
@@ -71,8 +76,15 @@ def grades_threshold_assign(request, pk):
                     for grade in grades:
                         if form.cleaned_data[str(grade.id)]:
                             threshold_mark = BTGradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                                Threshold_Mark=int(form.cleaned_data[str(grade.id)]), Exam_Mode=False)
                             threshold_mark.save()
+                    exam_mode_grade = grades.filter(Grade__in=['P','F'])
+                    for grade in exam_mode_grade:
+                        if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
+                            threshold_mark = BTGradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
+                                    Threshold_Mark=int(form.cleaned_data[str('exam_mode_')+str(grade.id)]), Exam_Mode=True)
+                            threshold_mark.save()
+
                     # else:
                     #     section = form.cleaned_data.get('section')
                     #     for grade in grades:
