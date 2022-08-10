@@ -41,7 +41,7 @@ def grade_points_upload(request):
                         errRows = [ (errorDataset[i][0],errorDataset[i][1],errorDataset[i][2]) for i in range(len(errorDataset))]
                         request.session['errRows'] = errRows
                         # request.session['currentRegEventId'] = currentRegEventId
-                        return redirect('GradePointsUploadErrorHandler' )
+                        return redirect('BTGradePointsUploadErrorHandler' )
                     msg = 'The data for grade points is uploaded succesfully.'
                     return(render(request,'BTsuperintendent/GradePointsUpload.html', {'form':form, 'msg':msg}))
                 else:
