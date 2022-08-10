@@ -3,11 +3,11 @@
 {% block sub %}
 
 <div class="container">
+    <form method="post" enctype="multipart/form-data">
     <div class="row">
- <strong>Choose the subject corresponding to required registration event to view the list of attendance shortage students.</strong>
-        <form method="post" enctype="multipart/form-data">
+        <strong>Choose the subject corresponding to required registration event to view the list of attendance shortage students.</strong>
             {% csrf_token %} {{ form.as_p }}
-            <button type="submit" name="submit-form" value="submit">Submit</button>
+            <button type="submit" name="submit-form" value="submit" style="width: fit-content;">Submit</button>
         
     </div>
     {% if att_short %}
