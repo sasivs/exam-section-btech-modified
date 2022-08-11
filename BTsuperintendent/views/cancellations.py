@@ -16,7 +16,7 @@ def seat_cancellation(request):
         form = StudentCancellationForm(request.POST)
         if(form.is_valid()):
             regno = int(form.cleaned_data['RegNo'])
-            date = form.cleaned_data('Date')
+            date = form.cleaned_data.get('Date')
             studentInfo = BTStudentInfo.objects.filter(RegNo=regno)
             context = {'form':form}
             if(len(studentInfo)!=0):
