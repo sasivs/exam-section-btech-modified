@@ -149,12 +149,12 @@ class MTCancelledStudentInfo(models.Model):
 
 class MTCancelledStudentRegistrations(models.Model):
     RegNo = models.IntegerField()
-    RegEventId = models.IntegerField()
+    RegEventId_id = models.IntegerField()
     Mode = models.IntegerField()
-    sub_id = models.IntegerField()
+    sub_id_id = models.IntegerField()
     class Meta:
         db_table = 'MTCancelledStudentRegistrations'
-        unique_together = (('RegNo', 'RegEventId', 'sub_id'))
+        unique_together = (('RegNo', 'RegEventId_id', 'sub_id_id'))
         managed = True
 
 
