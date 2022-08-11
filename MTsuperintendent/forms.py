@@ -99,6 +99,7 @@ class StudentCancellationForm(forms.Form):
         super(StudentCancellationForm, self).__init__(*args, **kwargs)
         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=2)
         self.fields['Date'] = forms.DateField(label='Cancelled Date')
+        self.fields['remark'] = forms.CharField(label='Remarks', widget=forms.Textarea())
     
     def clean_RegNo(self):
         regd_no = self.cleaned_data.get('RegNo')

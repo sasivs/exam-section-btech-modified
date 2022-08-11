@@ -17,6 +17,7 @@ def seat_cancellation(request):
         if(form.is_valid()):
             regno = int(form.cleaned_data['RegNo'])
             date = form.cleaned_data.get('Date')
+            remark = form.cleaned_data.get('remark')
             studentInfo = MTStudentInfo.objects.filter(RegNo=regno)
             context = {'form':form}
             if(len(studentInfo)!=0):
@@ -29,7 +30,7 @@ def seat_cancellation(request):
                 grades =MTStudentGrades.objects.filter(RegId__in = regs.values_list('id',flat =True))
                 marks = MTMarks.objects.filter(Registration__in = regs)
 
-                MTCancelledStudentInfo(CancelledDate=date,RegNo=student.RegNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardianName=student.GuardianName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2).save()
+                MTCancelledStudentInfo(Remarks=remark,CancelledDate=date,RegNo=student.RegNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardianName=student.GuardianName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2).save()
                 for i in rolls:
                     i_dict = i.__dict__
                     i_dict.pop('id') 
