@@ -132,7 +132,7 @@ class MTCancelledStudentInfo(models.Model):
     Gender = models.CharField(max_length=10)
     Category = models.CharField(max_length=20)
     GuardianName = models.CharField(max_length=50)
-    Phone = models.IntegerField()
+    Phone = models.TextField()
     email = models.CharField(max_length=50)
     Address1 = models.CharField(max_length=150)
     Address2 = models.CharField(max_length=100, null=True)
