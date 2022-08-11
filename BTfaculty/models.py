@@ -1,5 +1,6 @@
 from django.db import models
 from BTco_ordinator.models import BTSubjects
+import math
 # Create your models here.
 
 class BTAttendance_Shortage(models.Model):
@@ -51,7 +52,7 @@ class BTMarks_Staging(models.Model):
             for mark in marks_row:
                 sub_total += float(mark)
             total = sub_total*int(ratio[index])
-        return round(total/total_parts)
+        return math.ceil(total/total_parts)
 
     def get_marks_list(self):
         marks = self.Marks.split(',')
@@ -89,7 +90,7 @@ class BTMarks(models.Model):
             for mark in marks_row:
                 sub_total += float(mark)
             total = sub_total*int(ratio[index])
-        return round(total/total_parts)
+        return math.ceil(total/total_parts)
 
 
 class BTStudentGrades(models.Model):

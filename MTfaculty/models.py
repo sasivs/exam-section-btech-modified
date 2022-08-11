@@ -2,6 +2,7 @@ from django.db import models
 from ADPGDB.models import MTRegistrationStatus
 from MTsuperintendent.models import MTGradePoints
 from MTco_ordinator.models import MTSubjects, MTStudentRegistrations
+import math
 # Create your models here.
 
 class MTAttendance_Shortage(models.Model):
@@ -52,7 +53,7 @@ class MTMarks_Staging(models.Model):
             for mark in marks_row:
                 sub_total += float(mark)
             total = sub_total*int(ratio[index])
-        return round(total/total_parts)
+        return math.ceil(total/total_parts)
     
     def get_marks_list(self):
         marks = self.Marks.split(',')
@@ -89,7 +90,7 @@ class MTMarks(models.Model):
             for mark in marks_row:
                 sub_total += float(mark)
             total = sub_total*int(ratio[index])
-        return round(total/total_parts)
+        return math.ceil(total/total_parts)
 
 class MTStudentGrades(models.Model):
     RegId = models.IntegerField()
