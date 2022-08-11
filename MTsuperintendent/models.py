@@ -68,6 +68,9 @@ class MTMarksDistribution(models.Model):
         unique_together = (('Distribution', 'DistributionNames'))
         managed = True
     
+    def __str__(self):
+        return str(self.Distribution)+', '+str(self.PromoteThreshold)
+    
     def distributions(self):
         distributions_names = self.DistributionNames.split(',')
         distributions_marks = self.Distribution.split(',')
