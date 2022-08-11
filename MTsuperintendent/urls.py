@@ -40,7 +40,7 @@ urlpatterns = [
 
     path('MTAddMarkDistribution', Marks_Distribution.mark_distribution_add, name='MTAddMarkDistribution'),
     path('MTMarkDistributionStatus', Marks_Distribution.mark_distribution_status, name='MTMarkDistributionStatus'),
-    path('MTMarksDistributionUpdate/<int:id>', Marks_Distribution.mark_distribution_update, name='MTMarksDistributionUpdate'),
+    path('MTMarksDistributionUpdate/<int:pk>', Marks_Distribution.mark_distribution_update, name='MTMarksDistributionUpdate'),
 
     path('MTSupBTSeatCancellation',cancellations.seat_cancellation,name='MTSupBTSeatCancellation'),
 
