@@ -33,13 +33,19 @@ class AttendanceShoratgeStatusForm(forms.Form):
 class GradeThresholdForm(forms.Form):
     def __init__(self, faculty_subject, *args,**kwargs):
         super(GradeThresholdForm, self).__init__(*args, **kwargs)
-        grades = MTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
+        grades = MTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
         prev_thresholds = MTGradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
+        prev_thresholds_study_mode = prev_thresholds.filter(Exam_Mode=False)
+        prev_thresholds_exam_mode = prev_thresholds.filter(Exam_Mode=True)
         for grade in grades:
             self.fields[str(grade.id)] = forms.CharField(label=grade.Grade, required=False, widget=forms.TextInput(attrs={'type':'number', 'max':100, 'required':'True', 'class':'threshold'}))
-            if prev_thresholds.filter(Grade=grade):
-                self.fields[str(grade.id)].widget.attrs.update({'value':prev_thresholds.filter(Grade=grade).first().Threshold_Mark})
-                
+            if prev_thresholds_study_mode.filter(Grade=grade):
+                self.fields[str(grade.id)].widget.attrs.update({'value':prev_thresholds_study_mode.filter(Grade=grade).first().Threshold_Mark})
+        exam_mode_grades = grades.filter(Grade__in=['P','F'])
+        for grade in exam_mode_grades:
+            self.fields[str('exam_mode_')+str(grade.id)] = forms.CharField(label='Exam-Mode-('+str(grade.Grade)+')', required=False, widget=forms.TextInput(attrs={'type':'number', 'max':100, 'required':'True'}))
+            if prev_thresholds_exam_mode.filter(Grade=grade):
+                self.fields[str('exam_mode_')+str(grade.id)].widget.attrs.update({'value':prev_thresholds_exam_mode.filter(Grade=grade).first().Threshold_Mark})      
 
 class GradeThresholdStatusForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):

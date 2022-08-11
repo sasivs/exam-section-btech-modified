@@ -14,7 +14,8 @@ def mark_distribution_add(request):
         if(form.is_valid()):
             Distribution = form.cleaned_data['Distribution']
             marksDistribution = form.cleaned_data['DistributionName']
-            mark_distribution = MTMarksDistribution(Distribution=Distribution, DistributionNames=marksDistribution)
+            promote_threshold = form.cleaned_data['PromoteThreshold']
+            mark_distribution = MTMarksDistribution(Distribution=Distribution, DistributionNames=marksDistribution, PromoteThreshold=promote_threshold)
             mark_distribution.save()
             msg = 'Mark Distribution Added Successfully'
         return render(request, 'MTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})

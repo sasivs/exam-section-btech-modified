@@ -4,7 +4,7 @@ from MTsuperintendent.user_access_test import grades_threshold_access, grades_st
 from ADPGDB.models import MTRegistrationStatus
 from MTsuperintendent.models import MTHOD
 from MThod.models import MTFaculty_user, MTCoordinator
-from MTco_ordinator.models import MTFacultyAssignment, MTRollLists, MTStudentRegistrations
+from MTco_ordinator.models import MTFacultyAssignment, MTRollLists, MTStudentRegistrations, MTSubjects
 from MTfaculty.models import MTAttendance_Shortage, MTGradesThreshold, MTMarks_Staging, MTStudentGrades_Staging
 from MTExamStaffDB.models import MTIXGradeStudents
 from MTfaculty.forms import MarksStatusForm
@@ -36,6 +36,11 @@ def grades_generate(request):
             marks_objects = MTMarks_Staging.objects.filter(Registration__RegEventId=regEvent.id, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
 
+            subject_obj = MTSubjects.objects.get(id=subject)
+            promote_thresholds = subject_obj.MarkDistribution.PromoteThreshold
+            promote_thresholds = promote_thresholds.split(',')
+            promote_thresholds = [thr.split('+') for thr in promote_thresholds]
+
             attendance_shortage = MTAttendance_Shortage.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
             grades_objects = MTStudentGrades_Staging.objects.filter(RegId__in=marks_objects.values_list('Registration', flat=True))
             
@@ -60,24 +65,55 @@ def grades_generate(request):
                 marks_objects = marks_objects.exclude(Registration=ix_grade.Registration)
             
             if MTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent).exists():
-                thresholds = MTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent).order_by('-Threshold_Mark')
+                thresholds_study_mode = MTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, Exam_Mode=False).order_by('-Threshold_Mark')
+                thresholds_exam_mode = MTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, Exam_Mode=True).order_by('-Threshold_Mark')
 
 
-            if not thresholds:
-                msg = 'Grade Threshold is not updated for this subject.'
+            if not thresholds_exam_mode or not thresholds_study_mode:
+                msg = 'Grade Threshold(study/exam) is not updated for this subject.'
                 return render(request, 'MTfaculty/GradesGenerate.html', {'form':form, 'msg':msg})
 
             for mark in marks_objects:
-                for threshold in thresholds:
-                    if mark.TotalMarks >= threshold.Threshold_Mark:
-                        if grades_objects.filter(RegId=mark.Registration.id):
-                            grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
+                if mark.Registration.Mode == 1:
+                    marks_list = mark.Marks.split(',')
+                    marks_list = [m.split('+') for m in marks_list]
+                    graded = False
+                    for outer_index in range(len(promote_thresholds)):
+                        for inner_index in range(len(promote_thresholds[outer_index])):
+                            if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
+                                graded = True
+                                if grades_objects.filter(RegId=mark.Registration.id):
+                                    grades_objects.filter(RegId=mark.Registration.id).update(Grade='F', AttGrade='P')
+                                    break
+                                else:
+                                    grade = MTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                        Grade='F', AttGrade='P')
+                                    grade.save()
+                                    break
+                        if graded:
                             break
-                        else:
-                            grade = MTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
-                                Grade=threshold.Grade.Grade, AttGrade='P')
-                            grade.save()
-                            break
+                    if not graded:
+                        for threshold in thresholds_study_mode:
+                            if mark.TotalMarks >= threshold.Threshold_Mark:
+                                if grades_objects.filter(RegId=mark.Registration.id):
+                                    grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
+                                    break
+                                else:
+                                    grade = MTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                        Grade=threshold.Grade.Grade, AttGrade='P')
+                                    grade.save()
+                                    break
+                else:
+                    for threshold in thresholds_exam_mode:
+                        if mark.TotalMarks >= threshold.Threshold_Mark:
+                            if grades_objects.filter(RegId=mark.Registration.id):
+                                grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='X')
+                                break
+                            else:
+                                grade = MTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                        Grade=threshold.Grade.Grade, AttGrade='X')
+                                grade.save()
+                                break
             
             msg = 'Grades generated successfully.'
             return render(request, 'MTfaculty/GradesGenerate.html', {'form':form, 'msg':msg})

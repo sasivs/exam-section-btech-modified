@@ -134,7 +134,7 @@ class MarksDistributionForm(forms.Form):
         super(MarksDistributionForm, self).__init__(*args, **kwargs)
         self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
         self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
-        self.fields['PromoteThreshold'] = forms.CharField(label='Promotion Thresholds', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
+        self.fields['PromoteThreshold'] = forms.CharField(label='Passing Thresholds', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
     
     def clean(self):
         cleaned_data = super().clean()
@@ -160,6 +160,7 @@ class StudentCancellationForm(forms.Form):
     def __init__ (self,*args, **kwargs):
         super(StudentCancellationForm, self).__init__(*args, **kwargs)
         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
+        self.fields['Date'] = forms.DateField(label='Cancelled Date')
     
     def clean_RegNo(self):
         regd_no = self.cleaned_data.get('RegNo')

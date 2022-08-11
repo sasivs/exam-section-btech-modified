@@ -27,7 +27,7 @@ def grades_threshold(request):
 def grades_threshold_assign(request, pk):
     subject_faculty = get_object_or_404(MTFacultyAssignment, id=pk)
     subject = subject_faculty.Subject
-    grades = MTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
+    grades = MTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
     prev_thresholds = MTGradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty.RegEventId)
     marks = MTMarks_Staging.objects.filter(Registration__RegEventId=subject_faculty.RegEventId.id, Registration__sub_id=subject.id)
     marks_list = marks.values_list('TotalMarks', flat=True)
@@ -45,6 +45,10 @@ def grades_threshold_assign(request, pk):
                     for grade in grades:
                         if form.cleaned_data[str(grade.id)]:
                             prev_thresholds.filter(Grade=grade).update(Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                    exam_mode_grade = grades.filter(Grade__in=['P','F'])
+                    for grade in exam_mode_grade:
+                        if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
+                            prev_thresholds.filter(Grade=grade, Exam_Mode=True).update(Threshold_Mark=int(form.cleaned_data[str('exam_mode_')+str(grade.id)]))
                         # else:
                         #     section = form.cleaned_data.get('section')
                         #     for grade in grades:
@@ -72,6 +76,12 @@ def grades_threshold_assign(request, pk):
                         if form.cleaned_data[str(grade.id)]:
                             threshold_mark = MTGradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
                                 Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                            threshold_mark.save()
+                    exam_mode_grade = grades.filter(Grade__in=['P','F'])
+                    for grade in exam_mode_grade:
+                        if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
+                            threshold_mark = MTGradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
+                                    Threshold_Mark=int(form.cleaned_data[str('exam_mode_')+str(grade.id)]), Exam_Mode=True)
                             threshold_mark.save()
                     # else:
                     #     section = form.cleaned_data.get('section')

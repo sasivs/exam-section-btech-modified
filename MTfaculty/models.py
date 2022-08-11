@@ -19,9 +19,10 @@ class MTGradesThreshold(models.Model):
     Subject = models.ForeignKey(MTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey(MTRegistrationStatus, on_delete=models.CASCADE)
     Threshold_Mark = models.IntegerField()
+    Exam_Mode = models.BooleanField(default=False) 
     class Meta:
         db_table = 'MTGradesThreshold'
-        unique_together = (('Grade', 'Subject', 'RegEventId'))
+        unique_together = (('Grade', 'Subject', 'RegEventId','Exam_Mode'))
         managed = True
 
 class MTMarks_Staging(models.Model):
@@ -39,7 +40,7 @@ class MTMarks_Staging(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = MTSubjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = MTSubjects.objects.filter(id=self.Registration.sub_id.id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:
@@ -76,7 +77,7 @@ class MTMarks(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = MTSubjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = MTSubjects.objects.filter(id=self.Registration.sub_id.id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:

@@ -32,7 +32,7 @@ class AttendanceShoratgeStatusForm(forms.Form):
 class GradeThresholdForm(forms.Form):
     def __init__(self, faculty_subject, *args,**kwargs):
         super(GradeThresholdForm, self).__init__(*args, **kwargs)
-        grades = BTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
+        grades = BTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
         prev_thresholds = BTGradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
         prev_thresholds_study_mode = prev_thresholds.filter(Exam_Mode=False)
         prev_thresholds_exam_mode = prev_thresholds.filter(Exam_Mode=True)

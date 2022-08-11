@@ -80,7 +80,7 @@ def grades_generate(request):
                     graded = False
                     for outer_index in range(len(promote_thresholds)):
                         for inner_index in range(len(promote_thresholds[outer_index])):
-                            if int(marks_list[outer_index][inner_index]) < int(promote_thresholds[outer_index][inner_index]):
+                            if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
                                 graded = True
                                 if grades_objects.filter(RegId=mark.Registration.id):
                                     grades_objects.filter(RegId=mark.Registration.id).update(Grade='F', AttGrade='P')

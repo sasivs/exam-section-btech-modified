@@ -27,7 +27,7 @@ def grades_threshold(request):
 def grades_threshold_assign(request, pk):
     subject_faculty = get_object_or_404(BTFacultyAssignment, id=pk)
     subject = subject_faculty.Subject
-    grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R'])
+    grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
     prev_thresholds = BTGradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty.RegEventId)
     marks = BTMarks_Staging.objects.filter(Registration__RegEventId=subject_faculty.RegEventId.id, Registration__sub_id=subject.id)
     marks_list = marks.values_list('TotalMarks', flat=True)

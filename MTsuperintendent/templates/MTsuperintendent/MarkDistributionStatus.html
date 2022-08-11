@@ -23,10 +23,12 @@
                     {% if user|MThas_group:"Superintendent" %}
                     <form action="" method="POST">{% csrf_token %}
                         <td style="border: 1px solid black;">
-                            <button type="submit" name="delete" value="{{dis.id}}" onclick="return confirm('Are you sure you want to delete distribution {{dis.id}}?')">Delete</button>
+                            <a href="{% url 'MTMarksDistributionUpdate' dis.id %}" class="btn btn-primary" style="text-decoration:none">
+                                Update
+                            </a>
                         </td>
                         <td style="border: 1px solid black;">
-                            <a href="{% url 'MTMarksDistributionUpdate' dis.id %}" class="btn">Update</a>
+                            <button type="submit" name="delete" value="{{dis.id}}" onclick="return confirm('Are you sure you want to delete distribution {{dis.id}}?')">Delete</button>
                         </td>
                     </form>
                     {% endif %}

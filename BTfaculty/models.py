@@ -21,7 +21,7 @@ class BTGradesThreshold(models.Model):
     Exam_Mode = models.BooleanField(default=False) 
     class Meta:
         db_table = 'BTGradesThreshold'
-        unique_together = (('Grade', 'Subject', 'RegEventId', 'Section'))
+        unique_together = (('Grade', 'Subject', 'RegEventId', 'Section',"Exam_Mode"))
         managed = True
 
 class BTMarks_Staging(models.Model):
@@ -39,7 +39,7 @@ class BTMarks_Staging(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = BTSubjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = BTSubjects.objects.filter(id=self.Registration.sub_id.id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:
@@ -77,7 +77,7 @@ class BTMarks(models.Model):
     def get_total_marks(self):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
-        subject = BTSubjects.objects.filter(id=self.Registration.sub_id).first()
+        subject = BTSubjects.objects.filter(id=self.Registration.sub_id.id).first()
         ratio = subject.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:

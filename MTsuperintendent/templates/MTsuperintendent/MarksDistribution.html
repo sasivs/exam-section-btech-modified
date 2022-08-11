@@ -9,6 +9,11 @@
         If its a Double distribution subject(theory+lab),enter the marks of distributions by seperating it with a comma and enter marks with a plus sign in between and enter the description of the distribution in the Distribution name column by seperating them with a comma. <br>
         For Example:If its a theory+lab subject the Distribution column would look like 10+30+10+50,60+40  <br>
         and the DistributionName column would like Minor-1+Mid+Minor-2+End,ContinuousAssessment+External <br>
+        If there are any exams for which the student has to secure minimum number of marks, then those can be mentioned in Passing Thresholds fields. <br>
+        For Example:For a theory subject(Minor-I+Mid+Minor-II+EndSem) ,if there is condition that a student has to get 17.5 marks in the end semester exam then <br>
+        passing thresholds field should be filled as following 0+0+0+17.5 <br>
+        For Example:For a theory+lab subject(Minor-I+Mid+Minor-II+EndSem,Continuous+External)(10+30+10+50,60+40) ,if there is condition that a student has to get 17.5 marks in the end semester exam then <br>
+        passing thresholds field should be filled as following 0+0+0+17.5,0+14
         </strong>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} {{ form.as_p }}
