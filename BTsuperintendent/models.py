@@ -166,7 +166,7 @@ class BTCancelledStudentInfo(models.Model):
     Address2 = models.CharField(max_length=100, null=True)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     CancelledDate = models.DateField()
-    Remarks = models.TextField(default='')
+    Remarks = models.TextField()
 
     class Meta:
         db_table = 'BTCancelledStudentInfo'
