@@ -49,7 +49,7 @@ def makeup_registrations(request):
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' not in request.POST.keys():
             already_registered = MTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
              RegEventId_id=currentRegEventId)
-            modes_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in already_registered}
+            modes_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in already_registered}
             from json import dumps
             return render(request, 'MTco_ordinator/MakeupRegistrations.html', {'form':form, 'modes':dumps(modes_selection)})
             pass
