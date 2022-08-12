@@ -198,7 +198,7 @@ def generateRollList(request):
                         makeup_rolls.sort()
                         initial_roll_list = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
-                        BTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=makeup_rolls)
+                        BTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=makeup_rolls).delete()
 
                         if byear==1:
                             for regd_no in makeup_rolls:
