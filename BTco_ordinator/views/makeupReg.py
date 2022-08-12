@@ -51,7 +51,7 @@ def makeup_registrations(request):
             pass
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' not in request.POST.keys():
             already_registered = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
-                        sub_id_id=sub[8], RegEventId_id=currentRegEventId)
+                        RegEventId_id=currentRegEventId)
             modes_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in already_registered}
             from json import dumps
             return render(request, 'BTco_ordinator/MakeupRegistrations.html', {'form':form, 'modes':dumps(modes_selection)})
