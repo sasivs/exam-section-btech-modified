@@ -95,7 +95,7 @@ def generateRollList(request):
                     makeup_rolls.sort()
                     initial_roll_list = MTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
-                    MTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=makeup_rolls)
+                    MTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=makeup_rolls).delete()
                     for regd_no in makeup_rolls:
                         student = MTStudentInfo.objects.get(RegNo=regd_no)
                         if not initial_roll_list.filter(student=student).exists():
