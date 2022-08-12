@@ -89,13 +89,13 @@ def generateRollList(request):
                         if not initial_roll_list.filter(student=student).exists():
                             roll = MTRollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                             roll.save()
-                    MTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=backlog_rolls).delete()
+                    MTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).exclude(student__RegNo__in=backlog_rolls).delete()
                 elif mode == 'M':
                     makeup_rolls = list(MTStudentMakeups.objects.filter(Dept=dept, MYear=myear, MSem=msem).values_list('RegNo', flat=True).distinct())
                     makeup_rolls.sort()
                     initial_roll_list = MTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
-                    MTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=makeup_rolls).delete()
+                    MTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).exclude(student__RegNo__in=makeup_rolls).delete()
                     for regd_no in makeup_rolls:
                         student = MTStudentInfo.objects.get(RegNo=regd_no)
                         if not initial_roll_list.filter(student=student).exists():
