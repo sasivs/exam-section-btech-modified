@@ -192,13 +192,13 @@ def generateRollList(request):
                                 if not initial_roll_list.filter(student=student).exists():
                                     roll = BTRollLists_Staging(RegEventId_id=currentRegEventId, student=student)
                                     roll.save()
-                        BTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=backlog_rolls).delete()
+                        BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).exclude(student__RegNo__in=backlog_rolls).delete()
                     elif mode == 'M':
                         makeup_rolls = list(BTStudentMakeups.objects.filter(Dept=dept, BYear=byear, BSem=bsem).values_list('RegNo', flat=True).distinct())
                         makeup_rolls.sort()
                         initial_roll_list = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
 
-                        BTRollLists_Staging.objects.exclude(RegEventId_id=currentRegEventId, student__RegNo__in=makeup_rolls).delete()
+                        BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).exclude(student__RegNo__in=makeup_rolls).delete()
 
                         if byear==1:
                             for regd_no in makeup_rolls:
@@ -222,7 +222,7 @@ def generateRollList(request):
                         dropped_regno = list(set(dropped_regno))
                         dropped_regno.sort()
                         initial_roll_list = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
-                        BTRollLists_Staging.objects.exclude(student__RegNo__in=dropped_regno, RegEventId_id=currentRegEventId).delete()
+                        BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId).exclude(student__RegNo__in=dropped_regno).delete()
                         for student in dropped_regno:
                             if not initial_roll_list.filter(student=student).exists():
                                 roll = BTRollLists_Staging(RegEventId_id=currentRegEventId, student=student)
