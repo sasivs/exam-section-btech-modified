@@ -41,17 +41,17 @@ def btech_regular_registration(request):
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
-                    initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId, Mode=1)
+                    initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
                             if not initial_registrations.filter(RegNo=roll.student.RegNo, sub_id=sub.id).exists():
-                                regRow = BTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
+                                regRow = BTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId_id=currentRegEventId, sub_id_id=sub.id)
                                 regRow.save()
-                    BTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
+                    BTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=currentRegEventId).delete()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                 else:
-                    rolls = BTRollLists_Staging.objects.filter(RegEvent_id=currentRegEventId)
+                    rolls = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
@@ -59,14 +59,14 @@ def btech_regular_registration(request):
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
-                    initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId, Mode=1)
+                    initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
                             if not initial_registrations.filter(RegNo=roll.student.RegNo, sub_id=sub.id).exists():
-                                regRow = BTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId=currentRegEventId, sub_id=sub.id)
+                                regRow = BTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, RegEventId_id=currentRegEventId, sub_id_id=sub.id)
                                 regRow.save()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
-                    BTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
+                    BTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=currentRegEventId).delete()
                     return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
     else:
         form = RegistrationsUploadForm(Options=regIDs)

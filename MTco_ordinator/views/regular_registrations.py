@@ -39,13 +39,13 @@ def mtech_regular_registration(request):
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
-                    initial_registrations=MTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId,Mode=1)
+                    initial_registrations=MTStudentRegistrations_Staging.objects.filter(RegEventId_id=currentRegEventId,Mode=1)
                     for roll in rolls:
                         for sub in subs:
                           if not initial_registrations.filter(RegNo=roll.student.RegNo,sub_id=sub.id).exists():
-                            regRow = MTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, sub_id=sub.id,RegEventId=currentRegEventId)
+                            regRow = MTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, sub_id_id=sub.id,RegEventId_id=currentRegEventId)
                             regRow.save()
-                    MTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo',flat=True)),RegEventId=currentRegEventId).delete()
+                    MTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo',flat=True)),RegEventId_id=currentRegEventId).delete()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                 else:
@@ -61,10 +61,10 @@ def mtech_regular_registration(request):
                     for roll in rolls:
                         for sub in subs:
                           if not initial_registrations.filter(RegNo=roll.student.RegNo,sub_id=sub.id).exists():
-                            regRow = MTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, sub_id=sub.id,RegEventId=currentRegEventId)
+                            regRow = MTStudentRegistrations_Staging(RegNo=roll.student.RegNo, Mode=mode, sub_id_id=sub.id,RegEventId_id=currentRegEventId)
                             regRow.save()
                     msg = 'Your data upload for Student Registrations has been done successfully.'
-                    MTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId=currentRegEventId).delete()
+                    MTStudentRegistrations_Staging.objects.filter(~Q(RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=currentRegEventId).delete()
                     return render(request, 'MTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
     else:
         form = RegistrationsUploadForm(Options=regIDs)

@@ -81,5 +81,18 @@
     </div>
 </div>
 
-
+<script>
+    {% if modes %}
+    var modes = JSON.parse("{{modes|escapejs}}");
+    for (const [key, value] of Object.entries(modes)){
+      var radios = document.getElementsByName(key);
+      for (let i=0; i<radios.length; i++){
+        if (radios[i].value == value){
+          radios[i].checked = true;
+        }
+      }
+    }
+    console.log(modes);
+    {% endif %}
+  </script>
 {% endblock %}
