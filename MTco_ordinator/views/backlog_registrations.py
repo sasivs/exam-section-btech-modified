@@ -50,7 +50,7 @@ def mtech_backlog_registration(request):
         elif 'RegEvent' in request.POST and 'RegNo' in request.POST and not 'Submit' in request.POST:
             regEvents = MTRegistrationStatus.objects.filter(AYear=ayear, ASem=asem, Regulation=regulation)
             studentRegistrations = MTStudentRegistrations_Staging.objects.filter(RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
-            mode_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in studentRegistrations}
+            mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in studentRegistrations}
             student_obj = MTStudentInfo.objects.get(RegNo=request.POST.get('RegNo'))
             context = {'form':form, 'msg':0}
             context['RollNo'] = student_obj.RollNo
