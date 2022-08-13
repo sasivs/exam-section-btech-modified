@@ -11,7 +11,7 @@ from ADUGDB.models import BTRegistrationStatus
 from json import dumps
 import statistics as stat
 from import_export.formats.base_formats import XLSX
-
+import pandas as pd
 
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_access)
@@ -161,15 +161,12 @@ def grades_threshold_status(request):
 
 
 def add_grades_threshold(file):
-    data = bytes()
-    for chunk in file.chunks():
-        data += chunk
-    dataset = XLSX().create_dataset(data)
-    for row in dataset:
+    file = pd.read_excel(file)
+    for rIndex, row in file.iterrows():
         fac_assign_obj = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, RegEventId__AYear=row[0], RegEventId__ASem=row[1], RegEventId__BYear=row[2], RegEventId__BSem=row[3], \
             RegEventId__Dept=row[4], RegEventId__Regulation=row[5], RegEventId__Mode=row[6], Subject__SubCode=row[7]).first()
         study_grades = BTGradePoints.objects.filter(Regulation=fac_assign_obj.Subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
-        index = 7
+        index = 8
         for grade in study_grades:
             grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Threshold_Mark=row[index], Exam_Mode=False)
             grades_threshold_row.save()
@@ -182,8 +179,8 @@ def add_grades_threshold(file):
         else:
             p_threshold = 17.5
             f_threshold = 0
-        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject.RegEventId.Regulation, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='P').first(), Threshold_Mark=p_threshold, Exam_Mode=True)
+        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='P').first(), Threshold_Mark=p_threshold, Exam_Mode=True)
         grades_threshold_row.save()
-        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject.RegEventId.Regulation, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
+        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
         grades_threshold_row.save()
     return "Completed!!"

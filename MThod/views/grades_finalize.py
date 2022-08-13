@@ -44,12 +44,12 @@ def grades_finalize(request):
 
 
 def RefreshMaterializedViews():
+    from AWSP.settings import DATABASES
     conn = psycopg2.connect(
     host="localhost",
-    database="exam_mtech",
-    # name="public",
+    database=DATABASES['NAME'],
     user="postgres",
-    password="postgresql")
+    password=DATABASES['PASSWORD'])
     cursor = conn.cursor()
 
     try:
