@@ -94,7 +94,7 @@ class BTMarksDistribution(models.Model):
 
     class Meta:
         db_table = 'BTMarksDistribution'
-        unique_together = (('Distribution', 'DistributionNames'))
+        unique_together = (('Distribution', 'DistributionNames', 'PromoteThreshold'))
         managed = True
     
     def __str__(self):
