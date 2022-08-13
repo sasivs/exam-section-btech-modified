@@ -4,11 +4,13 @@ from django.shortcuts import render, get_object_or_404
 from BTsuperintendent.user_access_test import grades_threshold_access, grades_threshold_status_access
 from BTfaculty.models import BTGradesThreshold, BTMarks_Staging
 from BThod.models import BTFaculty_user, BTCoordinator
-from BTco_ordinator.models import BTFacultyAssignment
+from BTco_ordinator.models import BTFacultyAssignment, BTSubjects
 from BTsuperintendent.models import BTGradePoints, BTHOD, BTCycleCoordinator
 from BTfaculty.forms import GradeThresholdForm, GradeThresholdStatusForm
+from ADUGDB.models import BTRegistrationStatus
 from json import dumps
 import statistics as stat
+from import_export.formats.base_formats import XLSX
 
 
 @login_required(login_url="/login/")
@@ -17,7 +19,7 @@ def grades_threshold(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty).distinct('Subject')
+    subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty).distinct('Subject','RegEventId_id')
     if not subjects:
         raise Http404('You are not allowed to add threshold marks')
     return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': subjects})
@@ -132,18 +134,18 @@ def grades_threshold_status(request):
     subjects = None
     if 'Faculty' in groups:
         faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1).distinct('Subject')
+        subjects = BTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'Superintendent' in groups or 'Associate-Dean' in groups:
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1).distinct('Subject')
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1).distinct('Subject')
+        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1).distinct('Subject')
+        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1).distinct('Subject')
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     else:
         raise Http404('You are not allowed to view threshold marks')
     if request.method == 'POST':
@@ -156,3 +158,32 @@ def grades_threshold_status(request):
     else: 
         form = GradeThresholdStatusForm(subjects=subjects)
     return render(request, 'BTfaculty/GradesThresholdStatus.html', {'form':form})  
+
+
+def add_grades_threshold(file):
+    data = bytes()
+    for chunk in file.chunks():
+        data += chunk
+    dataset = XLSX().create_dataset(data)
+    for row in dataset:
+        fac_assign_obj = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, RegEventId__AYear=row[0], RegEventId__ASem=row[1], RegEventId__BYear=row[2], RegEventId__BSem=row[3], \
+            RegEventId__Dept=row[4], RegEventId__Regulation=row[5], RegEventId__Mode=row[6], Subject__SubCode=row[7]).first()
+        study_grades = BTGradePoints.objects.filter(Regulation=fac_assign_obj.Subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
+        index = 7
+        for grade in study_grades:
+            grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Threshold_Mark=row[index], Exam_Mode=False)
+            grades_threshold_row.save()
+            index += 1
+        
+        exam_grades = BTGradePoints.objects.filter(Regulation=fac_assign_obj.Subject.RegEventId.Regulation, Grade__in=['P','F'])
+        if fac_assign_obj.Subject.RegEventId.Regulation == 1:
+            p_threshold = 15
+            f_threshold = 0
+        else:
+            p_threshold = 17.5
+            f_threshold = 0
+        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject.RegEventId.Regulation, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='P').first(), Threshold_Mark=p_threshold, Exam_Mode=True)
+        grades_threshold_row.save()
+        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject.RegEventId.Regulation, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
+        grades_threshold_row.save()
+    return "Completed!!"
