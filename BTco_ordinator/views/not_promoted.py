@@ -4,7 +4,7 @@ from BTsuperintendent.user_access_test import not_promoted_access, not_promoted_
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
-from BTco_ordinator.models import BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses
+from BTco_ordinator.models import BTRegulationChange, BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, BTStudentRegistrations
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 from BTExamStaffDB.models import BTYearMandatoryCredits
@@ -49,7 +49,7 @@ def not_promoted_list(request):
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
-            rolls = BTRollLists.objects.filter(RegEventId__in=currentRegEventId)
+            rolls = BTRollLists.objects.filter(RegEventId__in=currentRegEventId).distinct('student__RegNo')
             
             mandatory_credits = BTYearMandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept)
             mandatory_credits = mandatory_credits[0].Credits
@@ -82,8 +82,10 @@ def not_promoted_list(request):
                             if dropped_courses:
                                 d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                 np.append(d)
-                            # else:
-                            #     regEvents = BTRegistrationStatus.objects.filter(BYear=byear-1, Regulation=regulation, Mode='R')
+                            # elif not BTRegulationChange.objects.filter(student__RegNo=roll.student.RegNo).exists():
+                            #     regEvent = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, RegEventId__BYear=byear-1, RegEventId__Mode='R').order_by('RegEventId__AYear').first()
+                            #     subjects = BTSubjects.objects.filter(RegEventId_id=regEvent.RegEventId.id)
+                            #     oec_subjects = 
 
                     elif byear == 4:
                         backlogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo)
@@ -244,7 +246,10 @@ def not_promoted_status(request):
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
             regulation = int(strs[3])
-            notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
+            if byear == 1:
+                notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation, student__Cycle=dept).order_by('student__RegNo')
+            else:
+                notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
             return render(request, 'BTco_ordinator/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
     else:
         form = NotPromotedStatusForm(regIDs)

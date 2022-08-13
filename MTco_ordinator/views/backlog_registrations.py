@@ -106,7 +106,7 @@ def mtech_backlog_registration(request):
                     elif(form.cleaned_data['Check'+str(sub[9])]):
                         #insert backlog registration
                         if sub[10]=='':
-                            newRegistration = MTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
+                            newRegistration = MTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId_id=currentRegEventId,\
                             Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                             newRegistration.save()     
                     return(render(request,'MTco_ordinator/BTBacklogRegistrationSuccess.html'))

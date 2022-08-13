@@ -66,7 +66,7 @@ class BranchChangeForm(forms.Form):
         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
         deptChoices = [(0,'--Select Dept--')] + deptChoices
         self.fields['CurrentDept'] = forms.CharField(label='CurrentDept',widget=forms.Select(choices=deptChoices))
-        aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        aYearChoices = [(0,'--Select AYear')] + [(i,i) for i in range(2016,datetime.datetime.now().year+1)]
         self.fields['AYear'] = forms.CharField(label='AYear',widget = forms.Select(choices=aYearChoices))
         self.fields['NewDept'] = forms.CharField(label='NewDept',widget = forms.Select(choices=deptChoices))
 

@@ -656,6 +656,7 @@ class MakeupRegistrationsForm(forms.Form):
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
             studentMakeupRolls = list(BTRollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
+            studentMakeupRolls.sort()
             studentMakeupRolls = [(row, row) for row in studentMakeupRolls]
             studentMakeupRolls = [(0,'--Select Reg Number--')] + studentMakeupRolls
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentMakeupRolls,\

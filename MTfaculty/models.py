@@ -19,7 +19,7 @@ class MTGradesThreshold(models.Model):
     Grade = models.ForeignKey(MTGradePoints, on_delete=models.CASCADE)
     Subject = models.ForeignKey(MTSubjects, on_delete=models.CASCADE)
     RegEventId = models.ForeignKey(MTRegistrationStatus, on_delete=models.CASCADE)
-    Threshold_Mark = models.IntegerField()
+    Threshold_Mark = models.FloatField()
     Exam_Mode = models.BooleanField() 
     class Meta:
         db_table = 'MTGradesThreshold'

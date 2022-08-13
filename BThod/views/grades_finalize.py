@@ -43,11 +43,12 @@ def grades_finalize(request):
     return render(request, 'BThod/GradesFinalize.html', {'form':form})
 
 def RefreshMaterializedViews():
+    from AWSP.settings import DATABASES
     conn = psycopg2.connect(
     host="localhost",
-    database="public",
+    database=DATABASES['NAME'],
     user="postgres",
-    password="postgresql")
+    password=DATABASES['PASSWORD'])
     cursor = conn.cursor()
 
     try:
