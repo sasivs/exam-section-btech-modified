@@ -83,6 +83,7 @@ def seat_cancellation(request):
                 notregistered.delete()
                 notpromoted.delete()
                 droppedregular.delete()
+                studentInfo.delete()
 
 
                     

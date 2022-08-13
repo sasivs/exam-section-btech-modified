@@ -99,15 +99,15 @@ def btech_backlog_registration(request):
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
-                                sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
+                                sub_id_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
                         elif(sub[5]):
                             #delete record from registration table
                             BTStudentRegistrations_Staging.objects.filter(id=sub[10]).delete()
                         elif(form.cleaned_data['Check'+str(sub[9])]):
                             #insert backlog registration
                             if sub[10]=='':
-                                newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
-                                Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
+                                newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId_id=currentRegEventId,\
+                                Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id_id=sub[9])
                                 newRegistration.save()                   
                 return(render(request,'BTco_ordinator/BTBacklogRegistrationSuccess.html'))
             else:

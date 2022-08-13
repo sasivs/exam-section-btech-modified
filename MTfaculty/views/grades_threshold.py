@@ -17,7 +17,7 @@ def grades_threshold(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     faculty = MTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty).distinct('Subject')
+    subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty).distinct('Subject','RegEventId_id')
     if not subjects:
         raise Http404('You are not allowed to add threshold marks')
     return render(request, 'MTfaculty/GradesThreshold.html', {'subjects': subjects})
@@ -128,15 +128,15 @@ def grades_threshold_status(request):
     subjects = None
     if 'Faculty' in groups:
         faculty = MTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1).distinct('Subject')
+        subjects = MTFacultyAssignment.objects.filter(Faculty=faculty.Faculty, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'Superintendent' in groups or 'Associate-Dean' in groups:
-        subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1).distinct('Subject')
+        subjects = MTFacultyAssignment.objects.filter(RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'Co-ordinator' in groups:
         co_ordinator = MTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = MTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1).distinct('Subject')
+        subjects = MTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = MTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1).distinct('Subject')
+        subjects = MTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1).distinct('Subject','RegEventId_id')
     # elif 'Cycle-Co-ordinator' in groups:
     #     cycle_cord = CycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
     #     subjects = MTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__MYear=1, RegEventId__Status=1).distinct('Subject')

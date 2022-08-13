@@ -25,13 +25,11 @@ def branch_change(request):
                 newRow = BTBranchChanges(RegNo=regno, RollNo=rollno, CurrentDept=currentDept, NewDept=newDept, AYear=ayear)
                 newRow.save()
                 BTStudentInfo.objects.filter(RegNo=regno).update(Dept=newDept)
-                print(newRow)
                 context['regno']=regno
                 context['Name'] = name
                 context['dept'] = newDept
                 return render(request,'BTsuperintendent/BTBranchChangeSuccess.html',context )
-        else:
-            print("form is not valid")
+
     else:
         form = BranchChangeForm()
     context['form']= form   
