@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import BacklogRegistrationForm
-from BTco_ordinator.models import BTStudentRegistrations_Staging, BTDroppedRegularCourses
+from BTco_ordinator.models import BTStudentBacklogs, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from BTsuperintendent.models import BTCycleCoordinator
 from BThod.models import BTCoordinator
 from ADUGDB.models import BTRegistrationStatus
@@ -127,5 +127,21 @@ def btech_backlog_registration(request):
         context['RollNo'] = studentInfo[0].RollNo
         context['Name'] = studentInfo[0].Name  
     return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
+
+def backlog_reegistrations(file):
+    import pandas as pd
+    file = pd.read_excel(file)
+    for rIndex, row in file.iterrows():
+        print(row)
+        if row[2] == 1:
+            backlogs = BTStudentBacklogs.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4])
+        else:
+            backlogs = BTStudentBacklogs.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4], BSem=row[3])
+        regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
+        subject_id = backlogs.filter(SubCode=row[7]).first()
+        registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+        registration_obj.save()
+    return "Completed!!"
+
 
 
