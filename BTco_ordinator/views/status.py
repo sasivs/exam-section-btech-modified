@@ -66,6 +66,9 @@ def btech_regular_registration_status(request):
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'
                 studentRegistrations = BTRegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept).order_by('RegNo')
+                
+                if(byear>1):
+                    studentRegistrations = studentRegistrations.order_by('RollNo')
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
                     studentRegistrations = studentRegistrations.filter(RegNo=regNo)
