@@ -354,10 +354,11 @@ class BacklogRegistrationForm(forms.Form):
                     elif regEvent.Mode == 'B':
                         registeredBacklogs.append(regn)
                 if byear == 1:
-                    studentBacklogs = list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']).\
-                        filter(BYear=byear,Dept=dept,BSem=bsem))
-                    studentBacklogs += list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']).\
-                        filter(BYear=byear).filter(~Q(Dept=dept)).filter(~Q(BSem=bsem)))
+                    studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], BYear=byear, Dept=dept)
+                    # studentBacklogs = list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']).\
+                    #     filter(BYear=byear,Dept=dept,BSem=bsem))
+                    # studentBacklogs += list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']).\
+                    #     filter(BYear=byear).filter(~Q(Dept=dept)).filter(~Q(BSem=bsem)))
                 else:
                     studentBacklogs = list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']))
                 if len(studentRegistrations_1) != 0:
