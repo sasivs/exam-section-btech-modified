@@ -235,3 +235,37 @@ def download_sample_excel_sheet(request):
     else:
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form})
+
+def add_marks(file):
+    import pandas as pd
+    file = pd.read_excel(file)
+    invalid_rows=[]
+    for rIndex, row in file.iterrows():
+        print(row)
+        regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
+        registration = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
+        marks_row = BTMarks_Staging.objects.filter(Registration_id=registration.id)
+        mark_dis = registration.sub_id.MarkDistribution
+        dis_names = mark_dis.DistributionNames.split(',')
+        distributions = [dis.split('+') for dis in dis_names]
+        marks_dis_list = mark_dis.Distribution.split(',')
+        marks_dis_list = [dis.split('+') for dis in marks_dis_list]
+        marks_string = marks_row.Marks.split(',')
+        marks = [mark.split('+') for mark in marks_string]
+        mark_index = 11
+        for outer in range(len(distributions)):
+            for inner in range(len(distributions[outer])):
+                mark_dis_limit = int(marks_dis_list[outer][inner])
+                if mark_dis_limit < int(row[mark_index]):
+                    invalid_rows.append((rIndex,row))
+                else:
+                    marks[outer][inner] = str(row[mark_index])
+        marks = ['+'.join(mark) for mark in marks]
+        marks_string = ','.join(marks)
+        marks_row.Marks = marks_string
+        marks_row.TotalMarks = marks_row.get_total_marks()
+        marks_row.save()
+    if invalid_rows:
+        print("These rows have marks greater than intended maximum marks")
+        print(invalid_rows)
+    return "Completed!!!!"
