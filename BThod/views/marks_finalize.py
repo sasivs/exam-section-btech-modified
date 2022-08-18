@@ -5,7 +5,7 @@ from django.shortcuts import render
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD
 from BThod.forms import MarksFinalizeForm
-from BTfaculty.models import BTMarks_Staging, BTMarks
+from BTfaculty.models import BTMarks_Staging, BTMarks, BTStudentGrades_Staging, BTStudentGrades
 
 
 @login_required(login_url="/login/")
@@ -39,3 +39,41 @@ def marks_finalize(request):
     else:
         form = MarksFinalizeForm(regIDs)
     return render(request, 'BTfaculty/MarksFinalize.html', {'form':form, 'msg':msg})
+
+def marks_grades_finalize(**kwargs):
+    print(kwargs)
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    dept = kwargs.get('Dept')
+    byear = kwargs.get('BYear')
+    if not kwargs.get('Dept') and not kwargs.get('BYear'):
+        dept = [1,2,3,4,5,6,7,8,9,10]
+        byear = [1,2,3,4]
+    elif not kwargs.get('Dept'):
+        dept = []
+        if 2 in kwargs.get('BYear') or 3 in kwargs.get('BYear') or 4 in kwargs.get('BYear'):
+            dept.extend([1,2,3,4,5,6,7,8])
+        if 1 in kwargs.get('BYear'):
+            dept.extend([9,10])
+    elif not kwargs.get('BYear'):
+        byear = [1,2,3,4]
+    asem = kwargs.get('ASem')
+    bsem = kwargs.get('BSem')
+    if not kwargs.get('ASem'):
+        asem = [1,2,3]
+    if not kwargs.get('BSem'):
+        bsem = [1,2]
+    regEvents = BTRegistrationStatus.objects.filter(AYear=kwargs.get('AYear'), Regulation=kwargs.get('Regulation'), Mode=kwargs.get('Mode'), BYear__in=byear, BSem__in=bsem, \
+        ASem__in=asem, Dept__in=dept)
+    marks_rows = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvents.values_list('id', flat=True))
+    for mark in marks_rows:
+        print(mark.__dict__)
+        BTMarks.objects.filter(Registration_id=mark.Registration.id).update(Marks=mark.Marks, TotalMarks=mark.TotalMarks)
+    grades_rows = BTStudentGrades_Staging.objects.filter(RegEventId__in=regEvents.values_list('id', flat=True))
+    for grade in grades_rows:
+        print(grade.__dict__)
+        grade_fin = BTStudentGrades(RegId=grade.RegId, RegEventId=grade.RegEventId, Grade=grade.Grade, AttGrade=grade.AttGrade, Regulation=grade.Regulation)
+        grade_fin.save
+    # for event in regEvents:
+    #     print(event.__dict__)
+    return "Completed!!!"
