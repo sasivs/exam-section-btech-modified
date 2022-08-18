@@ -1,5 +1,3 @@
-from inspect import currentframe
-from telnetlib import STATUS
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -146,3 +144,60 @@ def faculty_assignment_status(request):
     else:
         form = FacultyAssignmentStatusForm(regIDs)
     return render(request, 'BTco_ordinator/FacultyAssignmentStatus.html',{'form':form})
+
+
+def faculty_assignment(**kwargs):
+    print(kwargs)
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    if kwargs.get('Mode') == 'R':
+        regEvents = BTRegistrationStatus.objects.filter(AYear=kwargs.get('AYear'), ASem=kwargs.get('ASem'), BYear=kwargs.get('BYear'), BSem=kwargs.get('BSem'), \
+            Regulation=kwargs.get('Regulation'), Mode=kwargs.get('Mode'))
+        if not regEvents:
+            return "No Events!!!!"
+        depts = kwargs.get('Dept')
+        if not kwargs.get('Dept') and kwargs.get('BYear')!=1:
+            depts = [1,2,3,4,5,6,7,8]
+        elif not kwargs.get('Dept') and kwargs.get('BYear')==1:
+            depts = [9,10]
+        for dept in depts:
+            print(regEvents.filter(Dept=dept).first().__dict__)
+            regEventId = regEvents.filter(Dept=dept).first().id
+            dept_sub = BTSubjects.objects.filter(RegEventId_id=regEventId)
+            for sub in dept_sub:
+                print(sub.__dict__)
+                offering_dept = sub.OfferedBy
+                if offering_dept > 10: offering_dept -= 2
+                print(offering_dept)
+                fac_name = 'fac'+str(offering_dept)
+                print(fac_name)
+                fac_id = BTFacultyInfo.objects.filter(Name=fac_name).first()
+                fac_assign_obj = BTFacultyAssignment(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id)
+                fac_assign_obj.save()
+    elif kwargs.get('Mode') == 'M' or kwargs.get('Mode') == 'B':
+        regEvents = BTRegistrationStatus.objects.filter(AYear=kwargs.get('AYear'), ASem=kwargs.get('ASem'), BYear=kwargs.get('BYear'), BSem=kwargs.get('BSem'), \
+            Regulation=kwargs.get('Regulation'), Mode=kwargs.get('Mode'))
+        if not regEvents:
+            return "No Events!!!!"
+        depts = kwargs.get('Dept')
+        if not kwargs.get('Dept') and kwargs.get('BYear')!=1:
+            depts = [1,2,3,4,5,6,7,8]
+        elif not kwargs.get('Dept') and kwargs.get('BYear')==1:
+            depts = [9,10]
+        for dept in depts:
+            print(regEvents.filter(Dept=dept).first().__dict__)
+            regEventId = regEvents.filter(Dept=dept).first().id
+            student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=regEventId).distinct('sub_id_id')
+            subjects = BTSubjects.objects.filter(id__in=student_regs.values_list('sub_id_id', flat=True))
+            for sub in subjects:
+                print(sub.__dict__)
+                offering_dept = sub.OfferedBy
+                if offering_dept > 10: offering_dept -= 2
+                print(offering_dept)
+                fac_name = 'fac'+str(offering_dept)
+                print(fac_name)
+                fac_id = BTFacultyInfo.objects.filter(Name=fac_name).first()
+                fac_assign_obj = BTFacultyAssignment(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id)
+                fac_assign_obj.save()
+    return "Completed!!!!"
+
