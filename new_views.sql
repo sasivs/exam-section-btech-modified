@@ -944,3 +944,39 @@ select "RegNo",
 		from "BTStudentBestGradesV" 
 		group by "RegNo"
 		order by "RegNo") as "CatCredits" using ("RegNo")
+
+create materialized view "BTStudentGradesMV" as
+select "RegId", 
+"RegEventId", 
+case 
+when "RegId" in (select "Registration_id" from "BTAttendance_Shortage") then 'R'
+when "RegId" in (select "Registration_id" from "BTIXGradeStudents") then (select "Grade" from "BTIXGradeStudents" where "Registration_id"="RegId")
+else "Grade"
+end "Grade"
+from
+(select row_number() over (order by(row(marks."id", grthr."Threshold_Mark"))desc) as id, 
+marks."id" as "RegId", 
+marks."RegEventId",
+grthr."Grade",
+grthr."Mode", 
+grthr."Threshold_Mark"  from 
+(select btsr."id", 
+btsr."RegEventId", 
+btsr."sub_id", 
+btms."TotalMarks", 
+btsr."Mode" 
+from "BTStudentRegistrations" btsr, "BTMarks_Staging" btms 
+where btsr."id"=btms."Registration_id") marks, 
+(select btgt."Threshold_Mark", 
+btgt."RegEventId_id", 
+btgt."Subject_id", 
+btgp."Grade",
+case 
+when btgt."Exam_Mode" then 0
+else 1
+end "Mode"
+from 
+"BTGradesThreshold" btgt, "BTGradePoints" btgp where btgt."Grade_id"=btgp."id" order by btgt."Threshold_Mark")grthr
+where marks."RegEventId"=grthr."RegEventId_id" and marks."sub_id"=grthr."Subject_id" and marks."Mode"=grthr."Mode" and marks."TotalMarks">=grthr."Threshold_Mark")btg
+where id=1;
+REFRESH MATERIALIZED VIEW public."BTStudentGradesMV" WITH DATA;
