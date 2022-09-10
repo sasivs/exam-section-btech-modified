@@ -199,3 +199,88 @@ def grades_hod_submission(request):
     else:
         form = MarksStatusForm(subjects)
     return render(request, 'BThod/GradesFinalize.html', {'form':form, 'msg':msg})
+
+def generate_grades(**kwargs):
+    print(kwargs)
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+            BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    if not regEvents:
+            return "No Events!!!!"
+    error_events=[]
+    for event in regEvents:
+        marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=event.id)
+        subject_objects = BTSubjects.objects.filter(id__in=marks_objects.values_list('Registration__sub_id_id', flat=True))
+        attendance_shortage = BTAttendance_Shortage.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
+        grades_objects = BTStudentGrades_Staging.objects.filter(RegId__in=marks_objects.values_list('Registration', flat=True))
+        for att in attendance_shortage:
+            if grades_objects.filter(RegId=att.Registration.id):
+                grades_objects.filter(RegId=att.Registration.id).update(Grade='R', AttGrade='X')
+            else:
+                grade = BTStudentGrades_Staging(RegId=att.Registration.id, RegEventId=att.Registration.RegEventId.id, Regulation=att.Registration.RegEventId.Regulation, \
+                    Grade='R', AttGrade='X') 
+                grade.save()
+            marks_objects = marks_objects.exclude(Registration=att.Registration)
+        ix_grades = BTIXGradeStudents.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
+        for ix_grade in ix_grades:
+                if grades_objects.filter(RegId=ix_grade.Registration.id):
+                    grades_objects.filter(RegId=ix_grade.Registration.id).update(Grade=ix_grade.Grade, AttGrade='P')
+                else:
+                    grade = BTStudentGrades_Staging(RegId=ix_grade.Registration.id, RegEventId=ix_grade.Registration.RegEventId.id, Regulation=ix_grade.Registration.RegEventId.Regulation, \
+                        Grade=ix_grade.Grade, AttGrade='P')
+                    grade.save()
+                marks_objects = marks_objects.exclude(Registration=ix_grade.Registration)
+        
+        for mark in marks_objects:
+            subject = subject_objects.filter(id=mark.Registration.sub_id.id).first()
+            if mark.Registration.Mode == 1:
+                thresholds = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=mark.Registration.RegEventId, Exam_Mode=False).order_by('-Threshold_Mark')
+            else:
+                thresholds = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=mark.Registration.RegEventId, Exam_Mode=True).order_by('-Threshold_Mark')
+            if not thresholds:
+                error_events.append(event)
+            if mark.Registration.Mode == 1:
+                promote_thresholds = subject.MarkDistribution.PromoteThreshold
+                promote_thresholds = promote_thresholds.split(',')
+                promote_thresholds = [thr.split('+') for thr in promote_thresholds]
+                marks_list = mark.Marks.split(',')
+                marks_list = [m.split('+') for m in marks_list]
+                graded = False
+                for outer_index in range(len(promote_thresholds)):
+                    for inner_index in range(len(promote_thresholds[outer_index])):
+                        if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
+                            graded = True
+                            if grades_objects.filter(RegId=mark.Registration.id):
+                                grades_objects.filter(RegId=mark.Registration.id).update(Grade='F', AttGrade='P')
+                                break
+                            else:
+                                grade = BTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
+                                    Grade='F', AttGrade='P')
+                                grade.save()
+                                break
+                    if graded:
+                        break
+                if not graded:
+                    for threshold in thresholds:
+                        if mark.TotalMarks >= threshold.Threshold_Mark:
+                            if grades_objects.filter(RegId=mark.Registration.id):
+                                grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
+                                break
+                            else:
+                                grade = BTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
+                                    Grade=threshold.Grade.Grade, AttGrade='P')
+                                grade.save()
+                                break
+            else:
+                for threshold in thresholds:
+                    if mark.TotalMarks >= threshold.Threshold_Mark:
+                        if grades_objects.filter(RegId=mark.Registration.id):
+                            grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='X')
+                            break
+                        else:
+                            grade = BTStudentGrades_Staging(RegId=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
+                                    Grade=threshold.Grade.Grade, AttGrade='X')
+                            grade.save()
+                            break
+            
