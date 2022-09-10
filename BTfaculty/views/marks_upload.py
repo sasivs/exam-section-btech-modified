@@ -252,7 +252,7 @@ def add_marks(file):
         marks_dis_list = [dis.split('+') for dis in marks_dis_list]
         marks_string = marks_row.Marks.split(',')
         marks = [mark.split('+') for mark in marks_string]
-        mark_index = 11
+        mark_index = 10
         for outer in range(len(distributions)):
             for inner in range(len(distributions[outer])):
                 mark_dis_limit = int(marks_dis_list[outer][inner])
@@ -260,6 +260,7 @@ def add_marks(file):
                     invalid_rows.append((rIndex,row))
                 else:
                     marks[outer][inner] = str(row[mark_index])
+                mark_index+=1
         marks = ['+'.join(mark) for mark in marks]
         marks_string = ','.join(marks)
         marks_row.Marks = marks_string
