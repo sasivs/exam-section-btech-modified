@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.http import HttpResponse
 from django.shortcuts import render
+from BTExamStaffDB.models import BTIXGradeStudents
 from BTfaculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUploadForm
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from BTfaculty.models import BTAttendance_Shortage
+from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator, BTFaculty_user
@@ -99,4 +101,20 @@ def download_sample_attendance_shortage_sheet(request):
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)
     return response
+
+def add_marks(file):
+    import pandas as pd
+    file = pd.read_excel(file)
+    for rIndex, row in file.iterrows():
+        print(row)
+        regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
+        registration = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
+        if row[10] == 'R':
+            att_short = BTAttendance_Shortage(Registration_id=registration.id)
+            att_short.save()
+        else:
+            ix_grade = BTIXGradeStudents(Registration_id=registration.id, Grade=row[10])
+            ix_grade.save()
+    return 'Completed!!'
+        
 
