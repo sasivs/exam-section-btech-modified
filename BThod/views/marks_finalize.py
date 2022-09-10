@@ -5,6 +5,7 @@ from django.shortcuts import render
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD
 from BThod.forms import MarksFinalizeForm
+from BTco_ordinator.models import BTStudentRegistrations
 from BTfaculty.models import BTMarks_Staging, BTMarks, BTStudentGrades_Staging, BTStudentGrades
 
 
@@ -77,3 +78,19 @@ def marks_grades_finalize(**kwargs):
     # for event in regEvents:
     #     print(event.__dict__)
     return "Completed!!!"
+
+def finalize_marks(**kwargs):
+    print(kwargs)
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+            BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    if not regEvents:
+        return "No Events!!!!"
+    for event in regEvents:
+        registrations = BTStudentRegistrations.objects.filter(RegEventId_id=event.id)
+        marks_objs = BTMarks_Staging.objects.filter(Registration_id__in=registrations.values_list('id', flat=True))
+        for mark in marks_objs:
+            fmark = BTMarks(Registration=mark.Registration, Marks=mark.Marks, TotalMarks=mark.TotalMarks)
+            fmark.save()
+    return "Completed!!"

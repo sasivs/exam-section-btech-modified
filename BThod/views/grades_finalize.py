@@ -59,3 +59,19 @@ def RefreshMaterializedViews():
     finally:
         cursor.close()
         conn.commit()
+
+def finalize_grades(**kwargs):
+    print(kwargs)
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+            BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    if not regEvents:
+        return "No Events!!!!"
+    for event in regEvents:
+        registrations = BTStudentRegistrations.objects.filter(RegEventId_id=event.id)
+        grades_objs = BTStudentGrades_Staging.objects.filter(RegId__in=registrations.values_list('id', flat=True))
+        for grade in grades_objs:
+            fgrade = BTStudentGrades(RegId=grade.RegId, RegEventId=grade.RegEventId.id, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
+            fgrade.save()
+    return "Completed!!"
