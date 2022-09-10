@@ -945,7 +945,7 @@ select "RegNo",
 		group by "RegNo"
 		order by "RegNo") as "CatCredits" using ("RegNo")
 
-create materialized view "BTStudentGradesMV" as
+create materialized view "BTStudentGradesTestMV" as
 select "RegId", 
 "RegEventId", 
 case 
@@ -979,4 +979,90 @@ from
 "BTGradesThreshold" btgt, "BTGradePoints" btgp where btgt."Grade_id"=btgp."id" order by btgt."Threshold_Mark")grthr
 where marks."RegEventId"=grthr."RegEventId_id" and marks."sub_id"=grthr."Subject_id" and marks."Mode"=grthr."Mode" and marks."TotalMarks">=grthr."Threshold_Mark")btg
 where id=1;
+REFRESH MATERIALIZED VIEW public."BTStudentGradesTestMV" WITH DATA;
+
+create materialized view "BTStudentGradesMV" as
+select "RegId", 
+"RegEventId", 
+case 
+when "RegId" in (select "Registration_id" from "BTAttendance_Shortage") then 'R'
+when "RegId" in (select "Registration_id" from "BTIXGradeStudents") then (select "Grade" from "BTIXGradeStudents" where "Registration_id"="RegId")
+else 
+case 
+when "TotalMarks">="G1" then
+  case 
+  when "Regulation"=2 then 'S'
+  else 'EX'
+  end
+when "TotalMarks">="G2" then 'A'
+when "TotalMarks">="G3" then 'B'
+when "TotalMarks">="G4" then 'C'
+when "TotalMarks">="G5" then 'D'
+when "TotalMarks">="G6" then
+  case
+  when "Regulation"=2 then 'E'
+  else 'P'
+  end
+when "TotalMarks">="G7" and "Regulation"=2 then 'P'
+else 'F'
+end
+end "Grade"
+from
+(select btsr."id" as "RegId", 
+btsr."RegEventId", 
+btsr."sub_id", 
+btms."TotalMarks", 
+btsr."Mode" 
+from "BTStudentRegistrations" btsr, "BTMarks_Staging" btms 
+where btsr."id"=btms."Registration_id") marks, 
+(select 
+btgt."RegEventId_id",
+btgp."Regulation",
+btgt."Subject_id", 
+case
+when btgt."Exam_Mode" then 0
+else 1
+end "Mode",
+sum(case when "Grade"='EX' or "Grade"='S' then "Threshold_Mark" else 0 end) as "G1",
+sum(case when "Grade"='A' then "Threshold_Mark" else 0 end) as "G2",
+sum(case when "Grade"='B' then "Threshold_Mark" else 0 end) as "G3",
+sum(case when "Grade"='C' then "Threshold_Mark" else 0 end) as "G4",
+sum(case when "Grade"='D' then "Threshold_Mark" else 0 end) as "G5",
+sum(case when "Grade"='E' or "Grade"='P' then "Threshold_Mark" else 0 end) as "G6",
+sum(case when "Grade"='P' then "Threshold_Mark" else 0 end) as "G7"
+from 
+"BTGradesThreshold" btgt, "BTGradePoints" btgp where btgt."Grade_id"=btgp."id" 
+group by btgt."RegEventId_id", btgt."Subject_id", btgp."Regulation",btgt."Exam_Mode"
+)grthr
+where marks."RegEventId"=grthr."RegEventId_id" and marks."sub_id"=grthr."Subject_id" and marks."Mode"=grthr."Mode"
+;
 REFRESH MATERIALIZED VIEW public."BTStudentGradesMV" WITH DATA;
+
+
+create materialized view "BTStudentGradeDetailsMV" as
+select btsrgs."RegNo",
+btrs."AYear",
+btrs."ASem",
+btrs."BYear",
+btrs."BSem",
+btrs."Regulation",
+btrs."Dept",
+btrs."Mode",
+btsrgs."SubCode",
+btsrgs."SubName",
+btsrgs."Grade"
+from (select btsrg."RegNo", 
+btsrg."Grade",
+bts."SubCode",
+bts."SubName",
+btsrg."RegEventId"
+from (select btsg."Grade",
+btsr."RegNo",
+btsg."RegEventId",
+btsr."sub_id" from
+"BTStudentGradesMV" btsg join "BTStudentRegistrations" btsr on 
+btsg."RegId"=btsr."id")btsrg join "BTSubjects" bts
+on btsrg."sub_id"=bts."id")btsrgs
+ join "BTRegistration_Status" btrs on btrs."id"=btsrgs."RegEventId";
+
+REFRESH MATERIALIZED VIEW public."BTStudentGradeDetailsMV" WITH DATA;
