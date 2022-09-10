@@ -5,16 +5,17 @@ from BTsuperintendent.user_access_test import gpa_staging_access
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTStudentCGPAs_Staging
 from BThod.forms import GpaStagingForm
+import psycopg2
 
 @login_required(login_url="/login/")
 @user_passes_test(gpa_staging_access)
 def gpa_staging(request):
-    import psycopg2
+    from AWSP.settings import DATABASES
     conn = psycopg2.connect(
     host="localhost",
-    database="public",
+    database=DATABASES['default']['NAME'],
     user="postgres",
-    password="postgresql")
+    password=DATABASES['default']['PASSWORD'])
     cursor = conn.cursor()
 
     try:
