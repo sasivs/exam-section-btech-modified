@@ -162,14 +162,18 @@ def grades_threshold_status(request):
 
 def add_grades_threshold(file):
     file = pd.read_excel(file)
+    error_rows=[]
     for rIndex, row in file.iterrows():
         fac_assign_obj = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, RegEventId__AYear=row[0], RegEventId__ASem=row[1], RegEventId__BYear=row[2], RegEventId__BSem=row[3], \
             RegEventId__Dept=row[4], RegEventId__Regulation=row[5], RegEventId__Mode=row[6], Subject__SubCode=row[7]).first()
         study_grades = BTGradePoints.objects.filter(Regulation=fac_assign_obj.Subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
         index = 8
         for grade in study_grades:
-            grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Threshold_Mark=row[index], Exam_Mode=False)
-            grades_threshold_row.save()
+            if row[index] >= 0:
+                grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Threshold_Mark=row[index], Exam_Mode=False)
+                grades_threshold_row.save()
+            else:
+                error_rows.append(row)
             index += 1
         
         exam_grades = BTGradePoints.objects.filter(Regulation=fac_assign_obj.Subject.RegEventId.Regulation, Grade__in=['P','F'])
@@ -183,4 +187,6 @@ def add_grades_threshold(file):
         grades_threshold_row.save()
         grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
         grades_threshold_row.save()
+    print("Errors")
+    print(error_rows)
     return "Completed!!"

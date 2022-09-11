@@ -91,6 +91,5 @@ def finalize_marks(**kwargs):
         registrations = BTStudentRegistrations.objects.filter(RegEventId_id=event.id)
         marks_objs = BTMarks_Staging.objects.filter(Registration_id__in=registrations.values_list('id', flat=True))
         for mark in marks_objs:
-            fmark = BTMarks(Registration=mark.Registration, Marks=mark.Marks, TotalMarks=mark.TotalMarks)
-            fmark.save()
+            fmark = BTMarks.objects.filter(Registration=mark.Registration).update(Marks=mark.Marks, TotalMarks=mark.TotalMarks)
     return "Completed!!"
