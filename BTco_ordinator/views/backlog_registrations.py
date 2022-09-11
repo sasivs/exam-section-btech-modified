@@ -128,7 +128,7 @@ def btech_backlog_registration(request):
         context['Name'] = studentInfo[0].Name  
     return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
 
-def backlog_reegistrations(file):
+def backlog_registrations(file):
     import pandas as pd
     file = pd.read_excel(file)
     for rIndex, row in file.iterrows():
