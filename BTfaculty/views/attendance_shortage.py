@@ -102,7 +102,7 @@ def download_sample_attendance_shortage_sheet(request):
     workbook.save(response)
     return response
 
-def add_marks(file):
+def add_Rixgrades(file):
     import pandas as pd
     file = pd.read_excel(file)
     for rIndex, row in file.iterrows():
