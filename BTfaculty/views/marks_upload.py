@@ -245,6 +245,12 @@ def add_marks(file):
         regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
         registration = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
         marks_row = BTMarks_Staging.objects.filter(Registration_id=registration.id).first()
+        if not marks_row:
+            subject = BTSubjects.objects.get(id=registration.sub_id.id)
+            mark_distribution = subject.MarkDistribution
+            BTMarks_Staging.objects.create(Registration=registration, Marks=mark_distribution.get_zeroes_string(), TotalMarks=0)
+            BTMarks.objects.create(Registration=registration, Marks=mark_distribution.get_zeroes_string(), TotalMarks=0)
+            marks_row = BTMarks_Staging.objects.filter(Registration_id=registration.id).first()
         mark_dis = registration.sub_id.MarkDistribution
         dis_names = mark_dis.DistributionNames.split(',')
         distributions = [dis.split('+') for dis in dis_names]
