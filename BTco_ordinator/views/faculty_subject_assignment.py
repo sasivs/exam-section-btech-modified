@@ -147,6 +147,10 @@ def faculty_assignment_status(request):
 
 
 def faculty_assignment(**kwargs):
+    '''
+    Dept can be given in the form of list consisting of departments.
+    All the remaining arguments are not lists
+    '''
     print(kwargs)
     if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
         return "Provide the required arguments!!!!"
