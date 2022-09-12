@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
+from BTExamStaffDB.models import BTStudentInfo
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import MakeupRegistrationsForm
-from BTco_ordinator.models import BTStudentRegistrations_Staging, BTStudentMakeups
+from BTco_ordinator.models import BTRollLists, BTRollLists_Staging, BTStudentRegistrations_Staging, BTStudentMakeups
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator
 from BThod.models import BTCoordinator
@@ -84,4 +85,18 @@ def add_makeup_regs(file):
         subject_id = makeups.filter(SubCode=row[7]).first()
         registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
         registration_obj.save()
+    return "Completed!!"
+
+def add_makeup_rolls(file):
+    import pandas as pd
+    file = pd.read_excel(file)
+    for rIndex, row in file.iterrows():
+        print(row)
+        regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
+        student_obj = BTStudentInfo.objects.filter(RegNo=row[9])
+        if not BTRollLists_Staging.objects.filter(student_id=student_obj.id, RegEventId_id=regEventId.id).exists():
+            roll = BTRollLists_Staging(student_id=student_obj.id, RegEventId_id=regEventId.id, Cycle=row[4], Section='NA')
+            roll.save()
+            f_roll = BTRollLists(student_id=student_obj.id, RegEventId_id=regEventId.id, Cycle=row[4], Section='NA')
+            f_roll.save()
     return "Completed!!"
