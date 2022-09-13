@@ -346,7 +346,7 @@ class BacklogRegistrationForm(forms.Form):
                 dropped_subjects = []
                 registeredBacklogs = []
                 for regn in studentRegistrations:
-                    regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId)
+                    regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId.id)
                     if (regEvent.Mode == 'R'):
                         studentRegularRegistrations.append(regn)
                     elif regEvent.Mode == 'D':
@@ -555,7 +555,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 studentBacklogs=[]
                 registeredDroppedCourses = []
                 for regn in studentRegistrations:
-                    regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId)
+                    regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId.id)
                     if (regEvent.Mode == 'R'):
                         studentRegularRegistrations.append(regn)
                     elif regEvent.Mode == 'D' :
