@@ -372,19 +372,8 @@ def RollListFeeUpload(request):
             dataset = XLSX().create_dataset(data)
             regeventid=form.cleaned_data['regID']
             if(form.cleaned_data['regID']!='--Choose Event--'):
-                regEvent = form.cleaned_data['regID']
-                strs = regEvent.split(':')
-                depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-                years = {1:'I',2:'II',3:'III',4:'IV'}
-                deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
-                rom2int = {'I':1,'II':2,'III':3,'IV':4}
-                dept = deptDict[strs[0]]
-                ayear = int(strs[3])
-                asem = int(strs[4])
-                byear = rom2int[strs[1]]
-                bsem = rom2int[strs[2]]
-                regulation = int(strs[5])
-                mode = strs[6]
+                event = BTRegistrationStatus.objects.filter(id=regeventid).first()
+                mode = event.Mode
                 paid_regd_no = []
                 for row in dataset:
                     paid_regd_no.append(row[1])
