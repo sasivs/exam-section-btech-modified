@@ -428,7 +428,7 @@ class BacklogRegistrationForm(forms.Form):
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
-            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId_id)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -443,7 +443,7 @@ class BacklogRegistrationForm(forms.Form):
     def addDroppedRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
-            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId_id)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -592,7 +592,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
             SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
-            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId_id)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
             self.fields['RadioMode' + str(SubjectDetails[0].id)] = forms.ChoiceField(required=False, \
@@ -606,7 +606,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
     def addDroppedRegularSubjects(self, queryset, registeredDroppedCourses,Selection):
         for bRow in queryset:
             SubjectDetails = bRow
-            regEvent = BTRegistrationStatus.objects.get(id=bRow.RegEventId)
+            regEvent = BTRegistrationStatus.objects.get(id=bRow.RegEventId_id)
             print(SubjectDetails.id)
             self.fields['Check' + str(SubjectDetails.id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
