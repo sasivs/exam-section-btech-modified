@@ -3,9 +3,11 @@ from django.shortcuts import render
 from BTExamStaffDB.models import BTStudentInfo
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import MakeupRegistrationsForm
-from BTco_ordinator.models import BTRollLists, BTRollLists_Staging, BTStudentRegistrations_Staging, BTStudentMakeups
+from BTco_ordinator.models import BTStudentRegistrations_Staging, BTStudentMakeups, BTRollLists, BTRollLists_Staging, BTSubjects,\
+     BTStudentRegistrations
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator
+from BTExamStaffDB.models import BTStudentInfo
 from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")
@@ -75,6 +77,7 @@ def makeup_registrations(request):
         form = MakeupRegistrationsForm(regIDs)
     return render(request, 'BTco_ordinator/MakeupRegistrations.html', {'form':form})
 
+
 def add_makeup_regs(file):
     import pandas as pd
     file = pd.read_excel(file)
@@ -83,8 +86,9 @@ def add_makeup_regs(file):
         makeups = BTStudentMakeups.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4])
         regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
         subject_id = makeups.filter(SubCode=row[7]).first()
-        registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
-        registration_obj.save()
+        if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8]).exists():
+            registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+            registration_obj.save()
     return "Completed!!"
 
 def add_makeup_rolls(file):
@@ -93,10 +97,45 @@ def add_makeup_rolls(file):
     for rIndex, row in file.iterrows():
         print(row)
         regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        student_obj = BTStudentInfo.objects.filter(RegNo=row[9])
+        student_obj = BTStudentInfo.objects.filter(RegNo=row[8]).first()
         if not BTRollLists_Staging.objects.filter(student_id=student_obj.id, RegEventId_id=regEventId.id).exists():
             roll = BTRollLists_Staging(student_id=student_obj.id, RegEventId_id=regEventId.id, Cycle=row[4], Section='NA')
             roll.save()
             f_roll = BTRollLists(student_id=student_obj.id, RegEventId_id=regEventId.id, Cycle=row[4], Section='NA')
             f_roll.save()
+    return "Completed!!"
+    
+def add_makeup_regs_r_grade(file):
+    import pandas as pd
+    file = pd.read_excel(file)
+    for rIndex, row in file.iterrows():
+        print(row)
+        makeups = BTStudentMakeups.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4])
+        if not makeups.filter(SubCode=row[7]).exists():
+            regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[3], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode='R').first()
+            subject_id = BTSubjects.objects.filter(RegEventId_id=regEvent.id, SubCode=row[7]).first()
+            regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
+            if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
+                registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])
+                registration_obj.save()
+            else:
+                BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+            if not BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
+                registration_obj = BTStudentRegistrations(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])
+                registration_obj.save()
+            else:
+                BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+        else:
+            regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
+            subject_id = makeups.filter(SubCode=row[7]).first()
+            if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+                registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+                registration_obj.save()
+            else:
+                BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+            if not BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+                registration_obj = BTStudentRegistrations(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+                registration_obj.save()
+            else:
+                BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
     return "Completed!!"

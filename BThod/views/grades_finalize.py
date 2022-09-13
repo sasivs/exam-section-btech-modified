@@ -74,4 +74,5 @@ def finalize_grades(**kwargs):
         for grade in grades_objs:
             fgrade = BTStudentGrades(RegId=grade.RegId, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
             fgrade.save()
+    RefreshMaterializedViews()
     return "Completed!!"
