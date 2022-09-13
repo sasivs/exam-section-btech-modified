@@ -377,57 +377,57 @@ class BacklogRegistrationForm(forms.Form):
         validBacklogs = [row.sub_id for row in queryset]
         regBacklogsdict = {row.sub_id:row.id for row in registeredBacklogs}
         for bRow in queryset:
-            existingSubjects = BTSubjects.objects.filter(id=bRow.sub_id)
+            existingSubjects = BTSubjects.objects.filter(id=bRow.sub_id.id)
             if(len(existingSubjects)!=0):
-                if(bRow.sub_id in Selection.keys()):
-                    self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, \
+                if(bRow.sub_id.id in Selection.keys()):
+                    self.fields['Check' + str(bRow.sub_id.id)] = forms.BooleanField(required=False, \
                         widget=forms.CheckboxInput(attrs={'checked':True}))
                     if(bRow.Grade == 'R'):
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                     else:
-                        mode = Selection[bRow.sub_id]
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode,\
+                        mode = Selection[bRow.sub_id.id]
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode,\
                             widget=forms.RadioSelect())
-                        # self.fields['RadioMode' + str(bRow.sub_id)].initial = str(mode)
-                    self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
-                                    self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
-                                        bRow.Regulation, bRow.sub_id, regBacklogsdict[bRow.sub_id]))
+                        # self.fields['RadioMode' + str(bRow.sub_id.id)].initial = str(mode)
+                    self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id.id)], 
+                                    self['RadioMode' + str(bRow.sub_id.id)],bRow.sub_id.id in Selection.keys(),'B', bRow.OfferedYear, \
+                                        bRow.Regulation, bRow.sub_id.id, regBacklogsdict[bRow.sub_id.id]))
                 else:
-                    self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+                    self.fields['Check' + str(bRow.sub_id.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
                     if(bRow.Grade == 'R'):
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])     
                     else:
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(),choices=[('1', 'Study Mode'), ('0', 'Exam Mode')])
-                    self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
-                                    self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear,\
-                                         bRow.Regulation, bRow.sub_id,''))
-                self.checkFields.append(self['Check' + str(bRow.sub_id)])
-                self.radioFields.append(self['RadioMode' + str(bRow.sub_id)])
+                    self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id.id)], 
+                                    self['RadioMode' + str(bRow.sub_id.id)],bRow.sub_id.id in Selection.keys(),'B', bRow.OfferedYear,\
+                                         bRow.Regulation, bRow.sub_id.id,''))
+                self.checkFields.append(self['Check' + str(bRow.sub_id.id)])
+                self.radioFields.append(self['RadioMode' + str(bRow.sub_id.id)])
         for row in registeredBacklogs:
             if row.sub_id not in validBacklogs:
                 bRow = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], sub_id=row.sub_id)
                 bRow = bRow[0]
-                self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, \
+                self.fields['Check' + str(bRow.sub_id.id)] = forms.BooleanField(required=False, \
                     widget=forms.CheckboxInput(attrs={'checked':True}))
                 if(bRow.Grade == 'R'):
-                    self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                    self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                 else:
-                    mode = Selection[bRow.sub_id] 
-                    self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                    mode = Selection[bRow.sub_id.id] 
+                    self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                         choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode, widget=forms.RadioSelect(),)
-                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
-                                    self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
-                                        bRow.Regulation, bRow.sub_id, row.id))
-                self.checkFields.append(self['Check' + str(bRow.sub_id)])
-                self.radioFields.append(self['RadioMode' + str(bRow.sub_id)])
+                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id.id)], 
+                                    self['RadioMode' + str(bRow.sub_id.id)],bRow.sub_id.id in Selection.keys(),'B', bRow.OfferedYear, \
+                                        bRow.Regulation, bRow.sub_id.id, row.id))
+                self.checkFields.append(self['Check' + str(bRow.sub_id.id)])
+                self.radioFields.append(self['RadioMode' + str(bRow.sub_id.id)])
 
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
-            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
+            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
             regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
@@ -570,28 +570,28 @@ class DroppedRegularRegistrationsForm(forms.Form):
     
     def addBacklogSubjects(self, queryset,Selection,ayear):
         for bRow in queryset:
-            existingSubjects = BTSubjects.objects.filter(id=bRow.sub_id)
+            existingSubjects = BTSubjects.objects.filter(id=bRow.sub_id.id)
             if(len(existingSubjects)!=0):
-                if(bRow.sub_id in Selection.keys()):
-                    subDetails = BTSubjects.objects.get(id=bRow.sub_id)
+                if(bRow.sub_id.id in Selection.keys()):
+                    subDetails = BTSubjects.objects.get(id=bRow.sub_id.id)
                     regevent = BTRegistrationStatus.objects.get(id=subDetails.RegEventId)
-                    self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':True}))
+                    self.fields['Check' + str(bRow.sub_id.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':True}))
                     if(bRow.Grade == 'R'):
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                     else:
-                        mode = Selection[bRow.sub_id] 
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        mode = Selection[bRow.sub_id.id] 
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(),choices=[('1', 'Study Mode'), ('0', 'Exam Mode')])
-                    self.checkFields.append(self['Check' + str(bRow.sub_id)])
-                    self.radioFields.append(self['RadioMode' + str(bRow.sub_id)])
-                    self.myFields.append((subDetails.SubCode, subDetails.SubName, subDetails.Credits, self['Check' + str(bRow.sub_id)], 
-                                    self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', \
-                                        regevent.OfferedYear, regevent.Regulation, bRow.sub_id, bRow.id))
+                    self.checkFields.append(self['Check' + str(bRow.sub_id.id)])
+                    self.radioFields.append(self['RadioMode' + str(bRow.sub_id.id)])
+                    self.myFields.append((subDetails.SubCode, subDetails.SubName, subDetails.Credits, self['Check' + str(bRow.sub_id.id)], 
+                                    self['RadioMode' + str(bRow.sub_id.id)],bRow.sub_id.id in Selection.keys(),'B', \
+                                        regevent.OfferedYear, regevent.Regulation, bRow.sub_id.id, bRow.id))
 
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
-            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
+            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
             regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
@@ -929,28 +929,28 @@ class NotRegisteredRegistrationsForm(forms.Form):
         
     def addBacklogSubjects(self, queryset,Selection):
         for bRow in queryset:
-            existingSubjects = BTSubjects.objects.filter(id=bRow.sub_id)
+            existingSubjects = BTSubjects.objects.filter(id=bRow.sub_id.id)
             if(len(existingSubjects)!=0):
-                if(bRow.sub_id in Selection.keys()):
-                    subDetails = BTSubjects.objects.get(id=bRow.sub_id)
+                if(bRow.sub_id.id in Selection.keys()):
+                    subDetails = BTSubjects.objects.get(id=bRow.sub_id.id)
                     regevent = BTRegistrationStatus.objects.get(id=subDetails.RegEventId)
-                    self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':True}))
+                    self.fields['Check' + str(bRow.sub_id.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':True}))
                     if(bRow.Grade == 'R'):
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(attrs={'checked': True}), choices=[('1', 'Study Mode')])
                     else:
-                        mode = Selection[bRow.sub_id] 
-                        self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
+                        mode = Selection[bRow.sub_id.id] 
+                        self.fields['RadioMode' + str(bRow.sub_id.id)] = forms.ChoiceField(required=False, \
                             widget=forms.RadioSelect(),choices=[('1', 'Study Mode'), ('0', 'Exam Mode')])
-                    self.checkFields.append(self['Check' + str(bRow.sub_id)])
-                    self.radioFields.append(self['RadioMode' + str(bRow.sub_id)])
-                    self.myFields.append((subDetails.SubCode, subDetails.SubName, subDetails.Credits, self['Check' + str(bRow.sub_id)], 
-                                    self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', \
-                                        regevent.OfferedYear, regevent.Regulation, bRow.sub_id, bRow.id))
+                    self.checkFields.append(self['Check' + str(bRow.sub_id.id)])
+                    self.radioFields.append(self['RadioMode' + str(bRow.sub_id.id)])
+                    self.myFields.append((subDetails.SubCode, subDetails.SubName, subDetails.Credits, self['Check' + str(bRow.sub_id.id)], 
+                                    self['RadioMode' + str(bRow.sub_id.id)],bRow.sub_id.id in Selection.keys(),'B', \
+                                        regevent.OfferedYear, regevent.Regulation, bRow.sub_id.id, bRow.id))
 
     def addRegularSubjects(self, queryset):
         for bRow in queryset:
-            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
+            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
             regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId.id)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
@@ -964,7 +964,7 @@ class NotRegisteredRegistrationsForm(forms.Form):
  
     def addDroppedRegularSubjects(self, queryset):
         for bRow in queryset:
-            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id)
+            SubjectDetails = BTSubjects.objects.filter(id=bRow.sub_id.id)
             regEvent = BTRegistrationStatus.objects.get(id=SubjectDetails[0].RegEventId)
             self.fields['Check' + str(SubjectDetails[0].id)] = forms.BooleanField(required=False, \
                 widget=forms.CheckboxInput(attrs={'checked': True}))
