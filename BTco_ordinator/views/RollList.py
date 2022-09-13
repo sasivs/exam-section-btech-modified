@@ -172,7 +172,7 @@ def generateRollList(request):
 
                         if byear == 1:
 
-                            backlog_rolls = BTStudentBacklogs.objects.filter(BYear=byear, Dept=dept).values_list('RegNo', flat=True)
+                            backlog_rolls = BTStudentBacklogs.objects.filter(BYear=byear, BSem=bsem, Dept=dept).values_list('RegNo', flat=True)
                             backlog_rolls = list(set(backlog_rolls))
                             backlog_rolls.sort()
 

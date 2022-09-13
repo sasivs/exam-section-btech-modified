@@ -32,41 +32,34 @@ def seat_cancellation(request):
                 grades =BTStudentGrades.objects.filter(RegId__in = regs.values_list('id',flat =True))
                 marks = BTMarks.objects.filter(Registration__in = regs)
 
-                BTCancelledStudentInfo(Remarks=remark,CancelledDate=date,RegNo=student.RegNo,RollNo=student.RollNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardianName=student.GuardianName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2,Cycle=student.Cycle).save()
+                BTCancelledStudentInfo(id=student.id,Remarks=remark,CancelledDate=date,RegNo=student.RegNo,RollNo=student.RollNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardianName=student.GuardianName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2,Cycle=student.Cycle).save()
                 for i in rolls:
                     i_dict = i.__dict__
-                    i_dict.pop('id') 
                     i_dict.pop('_state')
                     BTCancelledRollLists.objects.create(**i_dict)
                 for i in notregistered:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
-                    i_dict.pop('id') 
                     BTCancelledNotRegistered.objects.create(**i_dict)
                 for i in regs:
                     i_dict = i.__dict__
-                    i_dict.pop('id') 
                     i_dict.pop('_state')
                     BTCancelledStudentRegistrations.objects.create(**i_dict)
                 for i in droppedregular:
                     i_dict = i.__dict__
-                    i_dict.pop('id') 
                     i_dict.pop('_state')
                     BTCancelledDroppedRegularCourses.objects.create(**i_dict)
                     
                 for i in marks:
                     i_dict = i.__dict__
-                    i_dict.pop('id') 
                     i_dict.pop('_state')
                     BTCancelledMarks.objects.create(**i_dict)
                 for i in grades:
                     i_dict = i.__dict__
-                    i_dict.pop('id') 
                     i_dict.pop('_state')
                     BTCancelledStudentGrades.objects.create(**i_dict)
                 for i in notpromoted:
                     i_dict = i.__dict__
-                    i_dict.pop('id') 
                     i_dict.pop('_state')
                     BTCancelledNotPromoted.objects.create(**i_dict)
 
