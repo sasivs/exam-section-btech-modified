@@ -321,7 +321,7 @@ class BacklogRegistrationForm(forms.Form):
             
             studentBacklogs = list(BTRollLists.objects.filter(RegEventId_id=currentRegEventId).values_list('student__RegNo', flat=True))
             studentBacklogs = [(row, row) for row in studentBacklogs]
-            studentBacklogs = [(0,'--Select Reg Number--')] + studentBacklogs
+            studentBacklogs = [('','--Select Reg Number--')] + studentBacklogs
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentBacklogs,\
                  attrs={'onchange':'submit();'}))  
             if('RegNo' in self.data and self.data['RegNo']!='--Select Reg Number--'):
