@@ -159,7 +159,6 @@ def grades_threshold_status(request):
         form = GradeThresholdStatusForm(subjects=subjects)
     return render(request, 'BTfaculty/GradesThresholdStatus.html', {'form':form})  
 
-
 def add_grades_threshold(file):
     file = pd.read_excel(file)
     error_rows=[]
@@ -170,8 +169,11 @@ def add_grades_threshold(file):
         index = 8
         for grade in study_grades:
             if row[index] >= 0:
-                grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Threshold_Mark=row[index], Exam_Mode=False)
-                grades_threshold_row.save()
+                if not BTGradesThreshold.objects.filter(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Exam_Mode=False).exists():
+                    grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Threshold_Mark=row[index], Exam_Mode=False)
+                    grades_threshold_row.save()
+                else:
+                    BTGradesThreshold.objects.filter(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=grade, Exam_Mode=False).update(Threshold_Mark=row[index])
             else:
                 error_rows.append(row)
             index += 1
@@ -183,10 +185,12 @@ def add_grades_threshold(file):
         else:
             p_threshold = 17.5
             f_threshold = 0
-        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='P').first(), Threshold_Mark=p_threshold, Exam_Mode=True)
-        grades_threshold_row.save()
-        grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
-        grades_threshold_row.save()
+        if not BTGradesThreshold.objects.filter(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='P').first(), Exam_Mode=True).exists():
+            grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='P').first(), Threshold_Mark=p_threshold, Exam_Mode=True)
+            grades_threshold_row.save()
+        if not BTGradesThreshold.objects.filter(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Exam_Mode=True).exists():
+            grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
+            grades_threshold_row.save()
     print("Errors")
     print(error_rows)
     return "Completed!!"
