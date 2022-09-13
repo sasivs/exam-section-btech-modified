@@ -372,6 +372,19 @@ def RollListFeeUpload(request):
             dataset = XLSX().create_dataset(data)
             regeventid=form.cleaned_data['regID']
             if(form.cleaned_data['regID']!='--Choose Event--'):
+                regEvent = form.cleaned_data['regID']
+                strs = regEvent.split(':')
+                depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+                years = {1:'I',2:'II',3:'III',4:'IV'}
+                deptDict = {dept:ind+1 for ind, dept  in enumerate(depts)}
+                rom2int = {'I':1,'II':2,'III':3,'IV':4}
+                dept = deptDict[strs[0]]
+                ayear = int(strs[3])
+                asem = int(strs[4])
+                byear = rom2int[strs[1]]
+                bsem = rom2int[strs[2]]
+                regulation = int(strs[5])
+                mode = strs[6]
                 paid_regd_no = []
                 for row in dataset:
                     paid_regd_no.append(row[1])
@@ -379,9 +392,10 @@ def RollListFeeUpload(request):
                 unpaid_regd_no = rolls.exclude(student__RegNo__in=paid_regd_no)
                 rolls = rolls.values_list('student__RegNo', flat=True)
                 error_regd_no = set(paid_regd_no).difference(set(rolls))
-                for regd_no in unpaid_regd_no:
-                    not_registered = BTNotRegistered(Student=regd_no.student, RegEventId_id=regeventid, Registered=False)
-                    not_registered.save()
+                if mode == 'R':
+                    for regd_no in unpaid_regd_no:
+                        not_registered = BTNotRegistered(Student=regd_no.student, RegEventId_id=regeventid, Registered=False)
+                        not_registered.save()
                 unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
                 BTStudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
                 BTRollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=regeventid).delete() 
