@@ -105,16 +105,26 @@ def download_sample_attendance_shortage_sheet(request):
 def add_Rixgrades(file):
     import pandas as pd
     file = pd.read_excel(file)
+    error_rows=[]
     for rIndex, row in file.iterrows():
         print(row)
         regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
         registration = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
-        if row[10] == 'R':
-            att_short = BTAttendance_Shortage(Registration_id=registration.id)
-            att_short.save()
+        if registration:
+            if row[10] == 'R':
+                if not BTAttendance_Shortage.objects.filter(Registration_id=registration.id).exists():
+                    att_short = BTAttendance_Shortage(Registration_id=registration.id)
+                    att_short.save()
+            else:
+                if not BTIXGradeStudents.objects.filter(Registration_id=registration.id).exists():
+                    ix_grade = BTIXGradeStudents(Registration_id=registration.id, Grade=row[10])
+                    ix_grade.save()
+                else:
+                    BTIXGradeStudents.objects.filter(Registration_id=registration.id).update(Grade=row[10])
         else:
-            ix_grade = BTIXGradeStudents(Registration_id=registration.id, Grade=row[10])
-            ix_grade.save()
+            error_rows.append(row)
+    print(error_rows)
+    print("These rows have no registrations.")
     return 'Completed!!'
         
 
