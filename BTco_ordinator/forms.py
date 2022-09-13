@@ -324,7 +324,7 @@ class BacklogRegistrationForm(forms.Form):
             studentBacklogs = [('','--Select Reg Number--')] + studentBacklogs
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentBacklogs,\
                  attrs={'onchange':'submit();'}))  
-            if('RegNo' in self.data and self.data['RegNo']!='--Select Reg Number--'):
+            if('RegNo' in self.data and self.data['RegNo']!=''):
                 self.myFields = []
                 self.checkFields = []
                 self.radioFields = []
