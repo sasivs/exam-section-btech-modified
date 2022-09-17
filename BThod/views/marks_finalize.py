@@ -34,9 +34,9 @@ def marks_finalize(request):
                     final_mark.TotalMarks = mark.TotalMarks
                     final_mark.save()
             msg = 'Marks are finalized successfully.'
-            # reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
-            # reg_status_obj.MarksStatus = 0
-            # reg_status_obj.save()
+            reg_status_obj = BTRegistrationStatus.objects.get(id=regEvent)
+            reg_status_obj.MarksStatus = 0
+            reg_status_obj.save()
     else:
         form = MarksFinalizeForm(regIDs)
     return render(request, 'BTfaculty/MarksFinalize.html', {'form':form, 'msg':msg})
@@ -92,4 +92,6 @@ def finalize_marks(**kwargs):
         marks_objs = BTMarks_Staging.objects.filter(Registration_id__in=registrations.values_list('id', flat=True))
         for mark in marks_objs:
             fmark = BTMarks.objects.filter(Registration=mark.Registration).update(Marks=mark.Marks, TotalMarks=mark.TotalMarks)
+        event.MarkStatus = 0
+        event.save()
     return "Completed!!"

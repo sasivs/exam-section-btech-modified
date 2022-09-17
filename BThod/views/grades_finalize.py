@@ -34,9 +34,9 @@ def grades_finalize(request):
                     gr.save()
                 RefreshMaterializedViews()
                 msg = 'Grades have been finalized.'
-            # reg_status_obj = RegistrationStatus.objects.get(id=regEvent)
-            # reg_status_obj.GradeStatus = 0
-            # reg_status_obj.save()
+            reg_status_obj = BTRegistrationStatus.objects.get(id=regEvent)
+            reg_status_obj.GradeStatus = 0
+            reg_status_obj.save()
             return render(request, 'BThod/GradesFinalize.html', {'form':form, 'msg':msg})
     else:
         form = GradesFinalizeForm(regIDs)
@@ -74,5 +74,7 @@ def finalize_grades(**kwargs):
         for grade in grades_objs:
             fgrade = BTStudentGrades(RegId=grade.RegId, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
             fgrade.save()
+        event.GradeStatus = 0
+        event.save()
     RefreshMaterializedViews()
     return "Completed!!"
