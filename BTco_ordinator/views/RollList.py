@@ -62,7 +62,7 @@ def generateRollList(request):
                             s_info.save()
                             if(prev_regulation != regulation):
                                 currentRegEventId = request.session.get('currentRegEventId')
-                                regu_change = BTRegulationChange(RegEventId = currentRegEventId, student= s_info, \
+                                regu_change = BTRegulationChange(RegEventId_id = currentRegEventId, student= s_info, \
                                     PreviousRegulation=prev_regulation ,PresentRegulation=regulation)
                                 regu_change.save()
                         else:
