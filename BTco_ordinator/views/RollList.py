@@ -62,7 +62,7 @@ def generateRollList(request):
                             s_info.save()
                             if(prev_regulation != regulation):
                                 currentRegEventId = request.session.get('currentRegEventId')
-                                regu_change = BTRegulationChange(RegEventId = currentRegEventId, student= s_info, \
+                                regu_change = BTRegulationChange(RegEventId_id = currentRegEventId, student= s_info, \
                                     PreviousRegulation=prev_regulation ,PresentRegulation=regulation)
                                 regu_change.save()
                         else:
@@ -108,7 +108,7 @@ def generateRollList(request):
                             related_events = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                                 Mode=mode)
                             for not_prom_reg in not_prom_regs:
-                                if BTRollLists_Staging.objects.filter(student__RegNo=not_prom_reg.RegNo, RegEventId_id__in=related_events.values_list('id', flat=True)).exists():
+                                if BTRollLists_Staging.objects.filter(student__RegNo=not_prom_reg.student.RegNo, RegEventId_id__in=related_events.values_list('id', flat=True)).exists():
                                     not_prom_regs.exclude(not_prom_reg)
                             
                             regular_regd_no = list(reg_rgs.values_list('RegNo', flat=True))
