@@ -172,6 +172,13 @@ class StudentCancellationForm(forms.Form):
             raise forms.ValidationError("{}, {} seat is already cancelled.".format(cancelled_student.RegNo, cancelled_student.Name))
         return regd_no
 
+class StudentCancellationStatusForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(StudentCancellationStatusForm, self).__init__(*args, **kwargs)
+        AYEAR_CHOICES = [(0,'--Select AYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        self.fields['AYear'] = forms.CharField(label='Academic Year',\
+            widget = forms.Select(choices=AYEAR_CHOICES, attrs={'onchange':'submit();'}))
+
 
 class HeldInForm(forms.Form):
     def __init__ (self,*args, **kwargs):
