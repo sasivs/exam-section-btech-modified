@@ -139,8 +139,11 @@ def backlog_registrations(file):
             backlogs = BTStudentBacklogs.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4], BSem=row[3])
         regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
         subject_id = backlogs.filter(SubCode=row[7]).first()
-        registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
-        registration_obj.save()
+        if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+            registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+            registration_obj.save()
+        else:
+            BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
     return "Completed!!"
 
 
