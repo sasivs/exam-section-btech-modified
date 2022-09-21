@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from ADUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD, BTCycleCoordinator
+from BTsuperintendent.models import BTHOD, BTCancelledDroppedRegularCourses, BTCancelledStudentInfo, BTCycleCoordinator
 from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from BTsuperintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
 from BTco_ordinator.models import BTStudentBacklogs
@@ -167,6 +167,9 @@ class StudentCancellationForm(forms.Form):
         regd_no = self.cleaned_data.get('RegNo')
         if not BTStudentInfo.objects.filter(RegNo=regd_no).exists():
             raise forms.ValidationError('Invalid Reg No.')
+        if BTCancelledStudentInfo.objects.filter(RegNo=regd_no).exists():
+            cancelled_student = BTCancelledStudentInfo.objects.filter(RegNo=regd_no).first()
+            raise forms.ValidationError("{}, {} seat is already cancelled.".format(cancelled_student.RegNo, cancelled_student.Name))
         return regd_no
 
 
