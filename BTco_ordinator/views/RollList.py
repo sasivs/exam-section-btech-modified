@@ -107,12 +107,13 @@ def generateRollList(request):
                             not_prom_regs = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=1, PoA='R')
                             related_events = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                                 Mode=mode)
+                            not_prom_regs_copy = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=1, PoA='R')
                             for not_prom_reg in not_prom_regs:
                                 if BTRollLists_Staging.objects.filter(student__RegNo=not_prom_reg.student.RegNo, RegEventId_id__in=related_events.values_list('id', flat=True)).exists():
-                                    not_prom_regs.exclude(not_prom_reg)
+                                    not_prom_regs_copy.exclude(student__RegN0=not_prom_reg.student.RegNo)
                             
                             regular_regd_no = list(reg_rgs.values_list('RegNo', flat=True))
-                            not_prom_regs = [row.student.RegNo for row in not_prom_regs]
+                            not_prom_regs = [row.student.RegNo for row in not_prom_regs_copy]
 
                             valid_rolls = regular_regd_no+not_prom_regs
 
@@ -252,10 +253,13 @@ def first_year_rollLists_cycle_handler(request):
                 if(form.cleaned_data.get('RadioMode'+str(sReg))):
                     cycle = form.cleaned_data.get('RadioMode'+str(sReg))
                     s_info = BTStudentInfo.objects.get(RegNo=sReg)
-                    roll = BTRollLists_Staging(student=s_info, RegEventId_id=currentRegEventId, Cycle=cycle)
+                    if not BTRollLists_Staging.objects.filter(student=s_info, RegEventId_id=currentRegEventId).exists():
+                        roll = BTRollLists_Staging(student=s_info, RegEventId_id=currentRegEventId, Cycle=cycle)
+                        roll.save()
+                    else:
+                        BTRollLists_Staging.objects.filter(student=s_info, RegEventId_id=currentRegEventId).update(Cycle=cycle)
                     s_info.Cycle=cycle
                     s_info.save()
-                    roll.save()
             return (render(request, 'BTco_ordinator/RollListGenerateSuccess.html'))
     else:
         form = RollListsCycleHandlerForm(Options=not_prom_regs)
