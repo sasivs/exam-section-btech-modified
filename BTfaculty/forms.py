@@ -134,7 +134,7 @@ class MarksStatusForm(forms.Form):
 class MarksUpdateForm(forms.Form):
     def __init__(self, mark, *args,**kwargs):
         super(MarksUpdateForm, self).__init__(*args, **kwargs)
-        subject = BTSubjects.objects.get(id=mark.Registration.sub_id)
+        subject = BTSubjects.objects.get(id=mark.Registration.sub_id_id)
         EXAM_CHOICES = [('', '----------')]
         EXAM_CHOICES += subject.MarkDistribution.distributions()
         self.subject = subject
