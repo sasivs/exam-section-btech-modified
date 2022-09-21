@@ -96,7 +96,7 @@ def add_makeup_rolls(file):
     for rIndex, row in file.iterrows():
         print(row)
         regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        student_obj = BTStudentInfo.objects.filter(RegNo=row[8]).first()
+        student_obj = BTStudentInfo.objects.filter(RegNo=row[7]).first()
         if not BTRollLists_Staging.objects.filter(student_id=student_obj.id, RegEventId_id=regEventId.id).exists():
             roll = BTRollLists_Staging(student_id=student_obj.id, RegEventId_id=regEventId.id, Cycle=row[4], Section='NA')
             roll.save()
@@ -131,10 +131,10 @@ def add_makeup_regs_r_grade(file):
                 registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
                 registration_obj.save()
             else:
-                BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+                BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
             if not BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
                 registration_obj = BTStudentRegistrations(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
                 registration_obj.save()
             else:
-                BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+                BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
     return "Completed!!"
