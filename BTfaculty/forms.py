@@ -139,7 +139,7 @@ class MarksUpdateForm(forms.Form):
         EXAM_CHOICES += subject.MarkDistribution.distributions()
         self.subject = subject
         self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, widget=forms.Select(choices=EXAM_CHOICES))
-        self.fields['mark'] = forms.CharField(label='Update Mark', widget=forms.TextInput(attrs={'type':'number'}))
+        self.fields['mark'] = forms.CharField(label='Update Mark', widget=forms.TextInput(attrs={'type':'number', 'step':'0.25'}))
     
     def clean_mark(self):
         mark = self.cleaned_data.get('mark')
