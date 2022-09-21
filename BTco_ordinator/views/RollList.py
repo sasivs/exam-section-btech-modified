@@ -104,7 +104,13 @@ def generateRollList(request):
                     if mode == 'R':
                         if(byear==1):
                             reg_rgs = BTStudentInfo.objects.filter(AdmissionYear=ayear,Cycle=dept,Regulation=regulation)
-                            not_prom_regs = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=1, Regulation=regulation, PoA='R', student__Cycle=dept)
+                            not_prom_regs = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=1, PoA='R')
+                            related_events = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
+                                Mode=mode)
+                            for not_prom_reg in not_prom_regs:
+                                if BTRollLists_Staging.objects.filter(student__RegNo=not_prom_reg.RegNo, RegEventId_id__in=related_events.values_list('id', flat=True)).exists():
+                                    not_prom_regs.exclude(not_prom_reg)
+                            
                             regular_regd_no = list(reg_rgs.values_list('RegNo', flat=True))
                             not_prom_regs = [row.student.RegNo for row in not_prom_regs]
 
