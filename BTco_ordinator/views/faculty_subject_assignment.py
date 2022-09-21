@@ -176,8 +176,9 @@ def faculty_assignment(**kwargs):
                 fac_name = 'fac'+str(offering_dept)
                 print(fac_name)
                 fac_id = BTFacultyInfo.objects.filter(Name=fac_name).first()
-                fac_assign_obj = BTFacultyAssignment(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id)
-                fac_assign_obj.save()
+                if not BTFacultyAssignment.objects.filter(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id).exists():
+                    fac_assign_obj = BTFacultyAssignment(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id)
+                    fac_assign_obj.save()
     elif kwargs.get('Mode') == 'M' or kwargs.get('Mode') == 'B':
         regEvents = BTRegistrationStatus.objects.filter(AYear=kwargs.get('AYear'), ASem=kwargs.get('ASem'), BYear=kwargs.get('BYear'), BSem=kwargs.get('BSem'), \
             Regulation=kwargs.get('Regulation'), Mode=kwargs.get('Mode'))
@@ -201,7 +202,8 @@ def faculty_assignment(**kwargs):
                 fac_name = 'fac'+str(offering_dept)
                 print(fac_name)
                 fac_id = BTFacultyInfo.objects.filter(Name=fac_name).first()
-                fac_assign_obj = BTFacultyAssignment(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id)
-                fac_assign_obj.save()
+                if not BTFacultyAssignment.objects.filter(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id).exists():
+                    fac_assign_obj = BTFacultyAssignment(Subject_id=sub.id, RegEventId_id=regEventId, Faculty_id=fac_id.id, Coordinator_id=fac_id.id)
+                    fac_assign_obj.save()
     return "Completed!!!!"
 
