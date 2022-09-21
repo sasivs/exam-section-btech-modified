@@ -70,7 +70,7 @@ def not_promoted_list(request):
                             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
                         else:
-                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo, Registered=False, subject__RegEventId__BYear=byear-1)
+                            dropped_courses = BTDroppedRegularCourses.objects.filter(student__RegNo=roll.student.RegNo, Registered=False, subject__RegEventId__BYear=byear-1)
                             # for course in dropped_courses:
                             #     sub = BTSubjects.objects.get(id=course.sub_id)
                             #     offeredEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
@@ -93,7 +93,7 @@ def not_promoted_list(request):
                             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             np.append(d)
                         else:
-                            dropped_courses = BTDroppedRegularCourses.objects.filter(RegNo=roll.student.RegNo, Registered=False)
+                            dropped_courses = BTDroppedRegularCourses.objects.filter(student__RegNo=roll.student.RegNo, Registered=False)
                             # for course in dropped_courses:
                             #     sub = BTSubjects.objects.get(id=course.sub_id)
                             #     check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
