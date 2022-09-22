@@ -46,12 +46,12 @@ def grades_threshold_assign(request, pk):
                     #     if form.cleaned_data.get('uniform_grading')=='1':
                     for grade in grades:
                         if form.cleaned_data[str(grade.id)]:
-                            prev_thresholds.filter(Grade=grade, Exam_Mode=False).update(Threshold_Mark=int(form.cleaned_data[str(grade.id)]))
+                            prev_thresholds.filter(Grade=grade, Exam_Mode=False).update(Threshold_Mark=float(form.cleaned_data[str(grade.id)]))
                     
                     exam_mode_grade = grades.filter(Grade__in=['P','F'])
                     for grade in exam_mode_grade:
                         if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
-                            prev_thresholds.filter(Grade=grade, Exam_Mode=True).update(Threshold_Mark=int(form.cleaned_data[str('exam_mode_')+str(grade.id)]))
+                            prev_thresholds.filter(Grade=grade, Exam_Mode=True).update(Threshold_Mark=float(form.cleaned_data[str('exam_mode_')+str(grade.id)]))
                         # else:
                         #     section = form.cleaned_data.get('section')
                         #     for grade in grades:
@@ -78,13 +78,13 @@ def grades_threshold_assign(request, pk):
                     for grade in grades:
                         if form.cleaned_data[str(grade.id)]:
                             threshold_mark = BTGradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                Threshold_Mark=int(form.cleaned_data[str(grade.id)]), Exam_Mode=False)
+                                Threshold_Mark=float(form.cleaned_data[str(grade.id)]), Exam_Mode=False)
                             threshold_mark.save()
                     exam_mode_grade = grades.filter(Grade__in=['P','F'])
                     for grade in exam_mode_grade:
                         if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
                             threshold_mark = BTGradesThreshold(Grade=grade, Subject=subject, RegEventId=subject_faculty.RegEventId, \
-                                    Threshold_Mark=int(form.cleaned_data[str('exam_mode_')+str(grade.id)]), Exam_Mode=True)
+                                    Threshold_Mark=float(form.cleaned_data[str('exam_mode_')+str(grade.id)]), Exam_Mode=True)
                             threshold_mark.save()
 
                     # else:
@@ -102,7 +102,7 @@ def grades_threshold_assign(request, pk):
             no_of_students = {grade.Grade:0 for grade in grades}
             for index, grade in enumerate(grades):
                 if request.POST.get(str(grade.id)):
-                    no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=int(request.POST.get(str(grade.id)))))
+                    no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=float(request.POST.get(str(grade.id)))))
             for index in range(len(grades)-1, 0, -1):
                 no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
             no_of_students = dumps(no_of_students)
