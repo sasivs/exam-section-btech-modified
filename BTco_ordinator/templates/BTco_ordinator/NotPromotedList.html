@@ -27,16 +27,24 @@
       <thead>
           <tr>
               <td style="border: 1px solid black;">RegNo </td>
-              <td style="border: 1px solid black;">AYear</td>
-              <td style="border: 1px solid black;">BYear</td>
+              <td style="border: 1px solid black;">RollNo </td>
+              <td style="border: 1px solid black;">Name </td>
+              <td style="border: 1px solid black;">Academic Year</td>
+              <td style="border: 1px solid black;">BTech Year</td>
               <td style="border: 1px solid black;">Regulation</td>
-              <td style="border: 1px solid black;">PoA</td>
+              <td style="border: 1px solid black;">Plan of Action</td>
           </tr>
       </thead>
       {% for np  in notPromoted %}
             <tr>
                 <td style="border: 1px solid black;">
                     {{ np.student.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                  {{ np.student.RollNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                  {{ np.student.Name }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ np.AYear }}
