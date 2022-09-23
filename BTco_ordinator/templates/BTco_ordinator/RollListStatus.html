@@ -20,12 +20,14 @@
                     <tr>
                         <td style="border: 1px solid black;">id </td>
                         <td style="border: 1px solid black;">RegNo </td>
-                        <td style="border: 1px solid black;">AYear </td>
-                        <td style="border: 1px solid black;">BYear </td>
-                        <td style="border: 1px solid black;">ASem </td>
-                        <td style="border: 1px solid black;">BSem </td>
+                        <td style="border: 1px solid black;">RollNo </td>
+                        <td style="border: 1px solid black;">Name </td>
+                        <!-- <td style="border: 1px solid black;">Academic Year </td>
+                        <td style="border: 1px solid black;">BTech Year </td>
+                        <td style="border: 1px solid black;">Academic Sem </td>
+                        <td style="border: 1px solid black;">BTech Sem </td>
+                        <td style="border: 1px solid black;">Regulation </td> -->
                         <td style="border: 1px solid black;">Dept </td>
-                        <td style="border: 1px solid black;">Regulation </td>
                         <td style="border: 1px solid black;">Cycle </td>
                         <td style="border: 1px solid black;">Section</td>
                     </tr>
@@ -39,9 +41,15 @@
                         {{ field.student.RegNo }}
                     </td>
                     <td style="border: 1px solid black;">
-                        {{ field.RegEventId.AYear }}
+                        {{ field.student.RollNo }}
                     </td>
                     <td style="border: 1px solid black;">
+                        {{ field.student.Name }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.AYear }}
+                    </td>
+                    <!-- <td style="border: 1px solid black;">
                         {{ field.RegEventId.BYear }}
                     </td>
                     <td style="border: 1px solid black;">
@@ -49,13 +57,13 @@
                     </td>
                     <td style="border: 1px solid black;">
                         {{ field.RegEventId.BSem }}
-                    </td>
+                    </td> -->
                     <td style="border: 1px solid black;">
                         {{ field.RegEventId.Dept }}
                     </td>
-                    <td style="border: 1px solid black;">
+                    <!-- <td style="border: 1px solid black;">
                         {{ field.RegEventId.Regulation }}
-                    </td>
+                    </td> -->
                     <td style="border: 1px solid black;">
                         {{ field.Cycle }}
                     </td>
