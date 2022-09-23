@@ -24,8 +24,11 @@
             <thead>
                 <tr>
                     <td style="border: 1px solid black;">RegNo </td>
-                    <td style="border: 1px solid black;">AYear</td>
-                    <td style="border: 1px solid black;">BYear</td>
+                    <td style="border: 1px solid black;">RollNo </td>
+                    <td style="border: 1px solid black;">Name </td>
+                    <td style="border: 1px solid black;">Dept </td>
+                    <td style="border: 1px solid black;">Academic Year</td>
+                    <td style="border: 1px solid black;">BTech Year</td>
                     <td style="border: 1px solid black;">Regulation</td>
                     <td style="border: 1px solid black;">PoA</td>
                 </tr>
@@ -34,6 +37,15 @@
             <tr>
                 <td style="border: 1px solid black;">
                     {{ np.student.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.student.RollNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.student.Name }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ np.student.Dept }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ np.AYear }}

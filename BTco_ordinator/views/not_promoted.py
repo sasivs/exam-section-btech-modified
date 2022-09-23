@@ -151,21 +151,21 @@ def not_promoted_upload(request):
             newDataset= Dataset()
             newDataset.headers =['student', 'AYear', 'BYear', 'Regulation','PoA']
             errorDataset = Dataset()
-            errorDataset.headers=['student_id', 'RegNo', 'AYear', 'BYear', 'Regulation', 'PoA']
+            errorDataset.headers=['student_id', 'RegNo', 'RollNo', 'Name', 'AYear', 'BYear', 'Regulation', 'PoA']
             for i in range(len(dataset)):
                 row = dataset[i]
                 if row[2] == ayear and row[3] == byear and row[4] == regulation:
-                    newRow = (row[0],row[2],row[3], row[4], row[5])
+                    newRow = (row[0],row[4],row[5], row[6], row[7])
                     newDataset.append(newRow)
                 else:
-                    newRow = (row[0],row[1],row[2],row[3],row[4],row[5])
+                    newRow = (row[0],row[1],row[2],row[3],row[4],row[5], row[6], row[7])
                     errorDataset.append(newRow)
             not_promoted_resource = NotPromotedResource()
             result = not_promoted_resource.import_data(newDataset, dry_run=True)
             if not result.has_errors():
                 not_promoted_resource.import_data(newDataset, dry_run=False)
                 if (len(errorDataset)!=0):
-                    npErrRows = [(errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3], errorDataset[i][4], errorDataset[i][5]) for i in range(len(errorDataset))]
+                    npErrRows = [(errorDataset[i][0],errorDataset[i][1],errorDataset[i][2],errorDataset[i][3], errorDataset[i][4], errorDataset[i][5], errorDataset[i][6], errorDataset[i][7]) for i in range(len(errorDataset))]
                     request.session['npErrRows'] = npErrRows
                     request.session['RegEvent'] = regEvent
                     return redirect('BTNotPromotedUploadErrorHandler' )
@@ -187,11 +187,11 @@ def not_promoted_upload(request):
                         print('Something went wrong in plain import')
                 errorData = Dataset()
                 for i in list(errorIndices):
-                    newRow = (newDataset[i][0],dataset[i][1],newDataset[i][1],newDataset[i][2],newDataset[i][3], newDataset[i][4])
+                    newRow = (newDataset[i][0],dataset[i][1],dataset[i][2],dataset[i][3],newDataset[i][1],newDataset[i][2],newDataset[i][3], newDataset[i][4])
                     errorData.append(newRow)
                 for i in errorDataset:
                     errorData.append(i)
-                npErrRows = [(errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3], errorData[i][4], errorData[i][5]) for i in range(len(errorData))]
+                npErrRows = [(errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3], errorData[i][4], errorData[i][5], errorData[i][6], errorData[i][7]) for i in range(len(errorData))]
                 request.session['npErrRows'] = npErrRows
                 request.session['RegEvent'] = regEvent
                 return redirect('BTNotPromotedUploadErrorHandler')
@@ -210,7 +210,7 @@ def not_promoted_upload_error_handler(request):
         if(form.is_valid()):
             for cIndex, fRow in enumerate(npErrRows):
                 if(form.cleaned_data.get('Check'+str(fRow[0]))):
-                    BTNotPromoted.objects.filter(student_id=fRow[0],AYear=fRow[2], BYear=fRow[3], Regulation=fRow[4]).update(PoA=fRow[5])
+                    BTNotPromoted.objects.filter(student_id=fRow[0],AYear=fRow[4], BYear=fRow[5], Regulation=fRow[6]).update(PoA=fRow[7])
             return render(request, 'BTco_ordinator/NotPromotedUploadSuccess.html')
     else:
         form = NotPromotedUpdateForm(Options=npErrRows)
