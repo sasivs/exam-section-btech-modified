@@ -59,7 +59,7 @@ class NotPromotedBookGenerator:
         file = str(self.regEvent)
         file = file.replace(':', '-')
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
-        headers = ['student_id', 'RegNo', 'AYear', 'BYear', 'Regulation', 'PoA']
+        headers = ['student_id', 'RegNo', 'RollNo', 'Name', 'Academic Year', 'BTech Year', 'Regulation', 'PoA']
         row_num = 1
         for col_num, column_title in enumerate(headers,1):
             cell = worksheet.cell(row=row_num, column=col_num)
@@ -71,6 +71,8 @@ class NotPromotedBookGenerator:
             row_data = [
                 row['student'].id,
                 row['student'].RegNo,
+                row['student'].RollNo,
+                row['student'].Name,
                 row['AYear'],
                 row['BYear'],
                 row['Regulation'],
