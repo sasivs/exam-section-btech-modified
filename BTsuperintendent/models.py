@@ -129,7 +129,7 @@ class BTMarksDistribution(models.Model):
     def get_excel_column_index(self, outer, inner):
         distribution_marks = self.Distribution.split(',')
         marks = [row.split('+') for row in distribution_marks]
-        index = 2
+        index = 3
         '''
         index starts from 1 availing for the roll number(index=0) and name(index=1) rows in excel sheet.
         '''
