@@ -28,7 +28,7 @@ class SampleMarksUploadExcelSheetGenerator:
                 marks_limit = marks_distribution.get_marks_limit(outer_index, inner_index)
                 distribution_names[outer_index][inner_index] += '(' + str(marks_limit) + ')'
         
-        marks_distribution_names = ['RegNo', 'Name'] 
+        marks_distribution_names = ['RegNo', 'RollNo', 'Name'] 
         for dis_name in distribution_names:
             marks_distribution_names.extend(dis_name)
         
@@ -42,6 +42,7 @@ class SampleMarksUploadExcelSheetGenerator:
             row_num+=1
             row_data = [
                 student.RegNo,
+                student.RollNo,
                 student.Name
             ]
             empty_cols = ['' for col in range(len(marks_distribution_names)-2)]
