@@ -388,3 +388,32 @@ def download_sample_subject_sheet(request):
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)
     return response
+
+
+def add_subjects(file):
+    import pandas as pd
+    file = pd.read_excel(file)
+    for rIndex, row in file.iterrows():
+        print(row)
+        regEvent = BTRegistrationStatus.objects.filter(AYear=row[5], ASem=row[3], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[6], Mode='R').first()
+        mark_dis_obj = BTMarksDistribution.objects.filter(Distribution=row[12], PromoteThreshold=row[13]).first()
+        if not mark_dis_obj:
+            mark_dis_obj = BTMarksDistribution(Distribution=row[12], PromoteThreshold=row[13], DistributionNames='M1+MD+M2+E')
+            mark_dis_obj.save()
+            mark_dis_obj = BTMarksDistribution.objects.filter(Distribution=row[12], PromoteThreshold=row[13]).first()
+        if not BTSubjects_Staging.objects.filter(SubCode=row[0], RegEventId_id=regEvent.id).exists():
+            subject_row = BTSubjects_Staging(SubCode=row[0], SubName=row[1], Creditable=row[7], Credits=row[8], Type=row[9], Category=row[10], OfferedBy=row[11],\
+                RegEventId_id=regEvent.id, MarkDistribution=mark_dis_obj.id, DistributionRatio=row[14])
+            subject_row.save()
+        else:
+            BTSubjects_Staging.objects.filter(SubCode=row[0], RegEventId_id=regEvent.id).update(SubName=row[1], Creditable=row[7], Credits=row[8], Type=row[9], Category=row[10], OfferedBy=row[11],\
+                MarkDistribution=mark_dis_obj.id, DistributionRatio=row[14])
+        
+        if not BTSubjects.objects.filter(SubCode=row[0], RegEventId_id=regEvent.id).exists():
+            subject_row = BTSubjects(SubCode=row[0], SubName=row[1], Creditable=row[7], Credits=row[8], Type=row[9], Category=row[10], OfferedBy=row[11],\
+                RegEventId_id=regEvent.id, MarkDistribution=mark_dis_obj.id, DistributionRatio=row[14])
+            subject_row.save()
+        else:
+            BTSubjects.objects.filter(SubCode=row[0], RegEventId_id=regEvent.id).update(SubName=row[1], Creditable=row[7], Credits=row[8], Type=row[9], Category=row[10], OfferedBy=row[11],\
+                MarkDistribution=mark_dis_obj.id, DistributionRatio=row[14])
+    return "Completed!!"            

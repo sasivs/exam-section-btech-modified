@@ -3,7 +3,7 @@ from BTsuperintendent.models import BTCancelledStudentInfo,BTCancelledStudentGra
 from BTco_ordinator.models import BTDroppedRegularCourses,BTNotPromoted,BTNotRegistered,BTRollLists,BTRollLists_Staging,BTStudentRegistrations,BTStudentRegistrations_Staging
 from BTExamStaffDB.models import BTStudentInfo
 from BTfaculty.models import BTStudentGrades,BTMarks,BTMarks_Staging,BTStudentGrades_Staging
-from BTsuperintendent.forms import StudentCancellationForm
+from BTsuperintendent.forms import StudentCancellationForm, StudentCancellationStatusForm
 from BTsuperintendent.user_access_test import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test 
     
@@ -88,4 +88,17 @@ def seat_cancellation(request):
         form = StudentCancellationForm()
     context = {'form':form}
     return render(request,'BTsuperintendent/BTStudentCancellation.html',context)
+
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def seat_cancellation_status(request):
+    if request.method == 'POST':
+        form = StudentCancellationStatusForm(request.POST)
+        if form.is_valid():
+            ayear = form.cleaned_data.get('AYear')
+            cancelled_students = BTCancelledStudentInfo.objects.filter(CancelledDate__year=ayear)
+            return render(request, 'BTsuperintendent/BTStudentCancellationStatus.html', {'form':form, 'cancelled_students':cancelled_students})
+    else:
+        form = StudentCancellationStatusForm()
+    return render(request, 'BTsuperintendent/BTStudentCancellationStatus.html', {'form':form})
 

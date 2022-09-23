@@ -52,6 +52,7 @@ urlpatterns = [
     path('BTMarksDistributionUpdate/<int:pk>', Marks_Distribution.mark_distribution_update, name='BTMarksDistributionUpdate'),
 
     path('BTSupBTSeatCancellation',cancellations.seat_cancellation,name='BTSupBTSeatCancellation'),
+    path('BTSupBTSeatCancellationStatus',cancellations.seat_cancellation_status,name='BTSupBTSeatCancellationStatus'),
 
     path('BTHeldIn', heldin.update_heldin, name='BTHeldIn'),
 ]
