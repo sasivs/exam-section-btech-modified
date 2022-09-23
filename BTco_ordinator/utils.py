@@ -17,7 +17,7 @@ class RollListBookGenerator:
         file = str(self.regEvent)
         file = file.replace(':', '-')
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
-        headers = ['id', 'RegNo', 'AYear', 'BYear', 'ASem', 'Bsem', 'Dept', 'Regulation', 'Cycle', 'Section']
+        headers = ['id', 'RegNo', 'RollNo', 'Name', 'Dept', 'Cycle', 'Section']
         row_num = 1
         for col_num, column_title in enumerate(headers,1):
             cell = worksheet.cell(row=row_num, column=col_num)
@@ -29,12 +29,9 @@ class RollListBookGenerator:
             row_data = [
                 roll.id,
                 roll.student.RegNo,
-                roll.RegEventId.AYear,
-                roll.RegEventId.BYear,
-                roll.RegEventId.ASem,
-                roll.RegEventId.BSem,
+                roll.student.RollNo,
+                roll.student.Name,
                 roll.RegEventId.Dept,
-                roll.RegEventId.Regulation,
                 roll.Cycle,
                 roll.Section
             ]

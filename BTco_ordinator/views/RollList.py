@@ -303,8 +303,8 @@ def UploadSectionInfo(request):
                 for row in dataset:
                     if roll_list.filter(id=row[0]).exists():
                         roll=roll_list.filter(id=row[0]).first()
-                        roll.Cycle = row[8]
-                        roll.Section=row[9]
+                        roll.Cycle = row[5]
+                        roll.Section=row[6]
                         roll.save()
                     else:
                         errData.append(row)
