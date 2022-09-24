@@ -17,6 +17,7 @@
         <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
+                    <td style="border: 1px solid black;">S.No.</td>
                     <td style="border: 1px solid black;">RegNo</td>
                     <td style="border: 1px solid black;">RollNo</td>
                     <td style="border: 1px solid black;">Name</td>
@@ -32,6 +33,7 @@
             <tbody>
                 {% for mark in marks %}
                 <tr>
+                    <td style="border: 1px solid black;">{{mark.s_no}}</td>
                     <td style="border: 1px solid black;">{{mark.Registration.RegNo}}</td>
                     <td style="border: 1px solid black;">{{mark.student.RollNo}}</td>
                     <td style="border: 1px solid black;">{{mark.student.Name}}</td>
