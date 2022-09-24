@@ -72,7 +72,13 @@ def btech_regular_registration_status(request):
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
                     studentRegistrations = studentRegistrations.filter(RegNo=regNo)
-                studentRegistrations = list(studentRegistrations.values())
+                for stud_reg in studentRegistrations:
+                    subjects = stud_reg.RegisteredSubjects
+                    subjects = subjects.split(',')
+                    subjects.sort()
+                    subjects = ','.join(subjects)
+                    stud_reg.RegisteredSubjects = subjects
+                # studentRegistrations = list(studentRegistrations.values())
     else:
         form = RegularRegistrationsStatusForm(regIDs)
     return render(request, 'BTco_ordinator/BTRegularRegistrationStatus.html',
@@ -122,7 +128,13 @@ def btech_backlog_registration_status(request):
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
                     studentRegistrations = studentRegistrations.filter(RegNo=regNo)
-                studentRegistrations = list(studentRegistrations.values())
+                for stud_reg in studentRegistrations:
+                    subjects = stud_reg.RegisteredSubjects
+                    subjects = subjects.split(',')
+                    subjects.sort()
+                    subjects = ','.join(subjects)
+                    stud_reg.RegisteredSubjects = subjects
+                # studentRegistrations = list(studentRegistrations.values())
     else:
         form = BacklogRegistrationSummaryForm(regIDs)
     return render(request, 'BTco_ordinator/BTBacklogRegistrationStatus.html',
@@ -171,7 +183,13 @@ def btech_makeup_registration_status(request):
                 regNo = form.cleaned_data['RegNo']
                 if regNo != 0:
                     studentRegistrations = studentRegistrations.filter(RegNo=regNo)
-                studentRegistrations = list(studentRegistrations.values())
+                for stud_reg in studentRegistrations:
+                    subjects = stud_reg.RegisteredSubjects
+                    subjects = subjects.split(',')
+                    subjects.sort()
+                    subjects = ','.join(subjects)
+                    stud_reg.RegisteredSubjects = subjects
+                # studentRegistrations = list(studentRegistrations.values())
     else:
         form = MakeupRegistrationSummaryForm(regIDs)
     return render(request, 'BTco_ordinator/BTMakeupRegistrationStatus.html',
