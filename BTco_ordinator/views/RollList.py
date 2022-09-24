@@ -113,7 +113,7 @@ def generateRollList(request):
                                     not_prom_regs_copy=not_prom_regs_copy.exclude(student__RegNo=not_prom_reg.student.RegNo)
                             
                             if asem==2:
-                                sem1_related_regEvent = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=asem, BYear=byear, BSem=bsem, Regulation=regulation,\
+                                sem1_related_regEvent = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=1, BYear=byear, BSem=1, Regulation=regulation,\
                                     Mode=mode)
                                 
                                 for not_prom_reg in not_prom_regs:
@@ -150,13 +150,25 @@ def generateRollList(request):
                                 prev_regEventId = BTRegistrationStatus.objects.filter(AYear=ayear-1, BYear=byear-1, Regulation=regulation, Mode=mode)
                             else:
                                 prev_regEventId = BTRegistrationStatus.objects.filter(AYear=ayear-1, BYear=byear-1, Regulation=regulation, Mode=mode, Dept=dept)  
-                            present_not_prom_regs = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=byear, student__Dept=dept)
+                            present_not_prom_regs = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=byear, student__Dept=dept, PoA='R')
                             # not_promoted_bmode = BTNotPromoted.objects.filter(AYear=ayear-2, BYear=byear-1, PoA='B')
                             not_promoted_regs = present_not_prom_regs
                             prev_not_prom_regs = BTNotPromoted.objects.filter(AYear=ayear-1, BYear=byear-1)
                             prev_not_prom_regd_no = prev_not_prom_regs.values_list('student__RegNo', flat=True)
                             prev_not_prom_regs = prev_not_prom_regs.values_list('student', flat=True)
                             reg_rgs = BTRollLists_Staging.objects.filter(~Q(student__in=prev_not_prom_regs), RegEventId__in=prev_regEventId, student__Dept=dept)
+                            
+                            if asem==2:
+                                sem1_related_regEvent = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=1, BYear=byear, BSem=1, Regulation=regulation,\
+                                    Mode=mode).first()
+                                reg_rgs = BTRollLists_Staging.objects.filter(RegEventId_id=sem1_related_regEvent.id)
+                                not_prom_regs_copy = BTNotPromoted.objecys.filter(AYear=ayear-1,BYear=byear, student__Dept=dept, PoA='R')
+                                for not_prom_reg in not_prom_regs:
+                                    if reg_rgs.filter(student__RegNo=not_prom_reg.student.RegNo).exists():
+                                        not_prom_regs_copy=not_prom_regs_copy.exclude(student__RegNo=not_prom_reg.student.RegNo)
+                                
+                                not_prom_regs = not_prom_regs_copy
+
                             not_promoted_regno=[row.student.RegNo for row in not_promoted_regs]
 
                             regular_regd_no = reg_rgs.values_list('student__RegNo', flat=True)
