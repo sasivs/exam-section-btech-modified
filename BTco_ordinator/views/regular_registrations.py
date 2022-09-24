@@ -54,11 +54,11 @@ def btech_regular_registration(request):
                     rolls = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
-                        return render(request, 'BTco_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'msg':msg})
                     subs = BTSubjects.objects.filter(~Q(Category='OEC'),RegEventId=currentRegEventId).filter(~Q(Category='DEC'))
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
-                        return render(request, 'BTco_ordinator/BTRegularRegistrationUploadSuccess.html', {'msg':msg})
+                        return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'msg':msg})
                     initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=currentRegEventId, Mode=1)
                     for roll in rolls:
                         for sub in subs:
