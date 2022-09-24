@@ -575,7 +575,7 @@ FROM (SELECT p."RegNo",
                       JOIN "BTRegistration_Status" reg_status ON sreg."RegEventId" = reg_status.id
              WHERE reg_status."Mode"::text = 'R'::text
                 OR reg_status."Mode"::text = 'D'::text) sreg_status
-          JOIN "BTSubjects" subs ON sreg_status.sub_id = subs.id) p
+          JOIN (select * from "BTSubjects" order by "SubCode") subs ON sreg_status.sub_id = subs.id) p
       GROUP BY p."RegNo", p."AYear", p."ASem", p."BYear", p."BSem", p."Dept", p."Regulation") q,
      (SELECT "BTStudentInfo"."RegNo",
              "BTStudentInfo"."RollNo",
