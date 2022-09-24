@@ -162,7 +162,7 @@ def generateRollList(request):
                                 sem1_related_regEvent = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=1, BYear=byear, BSem=1, Regulation=regulation,\
                                     Mode=mode).first()
                                 reg_rgs = BTRollLists_Staging.objects.filter(RegEventId_id=sem1_related_regEvent.id)
-                                not_prom_regs_copy = BTNotPromoted.objecys.filter(AYear=ayear-1,BYear=byear, student__Dept=dept, PoA='R')
+                                not_prom_regs_copy = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=byear, student__Dept=dept, PoA='R')
                                 for not_prom_reg in not_prom_regs:
                                     if reg_rgs.filter(student__RegNo=not_prom_reg.student.RegNo).exists():
                                         not_prom_regs_copy=not_prom_regs_copy.exclude(student__RegNo=not_prom_reg.student.RegNo)
