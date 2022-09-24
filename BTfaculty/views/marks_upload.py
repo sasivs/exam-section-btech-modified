@@ -136,7 +136,10 @@ def marks_upload_status(request):
             marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
                 Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
             fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
-            for mark in marks_objects:
+            for rindex, mark in enumerate(marks_objects):
+                mark.s_no = rindex+1
+                student_obj = BTStudentInfo.objects.filter(RegNo=mark.Registration.RegNo).first()
+                mark.student = student_obj
                 mark.Marks_list = mark.get_marks_list() 
                 mark.Status = fac_assign_obj.MarksStatus
             return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names_list})
