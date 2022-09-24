@@ -137,7 +137,7 @@ class RollListRegulationDifferenceForm(forms.Form):
             stud_info = BTStudentInfo.objects.get(RegNo=Options[0][row]) 
             self.fields['RadioMode' + str(Options[0][row])] = forms.CharField(required = True, widget = forms.RadioSelect(choices=Choices))
             self.radioFields.append(self['RadioMode' + str(Options[0][row])])
-            self.myFields.append((Options[0][row],Options[1],stud_info.Regulation,self['RadioMode' + str(Options[0][row])]))
+            self.myFields.append((Options[0][row], stud_info.RollNo, stud_info.Name, Options[1],stud_info.Regulation,self['RadioMode' + str(Options[0][row])]))
 
 class RollListFinalizeForm(forms.Form):
     def __init__(self, regIDs, *args,**kwargs):
