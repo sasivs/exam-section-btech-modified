@@ -17,10 +17,10 @@ def grades_threshold_event_wise(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, GradeStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, GradeStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         form = GradesThresholdEventWise(regIDs, request.POST, request.FILES)
         if form.is_valid():
