@@ -1,0 +1,81 @@
+{% extends 'BTsuperintendent/grades_home.html' %}
+{% block title %}Grades Threshold Event Wise{% endblock title %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    {% if invalid_rows %}
+    <div class="row">
+        <strong>This data has thresholds less than zero.</strong>
+        <br>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+              <tr>
+                <td style="border: 1px solid black;">Aacademic Year </td>
+                <td style="border: 1px solid black;">Academic Sem </td>
+                <td style="border: 1px solid black;">BTech Year</td>
+                <td style="border: 1px solid black;">BTech Sem </td>
+                <td style="border: 1px solid black;">Department </td>
+                <td style="border: 1px solid black;">Regulation </td>
+                <td style="border: 1px solid black;">Mode </td>
+                <td style="border: 1px solid black;">SubCode </td>
+              </tr>
+            </thead>
+            <tbody>
+                {% for row in invalid_rows %}
+                <tr>
+                    <td style="border: 1px solid black;">{{row.0}} </td>
+                    <td style="border: 1px solid black;">{{row.1}} </td>
+                    <td style="border: 1px solid black;">{{row.2}} </td>
+                    <td style="border: 1px solid black;">{{row.3}} </td>
+                    <td style="border: 1px solid black;">{{row.4}} </td>
+                    <td style="border: 1px solid black;">{{row.5}} </td>
+                    <td style="border: 1px solid black;">{{row.6}} </td>
+                    <td style="border: 1px solid black;">{{row.7}} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+    </div>
+    {% endif %}
+    {% if error_rows %}
+    <div class="row">
+        <strong>This data is not corresponding to selected event</strong>
+        <br>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+              <tr>
+                <td style="border: 1px solid black;">Aacademic Year </td>
+                <td style="border: 1px solid black;">Academic Sem </td>
+                <td style="border: 1px solid black;">BTech Year</td>
+                <td style="border: 1px solid black;">BTech Sem </td>
+                <td style="border: 1px solid black;">Department </td>
+                <td style="border: 1px solid black;">Regulation </td>
+                <td style="border: 1px solid black;">Mode </td>
+                <td style="border: 1px solid black;">SubCode </td>
+              </tr>
+            </thead>
+            <tbody>
+                {% for row in error_rows %}
+                <tr>
+                    <td style="border: 1px solid black;">{{row.0}} </td>
+                    <td style="border: 1px solid black;">{{row.1}} </td>
+                    <td style="border: 1px solid black;">{{row.2}} </td>
+                    <td style="border: 1px solid black;">{{row.3}} </td>
+                    <td style="border: 1px solid black;">{{row.4}} </td>
+                    <td style="border: 1px solid black;">{{row.5}} </td>
+                    <td style="border: 1px solid black;">{{row.6}} </td>
+                    <td style="border: 1px solid black;">{{row.7}} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -986,5 +986,16 @@ class NotRegisteredRegistrationsForm(forms.Form):
                 self.myFields.append((row.SubCode, row.SubName, row.Credits, self['Check' + str(row.id)], 
                                 self['RadioMode' + str(row.id)],row.id in Selection.keys(),'NR', row.RegEventId.AYear, \
                                     row.RegEventId.Regulation, row.id, ''))
-            
 
+
+class GradesThresholdEventWise(forms.Form):
+    def __init__(self, regIDs, *args,**kwargs):
+        super(GradesThresholdEventWise, self).__init__(*args, **kwargs)
+        MY_CHOICES = []
+        if regIDs:
+            MY_CHOICES = [(regEvent.id, regEvent.__str__) for regEvent in regIDs]
+        MY_CHOICES = [('','--Choose Event--')]+MY_CHOICES
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
+            max_length=26, widget=forms.Select(choices=MY_CHOICES, attrs={'required':'True'}))
+        self.fields['file'] = forms.FileField(required=False, validators=[validate_file_extension])
+        self.fields['file'].widget.attrs.update({'required':'True'})    
