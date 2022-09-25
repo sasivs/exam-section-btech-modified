@@ -237,3 +237,9 @@ def branch_change_home_access(user):
     if 'Superintendent' in groups or 'Associate-Dean' in groups:
         return True
     return  False
+
+def grades_threshold_event_wise_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
+        return True
+    return  False

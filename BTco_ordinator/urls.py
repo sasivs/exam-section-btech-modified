@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from BTco_ordinator.views import faculty_subject_assignment, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
-    dropped_regular_regs, makeupReg, not_promoted, status
+    dropped_regular_regs, makeupReg, not_promoted, status, grades_threshold_event_wise
 
 # create your urls here
 
@@ -64,7 +64,10 @@ urlpatterns = [
     path('BTFacultySubjectAssignment', faculty_subject_assignment.faculty_subject_assignment, name='BTFacultySubjectAssignment'),
     path('BTFacultySubjectAssignmentDetail/<int:pk>', faculty_subject_assignment.faculty_subject_assignment_detail, name='BTFacultySubjectAssignmentDetail'),
     path('BTFacultyAssignmentStatus', faculty_subject_assignment.faculty_assignment_status, name = 'BTFacultyAssignmentStatus'),
-]
+
+    path('BTGradesThresholdEventWise', grades_threshold_event_wise.grades_threshold_event_wise, name = 'BTGradesThresholdEventWise'),
+
+]   
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
