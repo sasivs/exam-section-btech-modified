@@ -23,6 +23,7 @@ def grades_threshold_event_wise(request):
         regIDs = BTRegistrationStatus.objects.filter(Status=1, GradeStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if request.method == 'POST':
         form = GradesThresholdEventWise(regIDs, request.POST, request.FILES)
+        msg = ''
         if form.is_valid():
             event_id = form.cleaned_data['regID']
             event_obj = BTRegistrationStatus.objects.filter(id=event_id).first()
@@ -68,9 +69,8 @@ def grades_threshold_event_wise(request):
                     if not BTGradesThreshold.objects.filter(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Exam_Mode=True).exists():
                         grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
                         grades_threshold_row.save()
-                msg = ''
-                if not fac_assign_none:
-                    msg = 'Grades Threshold updated successfully!'
+            if not fac_assign_none:
+                msg = 'Grades Threshold updated successfully!'
             return render(request, 'BTco_ordinator/GradesThresholdEventWise.html', {'form':form, 'msg':msg, 'error_rows':error_rows, 'invalid_rows':invalid_rows, \
                 'fac_assign_none':fac_assign_none})
         
