@@ -11,6 +11,44 @@
         <button type="submit">Submit</button>
       </form>
     </div>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    {% if fac_assign_none %}
+    <div class="row">
+        <strong>This data has thresholds less than zero.</strong>
+        <br>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+              <tr>
+                <td style="border: 1px solid black;">Aacademic Year </td>
+                <td style="border: 1px solid black;">Academic Sem </td>
+                <td style="border: 1px solid black;">BTech Year</td>
+                <td style="border: 1px solid black;">BTech Sem </td>
+                <td style="border: 1px solid black;">Department </td>
+                <td style="border: 1px solid black;">Regulation </td>
+                <td style="border: 1px solid black;">Mode </td>
+                <td style="border: 1px solid black;">SubCode </td>
+              </tr>
+            </thead>
+            <tbody>
+                {% for row in fac_assign_none %}
+                <tr>
+                    <td style="border: 1px solid black;">{{row.0}} </td>
+                    <td style="border: 1px solid black;">{{row.1}} </td>
+                    <td style="border: 1px solid black;">{{row.2}} </td>
+                    <td style="border: 1px solid black;">{{row.3}} </td>
+                    <td style="border: 1px solid black;">{{row.4}} </td>
+                    <td style="border: 1px solid black;">{{row.5}} </td>
+                    <td style="border: 1px solid black;">{{row.6}} </td>
+                    <td style="border: 1px solid black;">{{row.7}} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+    </div>
+    {% endif %}
     {% if invalid_rows %}
     <div class="row">
         <strong>This data has thresholds less than zero.</strong>

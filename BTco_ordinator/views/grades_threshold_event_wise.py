@@ -31,6 +31,7 @@ def grades_threshold_event_wise(request):
             file = pd.read_excel(file)
             error_rows = []
             invalid_rows=[]
+            fac_assign_none = []
             for rindex, row in file.iterrows():
                 if not (row[0]==event_obj.AYear and row[1]==event_obj.ASem and row[2]==event_obj.BYear and row[3]==event_obj.BSem and row[4]==event_obj.Dept\
                     and row[5]==event_obj.Regulation and row[6]==event_obj.Mode):
@@ -38,6 +39,8 @@ def grades_threshold_event_wise(request):
                     continue
                 fac_assign_objs = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, RegEventId__AYear=row[0], RegEventId__ASem=row[1], RegEventId__BYear=row[2], RegEventId__BSem=row[3], \
                     RegEventId__Dept=row[4], RegEventId__Regulation=row[5], RegEventId__Mode=row[6], Subject__SubCode=row[7])
+                if not fac_assign_objs:
+                    fac_assign_none.append(row)
                 for fac_assign_obj in fac_assign_objs:
                     study_grades = BTGradePoints.objects.filter(Regulation=fac_assign_obj.Subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
                     index = 8
@@ -65,7 +68,11 @@ def grades_threshold_event_wise(request):
                     if not BTGradesThreshold.objects.filter(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Exam_Mode=True).exists():
                         grades_threshold_row = BTGradesThreshold(Subject=fac_assign_obj.Subject, RegEventId=fac_assign_obj.RegEventId, Grade=exam_grades.filter(Grade='F').first(), Threshold_Mark=f_threshold, Exam_Mode=True)
                         grades_threshold_row.save()
-            return render(request, 'BTco_ordinator/GradesThresholdEventWise.html', {'form':form})
+                msg = ''
+                if not fac_assign_none:
+                    msg = 'Grades Threshold updated successfully!'
+            return render(request, 'BTco_ordinator/GradesThresholdEventWise.html', {'form':form, 'msg':msg, 'error_rows':error_rows, 'invalid_rows':invalid_rows, \
+                'fac_assign_none':fac_assign_none})
         
     else:
         form = GradesThresholdEventWise(regIDs)
