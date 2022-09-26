@@ -54,7 +54,7 @@ def subject_upload(request):
                     marks_distribution = BTMarksDistribution.objects.all()
                     for i in range(len(dataset)):
                         row = dataset[i]
-                        if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation)):
+                        if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation) and row[10]!='OEC' and row[10]!='OPC'):
                             newRow = (row[0],row[1],row[7],row[8],row[9],row[10],currentRegEventId, row[11], '', '')
                             newDataset.append(newRow)
                         else:
@@ -315,7 +315,7 @@ def open_subject_upload(request):
                     marks_distribution = BTMarksDistribution.objects.all()
                     for i in range(len(dataset)):
                         row = dataset[i]
-                        if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation) and row[10]=='OEC'):
+                        if((row[2],row[3],row[4],row[5],row[6])==(byear,bsem,dept,ayear,regulation) and (row[10]=='OEC' or row[10]!='OPC')):
                             newRow = (row[0],row[1],row[7],row[8],row[9],row[10],currentRegEventId, row[11], '', '')
                             newDataset.append(newRow)
                         else:

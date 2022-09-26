@@ -57,7 +57,7 @@ def dept_elective_regs_upload(request):
             currentRegEventId = currentRegEventId[0].id
             for i in range(len(dataset)):
                 regNo = int(dataset[i][0])
-                reg = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId,Mode=1,sub_id=subId)
+                reg = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId_id=currentRegEventId,Mode=1,sub_id_id=subId)
                 reg.save()
             return render(request, 'BTco_ordinator/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
