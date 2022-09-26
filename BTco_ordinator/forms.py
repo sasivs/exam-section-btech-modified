@@ -96,17 +96,19 @@ class SubjectFinalizeEventForm(forms.Form):
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=30, widget=forms.Select(choices=myChoices))
 
-class StudentRegistrationUpdateForm(forms.Form):
-    def __init__(self, Options=None, *args,**kwargs):
-        super(StudentRegistrationUpdateForm, self).__init__(*args, **kwargs)
-        self.myFields = []
-        self.checkFields = []
-        for fi in range(len(Options)):
-            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-            self.fields['Check'+str(Options[fi][0])].initial = False
-            self.checkFields.append(self['Check' + str(Options[fi][0])])
-            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5],\
-                Options[fi][6],Options[fi][7],Options[fi][8],Options[fi][9], self['Check' + str(Options[fi][0])]))
+class StudentRegistrationUpdateForm(forms.Form): 
+    def __init__(self, Options=None, *args,**kwargs): 
+        super(StudentRegistrationUpdateForm, self).__init__(*args, **kwargs) 
+        self.myFields = [] 
+        self.checkFields = [] 
+        for fi in range(len(Options)): 
+            subject = BTSubjects_Staging.objects.filter(SubCode=Options[fi][0], RegEventId_id=Options[fi][6]).first() 
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput()) 
+            self.fields['Check'+str(Options[fi][0])].initial = False 
+            self.checkFields.append(self['Check' + str(Options[fi][0])]) 
+            self.myFields.append(Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3],Options[fi][4],Options[fi][5],
+            Options[fi][6],Options[fi][7],Options[fi][8],Options[fi][9], self['Check' + str(Options[fi][0])], subject.MarkDistribution.Distribution,
+            subject.RegEventId.__str__())
 
 
 class RollListStatusForm(forms.Form):
