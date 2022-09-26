@@ -134,7 +134,7 @@ def faculty_assignment_status(request):
         form = FacultyAssignmentStatusForm(regIDs, request.POST)
         if(form.is_valid()):
             regeventid=form.cleaned_data['regID']
-            regEvent = BTRegistrationStatus.objects.filter(RegEventId_id=regeventid).first()
+            regEvent = BTRegistrationStatus.objects.filter(id=regeventid).first()
             if current_user.group == 'Superintendent' or current_user.group == 'Associate-Dean':
                 faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
             elif current_user.group == 'Co-ordinator' or current_user.group == 'HOD':
