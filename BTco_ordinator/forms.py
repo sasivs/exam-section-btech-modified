@@ -360,7 +360,7 @@ class BacklogRegistrationForm(forms.Form):
                     # studentBacklogs += list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']).\
                     #     filter(BYear=byear).filter(~Q(Dept=dept)).filter(~Q(BSem=bsem)))
                 else:
-                    studentBacklogs = list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo']).exclude(AYASBYBS__startswith=ayear))
+                    studentBacklogs = list(BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], BYear=byear, BSem=bsem, Dept=dept).exclude(AYASBYBS__startswith=ayear))
                 if len(studentRegistrations_1) != 0:
                     finalStudentBacklogs = []
                     for row in studentBacklogs:
