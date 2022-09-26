@@ -80,10 +80,10 @@ def registrations_finalize(request):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=0, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=0, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1)
     if(request.method=='POST'):
         form = RegistrationsFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
@@ -107,9 +107,9 @@ def registrations_finalize(request):
                 regs = BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId)
 
                 for reg in regs:
-                    # if not BTStudentRegistrations.objects.filter(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
-                    s=BTStudentRegistrations(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
-                    s.save()
+                    if not BTStudentRegistrations.objects.filter(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
+                        s=BTStudentRegistrations(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
+                        s.save()
                 currentRegEvent.RegistrationStatus = 0
                 currentRegEvent.save()
                 return render(request, 'BTco_ordinator/BTRegistrationsFinalizeSuccess.html')
