@@ -111,7 +111,7 @@ def faculty_assignment_status(request):
     elif 'HOD' in groups:
         current_user = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         current_user.group = 'HOD'
-        valid_subjects = BTSubjects.objects.filter(OfferedBy=current_user.Dept, RegEventId__BYear=1)
+        valid_subjects = BTSubjects.objects.filter(OfferedBy=current_user.Dept)
         regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
         active_regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1).exclude(Mode='R')
         other_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
