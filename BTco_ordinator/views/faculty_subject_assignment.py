@@ -141,7 +141,7 @@ def faculty_assignment_status(request):
                 if regEvent.Dept==current_user.Dept:
                     faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
                 else:
-                    faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid, RegEventId__Dept=current_user.Dept).order_by('Section')
+                    faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid, Subject__OfferedBy=current_user.Dept).order_by('Section')
             elif current_user.group == 'Cycle-Co-ordinator':
                 faculty = BTFacultyAssignment.objects.filter(RegEventId__id=regeventid).order_by('Section')
             return render(request, 'BTco_ordinator/FacultyAssignmentStatus.html',{'form':form, 'faculty':faculty})
