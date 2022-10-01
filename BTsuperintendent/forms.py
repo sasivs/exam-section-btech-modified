@@ -2,10 +2,10 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from ADUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD, BTCancelledDroppedRegularCourses, BTCancelledStudentInfo, BTCycleCoordinator
+from BTsuperintendent.models import BTHOD, BTCancelledStudentInfo, BTCycleCoordinator
 from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from BTsuperintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
-from BTco_ordinator.models import BTStudentBacklogs
+from BTco_ordinator.models import BTSubjects
 from BTsuperintendent.validators import validate_file_extension
 import datetime
 
@@ -198,3 +198,16 @@ class HeldInForm(forms.Form):
             self.fields['held_in_month'] = forms.ChoiceField(label='Held In Month', choices=MONTH_CHOICES, required=False, widget=forms.Select(attrs={'required':'True'}))
             YEAR_CHOICES += [(i,i) for i in range(int(self.data.get('ayasbybs')[:4]),datetime.datetime.now().year+1)]
             self.fields['held_in_year'] = forms.ChoiceField(label='Held In Year', required=False, choices=YEAR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
+
+class OpenElectiveRegistrationsFinalizeForm(forms.Form):
+    def __init__(self, regIDs, *args, **kwargs):
+        super(OpenElectiveRegistrationsFinalizeForm, self).__init__(*args, **kwargs)
+        EVENT_CHOICES = [('', 'Choose Event')]
+        if regIDs:
+            EVENT_CHOICES += [(event.id, event.__str__)for event in regIDs]
+        self.fields['regID'] = forms.CharField(label='Choose Registration Event', max_length=55, widget=forms.Select(choices=EVENT_CHOICES))
+        if self.data.get('regID'):
+            subjects = BTSubjects.objects.filter(RegEventId_id=self.data.get('regID'), Category__in=['OEC','OPC'])
+            SUBJECT_CHOICES = [('', 'Choose Subject')]
+            SUBJECT_CHOICES += [(sub.id, str(sub.SubCode)+', '+str(sub.SubName))for sub in subjects]
+            self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
