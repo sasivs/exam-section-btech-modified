@@ -31,6 +31,7 @@ urlpatterns = [
     # path('BTUpdateManageRegistrations', create_registration_event.update_manage_registrations,name='BTUpdateManageRegistrations'),
 
     path('BTOpenElectiveRegistrations',open_elective_registrations.open_elective_regs, name='BTOpenElectiveRegistrations'),
+    path('BTOpenElectiveRegistrationsFinalilze',open_elective_registrations.open_elective_regs_finalize, name='BTOpenElectiveRegistrationsFinalize'),
 
     path('BTGradePointsUpload', grade_points.grade_points_upload, name='BTGradePointsUpload'),
     path('BTGradePointsStatus', grade_points.grade_points_status, name='BTGradePointsStatus'),

@@ -271,3 +271,90 @@ class BTFacultyAssignment(models.Model):
             ('Subject', 'RegEventId', 'Faculty', 'Section')
         )
         managed = True
+
+
+class BTNPRStudentRegistrations(models.Model): # NPR=Not promoted repeat mode
+    RegNo = models.IntegerField()
+    RegEventId_id = models.IntegerField()
+    Mode = models.IntegerField()
+    sub_id_id = models.IntegerField()
+    class Meta:
+        db_table = 'BTNPRStudentRegistrations'
+        unique_together = (('RegNo', 'RegEventId_id', 'sub_id_id'))
+        managed = True
+
+
+class BTNPRStudentGrades(models.Model):
+    RegId= models.IntegerField()
+    RegEventId = models.IntegerField()
+    Regulation = models.IntegerField()
+    Grade = models.CharField(max_length=2)
+    AttGrade = models.CharField(max_length=2)
+    class Meta:
+        db_table = 'BTNPRStudentGrades'
+        constraints = [
+            models.UniqueConstraint(fields=['RegId'], name='unique_BTNPR_StudentGrades_registration')
+        ]
+        managed = True
+
+class BTNPRRollLists(models.Model):
+    CYCLE_CHOICES = (
+        (10,'PHYSICS'),
+        (9,'CHEMISTRY')
+    )
+    student_id = models.IntegerField()
+    RegEventId_id =models.IntegerField()
+    Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    Section = models.CharField(max_length=2, default='NA')
+    class Meta:
+        db_table = 'BTNPRRollLists'
+        unique_together = (('student_id', 'RegEventId_id'))
+        managed = True
+
+class BTNPRNotRegistered(models.Model):
+    RegEventId_id = models.IntegerField()
+    Student_id = models.IntegerField()
+    Registered = models.BooleanField()
+    class Meta:
+        db_table = 'BTNPRNotRegistered'
+        unique_together = (('RegEventId_id', 'Student_id'))
+        managed = True
+
+class BTNPRDroppedRegularCourses(models.Model):
+    student_id = models.IntegerField()
+    subject_id =models.IntegerField()
+    RegEventId_id = models.IntegerField()
+    Registered = models.BooleanField()
+    class Meta:
+        db_table = 'BTNPRDroppedRegularCourses'
+        unique_together = (('student_id', 'subject_id'))
+        managed = True
+
+class BTNPRMarks(models.Model):
+    Registration_id = models.IntegerField()
+    Marks = models.TextField()
+    TotalMarks = models.IntegerField()
+
+    class Meta:
+        db_table = 'BTNPRMarks'
+        constraints = [
+            models.UniqueConstraint(fields=['Registration_id'], name='unique_BTNPR_marks_registration')
+        ]
+        managed = True
+
+    def get_total_marks(self):
+        marks_dis = self.Marks.split(',')
+        marks_dis = [mark.split('+') for mark in marks_dis]
+        subject = BTSubjects.objects.filter(id=self.Registration.sub_id).first()
+        ratio = subject.DistributionRatio.split(':')
+        total_parts = 0
+        for part in ratio:
+            total_parts += int(part)
+        total = 0
+        for index in range(len(marks_dis)):
+            marks_row = marks_dis[index]
+            sub_total = 0
+            for mark in marks_row:
+                sub_total += int(mark)
+            total = sub_total*int(ratio[index])
+        return round(total/total_parts)

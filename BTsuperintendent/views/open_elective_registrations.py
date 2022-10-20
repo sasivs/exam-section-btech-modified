@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_Superintendent
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
-from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging
+from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging
+from BTsuperintendent.forms import OpenElectiveRegistrationsFinalizeForm
 from ADUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 
@@ -13,7 +14,7 @@ def open_elective_regs(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
     if 'Superintendent' in groups:
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode='R')
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     necessary_field_msg = False
@@ -64,10 +65,31 @@ def open_elective_regs(request):
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation)
             currentRegEventId = currentRegEventId[0].id
-            subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId, Category='OEC')
+            subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId, Category__in=['OEC','OPC'])
             subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:
         form = OpenElectiveRegistrationsForm(regIDs)
     return render(request, 'BTsuperintendent/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})
 
+@login_required(login_url="/login/")
+@user_passes_test(is_Superintendent)
+def open_elective_regs_finalize(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs =  []
+    msg = ''
+    if 'Superintendent' in groups:
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode='R')
+    if request.method == 'POST':
+        form = OpenElectiveRegistrationsFinalizeForm(regIDs, request.POST)
+        if form.is_valid():
+            staging_regs = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), sub_id_id=form.cleaned_data.get('sub'))
+            for reg in staging_regs:
+                final_reg = BTStudentRegistrations(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
+                final_reg.save()
+            msg = 'Open elective registrations are finalized.'
+        return render(request, 'BTsuperintendent/OpenElectiveRegistrationsFinalize.html', {'form':form, 'msg':msg})
+    else:
+        form = OpenElectiveRegistrationsFinalizeForm(regIDs)
+    return render(request, 'BTsuperintendent/OpenElectiveRegistrationsFinalize.html', {'form':form})
