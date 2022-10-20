@@ -35,6 +35,37 @@ class BTProgrammeModel(models.Model):
         ]
         managed = True
 
+class BTCourseStructure(models.Model):
+    Category = models.CharField(max_length=10)
+    Type = models.CharField(max_length=10)
+    Creditable = models.IntegerField()
+    Credits = models.IntegerField()
+    Regulation = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Dept = models.IntegerField()
+
+    class Meta:
+        db_table = 'BTCourseStructure'
+        managed = True
+
+class BTCourses(models.Model):
+    SubCode = models.CharField(max_length=10)
+    SubName = models.CharField(max_length=255)
+    OfferedBy = models.IntegerField()
+    CourseStructure = models.ForeignKey('BTsuperintendent.BTCourseStructure', on_delete=models.CASCADE)
+    lectures = models.IntegerField()
+    tutorials = models.IntegerField()
+    practicals  = models.IntegerField()
+    DistributionRatio = models.TextField()
+    MarkDistribution = models.ForeignKey('BTsuperintendent.BTMarksDistribution', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'BTCourses'
+        constraints = [
+            models.UniqueConstraint(fields = ['SubCode', 'SubName', 'CourseStructure'], name='BTCourses_unique_course')
+        ]
+        managed = True
 
 class BTBranchChanges(models.Model):
     RegNo = models.IntegerField()
@@ -302,4 +333,15 @@ class BTHeldIn(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['AYASBYBS'], name='unique_ayasbybs_btheldin')
         ]
+        managed = True
+
+class BTOpenElectiveRollLists(models.Model):
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
+    subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
+    Section = models.CharField(max_length=2, default='NA')
+
+    class Meta:
+        db_table = 'BTOpenElectiveRollLists'
+        unique_together = ('student', 'RegEventId')
         managed = True
