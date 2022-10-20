@@ -336,13 +336,13 @@ class BacklogRegistrationForm(forms.Form):
                     reg_status_1 = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=1, Regulation=regulation)
                     for regevent in reg_status_1:
                         studentRegistrations_1 += list(BTStudentRegistrations_Staging.objects.\
-                            filter(RegNo=self.data['RegNo'],RegEventId=regevent.id))
+                            filter(student__student__RegNo=self.data['RegNo'],RegEventId=regevent.id))
                     studentRegistrations_1 = [row.sub_id.id for row in studentRegistrations_1]
                 reg_status = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
                 studentRegistrations=[]
                 for regevent in reg_status:
                     studentRegistrations += list(BTStudentRegistrations_Staging.objects.\
-                        filter(RegNo=self.data['RegNo'],RegEventId=regevent.id))
+                        filter(student__student__RegNo=self.data['RegNo'],RegEventId=regevent.id))
                 Selection={studentRegistrations[i].sub_id.id:studentRegistrations[i].Mode for i in range(len(studentRegistrations))}
                 studentRegularRegistrations = []
                 dropped_subjects = []
@@ -551,7 +551,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 reg_status = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
                 studentRegistrations=[]
                 for regevent in reg_status:
-                    studentRegistrations += list(BTStudentRegistrations_Staging.objects.filter(RegNo=self.data['RegNo'],RegEventId=regevent.id))
+                    studentRegistrations += list(BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=self.data['RegNo'],RegEventId=regevent.id))
                 Selection={studentRegistrations[i].sub_id.id:studentRegistrations[i].Mode for i in range(len(studentRegistrations))}
                 studentRegularRegistrations = []
                 studentBacklogs=[]
@@ -670,7 +670,7 @@ class MakeupRegistrationsForm(forms.Form):
                 self.radioFields = []
                 studentMakeups = BTStudentMakeups.objects.filter(RegNo=self.data['RegNo'], BYear=byear, BSem=bsem)
                 for mk in studentMakeups:
-                    already_registered = BTStudentRegistrations_Staging.objects.filter(RegNo=self.data['RegNo'], sub_id=mk.sub_id, \
+                    already_registered = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=self.data['RegNo'], sub_id=mk.sub_id, \
                         RegEventId=currentRegEventId)
                     if len(already_registered) != 0:
                         self.fields['Check' + str(mk.sub_id)] = forms.BooleanField(required=False, \
@@ -918,12 +918,12 @@ class NotRegisteredRegistrationsForm(forms.Form):
                 regNo = selected_nr_object.Student.RegNo
                 not_registered_courses = BTSubjects.objects.filter(RegEventId=selected_nr_object.RegEventId).exclude(Q(Category='OEC')|Q(Category='DEC'))
                 reg_status_objs = BTRegistrationStatus.objects.filter(AYear=regEvent.AYear, ASem=regEvent.ASem, Regulation=regEvent.Regulation)
-                student_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__in=reg_status_objs.values_list('id', flat=True), RegNo=regNo)
+                student_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__in=reg_status_objs.values_list('id', flat=True), student__student__RegNo=regNo)
                 Selection={student_registrations[i].sub_id:student_registrations[i].Mode for i in range(len(student_registrations))}
                 student_regular_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='R').values_list('id', flat=True))
                 student_backlog_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='B').values_list('id', flat=True))
                 student_dropped_regs = student_registrations.filter(RegEventId__in=reg_status_objs.filter(Mode='D').values_list('id', flat=True))
-                registered_courses = BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, sub_id__in=not_registered_courses.values_list('id', flat=True))
+                registered_courses = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, sub_id__in=not_registered_courses.values_list('id', flat=True))
                 self.addBacklogSubjects(student_backlog_regs, Selection)
                 self.addRegularSubjects(student_regular_regs)
                 self.addDroppedRegularSubjects(student_dropped_regs)

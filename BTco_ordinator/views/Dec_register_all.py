@@ -48,10 +48,10 @@ def dept_elective_regs_all(request):
 
             rolls = BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId)
             for i in rolls:
-                reg = BTStudentRegistrations_Staging(RegNo=i.student.RegNo, RegEventId_id=currentRegEventId, Mode=1,sub_id_id=subId)
+                reg = BTStudentRegistrations_Staging(student__student__RegNo=i.student.RegNo, RegEventId_id=currentRegEventId, Mode=1,sub_id_id=subId)
                 reg.save()
             rolls = rolls.values_list('student__RegNo', flat=True)
-            BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(RegNo__in=rolls).delete()
+            BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(student__student__RegNo__in=rolls).delete()
             return render(request, 'BTco_ordinator/Dec_Regs_success.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')

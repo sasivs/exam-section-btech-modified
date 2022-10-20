@@ -35,7 +35,7 @@ def grades_generate(request):
             roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
 
             marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent.id, Registration__sub_id=subject, \
-                Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
+                Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             
             subject_obj = BTSubjects.objects.get(id=subject)
             promote_thresholds = subject_obj.MarkDistribution.PromoteThreshold
@@ -157,7 +157,7 @@ def grades_status(request):
             section = form.cleaned_data.get('subject').split(':')[2]
             roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
             student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject, \
-                RegNo__in=roll_list.values_list('student__RegNo', flat=True))
+                student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent.id, RegId__in=student_registrations.values_list('id',flat=True))
             grades = list(grades)
             for grade in grades:

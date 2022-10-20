@@ -20,7 +20,7 @@ def grade_challenge(request):
         if request.POST.get('submit'):
             if request.POST.get('regID') and request.POST.get('subject') and request.POST.get('regd_no')\
                 and request.POST.get('exam-type') and request.POST.get('mark'):
-                required_marks_obj = BTMarks_Staging.objects.filter(Registration__RegNo=request.POST.get('regd_no'), Registration__RegEventId=request.POST.get('regID'),\
+                required_marks_obj = BTMarks_Staging.objects.filter(Registration__student__student__RegNo=request.POST.get('regd_no'), Registration__RegEventId=request.POST.get('regID'),\
                     Registration__sub_id=request.POST.get('subject')).first()
                 required_grade_obj = BTStudentGrades_Staging.objects.filter(Registration=required_marks_obj.Registration).first()
                 exam_outer_index = request.POST.get('exam-type').split(',')[0]

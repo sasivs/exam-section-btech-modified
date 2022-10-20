@@ -58,7 +58,7 @@ FROM (SELECT final_table."RegNo",
                              "BTStudentGrades"."RegId",
                              "BTStudentGrades"."RegEventId"
                       FROM "BTStudentGrades") sg
-                  JOIN (SELECT "BTStudentRegistrations"."RegNo",
+                  JOIN (SELECT "BTStudentRegistrations"."student__student__RegNo",
                                "BTStudentRegistrations".sub_id,
                                "BTStudentRegistrations".id
                         FROM "BTStudentRegistrations") sreg ON sg."RegId" = sreg.id) sg_regs
@@ -172,7 +172,7 @@ FROM (SELECT final_table."RegNo",
                              "BTStudentGrades_Staging"."RegId",
                              "BTStudentGrades_Staging"."RegEventId"
                       FROM "BTStudentGrades_Staging") sg
-                  JOIN (SELECT "BTStudentRegistrations"."RegNo",
+                  JOIN (SELECT "BTStudentRegistrations"."student__student__RegNo",
                                "BTStudentRegistrations".sub_id,
                                "BTStudentRegistrations".id
                         FROM "BTStudentRegistrations") sreg ON sg."RegId" = sreg.id) sg_regs

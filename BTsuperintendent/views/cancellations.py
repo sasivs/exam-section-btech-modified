@@ -28,7 +28,7 @@ def seat_cancellation(request):
                 notpromoted= BTNotPromoted.objects.filter(student_id=student.id)
                 notregistered =BTNotRegistered.objects.filter(Student_id=student.id)
                 rolls= BTRollLists.objects.filter(student_id=student.id)
-                regs =BTStudentRegistrations.objects.filter(RegNo=regno)
+                regs =BTStudentRegistrations.objects.filter(student__student__RegNo=regno)
                 grades =BTStudentGrades.objects.filter(RegId__in = regs.values_list('id',flat =True))
                 marks = BTMarks.objects.filter(Registration__in = regs)
 
@@ -68,7 +68,7 @@ def seat_cancellation(request):
                 BTMarks_Staging.objects.filter(Registration__in = regs).delete()
                 BTRollLists_Staging.objects.filter(student_id=student.id).delete()
                 BTStudentGrades_Staging.objects.filter(RegId__in = regs.values_list('id',flat =True)).delete()
-                BTStudentRegistrations_Staging.objects.filter(RegNo=regno).delete()
+                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regno).delete()
                 marks.delete()
                 grades.delete()
                 regs.delete()

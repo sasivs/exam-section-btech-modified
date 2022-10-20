@@ -49,7 +49,7 @@ def open_elective_regs(request):
             currentRegEventId = currentRegEventId[0].id
             for i in range(len(dataset)):
                 regNo = int(dataset[i][0])
-                reg = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
+                reg = BTStudentRegistrations_Staging(student__student__RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
                 reg.save()
             return render(request, 'BTsuperintendent/OecRegistrationsSuccess.html')
         elif regId != '--Choose Event--':
