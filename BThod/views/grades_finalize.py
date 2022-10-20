@@ -25,12 +25,12 @@ def grades_finalize(request):
         if form.is_valid():
             regEvent = form.cleaned_data['regEvent']
             student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id__in=subjects.values_list('Subject_id', flat=True))
-            grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True))
-            if BTStudentGrades.objects.filter(RegEventId=regEvent, RegId__in=student_registrations.values_list('id', flat=True)).exists():
+            grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId_id__in=student_registrations.values_list('id', flat=True))
+            if BTStudentGrades.objects.filter(RegEventId=regEvent, RegId_id__in=student_registrations.values_list('id', flat=True)).exists():
                 msg = 'Grades Have already been finalized.'
             else:
                 for g in grades:
-                    gr = BTStudentGrades(RegId=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
+                    gr = BTStudentGrades(RegId_id=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
                     gr.save()
                 RefreshMaterializedViews()
                 msg = 'Grades have been finalized.'
@@ -70,9 +70,9 @@ def finalize_grades(**kwargs):
         return "No Events!!!!"
     for event in regEvents:
         registrations = BTStudentRegistrations.objects.filter(RegEventId_id=event.id)
-        grades_objs = BTStudentGrades_Staging.objects.filter(RegId__in=registrations.values_list('id', flat=True))
+        grades_objs = BTStudentGrades_Staging.objects.filter(RegId_id__in=registrations.values_list('id', flat=True))
         for grade in grades_objs:
-            fgrade = BTStudentGrades(RegId=grade.RegId, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
+            fgrade = BTStudentGrades(RegId_id=grade.RegId, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
             fgrade.save()
         event.GradeStatus = 0
         event.save()

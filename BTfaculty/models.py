@@ -94,7 +94,7 @@ class BTMarks(models.Model):
 
 
 class BTStudentGrades(models.Model):
-    RegId= models.IntegerField()
+    RegId = models.ForeignKey('BTco_ordinator.BTStudentRegistrations',db_column='RegId', on_delete=models.CASCADE)
     RegEventId = models.IntegerField()
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
@@ -109,7 +109,7 @@ class BTStudentGrades(models.Model):
 
 
 class BTStudentGrades_Staging(models.Model):
-    RegId = models.IntegerField()
+    RegId = models.ForeignKey('BTco_ordinator.BTStudentRegistrations',db_column='RegId', on_delete=models.CASCADE)
     RegEventId = models.IntegerField()
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
