@@ -76,7 +76,7 @@ class IXGradeStudentsAddition(forms.Form):
         subject = self.cleaned_data.get('subject')
         regd_no = self.cleaned_data.get('regd_no')
         if subject and regd_no:
-            if not BTStudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, RegNo=regd_no):
+            if not BTStudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, student__student__RegNo=regd_no):
                 raise forms.ValidationError('Invalid Registration Number')
         return regd_no
 

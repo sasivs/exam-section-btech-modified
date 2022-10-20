@@ -20,7 +20,7 @@ def ix_student_assignment(request):
                 subject = form.cleaned_data.get('subject')
                 regd_no = form.cleaned_data.get('regd_no')
                 grade = form.cleaned_data.get('grade')
-                student_registration = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject, RegNo=regd_no).first()
+                student_registration = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id=subject, student__student__RegNo=regd_no).first()
                 if BTIXGradeStudents.objects.filter(Registration=student_registration).exists():
                     BTIXGradeStudents.objects.filter(Registration=student_registration).update(Grade=grade)
                 else:

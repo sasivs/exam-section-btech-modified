@@ -47,7 +47,7 @@ def dropped_regular_registrations(request):
             reg_status = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem, Regulation=regulation)
             studentRegistrations=[]
             for regevent in reg_status:
-                studentRegistrations += list(BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'],RegEventId=regevent.id))
+                studentRegistrations += list(BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=request.POST['RegNo'],RegEventId=regevent.id))
             studentRegularRegistrations = []
             for regn in studentRegistrations:
                 regEvent = BTRegistrationStatus.objects.get(id=regn.RegEventId)
@@ -63,7 +63,7 @@ def dropped_regular_registrations(request):
             pass 
         elif 'RegEvent' in request.POST and 'RegNo' in request.POST and not 'Submit' in request.POST:
             regEvents = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=asem, Regulation=regulation)
-            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
+            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
             mode_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in studentRegistrations}
             student_obj = BTStudentInfo.objects.get(RegNo=request.POST.get('RegNo'))
             context = {'form':form, 'msg':0}
@@ -104,10 +104,10 @@ def dropped_regular_registrations(request):
                                 new_dropped_course.save()
                     elif sub[6] == 'D':
                         if(form.cleaned_data['Check'+str(sub[9])]):
-                            reg = BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
+                            reg = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], RegEventId=currentRegEventId,\
                                  sub_id = sub[9])
                             if(len(reg) == 0):
-                                newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'], RegEventId = currentRegEventId,\
+                                newRegistration = BTStudentRegistrations_Staging(student__student__RegNo = request.POST['RegNo'], RegEventId = currentRegEventId,\
                                     Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()
                                 BTDroppedRegularCourses.objects.filter(student=studentInfo[0], subject_id=sub[9]).first().update(Registered=True)
@@ -120,10 +120,10 @@ def dropped_regular_registrations(request):
                     else:   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
-                            BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
+                            BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
                         elif(sub[5]):
                             #delete record from registration table
-                            BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).delete()  
+                            BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], sub_id = sub[9], id=sub[10]).delete()  
                 return(render(request,'BTco_ordinator/DroppedRegularRegSuccess.html'))
             else:
                 form = DroppedRegularRegistrationsForm(regIDs,request.POST)

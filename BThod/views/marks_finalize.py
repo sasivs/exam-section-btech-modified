@@ -73,7 +73,7 @@ def marks_grades_finalize(**kwargs):
     grades_rows = BTStudentGrades_Staging.objects.filter(RegEventId__in=regEvents.values_list('id', flat=True))
     for grade in grades_rows:
         print(grade.__dict__)
-        grade_fin = BTStudentGrades(RegId=grade.RegId, RegEventId=grade.RegEventId, Grade=grade.Grade, AttGrade=grade.AttGrade, Regulation=grade.Regulation)
+        grade_fin = BTStudentGrades(RegId_id=grade.RegId, RegEventId=grade.RegEventId, Grade=grade.Grade, AttGrade=grade.AttGrade, Regulation=grade.Regulation)
         grade_fin.save
     # for event in regEvents:
     #     print(event.__dict__)

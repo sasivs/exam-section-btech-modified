@@ -31,7 +31,7 @@ def marks_upload(request):
                 section = form.cleaned_data.get('subject').split(':')[2]
                 roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
                 marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
-                    Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
+                    Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
                 mark_distribution = BTSubjects.objects.get(id=subject).MarkDistribution
                 file = form.cleaned_data.get('file')
                 data = bytes()
@@ -134,7 +134,7 @@ def marks_upload_status(request):
 
             roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
             marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
-                Registration__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
+                Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__RegNo')
             fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
             for rindex, mark in enumerate(marks_objects):
                 mark.s_no = rindex+1
@@ -225,7 +225,7 @@ def download_sample_excel_sheet(request):
             subject = BTSubjects.objects.get(id=subject)
             regEvent = BTRegistrationStatus.objects.get(id=regEvent)
             student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent.id, sub_id=subject.id, \
-                RegNo__in=roll_list.values_list('student__RegNo', flat=True))
+                student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
             students = BTStudentInfo.objects.filter(RegNo__in=student_registrations.values_list('RegNo', flat=True))
             
             from BTfaculty.utils import SampleMarksUploadExcelSheetGenerator
@@ -246,7 +246,7 @@ def add_marks(file):
     for rIndex, row in file.iterrows():
         print(row)
         regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        registration = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
+        registration = BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
         marks_row = BTMarks_Staging.objects.filter(Registration_id=registration.id).first()
         if not marks_row:
             subject = BTSubjects.objects.get(id=registration.sub_id.id)

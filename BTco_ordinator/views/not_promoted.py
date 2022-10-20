@@ -77,7 +77,7 @@ def not_promoted_list(request):
                             #     sub = BTSubjects.objects.get(id=course.sub_id)
                             #     offeredEvent = BTRegistrationStatus.objects.get(id=sub.RegEventId)
                             #     if offeredEvent.BYear == byear-1:
-                            #         check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
+                            #         check_registration = BTStudentRegistrations.objects.filter(student__student__RegNo=roll.student.RegNo, sub_id=course.sub_id)
                             #         if len(check_registration) == 0:
                             #             d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             #             np.append(d)
@@ -85,7 +85,7 @@ def not_promoted_list(request):
                                 d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                                 np.append(d)
                             # elif not BTRegulationChange.objects.filter(student__RegNo=roll.student.RegNo).exists():
-                            #     regEvent = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, RegEventId__BYear=byear-1, RegEventId__Mode='R').order_by('RegEventId__AYear').first()
+                            #     regEvent = BTStudentRegistrations.objects.filter(student__student__RegNo=roll.student.RegNo, RegEventId__BYear=byear-1, RegEventId__Mode='R').order_by('RegEventId__AYear').first()
                             #     subjects = BTSubjects.objects.filter(RegEventId_id=regEvent.RegEventId.id)
                             #     oec_subjects = 
 
@@ -98,7 +98,7 @@ def not_promoted_list(request):
                             dropped_courses = BTDroppedRegularCourses.objects.filter(student__RegNo=roll.student.RegNo, Registered=False)
                             # for course in dropped_courses:
                             #     sub = BTSubjects.objects.get(id=course.sub_id)
-                            #     check_registration = BTStudentRegistrations.objects.filter(RegNo=roll.student.RegNo, sub_id=course.sub_id)
+                            #     check_registration = BTStudentRegistrations.objects.filter(student__student__RegNo=roll.student.RegNo, sub_id=course.sub_id)
                             #     if len(check_registration) == 0:
                             #         d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA':'B'}
                             #         np.append(d)
@@ -171,7 +171,7 @@ def not_promoted_upload(request):
                         student_obj = BTStudentInfo.objects.filter(id=row[0]).first()
                         rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
                         regs = BTStudentRegistrations.objects.filter(RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
-                        grades = BTStudentGrades.objects.filter(RegId__in=regs.values_list('id', flat=True))
+                        grades = BTStudentGrades.objects.filter(RegId_id__in=regs.values_list('id', flat=True))
                         marks = BTMarks.objects.filter(RegId__in=regs.values_list('id', flat=True))
                         not_registered = BTNotRegistered.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
                         dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
@@ -201,7 +201,7 @@ def not_promoted_upload(request):
                             BTNPRStudentGrades.objects.create(**i_dict)
                         BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6]).delete()
                         BTMarks_Staging.objects.filter(Registration__in=regs.values_list('id', flat=True)).delete()
-                        BTStudentGrades_Staging.objects.filter(RegId__in=regs.values_list('id', flat=True)).delete()
+                        BTStudentGrades_Staging.objects.filter(RegId_id__in=regs.values_list('id', flat=True)).delete()
                         BTStudentRegistrations_Staging.objects.filter(RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6]).delete()
                         rolls.delete()
                         regs.delete()
@@ -233,7 +233,7 @@ def not_promoted_upload(request):
                             student_obj = BTStudentInfo.objects.filter(id=row[0]).first()
                             rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
                             regs = BTStudentRegistrations.objects.filter(RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
-                            grades = BTStudentGrades.objects.filter(RegId__in=regs.values_list('id', flat=True))
+                            grades = BTStudentGrades.objects.filter(RegId_id__in=regs.values_list('id', flat=True))
                             marks = BTMarks.objects.filter(RegId__in=regs.values_list('id', flat=True))
                             not_registered = BTNotRegistered.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
                             dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6])
@@ -263,7 +263,7 @@ def not_promoted_upload(request):
                                 BTNPRStudentGrades.objects.create(**i_dict)
                             BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6]).delete()
                             BTMarks_Staging.objects.filter(Registration__in=regs.values_list('id', flat=True)).delete()
-                            BTStudentGrades_Staging.objects.filter(RegId__in=regs.values_list('id', flat=True)).delete()
+                            BTStudentGrades_Staging.objects.filter(RegId_id__in=regs.values_list('id', flat=True)).delete()
                             BTStudentRegistrations_Staging.objects.filter(RegNo=student_obj.RegNo, RegEventId__AYear=row[4], RegEventId__BYear=row[5], RegEventId__Regulation=row[6]).delete()
                             rolls.delete()
                             regs.delete()
@@ -405,21 +405,21 @@ def not_promoted_status(request):
 #                 for sub in form.myFields:
 #                     if sub[6] == 'D':
 #                         if form.cleaned_data['Check'+str(sub[9])] == False:
-#                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], sub_id = sub[9], \
+#                             BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], sub_id = sub[9], \
 #                                 id=sub[10]).delete()
 #                     else:   #Handling Backlog Subjects
 #                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
 #                             #update operation mode could be study mode or exam mode
-#                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
+#                             BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], \
 #                                 sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
 #                         elif(sub[5]):
 #                             #delete record from registration table
-#                             BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
+#                             BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], \
 #                                 sub_id = sub[9], id=sub[10]).delete()
 #                         elif(form.cleaned_data['Check'+str(sub[9])]):
 #                             #insert backlog registration
 #                             if sub[10]=='':
-#                                 newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
+#                                 newRegistration = BTStudentRegistrations_Staging(student__student__RegNo = request.POST['RegNo'],RegEventId=currentRegEventId,\
 #                                 Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
 #                                 newRegistration.save()                   
 #                 return(render(request,'BTco_ordinator/BTBacklogRegistrationSuccess.html'))

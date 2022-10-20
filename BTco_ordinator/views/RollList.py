@@ -183,7 +183,7 @@ def generateRollList(request):
                                     roll = BTRollLists_Staging(student=reg.student, RegEventId_id=currentRegEventId)
                                     roll.save()
                             
-                            BTStudentRegistrations_Staging.objects.filter(RegNo__in=prev_not_prom_regd_no,RegEventId=currentRegEventId).delete()
+                            BTStudentRegistrations_Staging.objects.filter(student__student__RegNo__in=prev_not_prom_regd_no,RegEventId=currentRegEventId).delete()
                             BTRollLists_Staging.objects.filter(RegEventId_id=currentRegEventId, student__in=prev_not_prom_regs).delete()
 
                             
@@ -244,7 +244,7 @@ def generateRollList(request):
                         dropped_courses = BTDroppedRegularCourses.objects.filter(subject__RegEventId__BYear=byear, subject__RegEventId__Regulation=regulation)
                         dropped_regno=[]
                         for row in dropped_courses:
-                            sub_reg = BTStudentRegistrations_Staging.objects.filter(RegNo=row.student.RegNo, sub_id=row.subject.id)
+                            sub_reg = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row.student.RegNo, sub_id=row.subject.id)
                             if(len(sub_reg) == 0):
                                 dropped_regno.append(row.student)
                         dropped_regno = list(set(dropped_regno))
@@ -417,7 +417,7 @@ def RollListFeeUpload(request):
                         not_registered = BTNotRegistered(Student=regd_no.student, RegEventId_id=regeventid, Registered=False)
                         not_registered.save()
                 unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
-                BTStudentRegistrations_Staging.objects.filter(RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
+                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo__in=unpaid_regd_no, RegEventId=regeventid).delete()
                 BTRollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=regeventid).delete() 
                 currentRegEvent = BTRegistrationStatus.objects.get(id=regeventid)
                 currentRegEvent.RollListFeeStatus = 1

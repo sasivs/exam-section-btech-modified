@@ -52,7 +52,7 @@ def btech_backlog_registration(request):
             pass 
         elif 'RegEvent' in request.POST and 'RegNo' in request.POST and not 'Submit' in request.POST:
             regEvents = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=asem, Regulation=regulation)
-            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
+            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=request.POST.get('RegNo'), RegEventId__in=regEvents.values_list('id', flat=True))
             mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in studentRegistrations}
             student_obj = BTStudentInfo.objects.get(RegNo=request.POST.get('RegNo'))
             context = {'form':form, 'msg':0}
@@ -98,7 +98,7 @@ def btech_backlog_registration(request):
                     else:   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
-                            BTStudentRegistrations_Staging.objects.filter(RegNo = request.POST['RegNo'], \
+                            BTStudentRegistrations_Staging.objects.filter(student__student__RegNo = request.POST['RegNo'], \
                                 sub_id_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+str(sub[9])])
                         elif(sub[5]):
                             #delete record from registration table
@@ -106,7 +106,7 @@ def btech_backlog_registration(request):
                         elif(form.cleaned_data['Check'+str(sub[9])]):
                             #insert backlog registration
                             if sub[10]=='':
-                                newRegistration = BTStudentRegistrations_Staging(RegNo = request.POST['RegNo'],RegEventId_id=currentRegEventId,\
+                                newRegistration = BTStudentRegistrations_Staging(student__student__RegNo = request.POST['RegNo'],RegEventId_id=currentRegEventId,\
                                 Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id_id=sub[9])
                                 newRegistration.save()                   
                 return(render(request,'BTco_ordinator/BTBacklogRegistrationSuccess.html'))
@@ -139,8 +139,8 @@ def backlog_registrations(file):
             backlogs = BTStudentBacklogs.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4], BSem=row[3])
         regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
         subject_id = backlogs.filter(SubCode=row[7]).first()
-        if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
-            registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+        if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+            registration_obj = BTStudentRegistrations_Staging(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
             registration_obj.save()
         else:
             BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])

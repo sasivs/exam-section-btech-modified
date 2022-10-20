@@ -33,7 +33,7 @@ def not_registered_registrations(request):
             event = request.POST['regEvent']
             event = BTRegistrationStatus.objects.get(id=event)
             regEvents = BTRegistrationStatus.objects.filter(AYear=event.AYear, ASem=event.ASem, Regulation=event.Regulation)
-            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId__in=regEvents.values_list('id', flat=True))
+            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId__in=regEvents.values_list('id', flat=True))
             mode_selection = {'RadioMode'+str(reg.sub_id): reg.Mode for reg in studentRegistrations}
             student_obj = BTStudentInfo.objects.get(RegNo=regNo)
             context = {'form':form, 'msg':0}
@@ -69,43 +69,43 @@ def not_registered_registrations(request):
                         regular_sub = BTSubjects.objects.get(id=sub[9])
                         if(form.cleaned_data['Check'+str(sub[9])] == False):
                             #delete regular_record from the registration table
-                            reg = BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId=request.POST.get('regEvent'),\
+                            reg = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId=request.POST.get('regEvent'),\
                                  sub_id = sub[9], id=sub[10])
                             if len(reg) != 0:
-                                BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId=request.POST.get('regEvent'),\
+                                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId=request.POST.get('regEvent'),\
                                      sub_id = sub[9], id=sub[10]).delete()
                                 new_dropped_course = BTDroppedRegularCourses(student=studentInfo.Student, subject_id=sub[9], RegEventId_id=event, Registered=False)
                                 new_dropped_course.save()
                     elif sub[6] == 'D':
                         if(form.cleaned_data['Check'+str(sub[9])]):
-                            reg = BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId=currentRegEventId,\
+                            reg = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId=currentRegEventId,\
                                  sub_id = sub[9])
                             if(len(reg) == 0):
-                                newRegistration = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId = currentRegEventId,\
+                                newRegistration = BTStudentRegistrations_Staging(student__student__RegNo=regNo, RegEventId = currentRegEventId,\
                                     Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()
                                 BTDroppedRegularCourses.objects.filter(student=studentInfo.Student, subject_id=sub[9]).update(Registered=True)
                         else:
-                            reg = BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId=currentRegEventId,\
+                            reg = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId=currentRegEventId,\
                                  sub_id = sub[9])
                             if len(reg) != 0:
-                                BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId=currentRegEventId,\
+                                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId=currentRegEventId,\
                                      sub_id = sub[9]).delete()
                                 BTDroppedRegularCourses.objects.filter(student=studentInfo.Student, subject_id=sub[9]).update(Registered=False)
                     elif sub[6] == 'B':   #Handling Backlog Subjects
                         if((sub[5]) and (form.cleaned_data['Check'+str(sub[9])])):
                             #update operation mode could be study mode or exam mode
-                            BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
+                            BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, sub_id = sub[9], id=sub[10]).update(Mode=form.cleaned_data['RadioMode'+sub[0]])
                         elif(sub[5]):
                             #delete record from registration table
-                            BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, sub_id = sub[9], id=sub[10]).delete()  
+                            BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, sub_id = sub[9], id=sub[10]).delete()  
                     
                     elif sub[6] == 'NR':
                         if(form.cleaned_data['Check'+str(sub[9])]):
-                            reg = BTStudentRegistrations_Staging.objects.filter(RegNo=regNo, RegEventId=currentRegEventId,\
+                            reg = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regNo, RegEventId=currentRegEventId,\
                                  sub_id = sub[9])
                             if not reg:
-                                newRegistration = BTStudentRegistrations_Staging(RegNo=regNo, RegEventId = currentRegEventId,\
+                                newRegistration = BTStudentRegistrations_Staging(student__student__RegNo=regNo, RegEventId = currentRegEventId,\
                                     Mode=form.cleaned_data['RadioMode'+str(sub[9])],sub_id=sub[9])
                                 newRegistration.save()
                     msg = 'Registrations have been done successfully'

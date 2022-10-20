@@ -28,8 +28,8 @@ def seat_cancellation(request):
                 notpromoted= BTNotPromoted.objects.filter(student_id=student.id)
                 notregistered =BTNotRegistered.objects.filter(Student_id=student.id)
                 rolls= BTRollLists.objects.filter(student_id=student.id)
-                regs =BTStudentRegistrations.objects.filter(RegNo=regno)
-                grades =BTStudentGrades.objects.filter(RegId__in = regs.values_list('id',flat =True))
+                regs =BTStudentRegistrations.objects.filter(student__student__RegNo=regno)
+                grades =BTStudentGrades.objects.filter(RegId_id__in = regs.values_list('id',flat =True))
                 marks = BTMarks.objects.filter(Registration__in = regs)
 
                 BTCancelledStudentInfo(id=student.id,Remarks=remark,CancelledDate=date,RegNo=student.RegNo,RollNo=student.RollNo,Name=student.Name,Regulation=student.Regulation,Dept=student.Dept,AdmissionYear=student.AdmissionYear,Gender=student.Gender,Category=student.Category,GuardianName=student.GuardianName,Phone=student.Phone,email=student.email,Address1=student.Address1,Address2=student.Address2,Cycle=student.Cycle).save()
@@ -67,8 +67,8 @@ def seat_cancellation(request):
 
                 BTMarks_Staging.objects.filter(Registration__in = regs).delete()
                 BTRollLists_Staging.objects.filter(student_id=student.id).delete()
-                BTStudentGrades_Staging.objects.filter(RegId__in = regs.values_list('id',flat =True)).delete()
-                BTStudentRegistrations_Staging.objects.filter(RegNo=regno).delete()
+                BTStudentGrades_Staging.objects.filter(RegId_id__in = regs.values_list('id',flat =True)).delete()
+                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=regno).delete()
                 marks.delete()
                 grades.delete()
                 regs.delete()

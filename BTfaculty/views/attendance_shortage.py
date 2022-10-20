@@ -38,7 +38,7 @@ def attendance_shortage_upload(request):
                 if regno not in roll_list:
                     errorRegNo.append(regno)
                     continue 
-                student_registration = BTStudentRegistrations.objects.filter(RegNo=regno, RegEventId=regEvent, sub_id=sub)
+                student_registration = BTStudentRegistrations.objects.filter(student__student__RegNo=regno, RegEventId=regEvent, sub_id=sub)
                 att_short = BTAttendance_Shortage.objects.filter(Registration=student_registration.first())
                 if len(att_short) == 0 :
                     att_short = BTAttendance_Shortage(Registration=student_registration.first())
@@ -109,7 +109,7 @@ def add_Rixgrades(file):
     for rIndex, row in file.iterrows():
         print(row)
         regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        registration = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
+        registration = BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
         if registration:
             if row[10] == 'R':
                 if not BTAttendance_Shortage.objects.filter(Registration_id=registration.id).exists():

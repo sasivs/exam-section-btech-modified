@@ -52,18 +52,18 @@ def makeup_registrations(request):
         if 'RegNo' not in request.POST.keys() :
             pass
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' not in request.POST.keys():
-            already_registered = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
+            already_registered = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=request.POST['RegNo'], \
                         RegEventId_id=currentRegEventId)
             modes_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in already_registered}
             from json import dumps
             return render(request, 'BTco_ordinator/MakeupRegistrations.html', {'form':form, 'modes':dumps(modes_selection)})
         elif request.POST['RegNo'] != '--Select Reg Number--' and 'Submit' in request.POST.keys() and form.is_valid():
             for sub in form.myFields:
-                already_registered = BTStudentRegistrations_Staging.objects.filter(RegNo=request.POST['RegNo'], \
+                already_registered = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=request.POST['RegNo'], \
                         sub_id_id=sub[8], RegEventId_id=currentRegEventId)
                 if form.cleaned_data['Check'+str(sub[8])]:
                     if len(already_registered) == 0:
-                        newReg = BTStudentRegistrations_Staging(RegNo=request.POST['RegNo'], sub_id_id=sub[8],\
+                        newReg = BTStudentRegistrations_Staging(student__student__RegNo=request.POST['RegNo'], sub_id_id=sub[8],\
                             Mode=form.cleaned_data['RadioMode'+str(sub[8])], RegEventId_id=currentRegEventId)
                         newReg.save()
                 else:
@@ -85,8 +85,8 @@ def add_makeup_regs(file):
         makeups = BTStudentMakeups.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4])
         regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
         subject_id = makeups.filter(SubCode=row[7]).first()
-        if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8]).exists():
-            registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+        if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8]).exists():
+            registration_obj = BTStudentRegistrations_Staging(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
             registration_obj.save()
     return "Completed!!"
 
@@ -116,27 +116,27 @@ def add_makeup_regs_r_grade(file):
             regular_reg = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId__Mode='R', sub_id__SubCode=row[7]).first()
             subject_id = regular_reg.sub_id
             regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-            if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
-                registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])
+            if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
+                registration_obj = BTStudentRegistrations_Staging(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])
                 registration_obj.save()
             else:
-                BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
-            if not BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
-                registration_obj = BTStudentRegistrations(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])
+                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+            if not BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
+                registration_obj = BTStudentRegistrations(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])
                 registration_obj.save()
             else:
-                BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
+                BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).update(Mode=row[8])
         else:
             regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
             subject_id = makeups.filter(SubCode=row[7]).first()
-            if not BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
-                registration_obj = BTStudentRegistrations_Staging(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+            if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+                registration_obj = BTStudentRegistrations_Staging(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
                 registration_obj.save()
             else:
-                BTStudentRegistrations_Staging.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
-            if not BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
-                registration_obj = BTStudentRegistrations(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
+            if not BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+                registration_obj = BTStudentRegistrations(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
                 registration_obj.save()
             else:
-                BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
+                BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
     return "Completed!!"
