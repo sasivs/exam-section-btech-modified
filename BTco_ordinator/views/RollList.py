@@ -160,10 +160,10 @@ def generateRollList(request):
                             
                             if asem==2:
                                 sem1_related_regEvent = BTRegistrationStatus.objects.filter(AYear=ayear, ASem=1, BYear=byear, BSem=1, Regulation=regulation,\
-                                    Mode=mode).first()
+                                    Mode=mode, Dept=dept).first()
                                 reg_rgs = BTRollLists_Staging.objects.filter(RegEventId_id=sem1_related_regEvent.id)
                                 not_prom_regs_copy = BTNotPromoted.objects.filter(AYear=ayear-1,BYear=byear, student__Dept=dept, PoA='R')
-                                for not_prom_reg in not_prom_regs:
+                                for not_prom_reg in not_promoted_regs:
                                     if reg_rgs.filter(student__RegNo=not_prom_reg.student.RegNo).exists():
                                         not_prom_regs_copy=not_prom_regs_copy.exclude(student__RegNo=not_prom_reg.student.RegNo)
                                 
@@ -474,8 +474,9 @@ def rolllist_finalize(request):
             regEvent = form.cleaned_data['regID']
             rolls = BTRollLists_Staging.objects.filter(RegEventId_id=regEvent)
             for roll in rolls:
-                finalized_roll = BTRollLists(student=roll.student, RegEventId=roll.RegEventId, Section=roll.Section, Cycle=roll.Cycle)
-                finalized_roll.save()
+                if not BTRollLists.objects.filter(student=roll.student, RegEventId=roll.RegEventId).exists():
+                    finalized_roll = BTRollLists(student=roll.student, RegEventId=roll.RegEventId, Section=roll.Section, Cycle=roll.Cycle)
+                    finalized_roll.save()
             reg_status_obj = BTRegistrationStatus.objects.filter(id=regEvent).first()
             reg_status_obj.RollListStatus = 0
             reg_status_obj.save()
