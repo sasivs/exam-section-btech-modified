@@ -112,8 +112,10 @@ def add_makeup_regs_r_grade(file):
         print(row)
         makeups = BTStudentMakeups.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4])
         if not makeups.filter(SubCode=row[7]).exists():
-            regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[3], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode='R').first()
-            subject_id = BTSubjects.objects.filter(RegEventId_id=regEvent.id, SubCode=row[7]).first()
+            # regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[3], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode='R').first()
+            # subject_id = BTSubjects.objects.filter(RegEventId_id=regEvent.id, SubCode=row[7]).first()
+            regular_reg = BTStudentRegistrations.objects.filter(RegNo=row[9], RegEventId__Mode='R', sub_id__SubCode=row[7]).first()
+            subject_id = regular_reg.sub_id
             regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
             if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id).exists():
                 registration_obj = BTStudentRegistrations_Staging(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.id, Mode=row[8])

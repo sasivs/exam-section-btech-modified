@@ -2,10 +2,11 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from ADUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD, BTCancelledStudentInfo, BTCycleCoordinator
+from BTsuperintendent.models import BTHOD, BTCancelledStudentInfo, BTCourseStructure, BTCycleCoordinator
 from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from BTsuperintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
 from BTco_ordinator.models import BTSubjects
+from BTsuperintendent.constants import DEPARTMENTS, YEARS, SEMS
 from BTsuperintendent.validators import validate_file_extension
 import datetime
 
@@ -25,7 +26,34 @@ class AddRegulationForm(forms.Form):
         self.fields['bYear'] = bYearBox 
         self.fields['regulation'] = forms.CharField(label='Regulation Code',min_length=1)
 
+class CourseStructureForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CourseStructureForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct()
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        self.fields['regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=REGULATION_CHOICES))
+        self.fields['file'] =forms.FileField(label='Course Structure', validators=[validate_file_extension])
 
+class CourseStructureDeletionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CourseStructureDeletionForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct()
+        CHOICES = [('', 'Choose Event')]
+        CHOICES += [(str(dept)+':'+str(year)+':'+str(sem)+':'+str(regulation.Regulation),str(DEPARTMENTS[dept])+':'+str(YEARS[year])+':'+str(SEMS[sem])+':'+str(regulation.Regulation))for regulation in regulations for dept in range(1,11) for year in range(1,5) for sem in range(1,3)]
+        self.fields['event'] = forms.CharField(label='Event', widget = forms.Select(choices=CHOICES, attrs={'onchange':'submit();'}))
+        self.eventBox = self['event']
+
+        if self.data.get('event'):
+            event = [int(x) for x in self.data.get('event').split()]
+            course_structure = BTCourseStructure.objects.filter(Dept=event[0], BYear=event[1], BSem=event[2], Regulation=event[3]) 
+            self.myFields = []
+            for cs in course_structure:
+                self.fields['Check'+cs.id] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+                if self.data.get('Check'+cs.id) == True:
+                    self.fields['check'+cs.id].initial = True
+                self.myFields.append((cs.BYear, cs.BSem, cs.Dept, cs.Regulation, cs.Category, cs.Type, cs.Creditable, cs.Credits, self['Check'+cs.id]))
+            
 class GradePointsUploadForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(GradePointsUploadForm, self).__init__(*args, **kwargs)

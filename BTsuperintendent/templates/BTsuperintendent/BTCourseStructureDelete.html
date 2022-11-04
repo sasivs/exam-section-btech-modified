@@ -1,0 +1,57 @@
+{% extends 'BTsuperintendent/subjecthome.html' %} {% load static %} 
+
+{% block title %}Delete Course Structure{% endblock title %}
+
+{% block sub %}
+
+<div class="container">
+    <form action="" method="post">
+        <div class="row">
+            <div class="col-sm-3">
+                {% csrf_token %} {{ form.eventBox }}
+            </div>
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-3">
+                <button type="submit" value="submit">Delete</button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-hover table-muted table-striped">
+                <thead>
+                    <tr>
+                        <td style="border: 1px solid black;">BYear</td>
+                        <td style="border: 1px solid black;">BSem</td>
+                        <td style="border: 1px solid black;">Dept</td>
+                        <td style="border: 1px solid black;">Regulation</td>
+                        <td style="border: 1px solid black;">Category</td>
+                        <td style="border: 1px solid black;">Type</td>
+                        <td style="border: 1px solid black;">Creditable</td>
+                        <td style="border: 1px solid black;">Credits</td>
+                        <td style="border: 1px solid black;">Delete Y/N</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cs in form.myFields %}
+                    <tr>
+                        <td style="border: 1px solid black;">{{ sub.0 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.1 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.2 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.3 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.4 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.5 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.6 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.7 }}</td>
+                        <td style="border: 1px solid black;">{{ sub.8 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+</div>
