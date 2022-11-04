@@ -46,9 +46,9 @@ def RefreshMaterializedViews():
     from AWSP.settings import DATABASES
     conn = psycopg2.connect(
     host="localhost",
-    database=DATABASES['NAME'],
+    database=DATABASES['default']['NAME'],
     user="postgres",
-    password=DATABASES['PASSWORD'])
+    password=DATABASES['default']['PASSWORD'])
     cursor = conn.cursor()
 
     try:

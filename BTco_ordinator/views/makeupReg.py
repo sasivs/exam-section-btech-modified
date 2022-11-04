@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
+from BTExamStaffDB.models import BTStudentInfo
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import MakeupRegistrationsForm
 from BTco_ordinator.models import BTStudentRegistrations_Staging, BTStudentMakeups, BTRollLists, BTRollLists_Staging, BTSubjects,\
