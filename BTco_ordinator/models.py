@@ -9,38 +9,21 @@ from django.db import models
 
 
 class BTSubjects_Staging(models.Model):
-    SubCode = models.CharField(max_length=10) 
-    SubName= models.CharField(max_length=100)
-    Creditable = models.IntegerField()
-    Credits = models.IntegerField()
-    Type = models.CharField(max_length=10)
-    Category = models.CharField(max_length=10)
-    OfferedBy = models.IntegerField()
     RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
-    MarkDistribution = models.ForeignKey('BTsuperintendent.BTMarksDistribution', on_delete=models.CASCADE)
-    DistributionRatio = models.TextField()
-
+    course = models.ForeignKey('BTsuperintendent.BTCourses', on_delete=models.CASCADE, default=0)
     class Meta:
         db_table = 'BTSubjects_Staging'
-        unique_together = ('SubCode', 'RegEventId')
+        unique_together = ('course', 'RegEventId')
         managed = True
 
 
 class BTSubjects(models.Model):
-    SubCode = models.CharField(max_length=10) 
-    SubName= models.CharField(max_length=100)
-    Creditable = models.IntegerField()
-    Credits = models.IntegerField()
-    Type = models.CharField(max_length=10)
-    Category = models.CharField(max_length=10)
-    OfferedBy = models.IntegerField()
     RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
-    MarkDistribution = models.ForeignKey('BTsuperintendent.BTMarksDistribution', on_delete=models.CASCADE)
-    DistributionRatio = models.TextField()
+    course = models.ForeignKey('BTsuperintendent.BTCourses', on_delete=models.CASCADE, default=0)
     
     class Meta:
         db_table = 'BTSubjects'
-        unique_together = ('SubCode', 'RegEventId')
+        unique_together = ('course', 'RegEventId')
         managed = True
 
 
