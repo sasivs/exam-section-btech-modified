@@ -10,6 +10,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTOERollList' %}">Open Elective RollList</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTOERollListStatus' %}">Open Elective RollList Status</a>
+                </li>
                 {% elif user|BThas_group:'Associate-Dean' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
@@ -17,12 +23,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTOERollListStatus' %}">Open Elective RollList Status</a>
+                </li>
                 {% elif user|BThas_group:'HOD' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTNotRegisteredStatus' %}">NotRegistered Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTOERollListStatus' %}">Open Elective RollList Status</a>
                 </li>
                 {% elif user|BThas_group:'Co-ordinator' %}
                 <li class="nav-item">
@@ -36,6 +48,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRollListStatus' %}">RollList Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTOERollListStatus' %}">Open Elective RollList Status</a>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'BTFinalizeRollLists' %}" class="nav-link">Finalize RollList</a>

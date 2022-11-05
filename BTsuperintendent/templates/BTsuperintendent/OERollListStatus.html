@@ -1,0 +1,98 @@
+{% extends 'BTsuperintendent/rollList_home.html' %} {% block title %}RollLists Status{% endblock title %} {% block sub %}
+<div class="container">
+    <div class="row">
+        <strong>Choose the required registration.
+            <!-- <br> Download option would be userful for section upload and fee upload. -->
+        </strong>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Status</button>
+            <!-- <button type="submit" name="download" value="download">Download</button> -->
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">id</td>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">RollNo </td>
+                    <td style="border: 1px solid black;">Name </td>
+                    <!-- <td style="border: 1px solid black;">Academic Year </td>
+                        <td style="border: 1px solid black;">BTech Year </td>
+                        <td style="border: 1px solid black;">Academic Sem </td>
+                        <td style="border: 1px solid black;">BTech Sem </td>
+                        <td style="border: 1px solid black;">Regulation </td> -->
+                    <td style="border: 1px solid black;">Dept </td>
+                    <td style="border: 1px solid black;">Section</td>
+                </tr>
+            </thead>
+            {% for field in rows %}
+            <tr>
+                <td style="border: 1px solid black;">
+                    {{ field.id }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.student.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.student.RollNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.student.Name }}
+                </td>
+                <!-- <td style="border: 1px solid black;">
+                        {{ field.RegEventId.AYear }}
+                    </td> -->
+                <!-- <td style="border: 1px solid black;">
+                        {{ field.RegEventId.BYear }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.ASem }}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {{ field.RegEventId.BSem }}
+                    </td> -->
+                <td style="border: 1px solid black;">
+                    {{ field.RegEventId.Dept }}
+                </td>
+                <!-- <td style="border: 1px solid black;">
+                        {{ field.RegEventId.Regulation }}
+                    </td> -->
+                <!-- <td style="border: 1px solid black;">
+                    {{ field.Cycle }}
+                </td> -->
+                <td style="border: 1px solid black;">
+                    {{ field.Section }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %} {% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.table').DataTable({
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, -1],
+                [10, 25, 50, 100, 250, "All"]
+            ],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function() {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function() {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}
