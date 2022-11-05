@@ -2,8 +2,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_Superintendent
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
-from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging
+from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging,BTRollLists_Staging,BTRollLists
 from BTsuperintendent.forms import OpenElectiveRegistrationsFinalizeForm
+from BTsuperintendent.models import BTOpenElectiveRollLists
 from ADUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 
@@ -28,45 +29,35 @@ def open_elective_regs(request):
         subId = request.POST['subId']
         data = {'regID':regId, 'subId':subId}
         form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
-        if 'file' not in request.POST.keys():
-            file = request.FILES['file']   
-        else:
-            file = request.POST['file']
-        if regId != '--Choose Event--' and subId != '--Select Subject--' and file != '':
+        
+        if regId != '--Choose Event--' and subId != '--Select Subject--' :
             strs = regId.split(':')
-            dept = deptDict[strs[0]]
             ayear = int(strs[3])
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            data = bytes()
-            for chunk in file.chunks():
-                data += chunk
-            dataset = XLSX().create_dataset(data)
-            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-            currentRegEventId = currentRegEventId[0].id
-            for i in range(len(dataset)):
-                regNo = int(dataset[i][0])
-                reg = BTStudentRegistrations_Staging(student__student__RegNo=regNo, RegEventId=currentRegEventId, Mode=1,sub_id=subId)
+            
+            rolls = BTOpenElectiveRollLists.objects.filter(subject_id=subId,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
+            BTRollLists_Staging.objects.filter()
+
+            for i in range(len(rolls)):
+                reg = BTStudentRegistrations_Staging(student=rolls[i].student, RegEventId=rolls[i].RegEventId, Mode=1,sub_id=subId)
                 reg.save()
             return render(request, 'BTsuperintendent/OecRegistrationsSuccess.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
-            dept = deptDict[strs[0]]
             ayear = int(strs[3])
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
             mode = strs[6]
-            currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation)
-            currentRegEventId = currentRegEventId[0].id
-            subjects = BTSubjects.objects.filter(RegEventId=currentRegEventId, Category__in=['OEC','OPC'])
-            subjects = [(sub.id,str(sub.SubCode)+" "+str(sub.SubName)) for sub in subjects]
+            subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
+                RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+            subjects = [(sub.id,str(sub.course.SubCode)+" "+str(sub.course.SubName)) for sub in subjects]
             form = OpenElectiveRegistrationsForm(regIDs,subjects,data)
     else:
         form = OpenElectiveRegistrationsForm(regIDs)
@@ -84,10 +75,25 @@ def open_elective_regs_finalize(request):
     if request.method == 'POST':
         form = OpenElectiveRegistrationsFinalizeForm(regIDs, request.POST)
         if form.is_valid():
-            staging_regs = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), sub_id_id=form.cleaned_data.get('sub'))
+            rom2int = {'I':1,'II':2,'III':3,'IV':4}
+            regid = form.cleaned_data.get('redID')
+            strs = regid.split(':')
+            ayear = int(strs[3])
+            asem = int(strs[4])
+            byear = rom2int[strs[1]]
+            bsem = rom2int[strs[2]]
+            regulation = int(strs[5])
+            mode = strs[6]
+            rolls = BTRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)
+            staging_regs = BTStudentRegistrations_Staging.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)
             for reg in staging_regs:
-                final_reg = BTStudentRegistrations(RegNo=reg.RegNo, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
+                roll = rolls.filter(student=reg.student.student).first()
+                final_reg = BTStudentRegistrations(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
                 final_reg.save()
+            BTRegistrationStatus.objects.filter(AYear=ayear,BYear=byear,ASem=asem,BSem=bsem,Regulation=regulation,Mode=mode).update(OERegistartionStatus=0)
+
+
+                
             msg = 'Open elective registrations are finalized.'
         return render(request, 'BTsuperintendent/OpenElectiveRegistrationsFinalize.html', {'form':form, 'msg':msg})
     else:

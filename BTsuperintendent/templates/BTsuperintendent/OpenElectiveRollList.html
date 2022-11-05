@@ -1,0 +1,20 @@
+{% extends 'BTsuperintendent/rollList_home.html' %}{% block title %}Open Elective RollLists {% endblock title %} {% block content %}
+
+
+<div class="container">
+    <div class="row">
+        <strong>Upload RollList for OpenElective. </strong>
+    </div>
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name='submit-form' value="submit">Submit</button>
+        </form>
+    </div>
+    {%if msg %}
+    <div class="row">
+        <strong>
+            {{msg}}
+        </strong>
+    </div>
+    {%endif%} {% endblock content %}

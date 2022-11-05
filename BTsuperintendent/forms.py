@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from ADUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD, BTCancelledStudentInfo, BTCourseStructure, BTCycleCoordinator
+from BTsuperintendent.models import BTHOD, BTCancelledStudentInfo, BTCourseStructure, BTCycleCoordinator,BTCourses
 from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from BTsuperintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
 from BTco_ordinator.models import BTSubjects
@@ -235,16 +235,82 @@ class HeldInForm(forms.Form):
 class OpenElectiveRegistrationsFinalizeForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):
         super(OpenElectiveRegistrationsFinalizeForm, self).__init__(*args, **kwargs)
-        EVENT_CHOICES = [('', 'Choose Event')]
-        if regIDs:
-            EVENT_CHOICES += [(event.id, event.__str__)for event in regIDs]
-        self.fields['regID'] = forms.CharField(label='Choose Registration Event', max_length=55, widget=forms.Select(choices=EVENT_CHOICES))
-        if self.data.get('regID'):
-            subjects = BTSubjects.objects.filter(RegEventId_id=self.data.get('regID'), Category__in=['OEC','OPC'])
-            SUBJECT_CHOICES = [('', 'Choose Subject')]
-            SUBJECT_CHOICES += [(sub.id, str(sub.SubCode)+', '+str(sub.SubName))for sub in subjects]
-            self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = regIDs
+        myChoices = [( 'OE'+':'+years[option[2]]+':'+ sems[option[3]]+':'+ \
+            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]),'OE'+':'+\
+                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
+                    for oIndex, option in enumerate(self.regIDs)]
+        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
 
+            
+class OpenElectiveRollListForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(OpenElectiveRollListForm, self).__init__(*args, **kwargs)
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        myChoices = [( years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R', years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R') \
+                    for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
+        myChoices = [('','Choose Event')]+myChoices
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
+        if self.data.get('regID'):
+            regid = self.data.get('regID')
+            strs = regid.split(':')
+            ayear = int(strs[3])
+            asem = int(strs[4])
+            rom2int = {'I':1,'II':2,'III':3,'IV':4}
+            byear = rom2int[strs[1]]
+            bsem = rom2int[strs[2]]
+            regulation = int(strs[5])
+            mode = strs[6]
+
+            subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
+                RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+            SUBJECT_CHOICES = [('', 'Choose Subject')]
+            SUBJECT_CHOICES += [(sub.id, str(sub.course.SubCode)+', '+str(sub.course.SubName))for sub in subjects]
+            self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
+            self.fields['file'] =forms.FileField(label='OE RollList', validators=[validate_file_extension])
+
+        
+class OERollListStatusForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(OpenElectiveRollListForm, self).__init__(*args, **kwargs)
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        sems = {1:'I',2:'II'}
+        self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        myChoices = [( 'OE'+':'+years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R', 'OE'+':'+years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R') \
+                    for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
+        myChoices = [('','Choose Event')]+myChoices
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
+        if self.data.get('regID'):
+            regid = self.data.get('regID')
+            strs = regid.split(':')
+            ayear = int(strs[3])
+            asem = int(strs[4])
+            rom2int = {'I':1,'II':2,'III':3,'IV':4}
+            byear = rom2int[strs[1]]
+            bsem = rom2int[strs[2]]
+            regulation = int(strs[5])
+            mode = strs[6]
+
+            subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
+                RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+            SUBJECT_CHOICES = [('', 'Choose Subject')]
+            SUBJECT_CHOICES += [(sub.id, str(sub.course.SubCode)+', '+str(sub.course.SubName))for sub in subjects]
+            self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
+            
 class AddCoursesForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(AddCoursesForm, self).__init__(*args, **kwargs)
@@ -265,3 +331,4 @@ class CoursesStatusForm(forms.Form):
         self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
         BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
         self.fields['BYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
+

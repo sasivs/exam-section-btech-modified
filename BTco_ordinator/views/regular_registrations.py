@@ -98,6 +98,9 @@ def registrations_finalize(request):
                     s=BTStudentRegistrations(student=reg.student, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
                     s.save()
             currentRegEvent.RegistrationStatus = 0
+            oesubs = BTSubjects.objects.filter(RegEventId=currentRegEventId,course__CourseStructure__Category__in=['OEC','OPC'])
+            if len(oesubs) == 0:
+                currentRegEvent.OERegistartionStatus=0
             currentRegEvent.save()
             return render(request, 'BTco_ordinator/BTRegistrationsFinalizeSuccess.html')
     else:

@@ -357,8 +357,8 @@ class OpenElectiveRegistrationsForm(forms.Form):
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
         self.regIDs = regIDs
-        myChoices = [(depts[option[4]-1]+':'+ years[option[2]]+':'+ sems[option[3]]+':'+ \
-            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]), depts[option[4]-1]+':'+ \
+        myChoices = [( 'OE'+':'+years[option[2]]+':'+ sems[option[3]]+':'+ \
+            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]),'OE'+':'+\
                 years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
                     for oIndex, option in enumerate(self.regIDs)]
         myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
@@ -366,7 +366,7 @@ class OpenElectiveRegistrationsForm(forms.Form):
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
         subChoices = [('--Select Subject--','--Select Subject--')]
         self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))
-        self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
+        # self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
         if 'regID' in self.data and self.data['regID'] != '--Choose Event--':
             subChoices += subjects
             self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))

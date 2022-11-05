@@ -3,7 +3,7 @@ from BTsuperintendent.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from BTExamStaffDB.forms import StudentInfoFileUpload, StudentInfoUpdateForm, UpdateRollNumberForm
+from BTExamStaffDB.forms import StudentInfoFileUpload, StudentInfoStatusForm, StudentInfoUpdateForm, UpdateRollNumberForm
 from BTExamStaffDB.models import BTStudentInfo
 from BTExamStaffDB.resources import StudentInfoResource
 from tablib import Dataset
@@ -140,3 +140,18 @@ def download_sample_rollnoupdate_sheet(request):
     workbook = BookGenerator.generate_workbook()
     workbook.save(response)
     return response
+
+
+@login_required(login_url="/login/")
+@user_passes_test(is_ExamStaff)
+def StudInfoStatus(request):
+    if request.method == 'POST':
+        form = StudentInfoStatusForm(None,request.POST)
+        if form.is_valid():
+            admissionyear = form.cleaned_data['admnyear']
+            studentinfo = BTStudentInfo.objects.filter(AdmissionYear = admissionyear)
+            form = StudentInfoStatusForm(studentinfo,request.POST)
+            return render(request, 'BTExamStaffDB/BTStudentInfoStatus.html', {'form':form})
+    else:
+        form = StudentInfoStatusForm(None)
+        return render(request, 'BTExamStaffDB/BTStudentInfoStatus.html', {'form':form})

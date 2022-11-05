@@ -37,6 +37,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTYearMandatoryCredits' %}">Mandatory Credits</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTStudentInfoStatus' %}">Student Info Status</a>
+                </li>
                 {% elif user|BThas_group:"HOD" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>

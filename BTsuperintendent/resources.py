@@ -1,5 +1,5 @@
 from import_export import resources
-from BTsuperintendent.models import BTGradePoints, BTCourses
+from BTsuperintendent.models import BTGradePoints, BTCourses, BTOpenElectiveRollLists
 
 class GradePointsResource(resources.ModelResource):
     class Meta:
@@ -8,3 +8,7 @@ class GradePointsResource(resources.ModelResource):
 class BTCoursesResource(resources.ModelResource):
     class Meta:
         model = BTCourses
+
+class BTOpenElectiveRollListsResource(resources.ModelResource):
+    class Meta:
+        model = BTOpenElectiveRollLists

@@ -9,6 +9,7 @@ urlpatterns = [
     path('BTStudentInfoFileUpload',StudInfo.StudInfoFileUpload, name = 'BTStudentInfoFileUpload'),
     path('BTDownloadSampleStudentInfoSheet', StudInfo.download_sample_studentinfo_sheet, name='BTDownloadSampleStudentInfoSheet'),
     path('BTDownloadSampleRollNoUpdateSheet', StudInfo.download_sample_rollnoupdate_sheet, name='BTDownloadSampleRollNoUpdateSheet'),
+    path('BTStudentInfoStatus', StudInfo.StudentInfoStatus, name='BTStudentInfoStatus'),
 
     path('BTStudentInfoUploadErrorHandler', StudInfo.student_info_error_handler, name = 'BTStudentInfoUploadErrorHandler'),
     path('BTUpdateRollNumber', StudInfo.update_rollno, name='BTUpdateRollNumber'),

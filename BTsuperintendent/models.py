@@ -341,7 +341,7 @@ class BTHeldIn(models.Model):
         managed = True
 
 class BTOpenElectiveRollLists(models.Model):
-    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
+    student = models.ForeignKey('BTco_ordinator.BTRollLists_Staging', on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('ADUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
     Section = models.CharField(max_length=2, default='NA')
