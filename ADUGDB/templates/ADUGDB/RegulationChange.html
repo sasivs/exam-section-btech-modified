@@ -1,0 +1,37 @@
+{% extends 'BTsuperintendent/preRegistrations_home.html' %} 
+{% block title %}Regulation Change{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="Submit" value="submit">Submit</button>
+        </form>
+    </div>
+    {% if student %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <tbody>
+                <tr>
+                    <th>RegNo</th>
+                    <td>{{student.RegNo}}</td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <td>{{student.Name}}</td>
+                </tr>
+                <tr>
+                    <th>Regulation</th>
+                    <td>{{student.Regulation}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+</div>
+{% enblock %}

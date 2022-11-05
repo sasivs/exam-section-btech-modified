@@ -1,0 +1,62 @@
+{% extends 'BTsuperintendent/preRegistrations_home.html' %} 
+{% block title %}Regulation Change Status{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="Submit" value="submit">Submit</button>
+        </form>
+    </div>
+    {% if objects %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">S.No. </td>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">RollNo </td>
+                    <td style="border: 1px solid black;">Name </td>
+                    <td style="border: 1px solid black;">BTech.Yr. </td>
+                    <td style="border: 1px solid black;">Actual Regulation </td>
+                    <td style="border: 1px solid black;">Updated Regulation </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in objects %}
+                <tr>
+                    <td style="border: 1px solid black;">{{forloop.counter}} </td>
+                    <td style="border: 1px solid black;">{{obj.student.RegNo}} </td>
+                    <td style="border: 1px solid black;">{{obj.student.RollNo}} </td>
+                    <td style="border: 1px solid black;">{{obj.student.Name}} </td>
+                    <td style="border: 1px solid black;">{{obj.RegEventId.BYear}} </td>
+                    <td style="border: 1px solid black;">{{obj.PreviousRegulation}} </td>
+                    <td style="border: 1px solid black;">{{obj.PresentRegulation}} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

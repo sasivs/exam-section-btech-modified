@@ -13,11 +13,9 @@ from ADUGDB.models import BTGradeChallenge
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean)
 def grade_challenge(request):
-    user = request.user
-    co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True)
     if request.method == 'POST':
-        form = GradeChallengeForm(co_ordinator, request.POST)
-        if request.POST.get('submit'):
+        form = GradeChallengeForm(request.POST)
+        if request.POST.get('Submit'):
             if request.POST.get('regID') and request.POST.get('subject') and request.POST.get('regd_no')\
                 and request.POST.get('exam-type') and request.POST.get('mark'):
                 required_marks_obj = BTMarks_Staging.objects.filter(Registration__student__student__RegNo=request.POST.get('regd_no'), Registration__RegEventId=request.POST.get('regID'),\
@@ -77,10 +75,10 @@ def grade_challenge(request):
                 return render(request, 'ADUGDB/GradeChallenge.html', {'form':form, 'msg':msg})
                 
         elif request.POST.get('regID') and request.POST.get('subject') and request.POST.get('regd_no'):
-            mark_obj = BTMarks_Staging.objects.filter(Registration__RegEventId=request.POST.get('regID'), Registration__subject=request.POST.get('subject'))
+            mark_obj = BTMarks_Staging.objects.filter(Registration__RegEventId_id=request.POST.get('regID'), id=request.POST.get('regd_no')).first()
             return render(request, 'ADUGDB/GradeChallenge.html', {'form':form, 'mark':mark_obj})
     else:
-        form = GradeChallengeForm(co_ordinator=co_ordinator)
+        form = GradeChallengeForm()
     return render(request, 'ADUGDB/GradeChallenge.html', {'form':form})
 
 @login_required(login_url="/login/")
