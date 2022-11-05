@@ -20,7 +20,7 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Submit</button> 
+            <button type="submit" name="Submit", value="Submit">Submit</button> 
             <br><br>
             <hr>
             <label for="download-sample">Download template sheet:</label>
