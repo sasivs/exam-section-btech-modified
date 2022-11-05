@@ -8,12 +8,24 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
+                </li>
                 {% elif user|BThas_group:"Associate-Dean" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTCreateRegistrationEvent' %}">Create Registration Event</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTUpdateManageRegistrations' %}">Update Registration Event</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChange' %}">Regulation Change</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRollListCycleHandler' %}">RollLists Cycle Handler</a>
                 </li>
                 {% elif user|BThas_group:"ExamStaff" %}
                 <li class="nav-item">
@@ -24,6 +36,18 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTYearMandatoryCredits' %}">Mandatory Credits</a>
+                </li>
+                {% elif user|BThas_group:"HOD" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
+                </li>
+                {% elif user|BThas_group:"Co-ordinator" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
+                </li>
+                {% elif user|BThas_group:"Cycle-Co-ordinator" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
                 </li>
                 {% endif %}
             </ul>
