@@ -30,8 +30,11 @@ def StudInfoFileUpload(request):
                 newRow = (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],\
                     row[12],row[13])
                 newDataset.append(newRow)
+            print(newDataset)
+            print(len(newDataset))
             StudInfo_resource = StudentInfoResource()
             result = StudInfo_resource.import_data(newDataset,dry_run=True)
+            print(result.has_errors())
             if(not result.has_errors()):
                 StudInfo_resource.import_data(newDataset,dry_run=False)
                 msg = 'Student Info updated successfully.'
@@ -45,10 +48,11 @@ def StudInfoFileUpload(request):
                 for i in list(cleanIndices):
                     cleanDataset.append(newDataset[i])
                 cleanDataset.headers = newDataset.headers
-
-                result1 = StudInfo_resource.import_data(newDataset,dry_run=True)
+                print(errorIndices)
+                result1 = StudInfo_resource.import_data(cleanDataset,dry_run=True)
+                print(result1.has_errors())
                 if not result1.has_errors():
-                    StudInfo_resource.import_data(newDataset,dry_run=False)
+                    StudInfo_resource.import_data(cleanDataset,dry_run=False)
                 else:
                     print('Something went wrong in plain import')
                 
