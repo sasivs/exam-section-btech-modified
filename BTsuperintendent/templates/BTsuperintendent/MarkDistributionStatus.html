@@ -8,6 +8,7 @@
             <thead>
                 <tr>
                     <td style="border: 1px solid black;">Id</td>
+                    <td style="border: 1px solid black;">Regulation</td>
                     <td style="border: 1px solid black;">Distribution</td>
                     <td style="border: 1px solid black;">Distribution Fields</td>
                     <td style="border: 1px solid black;">Passing Thresholds</td>
@@ -21,6 +22,7 @@
                 {% for dis in distributions %}
                 <tr>
                     <td style="border: 1px solid black;">{{dis.id}}</td>
+                    <td style="border: 1px solid black;">{{dis.Regulation}}</td>
                     <td style="border: 1px solid black;">{{dis.Distribution}}</td>
                     <td style="border: 1px solid black;">{{dis.DistributionNames}}</td>
                     <td style="border: 1px solid black;">{{dis.PromoteThresholds}}</td>

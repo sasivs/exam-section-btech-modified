@@ -1,3 +1,4 @@
+from io import open_code
 from django.db import models
 from django.contrib.auth import get_user_model
 from BTco_ordinator.models import BTSubjects
@@ -44,9 +45,13 @@ class BTCourseStructure(models.Model):
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     Dept = models.IntegerField()
+    count = models.IntegerField()
 
     class Meta:
         db_table = 'BTCourseStructure'
+        constraints = [
+            models.UniqueConstraint(fields=['Category', 'Type', 'Creditable', 'Credits', 'Regulation', 'BYear', 'BSem', 'Dept'], name='Unique_BTCourseStructureId')
+        ]
         managed = True
 
 class BTCourses(models.Model):
@@ -68,15 +73,14 @@ class BTCourses(models.Model):
         managed = True
 
 class BTBranchChanges(models.Model):
-    RegNo = models.IntegerField()
-    RollNo = models.IntegerField()
+    student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     CurrentDept = models.IntegerField()
     NewDept = models.IntegerField()
     AYear = models.IntegerField()
     class Meta:
         db_table = 'BTBranchChanges'
         constraints = [
-            models.UniqueConstraint(fields=['AYear', 'RegNo'], name='unique_BTbranch_change')
+            models.UniqueConstraint(fields=['AYear', 'student'], name='unique_BTbranch_change')
         ]
         managed = True
 
@@ -119,13 +123,14 @@ class BTDepartments(models.Model):
         managed = True
 
 class BTMarksDistribution(models.Model):
+    Regulation = models.IntegerField()
     Distribution = models.TextField()
     DistributionNames=models.TextField()
     PromoteThreshold = models.TextField()
 
     class Meta:
         db_table = 'BTMarksDistribution'
-        unique_together = (('Distribution', 'DistributionNames', 'PromoteThreshold'))
+        unique_together = (('Regulation', 'Distribution', 'DistributionNames', 'PromoteThreshold'))
         managed = True
     
     def __str__(self):
@@ -343,5 +348,5 @@ class BTOpenElectiveRollLists(models.Model):
 
     class Meta:
         db_table = 'BTOpenElectiveRollLists'
-        unique_together = ('student', 'RegEventId')
+        unique_together = ('student', 'RegEventId', 'subject')
         managed = True
