@@ -12,10 +12,11 @@ def mark_distribution_add(request):
     if request.method == 'POST':
         form = MarksDistributionForm(request.POST)
         if(form.is_valid()):
+            regulation = form.cleaned_data['Regulation']
             Distribution = form.cleaned_data['Distribution']
             marksDistribution = form.cleaned_data['DistributionName']
             promote_threshold = form.cleaned_data['PromoteThreshold']
-            mark_distribution = BTMarksDistribution(Distribution=Distribution, DistributionNames=marksDistribution, PromoteThreshold=promote_threshold)
+            mark_distribution = BTMarksDistribution(Regulation=-regulation, Distribution=Distribution, DistributionNames=marksDistribution, PromoteThreshold=promote_threshold)
             mark_distribution.save()
             msg = 'Mark Distribution Added Successfully'
             return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})
@@ -45,9 +46,11 @@ def mark_distribution_update(request, pk):
     if request.method == 'POST':
         form = MarksDistributionForm(request.POST)
         if form.is_valid():
+            regulation = form.cleaned_data['Regulation']
             Distribution = form.cleaned_data['Distribution']
             marksDistribution = form.cleaned_data['DistributionName']
             promote_threshold = form.cleaned_data['PromoteThreshold']
+            mark_distribution_obj.Regulation = regulation
             mark_distribution_obj.Distribution = Distribution
             mark_distribution_obj.DistributionNames = marksDistribution
             mark_distribution_obj.PromoteThreshold = promote_threshold
@@ -55,7 +58,7 @@ def mark_distribution_update(request, pk):
             msg = 'Mark Distribution Updated Successfully'
             return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form, 'msg':msg})
     else:
-        initial_data = {'Distribution':mark_distribution_obj.Distribution, 'DistributionName':mark_distribution_obj.DistributionNames, \
+        initial_data = {'Regulation':mark_distribution_obj.Regulation, 'Distribution':mark_distribution_obj.Distribution, 'DistributionName':mark_distribution_obj.DistributionNames, \
             'PromoteThreshold':mark_distribution_obj.PromoteThreshold}
         form = MarksDistributionForm(initial=initial_data)
     return render(request, 'BTsuperintendent/MarksDistribution.html', {'form':form})
