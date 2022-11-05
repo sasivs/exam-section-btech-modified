@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, grade_points, branch_change,\
-    cycle_coordinator_assignment, home, open_elective_registrations, heldin
+    cycle_coordinator_assignment, home, open_elective_registrations, heldin, course_structure, courses
 
 
 
@@ -25,6 +25,11 @@ urlpatterns = [
     path('BTSupBTCancellationHome', home.cancellation_home, name='BTSupBTCancellationHome'),
 
     path('BTAddRegulation', add_regulation.addRegulation, name = 'BTAddRegulation'),
+
+    path('BTAddCourseStructure', course_structure.add_course_structre, name = 'BTAddCourseStructure'),
+    path('BTAddCourses', courses.add_courses, name = 'BTAddCourses'),
+    path('BTCoursesStatus', courses.course_upload_status, name='BTCoursesStatus'),
+
 
     # path('BTCreateRegistrationEvent', create_registration_event.create_registration_event, name='BTCreateRegistrationEvent'),
 
