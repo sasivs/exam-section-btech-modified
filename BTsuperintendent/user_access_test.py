@@ -243,3 +243,16 @@ def grades_threshold_event_wise_access(user):
     if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
         return True
     return  False
+
+def course_status_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Associate-Dean' in groups or 'Superintendent' in groups:
+        return True
+    return False
+
+def regulation_change_status_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Associate-Dean' in groups or 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups\
+        or 'HOD' in groups:
+        return True
+    return False
