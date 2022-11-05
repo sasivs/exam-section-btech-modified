@@ -6,7 +6,19 @@
             <ul class="nav flex-column">
                 {% if user|BThas_group:"Superintendent" %}
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAddCourseStructure' %}">Course Structure Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAddCourses' %}">Add Courses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCoursesStatus' %}">Courses Status</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTOpenSubjectUpload' %}">Open Elective Subjects Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTOpenSubjectFinalize' %}">Open Elective Subjects Finalize</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
@@ -18,6 +30,9 @@
                     <a class="nav-link" href="{% url 'BTMarkDistributionStatus' %}">Mark Distribution Status</a>
                 </li>
                 {% elif user|BThas_group:"Associate-Dean" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCoursesStatus' %}">Courses Status</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
                 </li>

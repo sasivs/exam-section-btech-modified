@@ -11,13 +11,14 @@ from BTco_ordinator.views import faculty_subject_assignment, not_registered_regi
 urlpatterns = [
 
     path('BTSupBTSubjectUpload', subjects.subject_upload, name = 'BTSupBTSubjectUpload'),
-    path('BTSupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'BTSupBTSubjectsUploadErrorHandler'),
+    # path('BTSupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'BTSupBTSubjectsUploadErrorHandler'),
     path('BTSupBTSubjectUploadStatus', subjects.subject_upload_status, name = 'BTSupBTSubjectUploadStatus'),
     path('BTSupBTSubjectDelete', subjects.subject_delete, name = 'BTSupBTSubjectDelete'),
     path('BTSupBTSubjectFinalize', subjects.subject_finalize, name = 'BTSupBTSubjectFinalize'),
     path('BTDownloadSampleSubjectSheet', subjects.download_sample_subject_sheet, name='BTDownloadSampleSubjectSheet'),
 
     path('BTSupBTOpenSubjectUpload', subjects.open_subject_upload,name='BTSupBTOpenSubjectUpload'),
+    path('BTSupBTOpenSubjectFinalize', subjects.subject_finalize,name='BTSupBTOpenSubjectFinalize'),
 
 
     path('BTGenerateRollList',RollList.generateRollList,name='BTGenerateRollList'),

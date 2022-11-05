@@ -21,7 +21,6 @@
                     <td style="border: 1px solid black;">OfferedBy</td>
                     <td style="border: 1px solid black;">Type</td>
                     <td style="border: 1px solid black;">Category</td>
-                    <td style="border: 1px solid black;">OfferedBy</td>
                     <td style="border: 1px solid black;">DistributionRatio</td>
                     <td style="border: 1px solid black;">MarkDistribution</td>
                 </tr>
@@ -29,34 +28,31 @@
             {% for sub in subjects %}
             <tr>
                 <td style="border: 1px solid black;">
-                    {{ sub.SubCode }}
+                    {{ sub.course.SubCode }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.SubName }}
+                    {{ sub.course.SubName }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.Creditable }}
+                    {{ sub.course.CourseStructure.Creditable }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.Credits }}
+                    {{ sub.course.CourseStructure.Credits }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.OfferedBy }}
+                    {{ sub.course.OfferedBy }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.Type }}
+                    {{ sub.course.CourseStructure.Type }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.Category }}
+                    {{ sub.course.CourseStructure.Category }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.OfferedBy }}
+                    {{ sub.course.DistributionRatio }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ sub.DistributionRatio }}
-                </td>
-                <td style="border: 1px solid black;">
-                    {{ sub.MarkDistribution.Distribution }}
+                    {{ sub.course.MarkDistribution }}
                 </td>
             </tr>
             {% endfor %}
