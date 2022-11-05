@@ -14,7 +14,7 @@ class RollListBookGenerator:
         return workbook
     
     def generate_roll_sheet(self, workbook):
-        file = str(self.regEvent)
+        file = str(self.regEvent.__str__())
         file = file.replace(':', '-')
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
         headers = ['id', 'RegNo', 'RollNo', 'Name', 'Dept', 'Cycle', 'Section']
@@ -56,7 +56,7 @@ class NotPromotedBookGenerator:
         file = str(self.regEvent)
         file = file.replace(':', '-')
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
-        headers = ['student_id', 'RegNo', 'RollNo', 'Name', 'Academic Year', 'BTech Year', 'Regulation', 'PoA']
+        headers = ['student_id', 'RegNo', 'RollNo', 'Name', 'Academic Year', 'BTech Year', 'Regulation', 'PoA_sem1', 'PoA_sem2']
         row_num = 1
         for col_num, column_title in enumerate(headers,1):
             cell = worksheet.cell(row=row_num, column=col_num)
@@ -73,7 +73,8 @@ class NotPromotedBookGenerator:
                 row['AYear'],
                 row['BYear'],
                 row['Regulation'],
-                row['PoA']
+                row['PoA_sem1'],
+                row['PoA_sem2']
             ]
             for col_num, cell_value in enumerate(row_data,1):
                 cell = worksheet.cell(row=row_num, column=col_num)

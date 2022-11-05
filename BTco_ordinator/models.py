@@ -232,7 +232,8 @@ class BTNotPromoted(models.Model):
     BYear = models.IntegerField()
     Regulation = models.IntegerField()
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
-    PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
+    PoA_sem1 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
+    PoA_sem2 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     class Meta:
         db_table = 'BTNotPromoted'
         unique_together=('AYear', 'BYear', 'Regulation', 'student')
