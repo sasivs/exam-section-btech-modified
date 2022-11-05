@@ -13,23 +13,24 @@ def branch_change(request):
     context={}
     if(request.method=='POST'):
         form = BranchChangeForm(request.POST)
-        if(form.is_valid()):
-            regno = form.cleaned_data['RegNo']
-            currentDept = form.cleaned_data['CurrentDept']
-            newDept = form.cleaned_data['NewDept']
-            ayear = form.cleaned_data['AYear']
-            row = BTStudentInfo.objects.filter(RegNo=regno).values()
-            rollno = row[0]['RollNo']
-            name = row[0]['Name']
-            if currentDept != newDept:
-                newRow = BTBranchChanges(RegNo=regno, RollNo=rollno, CurrentDept=currentDept, NewDept=newDept, AYear=ayear)
-                newRow.save()
-                BTStudentInfo.objects.filter(RegNo=regno).update(Dept=newDept)
-                context['regno']=regno
-                context['Name'] = name
-                context['dept'] = newDept
-                return render(request,'BTsuperintendent/BTBranchChangeSuccess.html',context )
-
+        if request.POST.get('Submit'):
+            if(form.is_valid()):
+                regno = form.cleaned_data['RegNo']
+                currentDept = form.cleaned_data['CurrentDept']
+                newDept = form.cleaned_data['NewDept']
+                ayear = form.cleaned_data['AYear']
+                row = BTStudentInfo.objects.filter(RegNo=regno).first()
+                if currentDept != newDept:
+                    newRow = BTBranchChanges(student=row, CurrentDept=currentDept, NewDept=newDept, AYear=ayear)
+                    newRow.save()
+                    BTStudentInfo.objects.filter(RegNo=regno).update(Dept=newDept)
+                    context['regno']=regno
+                    context['Name'] = row.Name
+                    context['dept'] = newDept
+                    return render(request,'BTsuperintendent/BTBranchChangeSuccess.html',context )
+        else:
+            student_info = BTStudentInfo.objects.filter(RegNo=request.POST.get('RegNo')).first()
+            return render(request, 'BTsuperintendent/BTBranchChange.html', {'form':form, 'student':student_info})
     else:
         form = BranchChangeForm()
     context['form']= form   

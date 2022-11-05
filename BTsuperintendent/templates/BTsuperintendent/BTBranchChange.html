@@ -15,7 +15,22 @@ Note that current department refers to the department of the student but not the
             2021-2022,Entering 2022 will result the branch changes of his batch because in 2022-2023 the branch change process would be done)
 
 </strong>
-
+        {% if student %}
+        <div class="row">
+            <table class="table table-hover table-muted table-striped">
+                <tbody>
+                    <th style="border: 1px solid black;">Name</th>
+                    <td style="border: 1px solid black;">{{student.Name}}</td>
+                    <th style="border: 1px solid black;">RollNo</th>
+                    <td style="border: 1px solid black;">{{student.RollNo}}</td>
+                    <th style="border: 1px solid black;">Department</th>
+                    <td style="border: 1px solid black;">{{student.Dept}}</td>
+                    <th style="border: 1px solid black;">Regulation</th>
+                    <td style="border: 1px solid black;">{{student.Regulation}}</td>
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
         <form action="" method="post" >
             {% csrf_token %}
             <div class="row">
