@@ -90,6 +90,7 @@ class BranchChangeForm(forms.Form):
     def __init__(self,  *args,**kwargs):
         super(BranchChangeForm, self).__init__(*args, **kwargs)
         self.fields['RegNo'] = forms.CharField(label='Registration Number',max_length=7,min_length=6)
+        self.fields['RegNo'].widget.attrs['onchange'] = 'submit()'
         departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').filter(Q(Dept__lte=8) & Q(Dept__gte=1))
         deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
         deptChoices = [(0,'--Select Dept--')] + deptChoices
@@ -160,6 +161,10 @@ class CycleCoordinatorAssignmentForm(forms.Form):
 class MarksDistributionForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(MarksDistributionForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct()
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
         self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
         self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
         self.fields['PromoteThreshold'] = forms.CharField(label='Passing Thresholds', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
@@ -239,3 +244,24 @@ class OpenElectiveRegistrationsFinalizeForm(forms.Form):
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             SUBJECT_CHOICES += [(sub.id, str(sub.SubCode)+', '+str(sub.SubName))for sub in subjects]
             self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
+
+class AddCoursesForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(AddCoursesForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct()
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
+        self.fields['BYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
+        self.fields['file'] = forms.FileField(validators=[validate_file_extension], required=False)
+
+class CoursesStatusForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CoursesStatusForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct()
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
+        self.fields['BYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
