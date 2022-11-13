@@ -1,18 +1,15 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import render
-from django.urls import reverse
 from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm, SubjectsSelectForm
 from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
-from BTco_ordinator.resources import SubjectStagingResource
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTMarksDistribution, BTCycleCoordinator, BTCourses, BTCourseStructure
 from BThod.models import BTCoordinator
-from tablib import Dataset
-from import_export.formats.base_formats import XLSX
 from BTsuperintendent.user_access_test import subject_access, subject_home_access, is_Superintendent
+from django.db import transaction
 
 
 @login_required(login_url="/login/")
@@ -56,7 +53,9 @@ def subject_upload(request):
                     form = SubjectsSelectForm(excessCourses, event)
                     from json import dumps
                     return render(request, 'BTco_ordinator/BTSubjectsUpload.html',{'form':form, 'excess':dumps(excessCoursesDict)})
-                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses} )
+                if not slackCourses:
+                    msg = 'Subjects uploaded successfully.'
+                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses, 'msg':msg} )
         elif request.POST.get('name') == 'SubjectsSelectForm':
             event = BTRegistrationStatus.objects.get(id=request.POST.get('event'))
             course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept)
@@ -77,7 +76,9 @@ def subject_upload(request):
                             if not BTSubjects_Staging.objects.filter(RegEventId_id=event.id, course_id=course.id).exists():
                                 subject_row = BTSubjects_Staging(RegEventId_id=event.id, course_id=course.id)
                                 subject_row.save()
-                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'slackCourses':slackCourses})
+                if not slackCourses:
+                    msg = 'Subjects uploaded successfully.'
+                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'slackCourses':slackCourses, 'msg':msg})
 
     else:
         form = SubjectsUploadForm(Options=regIDs)
@@ -166,7 +167,7 @@ def subject_delete(request):
 
 
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
 def subject_finalize(request):
@@ -186,11 +187,12 @@ def subject_finalize(request):
     if(request.method=='POST'):
         form = SubjectFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
-            currentRegEventId = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID'))
             subjects = []
-            subjects = BTSubjects_Staging.objects.filter(RegEventId=currentRegEventId)
             if 'Superintendent' in groups:
-                subjects = subjects.filter(course__CourseStructure__Category__in=['OEC', 'ODC'])
+                subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), \
+                    course__CourseStructure__Category__in=['OEC', 'ODC'])
+            else:
+                subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'))
             for sub in subjects:
                 s=BTSubjects(RegEventId_id=sub.RegEventId_id, course_id=sub.course_id)
                 s.save() 
@@ -207,7 +209,10 @@ def open_subject_upload(request):
     regIDs = []
     msg = ''
     if 'Superintendent' in groups:
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R')
+        course_structure_obj = BTCourseStructure.objects.filter(Category__in=['OEC', 'OPC'])
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R', Regulation__in=course_structure_obj.values_list('Regulation', flat=True), \
+            BYear__in=course_structure_obj.values_list('BYear', flat=True), BSem__in=course_structure_obj.values_list('BSem', flat=True), \
+                Dept__in=course_structure_obj.values_list('Dept', flat=True))
     if regIDs:
         regIDs = [(row.id, row.__str__()) for row in regIDs]
     if(request.method=='POST'):
@@ -231,7 +236,10 @@ def open_subject_upload(request):
                     form = SubjectsSelectForm(excessCourses, event)
                     from json import dumps
                     return render(request, 'BTco_ordinator/BTSubjectsUpload.html',{'form':form, 'excess':dumps(excessCoursesDict)})
-                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses} )
+                msg=''
+                if not slackCourses:
+                    msg = 'Subjects uploaded successfully.'
+                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses, 'msg':msg})
         elif request.POST.get('name') == 'SubjectsSelectForm':
             event = BTRegistrationStatus.objects.get(id=request.POST.get('event'))
             course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept)
@@ -251,7 +259,10 @@ def open_subject_upload(request):
                         if form.cleaned_data.get('Check'+str(course.id)):
                             subject_row = BTSubjects_Staging(RegEventId_id=event.id, course_id=course.id)
                             subject_row.save()
-                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'slackCourses':slackCourses})
+                msg = ''
+                if not slackCourses:
+                    msg = 'Subjects uploaded successfully.'
+                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'slackCourses':slackCourses, 'msg':msg})
     else:
         form = SubjectsUploadForm(Options=regIDs)
     return (render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
