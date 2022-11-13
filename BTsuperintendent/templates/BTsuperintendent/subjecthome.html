@@ -6,7 +6,13 @@
             <ul class="nav flex-column">
                 {% if user|BThas_group:"Superintendent" %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTAddCourseStructure' %}">Course Structure Upload</a>
+                    <a class="nav-link" href="{% url 'BTAddCourseStructure' %}">Upload Course Structure</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCourseStructureStatus' %}">Course Structure Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCourseStructureDelete' %}">Course Structure Delete</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTAddCourses' %}">Add Courses</a>
@@ -31,6 +37,9 @@
                 </li>
                 {% elif user|BThas_group:"Associate-Dean" %}
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCourseStructureStatus' %}">Course Structure Status</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTCoursesStatus' %}">Courses Status</a>
                 </li>
                 <li class="nav-item">
@@ -51,9 +60,6 @@
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
                 </li>
                 {% elif user|BThas_group:"Cycle-Co-ordinator" %}
@@ -62,9 +68,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUploadStatus' %}">Subjects Upload Status</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTSupBTSubjectDelete' %}">Subjects Delete</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
