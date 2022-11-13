@@ -13,7 +13,7 @@ urlpatterns = [
     path('BTSupBTSubjectUpload', subjects.subject_upload, name = 'BTSupBTSubjectUpload'),
     # path('BTSupBTSubjectsUploadErrorHandler', subjects.subject_upload_error_handler, name = 'BTSupBTSubjectsUploadErrorHandler'),
     path('BTSupBTSubjectUploadStatus', subjects.subject_upload_status, name = 'BTSupBTSubjectUploadStatus'),
-    path('BTSupBTSubjectDelete', subjects.subject_delete, name = 'BTSupBTSubjectDelete'),
+    # path('BTSupBTSubjectDelete', subjects.subject_delete, name = 'BTSupBTSubjectDelete'),
     path('BTSupBTSubjectFinalize', subjects.subject_finalize, name = 'BTSupBTSubjectFinalize'),
     path('BTDownloadSampleSubjectSheet', subjects.download_sample_subject_sheet, name='BTDownloadSampleSubjectSheet'),
 
@@ -24,7 +24,7 @@ urlpatterns = [
     path('BTGenerateRollList',RollList.generateRollList,name='BTGenerateRollList'),
     path('BTRollListSectionUpload',RollList.UploadSectionInfo,name='BTRollListSectionUpload'),
     path('BTRollListFeeUpload',RollList.RollListFeeUpload,name='BTRollListFeeUpload'),
-    path('BTFirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'BTFirstYearRollListsCycleHandler'),
+    # path('BTFirstYearRollListsCycleHandler',RollList.first_year_rollLists_cycle_handler, name = 'BTFirstYearRollListsCycleHandler'),
     path('BTRollListStatus',RollList.RollList_Status,name='BTRollListStatus'),
     path('BTFinalizeRollLists', RollList.rolllist_finalize, name='BTFinalizeRollLists'),
     path('BTNotRegisteredStatus',RollList.NotRegisteredStatus,name='BTNotRegisteredStatus'),
