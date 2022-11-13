@@ -11,7 +11,7 @@ class AttendanceShoratgeUploadForm(forms.Form):
         myChoices=[]
         for sub in Option:
             myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
-                str(sub.Subject.SubCode)+', '+str(sub.Section))]
+                str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
 
         myChoices = [('','--Select Subject--')]+myChoices
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
@@ -24,7 +24,7 @@ class AttendanceShoratgeStatusForm(forms.Form):
         myChoices=[]
         for sub in Option:
             myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
-                str(sub.Subject.SubCode)+', '+str(sub.Section))]
+                str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
         myChoices = [('','--Select Subject--')]+myChoices
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
             max_length=26, widget=forms.Select(choices=myChoices))
@@ -97,7 +97,7 @@ class GradeThresholdStatusForm(forms.Form):
         super(GradeThresholdStatusForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
         for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode))]
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
 
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
@@ -107,7 +107,7 @@ class MarksUploadForm(forms.Form):
         super(MarksUploadForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
         for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.SubCode)+', '+str(sub.Section))]
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         EXAM_CHOICES = [('', '----------')]
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, required=False, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()", 'required':'True'}))
@@ -115,7 +115,7 @@ class MarksUploadForm(forms.Form):
         if self.data.get('subject'):
             subject = self.data.get('subject').split(':')[0]
             subject = BTSubjects.objects.get(id=subject)
-            EXAM_CHOICES += subject.MarkDistribution.distributions() + [('all', 'All')]
+            EXAM_CHOICES += subject.course.MarkDistribution.distributions() + [('all', 'All')]
             self.fields['exam-type'] = forms.CharField(label='Select Exam Type', required=False, max_length=26, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
             self.fields['file'] = forms.FileField(required=False, validators=[validate_file_extension])
             self.fields['file'].widget.attrs.update({'required':'True'})
@@ -127,7 +127,7 @@ class MarksStatusForm(forms.Form):
         if subjects:
             for sub in subjects:
                 subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
-                    str(sub.Subject.SubCode)+', '+str(sub.Section))]
+                    str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
@@ -136,7 +136,7 @@ class MarksUpdateForm(forms.Form):
         super(MarksUpdateForm, self).__init__(*args, **kwargs)
         subject = BTSubjects.objects.get(id=mark.Registration.sub_id_id)
         EXAM_CHOICES = [('', '----------')]
-        EXAM_CHOICES += subject.MarkDistribution.distributions()
+        EXAM_CHOICES += subject.course.MarkDistribution.distributions()
         self.subject = subject
         self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, widget=forms.Select(choices=EXAM_CHOICES))
         self.fields['mark'] = forms.CharField(label='Update Mark', widget=forms.TextInput(attrs={'type':'number', 'step':'0.25'}))

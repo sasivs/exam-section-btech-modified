@@ -17,9 +17,9 @@ class SampleMarksUploadExcelSheetGenerator:
     def generate_marks_upload_sheet(self, workbook):
         file = self.regEvent.__str__()
         file = file.replace(':', '-')
-        file += '__'+str(self.subject.SubCode)
+        file += '__'+str(self.subject.course.SubCode)
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
-        marks_distribution = self.subject.MarkDistribution
+        marks_distribution = self.subject.course.MarkDistribution
         distribution_names = marks_distribution.DistributionNames.split(',')
         distribution_names = [name.split('+') for name in distribution_names]
         
