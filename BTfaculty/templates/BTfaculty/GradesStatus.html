@@ -15,7 +15,10 @@
         <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
+                    <td style="border: 1px solid black;">S.No.</td>
                     <td style="border: 1px solid black;">RegNo</td>
+                    <td style="border: 1px solid black;">RollNo</td>
+                    <td style="border: 1px solid black;">Name</td>
                     <td style="border: 1px solid black;">Marks</td>
                     <td style="border: 1px solid black;">Grade</td>
                     <td style="border: 1px solid black;">AttGrade</td>
@@ -24,7 +27,10 @@
             <tbody>
                 {% for grade in grades %}
                 <tr>
+                    <td style="border: 1px solid black;">{{forloop.counter}}</td>
                     <td style="border: 1px solid black;">{{grade.RegNo}}</td>
+                    <td style="border: 1px solid black;">{{grade.RegId.student.student.RollNo}}</td>
+                    <td style="border: 1px solid black;">{{grade.RegId.student.student.Name}}</td>
                     <td style="border: 1px solid black;">{{grade.Marks}}</td>
                     <td style="border: 1px solid black;">{{grade.Grade}}</td>
                     <td style="border: 1px solid black;">{{grade.AttGrade}}</td>

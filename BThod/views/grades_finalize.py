@@ -24,7 +24,7 @@ def grades_finalize(request):
         form = GradesFinalizeForm(regIDs, request.POST)
         if form.is_valid():
             regEvent = form.cleaned_data['regEvent']
-            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id__in=subjects.values_list('Subject_id', flat=True))
+            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=regEvent, sub_id_id__in=subjects.values_list('Subject_id', flat=True))
             grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId_id__in=student_registrations.values_list('id', flat=True))
             if BTStudentGrades.objects.filter(RegEventId=regEvent, RegId_id__in=student_registrations.values_list('id', flat=True)).exists():
                 msg = 'Grades Have already been finalized.'
