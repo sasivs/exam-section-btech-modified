@@ -12,8 +12,8 @@ from BTco_ordinator.models import (BTDroppedRegularCourses, BTNotPromoted,
                                    BTStudentRegistrations_Staging)
 from BTExamStaffDB.models import BTStudentInfo
 from BThod.models import BTCoordinator
-from BTsuperintendent.models import BTHOD, BTCycleCoordinator
-from BTsuperintendent.user_access_test import (roll_list_access,
+from ADAUGDB.models import BTHOD, BTCycleCoordinator
+from ADAUGDB.user_access_test import (roll_list_access,
                                                roll_list_status_access)
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q

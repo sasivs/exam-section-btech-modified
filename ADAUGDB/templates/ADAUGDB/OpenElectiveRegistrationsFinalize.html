@@ -1,0 +1,22 @@
+{% extends 'ADAUGDB/registrationhome.html' %}
+{% block title %}OEC Registrations Finalize{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+
+<div class="container">
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Finalize</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

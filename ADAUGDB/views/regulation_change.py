@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from BTsuperintendent.user_access_test import is_Associate_Dean, regulation_change_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean, regulation_change_status_access
 from django.shortcuts import render
 from ADAUGDB.forms import RegulationChangeForm, RegulationChangeStatusForm
 from BTco_ordinator.models import BTNotPromoted, BTRegulationChange
-from BTsuperintendent.models import BTHOD, BTCycleCoordinator
+from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")

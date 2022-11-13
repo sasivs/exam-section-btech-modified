@@ -1,0 +1,48 @@
+{% extends 'ADAUGDB/subjecthome.html' %} {% block title %}Marks Distribution Status{% endblock title %} {% load static %} {% block sub %} {% load user_check_tag %}
+<div class="container">
+    <div class="row">
+        <strong>Status of added mark distributions can be viewed here.(Delete Option is available to remove a particular ditribution)</strong>
+    </div>
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Id</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">Distribution</td>
+                    <td style="border: 1px solid black;">Distribution Fields</td>
+                    <td style="border: 1px solid black;">Passing Thresholds</td>
+                    {% if user|BThas_group:"Superintendent" %}
+                    <td style="border: 1px solid black;">Update</td>
+                    <td style="border: 1px solid black;">Delete</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for dis in distributions %}
+                <tr>
+                    <td style="border: 1px solid black;">{{dis.id}}</td>
+                    <td style="border: 1px solid black;">{{dis.Regulation}}</td>
+                    <td style="border: 1px solid black;">{{dis.Distribution}}</td>
+                    <td style="border: 1px solid black;">{{dis.DistributionNames}}</td>
+                    <td style="border: 1px solid black;">{{dis.PromoteThresholds}}</td>
+                    {% if user|BThas_group:"Superintendent" %}
+                    <form action="" method="POST">{% csrf_token %}
+                        <td style="border: 1px solid black;">
+                            <a href="{% url 'BTMarksDistributionUpdate' dis.id %}" class="btn btn-primary" style="text-decoration:none">
+                                Update
+                            </a>
+                        </td>
+                        <td style="border: 1px solid black;">
+                            <button type="submit" name="delete" value="{{dis.id}}" onclick="return confirm('Are you sure you want to delete distribution {{dis.id}}?')">Delete</button>
+                        </td>
+                    </form>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

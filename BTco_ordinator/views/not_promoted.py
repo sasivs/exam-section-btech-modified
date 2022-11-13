@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from BThod.models import BTCoordinator 
-from BTsuperintendent.user_access_test import not_promoted_access, not_promoted_status_access
+from ADAUGDB.user_access_test import not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
@@ -8,7 +8,7 @@ from BTco_ordinator.models import BTNotRegistered, BTStudentGradePoints, BTNotPr
     BTNPRDroppedRegularCourses, BTNPRMarks, BTNPRNotRegistered, BTNPRRollLists, BTNPRStudentGrades, BTNPRStudentRegistrations, BTRollLists_Staging, BTStudentRegistrations_Staging,\
         BTSubjects
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTCycleCoordinator, BTHOD
+from ADAUGDB.models import BTCycleCoordinator, BTHOD
 from BTfaculty.models import BTStudentGrades, BTMarks, BTMarks_Staging, BTStudentGrades_Staging
 from BTExamStaffDB.models import BTYearMandatoryCredits, BTStudentInfo
 from BTco_ordinator.resources import NotPromotedResource

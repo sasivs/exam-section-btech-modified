@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects
-from BTsuperintendent.user_access_test import grades_finalize_access
+from ADAUGDB.user_access_test import grades_finalize_access
 from BThod.forms import GradesFinalizeForm
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD
+from ADAUGDB.models import BTHOD
 from BTfaculty.models import BTStudentGrades_Staging, BTStudentGrades
 
 import psycopg2

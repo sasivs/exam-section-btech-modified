@@ -1,0 +1,28 @@
+{% extends 'ADAUGDB/registrationcancellation.html' %} {% load static %} 
+{% block title %}Seat Cancellation{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <strong>
+            Use this to permanantly cancel a student's seat at the institute.
+        </strong>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form.as_p}}
+                </div>
+            </div>
+            <input type='submit' name="Submit" value='Submit'>
+            <!-- {% if RollNo %}
+          <p> This is the Student Cancellation page for {{RollNo}} : {{Name}} </p> </div>
+        {% endif %} -->
+            {% if RegNo %}
+            <strong><p> Student Cancellation for {{RegNo}} : {{Name}} has done succesfully </p></strong>
+    </div>
+    {% endif %}
+    </form>
+
+</div>
+
+{% endblock %}

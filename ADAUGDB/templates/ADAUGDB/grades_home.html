@@ -1,0 +1,149 @@
+{% extends 'ADAUGDB/suphome.html' %} {% block title %}Grades Home{% endblock title %} {% block content %} {% load user_check_tag %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+
+            <ul class="nav flex-column">
+                {% if user|BThas_group:'Superintendent' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradePointsUpload' %}">Upload Grade Points</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradePointsStatus' %}">Grade Points Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCGPA' %}">CGPA</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTHeldIn' %}">Update End Exam Yr and Month</a>
+                </li>
+                {% elif user|BThas_group:'Associate-Dean' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradePointsStatus' %}">Grade Points Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCGPA' %}">CGPA</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradeChallengeUpdate' %}">Grade Challenge Update</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradeChallengeStatus' %}">Grade Challenge Status</a>
+                </li>
+                {% elif user|BThas_group:'HOD' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesFinalize' %}">Finalize Grades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCGPA' %}">CGPA</a>
+                </li>
+                {% elif user|BThas_group:'ExamStaff' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsAdd' %}">Add IX grade students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|BThas_group:'Faculty' %} {% if user|BThas_group:'Course-Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThreshold' %}">Grades Threshold</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeUpload' %}">Upload Attendance Shortage</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesGenerate' %}">Generate Grades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesHodSubmission' %}">Grades HOD Submission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|BThas_group:'Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdEventWise' %}">Grades Threshold Event Wise</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% elif user|BThas_group:'Cycle-Co-ordinator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdEventWise' %}">Grades Threshold Event Wise</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAttendanceShoratgeStatus' %}">Attendance Shortage Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradesStatus' %}">Grades Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block sub %} {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.db.models import Q
 from BTExamStaffDB.models import BTStudentInfo
-from BTsuperintendent.models import BTProgrammeModel
+from ADAUGDB.models import BTProgrammeModel
 
 @login_required(login_url="/login/")
 

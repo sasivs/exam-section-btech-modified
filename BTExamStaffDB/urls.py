@@ -14,7 +14,7 @@ urlpatterns = [
     path('BTStudentInfoUploadErrorHandler', StudInfo.student_info_error_handler, name = 'BTStudentInfoUploadErrorHandler'),
     path('BTUpdateRollNumber', StudInfo.update_rollno, name='BTUpdateRollNumber'),
 
-    path('BTYearMandatoryCredits',mandatory_credits.mandatory_credits_upload, name='BTYearMandatoryCredits'),
+    # path('BTYearMandatoryCredits',mandatory_credits.mandatory_credits_upload, name='BTYearMandatoryCredits'),
 
     path('BTIXGradeStudentsAdd', IX_student.ix_student_assignment, name='BTIXGradeStudentsAdd'),
     path('BTIXGradeStudentsStatus', IX_student.ix_student_status, name='BTIXGradeStudentsStatus'),

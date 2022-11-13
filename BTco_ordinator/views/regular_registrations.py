@@ -2,12 +2,12 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTco_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTCycleCoordinator
+from ADAUGDB.models import BTCycleCoordinator
 from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects, BTNotRegistered
 from BThod.models import BTCoordinator
 from django.db.models import Q
 from django.db import transaction
-from BTsuperintendent.user_access_test import registration_access
+from ADAUGDB.user_access_test import registration_access
 
 @transaction.atomic
 @login_required(login_url="/login/")

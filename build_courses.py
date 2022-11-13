@@ -1,4 +1,4 @@
-from BTsuperintendent.models import BTMarksDistribution
+from ADAUGDB.models import BTMarksDistribution
 import copy
 
 def get_course_structure_file(file):

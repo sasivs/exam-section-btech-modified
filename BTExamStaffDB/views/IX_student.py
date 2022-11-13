@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render
-from BTsuperintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
+from ADAUGDB.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD, BTCycleCoordinator
+from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator, BTFaculty_user
 from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from BTExamStaffDB.models import BTIXGradeStudents

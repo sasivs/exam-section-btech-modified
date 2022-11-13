@@ -1,9 +1,9 @@
 from django import forms
 from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
-from BTsuperintendent.models import BTRegulation, BTProgrammeModel
+from ADAUGDB.models import BTRegulation, BTProgrammeModel
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
-from BTsuperintendent.validators import validate_file_extension
+from ADAUGDB.validators import validate_file_extension
 
 
 class StudentInfoFileUpload(forms.Form):
@@ -31,22 +31,6 @@ class UpdateRollNumberForm(forms.Form):
         self.fields['file'] = forms.FileField(label='Upload File', validators=[validate_file_extension])
 
 
-
-class MandatoryCreditsForm(forms.Form):
-    def __init__(self, *args,**kwargs):
-        super(MandatoryCreditsForm, self).__init__(*args, **kwargs)
-        regulation = BTRegulation.objects.all()
-        regulation = [(row.Regulation, row.Regulation) for row in regulation]
-        regulation = list(set(regulation))
-        reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
-        departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
-        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        deptChoices = [('--Select Dept--','--Select Dept--')] + deptChoices
-        bYearChoices = [('--Select Dept--','--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
-        self.fields['Regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=reguChoices))
-        self.fields['BYear'] = forms.CharField(label='BYear', widget = forms.Select(choices=bYearChoices))
-        self.fields['Dept'] = forms.CharField(label='Department', widget = forms.Select(choices=deptChoices))
-        self.fields['Credits'] = forms.CharField(label='Credits',max_length= 6)
 
 class StudentInfoStatusForm(forms.Form):
     def __init__(self, *args, **kwargs):

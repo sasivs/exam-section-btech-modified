@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from BTsuperintendent.user_access_test import is_ExamStaff
+from ADAUGDB.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse

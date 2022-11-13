@@ -6,9 +6,9 @@ from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, Stu
     SubjectDeletionForm, SubjectFinalizeEventForm, SubjectsSelectForm
 from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTHOD, BTMarksDistribution, BTCycleCoordinator, BTCourses, BTCourseStructure
+from ADAUGDB.models import BTHOD, BTMarksDistribution, BTCycleCoordinator, BTCourses, BTCourseStructure
 from BThod.models import BTCoordinator
-from BTsuperintendent.user_access_test import subject_access, subject_home_access, is_Superintendent
+from ADAUGDB.user_access_test import subject_access, subject_home_access, is_Superintendent
 from django.db import transaction
 
 

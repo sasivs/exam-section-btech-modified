@@ -1,6 +1,6 @@
 from import_export import resources
 from BTco_ordinator.models import BTSubjects_Staging, BTNotPromoted
-from BTsuperintendent.models import BTCourseStructure
+from ADAUGDB.models import BTCourseStructure
 
 
 

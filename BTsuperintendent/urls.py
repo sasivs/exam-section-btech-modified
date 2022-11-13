@@ -8,7 +8,7 @@ from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribut
 urlpatterns = [
 
     path('BTsindex',home.sup_home, name='BTsindex'),
-    path("BTlogout", home.logout_request, name="BTlogout_request"),
+    path("BTlogout", home.logout_request, name="BTlogout_request"), 
     path('BThome', home.sup_home, name='BThome'),
     path('BTSupBTPreRegistrationHome', home.pre_registrations_home, name="BTSupBTPreRegistrationHome"),
     path('BTSupBTBranchChangeHome', home.branch_change_home, name='BTSupBTBranchChangeHome'),

@@ -31,17 +31,6 @@ class BTStudentInfo(models.Model):
         managed = True
 
 
-class BTYearMandatoryCredits(models.Model):
-    Regulation = models.IntegerField()
-    Dept = models.IntegerField()
-    BYear = models.IntegerField()
-    Credits = models.IntegerField()
-    class Meta:
-        db_table = 'BTYearMandatoryCredits'
-        unique_together = (('Regulation', 'Dept', 'BYear'))
-        managed = True
-
-
 class BTIXGradeStudents(models.Model):
     GRADE_CHOICES = (
         ('I', 'I'),

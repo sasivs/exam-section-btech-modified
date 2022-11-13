@@ -1,0 +1,69 @@
+{% extends 'ADAUGDB/subjecthome.html' %} {% load static %} 
+
+{% block title %}Delete Course Structure{% endblock title %}
+
+{% block sub %}
+
+<div class="container">
+    <div class="row">
+        <form action="" method="post">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" value="submit">Status</button>
+        </form>
+    </div>
+    {% if coursestructure %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">S.No.</td>
+                    <td style="border: 1px solid black;">BYear</td>
+                    <td style="border: 1px solid black;">BSem</td>
+                    <td style="border: 1px solid black;">Dept</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">Category</td>
+                    <td style="border: 1px solid black;">Type</td>
+                    <td style="border: 1px solid black;">Creditable</td>
+                    <td style="border: 1px solid black;">Credits</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cs in coursestructure %}
+                <tr>
+                    <td style="border: 1px solid black;">{{ forloop.counter }}</td>
+                    <td style="border: 1px solid black;">{{ cs.BYear }}</td>
+                    <td style="border: 1px solid black;">{{ cs.BSem }}</td>
+                    <td style="border: 1px solid black;">{{ cs.Dept }}</td>
+                    <td style="border: 1px solid black;">{{ cs.Regulation }}</td>
+                    <td style="border: 1px solid black;">{{ cs.Category }}</td>
+                    <td style="border: 1px solid black;">{{ cs.Type }}</td>
+                    <td style="border: 1px solid black;">{{ cs.Creditable }}</td>
+                    <td style="border: 1px solid black;">{{ cs.Credits }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

@@ -1,14 +1,14 @@
 from django import forms 
 from django.db.models import Q 
 from BTco_ordinator.models import  BTStudentRegistrations_Staging
-from BTsuperintendent.constants import DEPARTMENTS, YEARS, SEMS
+from ADAUGDB.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary,\
     BTRollLists_Staging
 from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
 
-from BTsuperintendent.validators import validate_file_extension
+from ADAUGDB.validators import validate_file_extension
 
 #Create your forms here
 

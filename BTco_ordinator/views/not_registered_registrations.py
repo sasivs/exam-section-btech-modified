@@ -5,8 +5,8 @@ from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTNotRegistered, BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from BTco_ordinator.forms import NotRegisteredRegistrationsForm
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.models import BTCycleCoordinator
-from BTsuperintendent.user_access_test import registration_access
+from ADAUGDB.models import BTCycleCoordinator
+from ADAUGDB.user_access_test import registration_access
 
 
 @login_required(login_url="/login/")
