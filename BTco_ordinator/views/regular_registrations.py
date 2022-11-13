@@ -3,12 +3,13 @@ from django.shortcuts import render
 from BTco_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator
-from BTco_ordinator.models import BTRollLists_Staging, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects, BTNotRegistered
+from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects, BTNotRegistered
 from BThod.models import BTCoordinator
 from django.db.models import Q
+from django.db import transaction
 from BTsuperintendent.user_access_test import registration_access
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def btech_regular_registration(request):
@@ -30,12 +31,11 @@ def btech_regular_registration(request):
                 (ayear,asem,byear,bsem,dept,mode, regulation) = regIDs[int(form.cleaned_data['regID'])]
                 event = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation).first()
-                # currentRegEventId = currentRegEventId[0].id
                 not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem,\
                     Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
                 mode = 1
                 if(byear==1):
-                    rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__student__in=not_registered_students.values_list('Student', values=True))
+                    rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', flat=True))
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
@@ -74,7 +74,7 @@ def btech_regular_registration(request):
         form = RegistrationsUploadForm(Options=regIDs)
     return(render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html',{'form':form }))
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def registrations_finalize(request):
@@ -91,11 +91,12 @@ def registrations_finalize(request):
         if(form.is_valid()):
             currentRegEvent = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
             currentRegEventId = currentRegEvent.id
-            regs = BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId)
-
+            regs = BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC'])
+            rolllist = BTRollLists.objects.filter(RegEventId_id=currentRegEventId)
             for reg in regs:
-                if not BTStudentRegistrations.objects.filter(student=reg.student, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
-                    s=BTStudentRegistrations(student=reg.student, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
+                roll = rolllist.filter(student=reg.student.student).first()
+                if not BTStudentRegistrations.objects.filter(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
+                    s=BTStudentRegistrations(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
                     s.save()
             currentRegEvent.RegistrationStatus = 0
             oesubs = BTSubjects.objects.filter(RegEventId=currentRegEventId,course__CourseStructure__Category__in=['OEC','OPC'])

@@ -265,9 +265,13 @@ class BacklogRegistrationForm(forms.Form):
                 if event.BYear == 1:
                     studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], BYear=event.BYear, BSem=event.BSem).\
                         exclude(AYASBYBS__startswith=event.AYear)
+                    subjects = BTSubjects.objects.filter(id__in=studentBacklogs.values_list('id', flat=True))
+                    studentBacklogs = studentBacklogs.exclude(sub_id__in=subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']))
                 else:
                     studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).\
                         exclude(AYASBYBS__startswith=event.AYear)
+                    subjects = BTSubjects.objects.filter(id__in=studentBacklogs.values_list('id', flat=True))
+                    studentBacklogs = studentBacklogs.exclude(sub_id__in=subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']))
                 if event.ASem == 2:
                     studentBacklogs = studentBacklogs.exclude(sub_id__in=studentRegistrations.filter(RegEventId__ASem=1).values_list('sub_id_id', flat=True))
                 self.addBacklogSubjects(studentBacklogs,registeredBacklogs,Selection)
