@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from BTsuperintendent.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Superintendent
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging,BTRollLists_Staging,BTRollLists
 from ADAUGDB.forms import OpenElectiveRegistrationsFinalizeForm

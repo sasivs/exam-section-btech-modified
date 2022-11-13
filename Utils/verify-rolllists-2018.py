@@ -1,5 +1,5 @@
 import pandas as pd
-from ADUGDB.models import BTRollListDetails
+from ADAUGDB.models import BTRollListDetails
 prefix = '/home/examsection/Desktop/Data/'
 dataprefix = prefix + 'SectionWise/2018/2/'
 df = pd.read_excel(dataprefix + 'All-Results-v1.xlsx')

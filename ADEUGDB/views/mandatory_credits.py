@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from BTsuperintendent.user_access_test import is_ExamStaff
+from ADEUGDB.user_access_test import is_ExamStaff
 from django.shortcuts import render
 from BTExamStaffDB.forms import MandatoryCreditsForm
 from BTExamStaffDB.models import BTYearMandatoryCredits

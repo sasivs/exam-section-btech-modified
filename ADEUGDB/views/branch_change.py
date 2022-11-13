@@ -1,6 +1,6 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from BTsuperintendent.user_access_test import is_Superintendent, branch_change_status_access
+from ADEUGDB.user_access_test import is_Superintendent, branch_change_status_access
 from django.shortcuts import render
 from ADEUGDB.forms import  BranchChangeForm, BranchChangeStausForm
 from ADEUGDB.models import BTBranchChanges

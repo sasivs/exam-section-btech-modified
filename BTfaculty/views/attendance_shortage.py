@@ -6,10 +6,10 @@ from BTfaculty.forms import AttendanceShoratgeStatusForm, AttendanceShoratgeUplo
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations
 from BTfaculty.models import BTAttendance_Shortage
 from ADAUGDB.models import BTRegistrationStatus
-from BTsuperintendent.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
+from ADAUGDB.user_access_test import is_Faculty, attendance_shortage_status_access, sample_regno_sheet_access
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator, BTFaculty_user
-from BTsuperintendent.models import BTCycleCoordinator, BTHOD
+from ADAUGDB.models import BTCycleCoordinator, BTHOD
 from django.db import transaction
 
 @transaction.atomic

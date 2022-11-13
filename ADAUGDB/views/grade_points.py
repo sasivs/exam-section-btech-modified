@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
-from BTsuperintendent.user_access_test import is_Superintendent, grade_points_status_access
+from ADAUGDB.user_access_test import is_Superintendent, grade_points_status_access
 from ADAUGDB.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
 from ADAUGDB.models import BTGradePoints
 from ADAUGDB.resources import GradePointsResource

@@ -1,8 +1,8 @@
 from django import forms 
 from BTco_ordinator.models import BTStudentRegistrations, BTRollLists, BTSubjects
-from BTsuperintendent.models import BTGradePoints
+from ADAUGDB.models import BTGradePoints
 from BTfaculty.models import BTGradesThreshold
-from BTsuperintendent.validators import validate_file_extension
+from ADAUGDB.validators import validate_file_extension
 
 
 class AttendanceShoratgeUploadForm(forms.Form):

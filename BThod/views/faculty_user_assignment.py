@@ -2,9 +2,9 @@ from django.shortcuts import redirect, render
 from BThod.forms import CoordinatorAssignmentForm
 from BThod.models import  BTFaculty_user,BTCoordinator
 from BTExamStaffDB.models import BTFacultyInfo
-from BTsuperintendent.user_access_test import is_Hod, co_ordinator_assignment_access
+from ADAUGDB.user_access_test import is_Hod, co_ordinator_assignment_access
 from django.contrib.auth.decorators import login_required, user_passes_test
-from BTsuperintendent.models import BTHOD
+from ADAUGDB.models import BTHOD
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils import timezone

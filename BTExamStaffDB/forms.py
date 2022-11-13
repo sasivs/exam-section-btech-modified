@@ -1,9 +1,9 @@
 from django import forms
 from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
-from BTsuperintendent.models import BTRegulation, BTProgrammeModel
+from ADAUGDB.models import BTRegulation, BTProgrammeModel
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects
-from BTsuperintendent.validators import validate_file_extension
+from ADAUGDB.validators import validate_file_extension
 
 
 class StudentInfoFileUpload(forms.Form):

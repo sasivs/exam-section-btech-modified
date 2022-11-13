@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse 
 from django.shortcuts import render
 from ADAUGDB.models import BTCourseStructure, BTCourses, BTMarksDistribution
-from BTsuperintendent.resources import BTCoursesResource
-from BTsuperintendent.user_access_test import is_Superintendent, course_status_access
+from ADAUGDB.resources import BTCoursesResource
+from ADAUGDB.user_access_test import is_Superintendent, course_status_access
 from ADAUGDB.forms import AddCoursesForm, CoursesStatusForm
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset

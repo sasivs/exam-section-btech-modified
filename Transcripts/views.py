@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from BTsuperintendent.models import BTProgrammeModel, BTHeldIn
+from ADAUGDB.models import BTProgrammeModel, BTHeldIn
 from MTsuperintendent.models import MTProgrammeModel, MTHeldIn
 from BTExamStaffDB.models import BTStudentInfo
 from MTExamStaffDB.models import MTStudentInfo
@@ -10,7 +10,7 @@ from MTco_ordinator.models import MTStudentGradePoints
 from Transcripts.models import BTDepartmentExamEvents, MTDepartmentExamEvents, BTDeptExamEventStudents, MTDeptExamEventStudents, \
     BTStudentExamEvents, BTStudentCGPAs, MTStudentExamEvents, MTStudentCGPAs, BTDegreeAwardees, MTDegreeAwardees,\
     BTStudentBestGrades, BTStudentFinalSGPAs, BTStudentFinalCGPA, BTStudentGradePointsV, MTStudentGradePointsV
-from BTsuperintendent.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Superintendent
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.shortcuts import redirect

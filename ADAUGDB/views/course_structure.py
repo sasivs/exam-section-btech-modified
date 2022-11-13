@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
 from ADAUGDB.models import BTCourseStructure
-from BTsuperintendent.user_access_test import is_Superintendent, course_status_access
+from ADAUGDB import is_Superintendent, course_status_access
 from ADAUGDB.forms import CourseStructureForm, CourseStructureDeletionForm, CourseStructureStatusForm
 from tablib import Dataset
 from django.http import HttpResponse

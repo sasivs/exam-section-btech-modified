@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from BTsuperintendent.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Superintendent
 from ADAUGDB.forms import OERollListStatusForm, OpenElectiveRollListForm
 from ADAUGDB.resources import BTOpenElectiveRollListsResource
 from ADAUGDB.models import BTOpenElectiveRollLists
@@ -9,7 +9,7 @@ from BThod.models import BTCoordinator
 from ADAUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
-from BTsuperintendent.user_access_test import  roll_list_status_access
+from ADAUGDB.user_access_test import  roll_list_status_access
 from BTco_ordinator.models import BTRollLists_Staging
 
 

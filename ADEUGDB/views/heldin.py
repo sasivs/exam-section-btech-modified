@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from BTsuperintendent.user_access_test import is_Superintendent
+from ADEUGDB.user_access_test import is_Superintendent
 from ADEUGDB.forms import HeldInForm
 from ADEUGDB.models import BTHeldIn
 

@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404 
-from BTsuperintendent.user_access_test import is_Superintendent, mark_distribution_status_access
+from ADAUGDB.user_access_test import is_Superintendent, mark_distribution_status_access
 from django.shortcuts import render
 from ADAUGDB.forms import MarksDistributionForm
 from ADAUGDB.models import BTMarksDistribution

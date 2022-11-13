@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from BTsuperintendent.user_access_test import grades_threshold_access, grades_threshold_status_access
+from ADAUGDB.user_access_test import grades_threshold_access, grades_threshold_status_access
 from BTfaculty.models import BTGradesThreshold, BTMarks_Staging
 from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment, BTSubjects
-from BTsuperintendent.models import BTGradePoints, BTHOD, BTCycleCoordinator
+from ADAUGDB.models import BTGradePoints, BTHOD, BTCycleCoordinator
 from BTfaculty.forms import GradeThresholdForm, GradeThresholdStatusForm
 from ADAUGDB.models import BTRegistrationStatus
 from json import dumps

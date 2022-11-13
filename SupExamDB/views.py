@@ -8,7 +8,7 @@
 # from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 # from django.http.response import HttpResponseRedirect, JsonResponse
 # from django.urls import reverse 
-# from BTsuperintendent.models import BTProgrammeModel
+# from ADAUGDB.models import BTProgrammeModel
 # from BTco_ordinator.models import BTStudentGradePoints
 # from BTExamStaffDB.models import BTStudentInfo
 # from Transcripts.models import BTStudentExamEvents, BTDepartmentExamEvents, BTDeptExamEventStudents,\

@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from BTsuperintendent.user_access_test import is_Superintendent, hod_assignment_status_access
+from ADAUGDB.user_access_test import is_Superintendent, hod_assignment_status_access
 from django.shortcuts import render
 from django.utils import timezone
 from ADAUGDB.models import BTHOD
