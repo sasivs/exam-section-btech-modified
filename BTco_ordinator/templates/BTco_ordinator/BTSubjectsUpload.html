@@ -2,6 +2,11 @@
 {% block title %}Add Subjects{% endblock title %}
 {% block sub %}
 <div class="container">
+  {% if msg %}
+  <div class="row">
+    <strong>{{msg}}</strong>
+  </div>
+  {% endif %}
   {% if form.fields.name.initial == 'SubjectsUploadForm' %}
   <div class="row">
     <form method="post" enctype="multipart/form-data">
