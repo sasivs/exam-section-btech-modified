@@ -24,10 +24,10 @@
             {% for field in faculty %}
             <tr>
                 <td style="border: 1px solid black;">
-                    {{ field.Subject.SubCode }}
+                    {{ field.Subject.course.SubCode }}
                 </td>
                 <td style="border: 1px solid black;">
-                    {{ field.Subject.SubName }}
+                    {{ field.Subject.course.SubName }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ field.Coordinator.Name }}

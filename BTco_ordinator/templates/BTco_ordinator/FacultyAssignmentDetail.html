@@ -6,33 +6,29 @@
 <div class="container">
     <div class="row">
         <table class="table table-hover table-muted table-striped">
-            <!-- <tr>
-                <th>id</th>
-                <td>{{subject.id}}</td>
-            </tr> -->
             <tr>
                 <th>SubCode</th>
-                <td>{{subject.SubCode}}</td>
+                <td>{{subject.course.SubCode}}</td>
             </tr>
             <tr>
                 <th>SubName</th>
-                <td>{{subject.SubName}}</td>
+                <td>{{subject.course.SubName}}</td>
             </tr>
             <tr>
                 <th>Creditable</th>
-                <td>{{subject.Creditable}}</td>
+                <td>{{subject.course.CourseStructure.Creditable}}</td>
             </tr>
             <tr>
                 <th>Credits</th>
-                <td>{{subject.Credits}}</td>
+                <td>{{subject.course.CourseStructure.Credits}}</td>
             </tr>
             <tr>
                 <th>Type</th>
-                <td>{{subject.Type}}</td>
+                <td>{{subject.course.CourseStructure.Type}}</td>
             </tr>
             <tr>
                 <th>Category</th>
-                <td>{{subject.Category}}</td>
+                <td>{{subject.course.CourseStructure.Category}}</td>
             </tr>
          
             <form action="" method="POST">{% csrf_token %}

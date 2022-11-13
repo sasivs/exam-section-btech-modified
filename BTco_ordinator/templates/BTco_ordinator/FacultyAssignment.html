@@ -17,7 +17,7 @@
       <table class="table table-hover table-muted table-striped">
         <thead>
           <tr>
-            <td style="border: 1px solid black;">id</td>
+            <td style="border: 1px solid black;">S.No.</td>
             <td style="border: 1px solid black;">SubCode</td>
             <td style="border: 1px solid black;">SubName</td>
             <td style="border: 1px solid black;">Creditable</td>
@@ -30,13 +30,13 @@
         </thead>
         {% for sub in subjects %}
         <tr data-row-href="{% url 'BTFacultySubjectAssignmentDetail' sub.id %}">
-          <td style="border: 1px solid black;">{{sub.id}}</td>
-          <td style="border: 1px solid black;">{{sub.SubCode}}</td>
-          <td style="border: 1px solid black;">{{sub.SubName}}</td>
-          <td style="border: 1px solid black;">{{sub.Creditable}}</td>
-          <td style="border: 1px solid black;">{{sub.Credits}}</td>
-          <td style="border: 1px solid black;">{{sub.Type}}</td>
-          <td style="border: 1px solid black;">{{sub.Category}}</td>
+          <td style="border: 1px solid black;">{{forloop.counter}}</td>
+          <td style="border: 1px solid black;">{{sub.course.SubCode}}</td>
+          <td style="border: 1px solid black;">{{sub.course.SubName}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Creditable}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Credits}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Type}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Category}}</td>
           <td style="border: 1px solid black;">{{sub.RegEventId.Dept}}</td>
           <td style="border: 1px solid black;">
               <a href="{% url 'BTFacultySubjectAssignmentDetail' sub.id %}">Assign</a>
