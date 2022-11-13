@@ -18,13 +18,21 @@
             <thead>
                 <tr>
                     <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">RollNo </td>
+                    <td style="border: 1px solid black;">Name </td>
                     <td style="border: 1px solid black;">Delete</td>
                 </tr>
             </thead>
             {% for field in att_short %}
             <tr>
                 <td style="border: 1px solid black;">
-                    {{ field.Registration.RegNo }}
+                    {{ field.Registration.student.student.RegNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.Registration.student.student.RollNo }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ field.Registration.student.student.Name }}
                 </td>
                 <td style="border: 1px solid black;">
                     <button type="submit" name="delete" value="{{field.id}}" onclick="return confirm('Are you sure you want to delete attendance shortage record of {{field.Registration.RegNo}}?')">Delete</button>

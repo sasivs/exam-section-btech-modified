@@ -41,7 +41,7 @@ class BTMarks_Staging(models.Model):
         marks_dis = self.Marks.split(',')
         marks_dis = [mark.split('+') for mark in marks_dis]
         subject = BTSubjects.objects.filter(id=self.Registration.sub_id.id).first()
-        ratio = subject.DistributionRatio.split(':')
+        ratio = subject.course.DistributionRatio.split(':')
         total_parts = 0
         for part in ratio:
             total_parts += int(part)
