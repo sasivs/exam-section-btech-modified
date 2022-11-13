@@ -10,7 +10,6 @@
         <table class="table table-hover table-muted table-striped">
             <thead>
               <tr>
-                <td style="border: 1px solid black;">id</td>
                 <td style="border: 1px solid black;">SubCode</td>
                 <td style="border: 1px solid black;">SubName</td>
                 <td style="border: 1px solid black;">Creditable</td>
@@ -24,14 +23,13 @@
             </thead>
             {% for sub in subjects %}
             <tr>
-              <td style="border: 1px solid black;">{{sub.Subject.id}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.SubCode}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.SubName}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Creditable}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Credits}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Type}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Category}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.RegEventId.Dept}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.SubCode}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.SubName}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Creditable}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Credits}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Type}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Category}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.RegEventId.Dept}}</td>
               <td style="border: 1px solid black;">{{sub.RegEventId}}</td>
               <td style="border: 1px solid black;">{{sub.Section}}</td>
             </tr>
