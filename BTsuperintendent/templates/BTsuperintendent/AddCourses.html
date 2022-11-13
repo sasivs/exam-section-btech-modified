@@ -12,9 +12,11 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" name="Submit" value="upload_file_submit">Upload</button>
-            <br> 
+            <br>
+            <hr>
+            <label for="download">Download Template: </label>
             <button type="submit" name="download" value="download">Download</button>
-          </form>
+        </form>
     </div>
     {% if invalidData %}
     <div class="row">
@@ -99,6 +101,7 @@
                         <td style="border: 1px solid black">{{row.4}}</td>
                         <td style="border: 1px solid black">{{row.5}}</td>
                         <td style="border: 1px solid black">{{row.6}}</td>
+                        <td style="border: 1px solid black">{{row.7}}</td>
                         <td style="border: 1px solid black">{{row.8}}</td>
                         <td style="border: 1px solid black">{{row.9}}</td>
                         <td style="border: 1px solid black">{{row.10}}</td>
@@ -107,7 +110,6 @@
                         <td style="border: 1px solid black">{{row.13}}</td>
                         <td style="border: 1px solid black">{{row.14}}</td>
                         <td style="border: 1px solid black">{{row.15}}</td>
-                        <td style="border: 1px solid black">{{row.16}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

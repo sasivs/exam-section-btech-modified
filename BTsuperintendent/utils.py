@@ -22,7 +22,7 @@ class CoursesTemplateExcelFile:
         worksheet = workbook.create_sheet(title = "{filename}".format(filename=file))
         headers = ['CourseCode', 'CourseName', 'BYear', 'BSem', 'Department', 'OfferedBy', 'Regulation',\
             'Creditable', 'Credits', 'Type', 'Category', 'lectures', 'tutorials', 'practicals', 'DistributionRatio', 'MarkDistribution']
-        MARK_DISTRIBUTION_CHOICES = [str(dis.Distribution)+'('+str(dis.PromoteThreshold)+str(')') for dis in self.mark_distribution_objs]
+        MARK_DISTRIBUTION_CHOICES = [str(dis.Distribution)+';'+str(dis.PromoteThreshold)+';'+str(dis.DistributionNames) for dis in self.mark_distribution_objs]
         mark_distr_choices_str = ', '.join(MARK_DISTRIBUTION_CHOICES)
         mark_distr_choices_str = str('\"')+mark_distr_choices_str+str('\"')
         data_val = DataValidation(type="list", formula1=mark_distr_choices_str, allow_blank=False)
