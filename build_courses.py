@@ -1,8 +1,10 @@
 from BTsuperintendent.models import BTMarksDistribution
+import copy
 
 def get_course_structure_file(file):
     import pandas as pd
     file = pd.read_excel(file)
+    org_file = copy.deepcopy(file)
     file = file.drop_duplicates(subset=['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'DistributionRatio', 'MarkDistribution_id'])
     file['lectures'] = 0
     file['tutorials'] = 0
@@ -50,8 +52,20 @@ def get_course_structure_file(file):
     course_data.index = course_data.index + 1
     course_data.index.name = 'id'
     print(course_data)
+    subjects_data = []
+    for _, row in org_file.iterrows():
+        new_row = [row['id'], row['RegEventId_id']]
+        cs_id = cs_file.loc[(cs_file['BYear']==row['BYear']) & (cs_file['BSem']==row['BSem']) & (cs_file['Dept']==row['Dept']) & \
+            (cs_file['Regulation']==row['Regulation']) & (cs_file['Category']==row['Category']) & (cs_file['Type']==row['Type']) & \
+                (cs_file['Creditable']==row['Creditable']) & (cs_file['Credits']==row['Credits'])].index
+        course_id = course_data.loc[(course_data['SubCode']==row['SubCode']) & (course_data['SubName']==row['SubName']) & (course_data['OfferedBy']==row['OfferedBy'])&\
+            (course_data['CourseStructure_id']==cs_id)].index
+        new_row.append(course_id)
+    subjects_frame = pd.DataFrame(subjects_data, columns=['id', 'RegEventId_id', 'course_id'])
+    print(subjects_frame)
+        
     mark_dis_dataset.to_excel(r"C:\Users\sasib\Desktop\db\btech\MarkDistribution.xlsx")
-    cs_file.to_excel(r"C:\Users\sasib\Desktop\db\btech\course_structure.xlsx")
-    course_data.to_excel(r"C:\Users\sasib\Desktop\db\btech\courses.xlsx")
-    
+    cs_file.to_excel(r"C:\Users\sasib\Desktop\db\btech\sampledb\course_structure.xlsx")
+    course_data.to_excel(r"C:\Users\sasib\Desktop\db\btech\sampledb\courses.xlsx")
+    subjects_frame.to_excel(r"C:\Users\sasib\Desktop\db\btech\sampledb\subjects.xlsx", index=False)
 # get_course_structure_file(r"C:\Users\sasib\Desktop\db\btech\phy_Subjects.xlsx")
