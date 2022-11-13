@@ -48,7 +48,7 @@ def faculty_upload(request):
                         FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3],errorData[i][4],\
                             errorData[i][5] ) for i in range(len(errorData))]
                         request.session['FacInfoErrRows'] = FacInfoErrRows
-                        return redirect('FacultyInfoUploadErrorHandler')
+                        return redirect('BTFacultyInfoUploadErrorHandler')
                     msg = 'Faculty Info Uploaded Successfully'
                     return(render(request,'BTExamStaffDB/FacultyUpload.html', {'form':form, 'msg':msg}))
                 else:
@@ -77,7 +77,7 @@ def faculty_upload(request):
                     FacInfoErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2],errorData[i][3] ,errorData[i][4],\
                         errorData[i][5]) for i in range(len(errorData))]
                     request.session['FacInfoErrRows'] = FacInfoErrRows
-                    return redirect('FacultyInfoUploadErrorHandler')
+                    return redirect('BTFacultyInfoUploadErrorHandler')
     else:
         form = FacultyUploadForm()
     return (render(request, 'BTExamStaffDB/FacultyUpload.html', {'form':form}))

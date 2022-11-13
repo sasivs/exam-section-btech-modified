@@ -146,12 +146,11 @@ def download_sample_rollnoupdate_sheet(request):
 @user_passes_test(is_ExamStaff)
 def StudInfoStatus(request):
     if request.method == 'POST':
-        form = StudentInfoStatusForm(None,request.POST)
+        form = StudentInfoStatusForm(request.POST)
         if form.is_valid():
             admissionyear = form.cleaned_data['admnyear']
-            studentinfo = BTStudentInfo.objects.filter(AdmissionYear = admissionyear)
-            form = StudentInfoStatusForm(studentinfo,request.POST)
-            return render(request, 'BTExamStaffDB/BTStudentInfoStatus.html', {'form':form})
+            students = BTStudentInfo.objects.filter(AdmissionYear = admissionyear)
+            return render(request, 'BTExamStaffDB/BTStudentInfoStatus.html', {'form':form, 'students':students})
     else:
-        form = StudentInfoStatusForm(None)
+        form = StudentInfoStatusForm()
         return render(request, 'BTExamStaffDB/BTStudentInfoStatus.html', {'form':form})

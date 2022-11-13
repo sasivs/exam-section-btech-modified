@@ -49,26 +49,13 @@ class MandatoryCreditsForm(forms.Form):
         self.fields['Credits'] = forms.CharField(label='Credits',max_length= 6)
 
 class StudentInfoStatusForm(forms.Form):
-    def __init__(self, Options = None, *args, **kwargs):
-        super(StudentInfoUpdateForm, self).__init__(*args, **kwargs)
-        
-        self.checkFields = []
-
-        if Options != None :
-            for row in range(len(Options)):
-                self.myFields = []
-                # self.fields['Check' + str(Options[row][0])] = forms.BooleanField(required = False, widget = forms.CheckboxInput())
-                # self.fields['Check'+str(Options[row][0])].initial = False 
-                # self.checkFields.append(self['Check' + str(Options[row][0])])
-                self.myFields.append((Options[row][0], Options[row][1], Options[row][2],Options[row][3],Options[row][4],Options[row][5],\
-                    Options[row][6],Options[row][7],Options[row][8],Options[row][9],Options[row][10],Options[row][11],Options[row][12],Options[row][13]))
-        else:
-            admnyear = BTStudentInfo.objects.all()
-            admnyear = [(row.AdmissionYear,row.AdmissionYear) for row in admnyear]
-            admnyear = list(set(admnyear))
-            admnyearchoice = [('-- Select Admission Year --','-- Select Admission Year --')] + admnyear
-            self.fields['admnyear'] = forms.CharField(label='Admission Year', widget = forms.Select(choices=admnyearchoice))
-
+    def __init__(self, *args, **kwargs):
+        super(StudentInfoStatusForm, self).__init__(*args, **kwargs)
+        admnyear = BTStudentInfo.objects.all()
+        admnyear = [(row.AdmissionYear,row.AdmissionYear) for row in admnyear]
+        admnyear = list(set(admnyear))
+        admnyearchoice = [('-- Select Admission Year --','-- Select Admission Year --')] + admnyear
+        self.fields['admnyear'] = forms.CharField(label='Admission Year', widget = forms.Select(choices=admnyearchoice))
 
 
 
