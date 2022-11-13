@@ -57,8 +57,9 @@ INSTALLED_APPS = [
     'MTco_ordinator',
     'MTExamStaffDB', 
     'MTfaculty',
-    'ADUGDB',
+    'ADAUGDB',
     'ADPGDB',
+    'ADEUGDB',
 
 ]
 
