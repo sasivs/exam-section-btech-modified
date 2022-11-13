@@ -13,8 +13,9 @@ class BTRegistrationStatus(models.Model):
     Mode = models.CharField(max_length=1) # R for Regular B for Backlog
     Status = models.IntegerField()
     RollListStatus = models.IntegerField()
-    RollListFeeStatus = models.IntegerField(default=0)
-    OERegistartionStatus = models.IntegerField(default=0)
+    RollListFeeStatus = models.IntegerField()
+    OERollListStatus = models.IntegerField()
+    OERegistartionStatus = models.IntegerField()
     RegistrationStatus = models.IntegerField()
     MarksStatus = models.IntegerField()
     GradeStatus = models.IntegerField()

@@ -1,8 +1,9 @@
 from django import forms
 from ADUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTProgrammeModel,BTRegulation
-from BTco_ordinator.models import BTNotPromoted, BTStudentBacklogs, BTRegulationChange, BTSubjects, BTStudentRegistrations
+from BTco_ordinator.models import BTNotPromoted, BTStudentBacklogs, BTSubjects, BTStudentRegistrations
 from BTfaculty.models import BTMarks_Staging
+from django.db.models import Q
 import datetime
 
 
@@ -40,6 +41,8 @@ class DBYBSAYASSelectionForm(forms.Form):
         self.fields['reg-status'] = regBox
         self.fields['marks-status'] = marksBox
         self.fields['grades-status'] = gradesBox
+        self.fields['oerolls-status'] = forms.ChoiceField(label='OE Rolllist Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
+        self.fields['oeregs-status'] = forms.ChoiceField(label='OE Registrations Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
         self.fields['mode'] = modeBox
         if 'aYear' in self.data and 'bYear' in self.data and self.data['aYear']!='' and \
             self.data['bYear']!='' and self.data['aYear']!='0' and \
@@ -110,6 +113,7 @@ class CreateRegistrationEventForm(forms.Form):
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+            deptChoices = [('','--Select Dept--')]
             deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
             deptChoices += [('all', 'All Departments')]
             deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
@@ -120,6 +124,7 @@ class CreateRegistrationEventForm(forms.Form):
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG',Dept__in=[10,9])
+            deptChoices = [('','--Select Dept--')]
             deptChoices +=[(rec.Dept, rec.Specialization) for rec in departments ]
             deptChoices += [('all', 'All Departments')]
             deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
@@ -131,7 +136,7 @@ class GradeChallengeForm(forms.Form):
         super(GradeChallengeForm, self).__init__(*args, **kwargs)
         events = BTRegistrationStatus.objects.filter(Status=1)
         # regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Dept, BYear=faculty.BYear)
-        regEventIDKVs = [(fac.id,fac.__str__()) for fac in events]
+        regEventIDKVs = [(reg.id,reg.__str__()) for reg in events]
         regEventIDKVs = [('','-- Select Registration Event --')] + regEventIDKVs
         SUBJECT_CHOICES = [('', 'Choose Subject')]
         ROLL_CHOICES = [('', '--------')]
@@ -151,19 +156,18 @@ class GradeChallengeForm(forms.Form):
         #     ROLL_CHOICES += [(mark.id, mark.Registration.RegNo) for mark in marks_list]
         #     self.fields['regd_no'] = forms.ChoiceField(label='Choose Roll Number', required=False, widget=forms.Select(choices=ROLL_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
         if self.data.get('regID'):
-            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regID'))
+            student_registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regID')).distinct('sub_id')
             self.regs = student_registrations
-            subjects = BTSubjects.objects.filter(id__in=student_registrations.values_list('sub_id', flat=True))
-            SUBJECT_CHOICES += [(sub.id, sub.SubCode) for sub in subjects]
+            SUBJECT_CHOICES += [(reg.sub_id.id, reg.sub_id.course.SubCode) for reg in self.regs]
             self.fields['subject'] = forms.CharField(label='Choose Subject', required=False, widget = forms.Select(choices=SUBJECT_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('subject'):
-                marks_list = BTMarks_Staging.objects.filter(Registration__RegEventId=self.data.get('regID'), Registration__sub_id=self.data.get('subject')).order_by('Registration__RegNo')
-                ROLL_CHOICES += [(mark.id, mark.Registration.RegNo) for mark in marks_list]
+                marks_list = BTMarks_Staging.objects.filter(Registration__RegEventId=self.data.get('regID'), Registration__sub_id=self.data.get('subject')).order_by('Registration__student__student__RegNo')
+                ROLL_CHOICES += [(mark.id, mark.Registration.student.student.RegNo) for mark in marks_list]
                 self.fields['regd_no'] = forms.CharField(label='Choose Roll Number', required=False, widget=forms.Select(choices=ROLL_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
                 if self.data.get('regd_no'):
                     subject = BTSubjects.objects.get(id=self.data.get('subject'))
                     self.subject = subject
-                    EXAM_TYPE_CHOICES += subject.MarkDistribution.distributions()
+                    EXAM_TYPE_CHOICES += subject.course.MarkDistribution.distributions()
                     self.fields['exam-type'] = forms.CharField(label='Choose Exam Type', required=False, widget=forms.Select(choices=EXAM_TYPE_CHOICES, attrs={'required':'True'}))
                     self.fields['mark'] = forms.CharField(label='Enter Marks', required=False, widget=forms.TextInput(attrs={'type':'number', 'required':'True'}))
 
@@ -173,7 +177,7 @@ class GradeChallengeForm(forms.Form):
             exam_type = self.cleaned_data.get('exam-type')
             exam_inner_index = int(exam_type.split(',')[1])
             exam_outer_index = int(exam_type.split(',')[0])
-            mark_dis_limit = self.subject.MarkDistribution.get_mark_limit(exam_outer_index, exam_inner_index)
+            mark_dis_limit = self.subject.course.MarkDistribution.get_mark_limit(exam_outer_index, exam_inner_index)
             if mark > mark_dis_limit:
                 raise forms.ValidationError('Entered mark is greater than the maximum marks.')
             return mark
@@ -195,15 +199,15 @@ class RegulationChangeForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RegulationChangeForm, self).__init__(*args, **kwargs)
         events = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=1, ASem=1)
-        REGEVENT_CHOICES = ['', 'Choose Event']
+        REGEVENT_CHOICES = [('', 'Choose Event')]
         REGEVENT_CHOICES += [(event.id, event.__str__()) for event in events]
         REGNO_CHOICES = [('', 'Choose RegNo')]
         self.fields['regid'] = forms.CharField(label='Registration Event', required=False, widget = forms.Select(choices=REGEVENT_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
         self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget = forms.Select(choices=REGNO_CHOICES))
         if self.data.get('regid'):
             event = events.filter(id=self.data.get('regid')).first()
-            not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA='R').exclude(Regulation=event.Regulation)
-            not_promoted_b_mode = BTNotPromoted.objects.filter(AYear=event.AYear-2, BYear=event.BYear-1, PoA='B').exclude(Regulation=event.Regulation)
+            not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem1='R', PoA_sem2='R').exclude(Regulation=event.Regulation)
+            not_promoted_b_mode = BTNotPromoted.objects.filter(Q(PoA_sem1='B')|Q(PoA_sem2='B'), AYear=event.AYear-2, BYear=event.BYear-1).exclude(Regulation=event.Regulation)
             REGNO_CHOICES += [(row.id, row.RegNo) for row in not_promoted_r_mode|not_promoted_b_mode]
             self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget=forms.Select(choices=REGNO_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('regno'):
@@ -222,15 +226,18 @@ class RegulationChangeForm(forms.Form):
 class CycleHandlerForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(CycleHandlerForm, self).__init__(*args, **kwargs)
-        events = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=1, ASem=1)
-        REGEVENT_CHOICES = ['', 'Choose Event']
+        events = BTRegistrationStatus.objects.filter(Status=1, RollListStatus=1, ASem=1, Mode='R')
+        REGEVENT_CHOICES = [('', 'Choose Event')]
         REGEVENT_CHOICES += [(event.id, event.__str__()) for event in events]
         REGNO_CHOICES = [('', 'Choose RegNo')]
         self.fields['regid'] = forms.CharField(label='Registration Event', required=False, widget = forms.Select(choices=REGEVENT_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
         self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget = forms.Select(choices=REGNO_CHOICES))
         if self.data.get('regid'):
             event = events.filter(id=self.data.get('regid')).first()
-            not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA='R', student__Regulation=event.Regulation)
+            if event.ASem == 1:
+                not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem1='R', student__Regulation=event.Regulation)
+            else:
+                not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem2='R', student__Regulation=event.Regulation)
             REGNO_CHOICES += [(row.id, row.RegNo) for row in not_promoted_r_mode]
             self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget=forms.Select(choices=REGNO_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('regno'):
@@ -243,4 +250,5 @@ class RegulationChangeStatusForm(forms.Form):
         super(RegulationChangeStatusForm, self).__init__(*args, **kwargs)
         YEAR_CHOICES = [('', 'Choose Year')]
         YEAR_CHOICES += [(reg.RegEventId.AYear, reg.RegEventId.AYear) for reg in regulation_change_objs]
+        YEAR_CHOICES = list(set(YEAR_CHOICES))
         self.fields['ayear'] = forms.CharField(label='Academic Year', required=False, widget=forms.Select(choices=YEAR_CHOICES, attrs={'required':'true'}))
