@@ -25,7 +25,7 @@ def marks_finalize(request):
         form = MarksFinalizeForm(regIDs, request.POST)
         if form.is_valid():
             regEvent = form.cleaned_data.get('regEvent')
-            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=subjects.values_list('Subject_id', flat=True)).order_by('Registration__RegNo')
+            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id_id__in=subjects.values_list('Subject_id', flat=True)).order_by('Registration__RegNo')
             final_marks_objects = BTMarks.objects.filter(Registration_id__in=marks_objects.values_list('Registration_id', flat=True))
             for mark in marks_objects:
                 final_mark = final_marks_objects.filter(Registration=mark.Registration).first()
