@@ -12,6 +12,7 @@ from json import dumps
 import statistics as stat
 from import_export.formats.base_formats import XLSX
 import pandas as pd
+from django.db import transaction
 
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_access)
@@ -24,6 +25,7 @@ def grades_threshold(request):
         raise Http404('You are not allowed to add threshold marks')
     return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': subjects})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_access)
 def grades_threshold_assign(request, pk):
@@ -31,7 +33,7 @@ def grades_threshold_assign(request, pk):
     subject = subject_faculty.Subject
     grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
     prev_thresholds = BTGradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty.RegEventId)
-    marks = BTMarks_Staging.objects.filter(Registration__RegEventId=subject_faculty.RegEventId.id, Registration__sub_id=subject.id)
+    marks = BTMarks_Staging.objects.filter(Registration__RegEventId_id=subject_faculty.RegEventId.id, Registration__sub_id_id=subject.id)
     marks_list = marks.values_list('TotalMarks', flat=True)
     mean = round(stat.mean(marks_list), 2)
     stdev = round(stat.stdev(marks_list), 2)

@@ -27,12 +27,12 @@
             {% for sub in subjects %}
             <tr>
               <td style="border: 1px solid black;">{{sub.Subject.id}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.SubCode}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.SubName}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Creditable}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Credits}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Type}}</td>
-              <td style="border: 1px solid black;">{{sub.Subject.Category}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.SubCode}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.SubName}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Creditable}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Credits}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Type}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Category}}</td>
               <td style="border: 1px solid black;">{{sub.Subject.RegEventId.Dept}}</td>
               <td style="border: 1px solid black;">{{sub.RegEventId}}</td>
               <td style="border: 1px solid black;">
