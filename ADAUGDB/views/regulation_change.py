@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from BTsuperintendent.user_access_test import is_Associate_Dean, regulation_change_status_access
 from django.shortcuts import render
-from ADUGDB.forms import RegulationChangeForm, RegulationChangeStatusForm
+from ADAUGDB.forms import RegulationChangeForm, RegulationChangeStatusForm
 from BTco_ordinator.models import BTNotPromoted, BTRegulationChange
 from BTsuperintendent.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator
@@ -21,13 +21,13 @@ def regulation_change(request):
                     msg = 'Regulation Change performed successfully.'
                 else:
                     msg = 'Regulation change already performed for this candidate for this registration event.'
-                return render(request, 'ADUGDB/RegulationChange.html', {'form':form, 'msg':msg})
+                return render(request, 'ADAUGDB/RegulationChange.html', {'form':form, 'msg':msg})
         elif request.POST.get('regno'):
             student = BTNotPromoted.objects.filter(RegNo=request.POST.get('regno')).first().student
-            return render(request, 'ADUGDB/RegulationChange.html', {'form':form, 'student':student})
+            return render(request, 'ADAUGDB/RegulationChange.html', {'form':form, 'student':student})
     else:
         form = RegulationChangeForm()
-    return render(request, 'ADUGDB/RegulationChange.html', {'form':form})
+    return render(request, 'ADAUGDB/RegulationChange.html', {'form':form})
 
 @login_required(login_url="/login/")
 @user_passes_test(regulation_change_status_access)
@@ -48,8 +48,8 @@ def regulation_change_status(request):
     if request.method == 'POST':
         form = RegulationChangeStatusForm(regulation_change_objs, request.POST)
         if form.is_valid():
-            return render(request, 'ADUGDB/RegulationChangeStatus.html', {'form':form, 'objects':regulation_change_objs})
+            return render(request, 'ADAUGDB/RegulationChangeStatus.html', {'form':form, 'objects':regulation_change_objs})
 
     else:
         form = RegulationChangeStatusForm(regulation_change_objs)
-    return render(request, 'ADUGDB/RegulationChange.html', {'form':form})
+    return render(request, 'ADAUGDB/RegulationChange.html', {'form':form})

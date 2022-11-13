@@ -5,7 +5,7 @@ from BTco_ordinator.forms import BacklogRegistrationForm
 from BTco_ordinator.models import BTStudentBacklogs, BTStudentRegistrations_Staging, BTDroppedRegularCourses, BTRollLists_Staging
 from BTsuperintendent.models import BTCycleCoordinator
 from BThod.models import BTCoordinator
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
 
 

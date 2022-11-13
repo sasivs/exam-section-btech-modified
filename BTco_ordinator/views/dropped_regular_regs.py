@@ -3,7 +3,7 @@ from django.shortcuts import render
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import DroppedRegularRegistrationsForm
 from BTco_ordinator.models import BTDroppedRegularCourses, BTStudentRegistrations_Staging, BTRollLists_Staging
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BThod.models import BTCoordinator

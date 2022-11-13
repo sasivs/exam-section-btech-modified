@@ -6,7 +6,7 @@ from BTsuperintendent.resources import BTOpenElectiveRollListsResource
 from BTsuperintendent.models import BTOpenElectiveRollLists
 from BTsuperintendent.models import BTCycleCoordinator, BTHOD
 from BThod.models import BTCoordinator
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 from BTsuperintendent.user_access_test import  roll_list_status_access

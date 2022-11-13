@@ -5,7 +5,7 @@ from django.shortcuts import render
 from BTco_ordinator.forms import RegistrationsEventForm, SubjectsUploadForm, StudentRegistrationUpdateForm, \
     SubjectDeletionForm, SubjectFinalizeEventForm, SubjectsSelectForm
 from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTMarksDistribution, BTCycleCoordinator, BTCourses, BTCourseStructure
 from BThod.models import BTCoordinator
 from BTsuperintendent.user_access_test import subject_access, subject_home_access, is_Superintendent

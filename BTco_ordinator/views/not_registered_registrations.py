@@ -4,7 +4,7 @@ from BThod.models import BTCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTNotRegistered, BTSubjects, BTStudentRegistrations_Staging, BTDroppedRegularCourses
 from BTco_ordinator.forms import NotRegisteredRegistrationsForm
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator
 from BTsuperintendent.user_access_test import registration_access
 

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects
 from BTsuperintendent.user_access_test import grades_finalize_access
 from BThod.forms import GradesFinalizeForm
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD
 from BTfaculty.models import BTStudentGrades_Staging, BTStudentGrades
 

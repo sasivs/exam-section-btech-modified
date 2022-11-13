@@ -4,7 +4,7 @@ from django.shortcuts import render
 from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import DeptElectiveRegistrationsForm
 from BTsuperintendent.models import BTCycleCoordinator
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTRollLists_Staging
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator

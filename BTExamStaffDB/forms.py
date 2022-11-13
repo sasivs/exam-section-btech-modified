@@ -1,5 +1,5 @@
 from django import forms
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
 from BTsuperintendent.models import BTRegulation, BTProgrammeModel
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects

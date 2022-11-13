@@ -7,7 +7,7 @@ from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment, BTSubjects
 from BTsuperintendent.models import BTGradePoints, BTHOD, BTCycleCoordinator
 from BTfaculty.forms import GradeThresholdForm, GradeThresholdStatusForm
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from json import dumps
 import statistics as stat
 from import_export.formats.base_formats import XLSX

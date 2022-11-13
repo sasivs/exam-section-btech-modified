@@ -4,7 +4,7 @@ from BThod.models import BTCoordinator
 from BTsuperintendent.user_access_test import registration_status_access
 from BTco_ordinator.forms import  RegularRegistrationsStatusForm, BacklogRegistrationSummaryForm, MakeupRegistrationSummaryForm
 from BTco_ordinator.models import BTBacklogRegistrationSummary, BTRegularRegistrationSummary, BTMakeupRegistrationSummary
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator, BTProgrammeModel, BTHOD
 
 

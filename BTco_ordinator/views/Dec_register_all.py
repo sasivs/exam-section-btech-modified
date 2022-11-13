@@ -4,7 +4,7 @@ from BTsuperintendent.user_access_test import registration_access
 from BTco_ordinator.forms import DeptElectiveRegsForm
 from BTco_ordinator.models import BTRollLists_Staging, BTSubjects, BTStudentRegistrations_Staging
 from BTsuperintendent.models import BTCycleCoordinator
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BThod.models import BTCoordinator
 
 

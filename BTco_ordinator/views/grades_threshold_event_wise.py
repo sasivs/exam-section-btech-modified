@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import grades_threshold_event_wise_access
 from BThod.models import BTCoordinator
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTCycleCoordinator, BTGradePoints
 from BTco_ordinator.forms import GradesThresholdEventWise
 from BTco_ordinator.models import BTFacultyAssignment

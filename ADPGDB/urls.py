@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from ADUGDB.views import create_registration_event, grade_challenge
+from ADAUGDB.views import create_registration_event, grade_challenge
 
 
 

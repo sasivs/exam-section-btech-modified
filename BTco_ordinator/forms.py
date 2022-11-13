@@ -5,7 +5,7 @@ from BTsuperintendent.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary,\
     BTRollLists_Staging
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
 
 from BTsuperintendent.validators import validate_file_extension

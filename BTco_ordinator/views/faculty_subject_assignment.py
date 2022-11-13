@@ -8,7 +8,7 @@ from BTsuperintendent.constants import DEPT_DICT, ROMAN_TO_INT
 from BTco_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignmentStatusForm
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects, BTRollLists
 from BThod.models import BTCoordinator
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTCycleCoordinator
 
 

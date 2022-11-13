@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_ExamStaff, ix_grade_student_status_access
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator, BTFaculty_user
 from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus

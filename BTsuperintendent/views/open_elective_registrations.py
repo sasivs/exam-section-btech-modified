@@ -5,7 +5,7 @@ from BTco_ordinator.forms import OpenElectiveRegistrationsForm
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging,BTRollLists_Staging,BTRollLists
 from BTsuperintendent.forms import OpenElectiveRegistrationsFinalizeForm
 from BTsuperintendent.models import BTOpenElectiveRollLists
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 
 @login_required(login_url="/login/")

@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from BTco_ordinator.models import BTRollLists
 from BTsuperintendent.user_access_test import gpa_staging_access
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTStudentCGPAs_Staging
 from BThod.forms import GpaStagingForm
 import psycopg2

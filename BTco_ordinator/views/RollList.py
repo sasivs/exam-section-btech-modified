@@ -1,5 +1,5 @@
 
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTco_ordinator.forms import (GenerateRollListForm,
                                   NotRegisteredStatusForm,
                                   RollListFeeUploadForm, RollListFinalizeForm,

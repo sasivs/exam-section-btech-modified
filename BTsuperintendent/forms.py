@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
-from ADUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus
 from BTsuperintendent.models import BTHOD, BTCancelledStudentInfo, BTCourseStructure, BTCycleCoordinator,BTCourses
 from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
 from BTsuperintendent.models import BTProgrammeModel, BTDepartments, BTRegulation
