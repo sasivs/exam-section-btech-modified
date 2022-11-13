@@ -117,6 +117,8 @@ class BTStudentBacklogs(models.Model):
     RegNo = models.IntegerField()
     RollNo = models.IntegerField()
     sub_id = models.IntegerField()
+    # Category = models.CharField(max_length=10, default='None')
+    # Type = models.CharField(max_length=10, default='None')
     SubCode = models.CharField(max_length=10)
     SubName = models.CharField(max_length=50)
     OfferedYear = models.IntegerField()
@@ -141,6 +143,8 @@ class BTStudentMakeups(models.Model):
     sub_id = models.IntegerField()
     SubCode = models.CharField(max_length=10)
     SubName = models.CharField(max_length=50)
+    # Category = models.CharField(max_length=10)
+    # Type = models.CharField(max_length=10)
     OfferedYear = models.IntegerField()
     Dept = models.IntegerField()
     Credits = models.IntegerField()
@@ -233,7 +237,7 @@ class BTNotPromoted(models.Model):
     Regulation = models.IntegerField()
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PoA_sem1 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
-    PoA_sem2 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
+    PoA_sem2 = models.CharField(max_length=1, default='R') #S for Study Mode and R for Cancellation and Repeat
     class Meta:
         db_table = 'BTNotPromoted'
         unique_together=('AYear', 'BYear', 'Regulation', 'student')

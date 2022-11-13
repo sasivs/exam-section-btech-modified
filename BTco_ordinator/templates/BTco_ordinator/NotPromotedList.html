@@ -26,17 +26,22 @@
     <table class="table table-hover table-muted table-striped">
       <thead>
           <tr>
+              <td style="border: 1px solid black;">S.No. </td>
               <td style="border: 1px solid black;">RegNo </td>
               <td style="border: 1px solid black;">RollNo </td>
               <td style="border: 1px solid black;">Name </td>
               <td style="border: 1px solid black;">Academic Year</td>
               <td style="border: 1px solid black;">BTech Year</td>
               <td style="border: 1px solid black;">Regulation</td>
-              <td style="border: 1px solid black;">Plan of Action</td>
+              <td style="border: 1px solid black;">Plan of Action(1)</td>
+              <td style="border: 1px solid black;">Plan of Action(2)</td>
           </tr>
       </thead>
       {% for np  in notPromoted %}
             <tr>
+                <td style="border: 1px solid black;">
+                  {{ forloop.counter }}
+                </td>  
                 <td style="border: 1px solid black;">
                     {{ np.student.RegNo }}
                 </td>
@@ -54,9 +59,12 @@
                 </td>
                 <td style="border: 1px solid black;">
                   {{ np.Regulation }}
-              </td>
+                </td>
                 <td style="border: 1px solid black;">
-                    {{ np.PoA }}
+                    {{ np.PoA_sem1 }}
+                </td>
+                <td style="border: 1px solid black;">
+                  {{ np.PoA_sem2 }}
                 </td>
             </tr>
             {% endfor %}

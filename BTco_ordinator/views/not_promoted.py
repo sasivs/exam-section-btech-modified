@@ -16,6 +16,7 @@ from django.db.models import Q
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
 from django.http.response import HttpResponse
+from django.db import transaction
 # Import render module
 
 
@@ -54,11 +55,12 @@ def not_promoted_list(request):
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
             rolls = BTRollLists.objects.filter(RegEventId__in=currentRegEventId).distinct('student__RegNo')
             
-            not_promoted_b_mode = BTNotPromoted.objects.filter(AYear=ayear-1, BYear=byear, Regulation=regulation, Mode='B')
+            not_promoted_b_mode = BTNotPromoted.objects.filter(AYear=ayear-1, BYear=byear, Regulation=regulation, PoA_sem1='B', PoA_sem2='B')
             mandatory_credits = BTYearMandatoryCredits.objects.filter(Regulation=regulation, BYear=byear, Dept=dept).first()
             mandatory_credits = mandatory_credits.Credits
+            check_rolls = [roll for roll in rolls] + [roll for roll in not_promoted_b_mode]
             np = []
-            for roll in rolls|not_promoted_b_mode:
+            for roll in check_rolls:
                 grades = BTStudentGradePoints.objects.filter(RegNo=roll.student.RegNo, AYear=ayear, BYear=byear).filter(~Q(Grade='F')).\
                     filter(~Q(Grade='I')).filter(~Q(Grade='X')).filter(~Q(Grade='R'))
                 credits=0
@@ -379,7 +381,7 @@ def not_promoted_upload(request):
         form = NotPromotedUploadForm(regIDs)
     return render(request, 'BTco_ordinator/NotPromotedUpload.html', {'form':form})
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(not_promoted_access)
 def not_promoted_upload_error_handler(request):
