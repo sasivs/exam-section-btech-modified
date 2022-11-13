@@ -1,10 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BTsuperintendent.user_access_test import is_Superintendent
-from BTco_ordinator.forms import OpenElectiveRegistrationsForm
-from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging
-from BTExamStaffDB.models import BTStudentInfo
-from BTsuperintendent.forms import OpenElectiveRegistrationsFinalizeForm,OERollListStatusForm, OpenElectiveRollListForm
+from BTsuperintendent.forms import OERollListStatusForm, OpenElectiveRollListForm
 from BTsuperintendent.resources import BTOpenElectiveRollListsResource
 from BTsuperintendent.models import BTOpenElectiveRollLists
 from BTsuperintendent.models import BTCycleCoordinator, BTHOD
@@ -14,7 +11,6 @@ from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 from BTsuperintendent.user_access_test import  roll_list_status_access
 from BTco_ordinator.models import BTRollLists_Staging
-from django.http import HttpResponse, HttpResponseRedirect
 
 
 
@@ -116,10 +112,10 @@ def OERollList_Status(request):
                 subid = form.cleaned_data.get('sub')
                 rows = BTOpenElectiveRollLists.objects.filter(subject_id=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
                 return (render(request, 'BTco_ordinator/OERollListStatus.html',{'form':form,'rows':rows})) 
-        return render(request, 'BTco_ordinator/OERollListStatus.html', {'form':form,'rows':rows})
+        return render(request, 'BTsuperintendent/OERollListStatus.html', {'form':form,'rows':rows})
   
     else:
         form = OERollListStatusForm()
-        return render(request, 'BTco_ordinator/OERollListStatus.html', {'form':form})
+        return render(request, 'BTsuperintendent/OERollListStatus.html', {'form':form})
 
 
