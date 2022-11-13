@@ -35,24 +35,33 @@ class CourseStructureForm(forms.Form):
         self.fields['regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=REGULATION_CHOICES))
         self.fields['file'] =forms.FileField(label='Course Structure', validators=[validate_file_extension])
 
+class CourseStructureStatusForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CourseStructureStatusForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct('Regulation')
+        CHOICES = [('', 'Choose Event')]
+        CHOICES += [(str(dept)+':'+str(year)+':'+str(sem)+':'+str(regulation.Regulation),str(DEPARTMENTS[dept-1])+':'+str(YEARS[year])+':'+str(SEMS[sem])+':'+str(regulation.Regulation))for regulation in regulations for dept in range(1,11) for year in range(1,5) for sem in range(1,3) if not((year==1 and dept<9)or(year>=2 and dept>=9))]
+        self.fields['event'] = forms.CharField(label='Event', widget = forms.Select(choices=CHOICES))
+
+
 class CourseStructureDeletionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(CourseStructureDeletionForm, self).__init__(*args, **kwargs)
         regulations = BTRegulation.objects.all().distinct()
         CHOICES = [('', 'Choose Event')]
-        CHOICES += [(str(dept)+':'+str(year)+':'+str(sem)+':'+str(regulation.Regulation),str(DEPARTMENTS[dept])+':'+str(YEARS[year])+':'+str(SEMS[sem])+':'+str(regulation.Regulation))for regulation in regulations for dept in range(1,11) for year in range(1,5) for sem in range(1,3)]
+        CHOICES += [(str(dept)+':'+str(year)+':'+str(sem)+':'+str(regulation.Regulation),str(DEPARTMENTS[dept-1])+':'+str(YEARS[year])+':'+str(SEMS[sem])+':'+str(regulation.Regulation))for regulation in regulations for dept in range(1,11) for year in range(1,5) for sem in range(1,3) if not((year==1 and dept<9)or(year>=2 and dept>=9))]
         self.fields['event'] = forms.CharField(label='Event', widget = forms.Select(choices=CHOICES, attrs={'onchange':'submit();'}))
         self.eventBox = self['event']
 
         if self.data.get('event'):
-            event = [int(x) for x in self.data.get('event').split()]
+            event = [int(x) for x in self.data.get('event').split(':')]
             course_structure = BTCourseStructure.objects.filter(Dept=event[0], BYear=event[1], BSem=event[2], Regulation=event[3]) 
             self.myFields = []
             for cs in course_structure:
-                self.fields['Check'+cs.id] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-                if self.data.get('Check'+cs.id) == True:
-                    self.fields['check'+cs.id].initial = True
-                self.myFields.append((cs.BYear, cs.BSem, cs.Dept, cs.Regulation, cs.Category, cs.Type, cs.Creditable, cs.Credits, self['Check'+cs.id]))
+                self.fields['Check'+str(cs.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+                if self.data.get('Check'+str(cs.id)) == True:
+                    self.fields['check'+str(cs.id)].initial = True
+                self.myFields.append((cs.BYear, cs.BSem, cs.Dept, cs.Regulation, cs.Category, cs.Type, cs.Creditable, cs.Credits, self['Check'+str(cs.id)], cs.id))
             
 class GradePointsUploadForm(forms.Form):
     def __init__(self, *args,**kwargs):
@@ -254,9 +263,10 @@ class OpenElectiveRollListForm(forms.Form):
         sems = {1:'I',2:'II'}
         self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
         myChoices = [( years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
-            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R', years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
-            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R') \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation), years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)) \
                     for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
+        myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
@@ -269,10 +279,10 @@ class OpenElectiveRollListForm(forms.Form):
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
             regulation = int(strs[5])
-            mode = strs[6]
+            # mode = strs[6]
 
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
-            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode='R',\
                 RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             SUBJECT_CHOICES += [(sub.id, str(sub.course.SubCode)+', '+str(sub.course.SubName))for sub in subjects]
@@ -282,7 +292,7 @@ class OpenElectiveRollListForm(forms.Form):
         
 class OERollListStatusForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        super(OpenElectiveRollListForm, self).__init__(*args, **kwargs)
+        super(OERollListStatusForm, self).__init__(*args, **kwargs)
         years = {1:'I',2:'II',3:'III',4:'IV'}
         sems = {1:'I',2:'II'}
         self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
@@ -317,9 +327,9 @@ class AddCoursesForm(forms.Form):
         regulations = BTRegulation.objects.all().distinct()
         REGULATION_CHOICES = [('', 'Choose Regulation')]
         REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
-        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
         BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
-        self.fields['BYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
+        self.fields['BYear'] = forms.IntegerField(label='Select BYear', required=False, widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
         self.fields['file'] = forms.FileField(validators=[validate_file_extension], required=False)
 
 class CoursesStatusForm(forms.Form):

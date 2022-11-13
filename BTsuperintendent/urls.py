@@ -26,6 +26,8 @@ urlpatterns = [
     path('BTAddRegulation', add_regulation.addRegulation, name = 'BTAddRegulation'),
 
     path('BTAddCourseStructure', course_structure.add_course_structre, name = 'BTAddCourseStructure'),
+    path('BTCourseStructureStatus', course_structure.course_structure_status, name = 'BTCourseStructureStatus'),
+    path('BTCourseStructureDelete', course_structure.course_structure_delete, name = 'BTCourseStructureDelete'),
     path('BTAddCourses', courses.add_courses, name = 'BTAddCourses'),
     path('BTCoursesStatus', courses.course_upload_status, name='BTCoursesStatus'),
 

@@ -37,14 +37,14 @@ class BTProgrammeModel(models.Model):
         managed = True
 
 class BTCourseStructure(models.Model):
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Dept = models.IntegerField()
+    Regulation = models.IntegerField()
     Category = models.CharField(max_length=10)
     Type = models.CharField(max_length=10)
     Creditable = models.IntegerField()
     Credits = models.IntegerField()
-    Regulation = models.IntegerField()
-    BYear = models.IntegerField()
-    BSem = models.IntegerField()
-    Dept = models.IntegerField()
     count = models.IntegerField()
 
     class Meta:
