@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from ADAUGDB.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from ADAUGDB.forms import OERollListStatusForm, OpenElectiveRollListForm
 from ADAUGDB.resources import BTOpenElectiveRollListsResource
 from ADAUGDB.models import BTOpenElectiveRollLists
@@ -17,7 +17,7 @@ from BTco_ordinator.models import BTRollLists_Staging
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def open_elective_rollList(request):
     if(request.method == "POST"):
         form = OpenElectiveRollListForm(request.POST)
@@ -86,7 +86,7 @@ def OERollList_Status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

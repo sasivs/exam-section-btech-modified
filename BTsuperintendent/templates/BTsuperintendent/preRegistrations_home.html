@@ -1,4 +1,4 @@
-{% extends 'ADAUGDB/suphome.html' %} {% block title %}Pre-Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Pre-Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
 
 <div class="container">
     <div class="row">
@@ -6,12 +6,12 @@
             <ul class="nav flex-column">
                 {% if user|BThas_group:"Superintendent" %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
                 </li>
-                {% elif user|BThas_group:"Associate-Dean" %}
+                {% elif user|BThas_group:"Associate-Dean-Academics" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTCreateRegistrationEvent' %}">Create Registration Event</a>
                 </li>
@@ -27,15 +27,19 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRollListCycleHandler' %}">RollLists Cycle Handler</a>
                 </li>
+                {% elif user|BThas_group:"Associate-Dean-Exams" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTYearMandatoryCredits' %}">Mandatory Credits</a>
+                </li>
                 {% elif user|BThas_group:"ExamStaff" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTStudentInfoFileUpload' %}">Upload Student Info</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTUpdateRollNumber' %}">Update Roll Number</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'BTYearMandatoryCredits' %}">Mandatory Credits</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTStudentInfoStatus' %}">Student Info Status</a>

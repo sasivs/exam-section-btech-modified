@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
-from ADAUGDB.user_access_test import is_Superintendent, grade_points_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, grade_points_status_access
 from ADAUGDB.forms import GradePointsStatusForm, GradePointsUploadForm, GradePointsUpdateForm
 from ADAUGDB.models import BTGradePoints
 from ADAUGDB.resources import GradePointsResource
@@ -9,7 +9,7 @@ from import_export.formats.base_formats import XLSX
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def grade_points_upload(request):
     if request.method == 'POST':
         form = GradePointsUploadForm(request.POST, request.FILES)
@@ -72,7 +72,7 @@ def grade_points_upload(request):
     return render(request, 'ADAUGDB/GradePointsUpload.html', {'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def grade_points_upload_error_handler(request):
     errRows = request.session.get('errRows')
     if(request.method=='POST'):

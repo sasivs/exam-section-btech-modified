@@ -9,6 +9,21 @@ from BTco_ordinator.models import BTStudentRegistrations
 
 User = get_user_model()
 
+class BTHeldIn(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    AYASBYBS = models.IntegerField()
+    HeldInMonth = models.CharField(max_length=10)
+    HeldInYear = models.IntegerField()
+    class Meta:
+        db_table = 'BTHeldIn'
+        constraints = [
+            models.UniqueConstraint(fields=['AYASBYBS'], name='unique_ayasbybs_btheldin')
+        ]
+        managed = True
+
 class BTBranchChanges(models.Model):
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     CurrentDept = models.IntegerField()

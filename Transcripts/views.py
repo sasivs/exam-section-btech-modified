@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from ADAUGDB.models import BTProgrammeModel, BTHeldIn
+from ADEUGDB.models import BTHeldIn
+from ADAUGDB.models import BTProgrammeModel
 from MTsuperintendent.models import MTProgrammeModel, MTHeldIn
 from BTExamStaffDB.models import BTStudentInfo
 from MTExamStaffDB.models import MTStudentInfo

@@ -31,7 +31,7 @@ def btech_regular_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -90,7 +90,7 @@ def btech_backlog_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='B')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -146,7 +146,7 @@ def btech_makeup_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='M')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

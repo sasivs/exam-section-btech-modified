@@ -7,10 +7,10 @@ from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, Not
 from BTco_ordinator.models import BTNotRegistered, BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, BTStudentRegistrations,\
     BTNPRDroppedRegularCourses, BTNPRMarks, BTNPRNotRegistered, BTNPRRollLists, BTNPRStudentGrades, BTNPRStudentRegistrations, BTRollLists_Staging, BTStudentRegistrations_Staging,\
         BTSubjects
-from ADAUGDB.models import BTRegistrationStatus
-from ADAUGDB.models import BTCycleCoordinator, BTHOD
+from ADAUGDB.models import BTRegistrationStatus, BTCycleCoordinator, BTHOD
 from BTfaculty.models import BTStudentGrades, BTMarks, BTMarks_Staging, BTStudentGrades_Staging
-from BTExamStaffDB.models import BTYearMandatoryCredits, BTStudentInfo
+from BTExamStaffDB.models import BTStudentInfo
+from ADEUGDB.models import BTYearMandatoryCredits
 from BTco_ordinator.resources import NotPromotedResource
 from django.db.models import Q
 from tablib import Dataset
@@ -39,6 +39,8 @@ def not_promoted_list(request):
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
+    elif 'Associate-Dean-Exams' in groups:
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     if request.method == 'POST':
         form = NotPromotedListForm(regIDs, request.POST)
         if form.is_valid():
@@ -136,6 +138,8 @@ def not_promoted_upload(request):
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1, Dept=cycle_cord.Cycle, Mode='R')
+    elif 'Associate-Dean-Exams' in groups:
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     if request.method == 'POST':
         form = NotPromotedUploadForm(regIDs, request.POST, request.FILES)
         if form.is_valid() and form.cleaned_data['RegEvent']!='-- Select Registration Event --':
@@ -491,7 +495,7 @@ def not_promoted_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

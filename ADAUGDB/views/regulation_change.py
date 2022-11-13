@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from ADAUGDB.user_access_test import is_Associate_Dean, regulation_change_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, regulation_change_status_access
 from django.shortcuts import render
 from ADAUGDB.forms import RegulationChangeForm, RegulationChangeStatusForm
 from BTco_ordinator.models import BTNotPromoted, BTRegulationChange
@@ -7,7 +7,7 @@ from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Associate_Dean)
+@user_passes_test(is_Associate_Dean_Academics)
 def regulation_change(request):
     if request.method == 'POST':
         form  = RegulationChangeForm(request.POST)
@@ -34,7 +34,7 @@ def regulation_change(request):
 def regulation_change_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regulation_change_objs = BTRegulationChange.objects.all()
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

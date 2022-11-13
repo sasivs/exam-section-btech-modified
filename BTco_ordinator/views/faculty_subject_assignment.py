@@ -120,7 +120,7 @@ def faculty_assignment_status(request):
         current_user = user
         current_user.group = 'Superintendent'
         regIDs = BTRegistrationStatus.objects.filter(Status=1)
-    elif 'Associate-Dean' in groups:
+    elif 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         current_user = user
         current_user.group = 'Associate-Dean'
         regIDs = BTRegistrationStatus.objects.filter(Status=1)

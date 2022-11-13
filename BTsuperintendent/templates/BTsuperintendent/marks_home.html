@@ -1,4 +1,4 @@
-{% extends 'ADAUGDB/suphome.html' %} {% block title %}Marks Home{% endblock title %} {% block content %} {% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Marks Home{% endblock title %} {% block content %} {% load user_check_tag %}
 <div class="container">
     <div class="row">
         <div class="col-md-2">
@@ -7,7 +7,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>
-                {% elif user|BThas_group:'Associate-Dean' %}
+                {% elif user|BThas_group:'Associate-Dean-Academics' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
+                </li>
+                {% elif user|BThas_group:'Associate-Dean-Exams' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMarksUploadStatus' %}">Marks Upload Status</a>
                 </li>

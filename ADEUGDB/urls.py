@@ -1,22 +1,21 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from BTsuperintendent.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, grade_points, branch_change,\
-    cycle_coordinator_assignment, home, open_elective_registrations, heldin, course_structure, courses, open_elective_rollList
+from ADEUGDB.views import branch_change, heldin, grade_challenge, mandatory_credits
 
 
 urlpatterns = [
 
-    path('BTsindex',home.sup_home, name='BTsindex'),
-    path("BTlogout", home.logout_request, name="BTlogout_request"),
-    path('BThome', home.sup_home, name='BThome'),
-    path('BTSupBTPreRegistrationHome', home.pre_registrations_home, name="BTSupBTPreRegistrationHome"),
-    path('BTSupBTBranchChangeHome', home.branch_change_home, name='BTSupBTBranchChangeHome'),
-    path('BTSupBTRegistrationHome', home.registration_home, name = 'BTSupBTRegistrationHome'),
+    # path('BTsindex',home.sup_home, name='BTsindex'),
+    # path("BTlogout", home.logout_request, name="BTlogout_request"),
+    # path('BThome', home.sup_home, name='BThome'),
+    # path('BTSupBTPreRegistrationHome', home.pre_registrations_home, name="BTSupBTPreRegistrationHome"),
+    # path('BTSupBTBranchChangeHome', home.branch_change_home, name='BTSupBTBranchChangeHome'),
+    # path('BTSupBTRegistrationHome', home.registration_home, name = 'BTSupBTRegistrationHome'),
     # path('BTSupBTRollListHome', home.rolllist_home, name='BTSupBTRollListHome'),
     # path('BTSupBTSubjectHome', home.subject_home, name = 'BTSupBTSubjectHome'),
     # path('BTSupBTGradesHome', home.grades_home, name="BTSupBTGradesHome"),
-    path('BTSupBTNotPromotedHome', home.not_promoted_home, name="BTSupBTNotPromotedHome"),
+    # path('BTSupBTNotPromotedHome', home.not_promoted_home, name="BTSupBTNotPromotedHome"),
     path('BTYearMandatoryCredits',mandatory_credits.mandatory_credits_upload, name='BTYearMandatoryCredits'),
  
     # path('BTSupBTFacultyHome', home.faculty_home, name='BTSupBTFacultyHome'),
@@ -72,8 +71,8 @@ urlpatterns = [
 
     # path('BTUpdateManageRegistrations', create_registration_event.update_manage_registrations,name='BTUpdateManageRegistrations'),
 
-    # path('BTGradeChallengeUpdate', grade_challenge.grade_challenge, name='BTGradeChallengeUpdate'),
-    # path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
+    path('BTGradeChallengeUpdate', grade_challenge.grade_challenge, name='BTGradeChallengeUpdate'),
+    path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
     
     # path('BTRegulationChange', regulation_change.regulation_change, name='BTRegulationChange'),
     # path('BTRegulationChangeStatus', regulation_change.regulation_change_status, name='BTRegulationChangeStatus'),

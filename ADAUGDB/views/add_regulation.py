@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from ADAUGDB.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from ADAUGDB.models import BTRegulation
 from ADAUGDB.forms import AddRegulationForm
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def addRegulation(request):
     if request.method == 'POST':
         form = AddRegulationForm(request.POST)

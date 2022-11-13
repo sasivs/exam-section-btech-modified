@@ -14,7 +14,7 @@ class BTAttendance_Shortage(models.Model):
         managed = True
 
 class BTGradesThreshold(models.Model):
-    Grade = models.ForeignKey('BTsuperintendent.BTGradePoints', on_delete=models.CASCADE)
+    Grade = models.ForeignKey('ADAUGDB.BTGradePoints', on_delete=models.CASCADE)
     Subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Threshold_Mark = models.FloatField()

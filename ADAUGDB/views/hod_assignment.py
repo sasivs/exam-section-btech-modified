@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from ADAUGDB.user_access_test import is_Superintendent, hod_assignment_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, hod_assignment_status_access
 from django.shortcuts import render
 from django.utils import timezone
 from ADAUGDB.models import BTHOD
 from ADAUGDB.forms import HODAssignmentForm
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def hod_assignment(request):
     if request.method == 'POST':
         form = HODAssignmentForm(request.POST)

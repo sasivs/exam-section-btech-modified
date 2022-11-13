@@ -1,6 +1,6 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from ADEUGDB.user_access_test import is_Superintendent, branch_change_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Exams, branch_change_status_access
 from django.shortcuts import render
 from ADEUGDB.forms import  BranchChangeForm, BranchChangeStausForm
 from ADEUGDB.models import BTBranchChanges
@@ -8,7 +8,7 @@ from BTExamStaffDB.models import BTStudentInfo
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Exams)
 def branch_change(request):
     context={}
     if(request.method=='POST'):

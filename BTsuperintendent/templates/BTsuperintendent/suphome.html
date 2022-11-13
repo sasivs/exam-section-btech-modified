@@ -189,7 +189,7 @@
                                 <li><a class="dropdown-item" href="{% url 'BTSupBTUserManagementHome' %}">User Management</a></li>
                             </ul>
                         </li>
-                        {% elif user|BThas_group:"Superintendent" or user|MThas_group:"Associate-Dean" %}
+                        {% elif user|BThas_group:"Superintendent" or user|MThas_group:"Associate-Dean-Exams" or user|MThas_group:"Associate-Dean-Academics" %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="PrintingDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Printing

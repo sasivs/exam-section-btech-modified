@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from ADEUGDB.user_access_test import is_ExamStaff
+from ADAUGDB.user_access_test import is_Associate_Dean_Exams
 from django.shortcuts import render
-from BTExamStaffDB.forms import MandatoryCreditsForm
-from BTExamStaffDB.models import BTYearMandatoryCredits
+from ADEUGDB.forms import MandatoryCreditsForm
+from ADEUGDB.models import BTYearMandatoryCredits
 
 @login_required(login_url="/login/")
-@user_passes_test(is_ExamStaff)
+@user_passes_test(is_Associate_Dean_Exams)
 def mandatory_credits_upload(request):
     if(request.method == 'POST'):
         form = MandatoryCreditsForm(request.POST)
@@ -25,7 +25,7 @@ def mandatory_credits_upload(request):
                     mancred = BTYearMandatoryCredits(Regulation = regulation,BYear = byear, Dept= dept,Credits=credits)
                     mancred.save()
                 msg = 'The data for Mandatory Credits is uploaded succesfully'
-                return render(request, 'BTExamStaffDB/MandatoryCreditsUpload.html', {'form':form, 'msg':msg})
+                return render(request, 'ADEUGDB/MandatoryCreditsUpload.html', {'form':form, 'msg':msg})
     else:
         form = MandatoryCreditsForm()
-    return render(request, 'BTExamStaffDB/MandatoryCreditsUpload.html',{'form':form})
+    return render(request, 'ADEUGDB/MandatoryCreditsUpload.html',{'form':form})

@@ -2,14 +2,14 @@ from unicodedata import name
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from BTExamStaffDB.views import StudInfo, mandatory_credits
+from BTExamStaffDB.views import StudInfo
 
-from SupExamDBRegistrations.views import cancellations, grades, \
-    grades
-from SupExamDB import views as supviews
-from BTco_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, regular_registrations, status, subjects
-from BTExamStaffDB.views import FacultyInfo
-from BTsuperintendent.views import add_regulation, branch_change, grade_points, home, open_elective_registrations
+# from SupExamDBRegistrations.views import cancellations, grades, \
+#     grades
+# from SupExamDB import views as supviews
+# from BTco_ordinator.views import RollList, backlog_registrations, dropped_regular_regs, makeupReg, not_promoted, regular_registrations, status, subjects
+# from BTExamStaffDB.views import FacultyInfo
+# from BTsuperintendent.views import add_regulation, branch_change, grade_points, home, open_elective_registrations
 # from SupExamDBRegistrations.views.mandatory_credits import mandatory_credits
 urlpatterns = [
     # path('sindex',supviews.sup_home, name='sindex'),

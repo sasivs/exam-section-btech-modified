@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
-from ADAUGDB.user_access_test import is_Associate_Dean
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from django.shortcuts import render
 from ADAUGDB.models import BTProgrammeModel
 from ADAUGDB.models import BTRegistrationStatus
@@ -7,7 +7,7 @@ from ADAUGDB.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
 
 # Create your views here.
 @login_required(login_url="/login/")
-@user_passes_test(is_Associate_Dean)
+@user_passes_test(is_Associate_Dean_Academics)
 def create_registration_event(request):
     msg = ''
     if request.method == 'POST':
@@ -54,7 +54,7 @@ def create_registration_event(request):
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Associate_Dean)
+@user_passes_test(is_Associate_Dean_Academics)
 def update_manage_registrations(request):
     if(request.method=='POST'):
         form = DBYBSAYASSelectionForm(request.POST)

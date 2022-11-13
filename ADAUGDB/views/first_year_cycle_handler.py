@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from ADAUGDB.user_access_test import is_Associate_Dean
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from django.shortcuts import render
 from ADAUGDB.forms import CycleHandlerForm
 from BTco_ordinator.models import BTNotPromoted 
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Associate_Dean)
+@user_passes_test(is_Associate_Dean_Academics)
 def cycle_handler(request):
     if request.method == 'POST':
         form = CycleHandlerForm(request.POST)

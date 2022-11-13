@@ -1,4 +1,4 @@
-{% extends 'ADAUGDB/suphome.html' %} {% block title %}Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
+{% extends 'BTsuperintendent/suphome.html' %} {% block title %}Registrations Home{% endblock title %} {% block content %} {% load user_check_tag %}
 
 <div class="container">
     <div class="row">
@@ -54,7 +54,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTRegistrationsFinalize' %}">Finalize Registrations</a>
                 </li>
-                {% elif user|BThas_group:"Superintendent" %}
+                {% elif user|BThas_group:"Associate-Dean-Academics" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTOpenElectiveRegistrations' %}">Open Elective Registrations</a>
                 </li>

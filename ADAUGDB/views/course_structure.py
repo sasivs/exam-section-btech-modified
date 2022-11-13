@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import redirect, render
 from ADAUGDB.models import BTCourseStructure
-from ADAUGDB import is_Superintendent, course_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, course_status_access
 from ADAUGDB.forms import CourseStructureForm, CourseStructureDeletionForm, CourseStructureStatusForm
 from tablib import Dataset
 from django.http import HttpResponse
@@ -9,7 +9,7 @@ from import_export.formats.base_formats import XLSX
 from BTco_ordinator.resources import CourseStructureResource
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def add_course_structre(request):
     msg = ''
     invalid_data_msg = ''
@@ -88,7 +88,7 @@ def course_structure_status(request):
     return render(request, 'ADAUGDB/BTCourseStructureStatus.html',{'form':form})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def course_structure_delete(request):
     if(request.method=='POST'):
         form = CourseStructureDeletionForm(request.POST)

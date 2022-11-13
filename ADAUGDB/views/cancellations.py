@@ -4,12 +4,12 @@ from BTco_ordinator.models import BTDroppedRegularCourses,BTNotPromoted,BTNotReg
 from BTExamStaffDB.models import BTStudentInfo
 from BTfaculty.models import BTStudentGrades,BTMarks,BTMarks_Staging,BTStudentGrades_Staging
 from ADAUGDB.forms import StudentCancellationForm, StudentCancellationStatusForm
-from ADAUGDB.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import seat_cancellation_status_access, is_Associate_Dean_Academics
 from django.contrib.auth.decorators import login_required, user_passes_test 
     
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def seat_cancellation(request):
     studentInfo = []
     if(request.method=='POST'):
@@ -90,7 +90,7 @@ def seat_cancellation(request):
     return render(request,'ADAUGDB/BTStudentCancellation.html',context)
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(seat_cancellation_status_access)
 def seat_cancellation_status(request):
     if request.method == 'POST':
         form = StudentCancellationStatusForm(request.POST)

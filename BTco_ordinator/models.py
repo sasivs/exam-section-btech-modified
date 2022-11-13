@@ -10,7 +10,7 @@ from django.db import models
 
 class BTSubjects_Staging(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
-    course = models.ForeignKey('BTsuperintendent.BTCourses', on_delete=models.CASCADE, default=0)
+    course = models.ForeignKey('ADAUGDB.BTCourses', on_delete=models.CASCADE, default=0)
     class Meta:
         db_table = 'BTSubjects_Staging'
         unique_together = ('course', 'RegEventId')
@@ -19,7 +19,7 @@ class BTSubjects_Staging(models.Model):
 
 class BTSubjects(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
-    course = models.ForeignKey('BTsuperintendent.BTCourses', on_delete=models.CASCADE, default=0)
+    course = models.ForeignKey('ADAUGDB.BTCourses', on_delete=models.CASCADE, default=0)
     
     class Meta:
         db_table = 'BTSubjects'

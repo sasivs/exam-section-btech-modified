@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from ADEUGDB.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Associate_Dean_Exams
 from ADEUGDB.forms import HeldInForm
 from ADEUGDB.models import BTHeldIn
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Exams)
 def update_heldin(request):
     if request.method == 'POST':
         form = HeldInForm(request.POST)

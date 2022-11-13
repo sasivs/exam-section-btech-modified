@@ -1,13 +1,13 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404 
-from ADAUGDB.user_access_test import is_Superintendent, mark_distribution_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, mark_distribution_status_access
 from django.shortcuts import render
 from ADAUGDB.forms import MarksDistributionForm
 from ADAUGDB.models import BTMarksDistribution
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def mark_distribution_add(request):
     if request.method == 'POST':
         form = MarksDistributionForm(request.POST)
@@ -37,10 +37,10 @@ def mark_distribution_status(request):
             id = request.POST['delete']
             mark_distribution.filter(id=id).delete()
             mark_distribution = BTMarksDistribution.objects.all()
-    return render(request, 'BTsuperintendent/MarkDistributionStatus.html', {'distributions':mark_distribution})
+    return render(request, 'ADAUGDB/MarkDistributionStatus.html', {'distributions':mark_distribution})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def mark_distribution_update(request, pk):
     mark_distribution_obj = BTMarksDistribution.objects.get(id=pk)
     if request.method == 'POST':

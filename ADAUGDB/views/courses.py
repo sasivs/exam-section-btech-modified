@@ -3,14 +3,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from ADAUGDB.models import BTCourseStructure, BTCourses, BTMarksDistribution
 from ADAUGDB.resources import BTCoursesResource
-from ADAUGDB.user_access_test import is_Superintendent, course_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, course_status_access
 from ADAUGDB.forms import AddCoursesForm, CoursesStatusForm
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 import copy
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def add_courses(request):
     msg = ''
     if request.method == 'POST':
@@ -70,7 +70,7 @@ def add_courses(request):
                     msg = 'Courses Uploaded successfully'
                     return render(request, 'ADAUGDB/AddCourses.html', {'form':form, 'invalidData':invalidData, 'msg': msg})
             elif request.POST.get('download'):
-                from BTsuperintendent.utils import CoursesTemplateExcelFile
+                from ADAUGDB.utils import CoursesTemplateExcelFile
                 response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                 response['Content-Disposition'] = 'attachment; filename=R-{regulation}_BYear-{byear}.xlsx'.format(regulation=form.cleaned_data.get('Regulation'), byear=form.cleaned_data.get("BYear"))
                 BookGenerator = CoursesTemplateExcelFile(form.cleaned_data.get('Regulation'), form.cleaned_data.get('BYear'))

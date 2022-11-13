@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
-from ADAUGDB.user_access_test import is_Superintendent
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from BTco_ordinator.forms import OpenElectiveRegistrationsForm
 from BTco_ordinator.models import BTStudentRegistrations, BTSubjects, BTStudentRegistrations_Staging,BTRollLists_Staging,BTRollLists
 from ADAUGDB.forms import OpenElectiveRegistrationsFinalizeForm
@@ -9,13 +9,13 @@ from ADAUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def open_elective_regs(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =None
-    if 'Superintendent' in groups:
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode='R')
+    if 'Associate-Dean-Academics' in groups:
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode__in=['R','B'])
     if regIDs:
         regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     necessary_field_msg = False
@@ -64,14 +64,16 @@ def open_elective_regs(request):
     return render(request, 'ADAUGDB/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def open_elective_regs_finalize(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs =  []
     msg = ''
-    if 'Superintendent' in groups:
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode='R')
+    if 'Associate-Dean-Academics' in groups:
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode__in=['R','B'])
+    if regIDs:
+        regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
     if request.method == 'POST':
         form = OpenElectiveRegistrationsFinalizeForm(regIDs, request.POST)
         if form.is_valid():

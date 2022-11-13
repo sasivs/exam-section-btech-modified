@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from ADAUGDB.user_access_test import is_Superintendent, cycle_coordinator_assignment_status_access
+from ADAUGDB.user_access_test import is_Associate_Dean_Academics, cycle_coordinator_assignment_status_access
 from django.shortcuts import render
 from django.utils import timezone
 from ADAUGDB.models import BTCycleCoordinator
@@ -7,7 +7,7 @@ from ADAUGDB.forms import CycleCoordinatorAssignmentForm
 
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def cycle_coordinator_assignment(request):
     if request.method == 'POST':
         form = CycleCoordinatorAssignmentForm(request.POST)

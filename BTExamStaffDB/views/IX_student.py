@@ -40,7 +40,7 @@ def ix_student_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     students = None
-    if 'Superintendent' in groups or 'ExamStaff' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'ExamStaff' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

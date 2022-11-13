@@ -36,7 +36,7 @@ def gpa_staging(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIds = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIds = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

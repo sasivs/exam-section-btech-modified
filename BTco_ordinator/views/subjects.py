@@ -8,7 +8,7 @@ from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
 from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTHOD, BTMarksDistribution, BTCycleCoordinator, BTCourses, BTCourseStructure
 from BThod.models import BTCoordinator
-from ADAUGDB.user_access_test import subject_access, subject_home_access, is_Superintendent
+from ADAUGDB.user_access_test import subject_access, subject_home_access, is_Associate_Dean_Academics
 from django.db import transaction
 
 
@@ -109,7 +109,7 @@ def subject_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -181,7 +181,7 @@ def subject_finalize(request):
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
-    elif 'Superintendent' in groups:
+    elif 'Associate-Dean-Academics' in groups:
         subjects = BTSubjects_Staging.objects.filter(RegEventId__Status=1, course__CourseStructure__Category__in=['OEC', 'ODC'])
         regIDs = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
     if(request.method=='POST'):
@@ -202,7 +202,7 @@ def subject_finalize(request):
     return render(request, 'BTco_ordinator/BTSubjectFinalize.html',{'form':form, 'msg':msg})
 
 @login_required(login_url="/login/")
-@user_passes_test(is_Superintendent)
+@user_passes_test(is_Associate_Dean_Academics)
 def open_subject_upload(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)

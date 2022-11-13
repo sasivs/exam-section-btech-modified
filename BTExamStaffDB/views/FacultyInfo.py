@@ -103,7 +103,7 @@ def FacultyInfo_upload_error_handler(request):
 def FacultyInfo_upload_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'ExamStaff' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'ExamStaff' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         fac_info = BTFacultyInfo.objects.all()
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()

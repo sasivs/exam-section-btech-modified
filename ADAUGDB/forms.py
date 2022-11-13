@@ -448,9 +448,10 @@ class OERollListStatusForm(forms.Form):
         sems = {1:'I',2:'II'}
         self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
         myChoices = [( 'OE'+':'+years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
-            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R', 'OE'+':'+years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
-            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)+':'+'R') \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation), 'OE'+':'+years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+            str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)) \
                     for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
+        myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+myChoices
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))

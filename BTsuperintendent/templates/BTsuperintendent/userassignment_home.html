@@ -6,6 +6,16 @@
             <ul class="nav flex-column">
                 {% if user|BThas_group:"Superintendent" %}
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTHodAssignmentStatus' %}">Hod Assignment Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCycleCoordinatorAssignmentStatus' %}">Cycle Coordinator Assignment Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
+                </li>
+                {% elif user|BThas_group:"Associate-Dean-Academics" %}
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTHodAssignment' %}">Hod Assignment</a>
                 </li>
                 <li class="nav-item">
@@ -20,7 +30,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTCoordinatorAssignmentStatus' %}">Coordinator Assignment Status</a>
                 </li>
-                {% elif user|BThas_group:"Associate-Dean" %}
+                {% elif user|BThas_group:"Associate-Dean-Exams" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTHodAssignmentStatus' %}">Hod Assignment Status</a>
                 </li>

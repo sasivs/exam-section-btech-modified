@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
-                {% if user|BThas_group:'Superintendent' %}
+                {% if user|BThas_group:'Superintendent' or user|BThas_group:'Associate-Dean-Academics' or user|BThas_group:'Associate-Dean-Exams' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTRegularRegistrationStatus' %}">Regular Registration Status</a>
                 </li>

@@ -15,7 +15,7 @@ from MTsuperintendent.models import  MTProgrammeModel, MTHOD
 def mtech_regular_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='R')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -62,7 +62,7 @@ def mtech_regular_registration_status(request):
 def mtech_backlog_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='B')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
@@ -109,7 +109,7 @@ def mtech_backlog_registration_status(request):
 def mtech_makeup_registration_status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Superintendent' in groups or 'Associate-Dean' in groups:
+    if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         regIDs = MTRegistrationStatus.objects.filter(Status=1, Mode='M')
     elif 'HOD' in groups:
         hod = MTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
