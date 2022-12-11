@@ -376,7 +376,7 @@ class OpenElectiveRegistrationsForm(forms.Form):
             self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))
 
 class DeptElectiveRegistrationsForm(forms.Form):
-    def __init__(self,regIDs, subjects=None, *args,**kwargs):
+    def __init__(self,regIDs, *args,**kwargs):
         super(DeptElectiveRegistrationsForm, self).__init__(*args, **kwargs)
         myChoices=[]
         if regIDs:
@@ -389,6 +389,8 @@ class DeptElectiveRegistrationsForm(forms.Form):
         self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
         self.fields['file'].widget.attrs['required']='True'
         if self.data.get('regID'):
+            subjects = BTSubjects.objects.filter(RegEventId=self.data.get('regID'), course__CourseStructure__Category='DEC')
+            subjects = [(sub.id,str(sub.course.SubCode)+" "+str(sub.course.SubName)) for sub in subjects]
             subChoices += subjects
             self.fields['subId'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=subChoices, attrs={'required':'True'}))
 
@@ -538,61 +540,6 @@ class MakeupRegistrationsForm(forms.Form):
                     self.radioFields.append(self['RadioMode' + str(mk.sub_id)])
                     self.myFields.append((mk.SubCode, mk.SubName, mk.Credits, self['Check' + str(mk.sub_id)],\
                         self['RadioMode' + str(mk.sub_id)],'M', mk.OfferedYear,mk.Regulation, mk.sub_id))
-
-
-
-class NotPromotedListForm(forms.Form):
-    def __init__(self, regIDs, *args,**kwargs):
-        super(NotPromotedListForm,self).__init__(*args, **kwargs)
-        regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
-        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \
-            str(option[0])+ ':'+str(option[3]), depts[option[2]-1]+':'+ years[option[1]]+':'+ \
-            str(option[0])+ ':'+str(option[3])) for oIndex, option in enumerate(regIDs)]
-        regEventIDKVs = list(set(regEventIDKVs))
-        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
-        self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs)) 
-
-class NotPromotedUploadForm(forms.Form):
-    def __init__(self, regIDs, *args,**kwargs):
-        super(NotPromotedUploadForm,self).__init__(*args, **kwargs)
-        regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
-        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \
-            str(option[0])+ ':'+str(option[3]), depts[option[2]-1]+':'+ years[option[1]]+':'+ \
-            str(option[0])+ ':'+str(option[3])) for oIndex, option in enumerate(regIDs)]
-        regEventIDKVs = list(set(regEventIDKVs))
-        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
-        self.fields['RegEvent'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs))
-        self.fields['file'] = forms.FileField(label='Upload not promoted list', validators=[validate_file_extension])    
-
-class NotPromotedUpdateForm(forms.Form):
-    def __init__(self, Options=None, *args,**kwargs):
-        super(NotPromotedUpdateForm, self).__init__(*args, **kwargs)
-        self.myFields = []
-        self.checkFields = []
-        for fi in range(len(Options)):
-            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-            self.fields['Check'+str(Options[fi][0])].initial = False  
-            self.checkFields.append(self['Check' + str(Options[fi][0])])
-            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], Options[fi][4], Options[fi][5], Options[fi][6], self['Check' + str(Options[fi][0])])) 
-
-class NotPromotedStatusForm(forms.Form):
-      def __init__(self, regIDs, *args,**kwargs):
-        super(NotPromotedStatusForm, self).__init__(*args, **kwargs)
-        if regIDs:
-            regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
-        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \
-            str(option[0])+ ':'+str(option[3]), depts[option[2]-1]+':'+ years[option[1]]+':'+ \
-            str(option[0])+ ':'+str(option[3])) for oIndex, option in enumerate(regIDs)]
-        regEventIDKVs = list(set(regEventIDKVs))
-        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
-        self.fields['RegEvent'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs))
-
 
 
 class RegularRegistrationsStatusForm(forms.Form):

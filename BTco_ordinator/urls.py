@@ -1,9 +1,10 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from ADEUGDB.views import not_promoted
 from BTco_ordinator.views import faculty_subject_assignment, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
-    dropped_regular_regs, makeupReg, not_promoted, status, grades_threshold_event_wise
+    dropped_regular_regs, makeupReg, status, grades_threshold_event_wise
 
 # create your urls here
 
@@ -52,10 +53,6 @@ urlpatterns = [
 
     
     # path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),
-    path('BTNotPromotedList', not_promoted.not_promoted_list, name='BTNotPromotedList'),
-    path('BTNotPromotedUpload', not_promoted.not_promoted_upload, name='BTNotPromotedUpload'),
-    path('BTNotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='BTNotPromotedUploadErrorHandler'),
-    path('BTNotPromotedStatus', not_promoted.not_promoted_status, name='BTNotPromotedStatus'),
 
 
     path('BTSupBTRegularRegistrationStatus', status.btech_regular_registration_status, name = 'BTSupBTRegularRegistrationStatus'),
