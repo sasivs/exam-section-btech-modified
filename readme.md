@@ -51,3 +51,4 @@ user: che1
 password: checord1@123
 
 ============================================================================================================
+command for deleting migrations `rm **/migrations/[0-9]*.py`
