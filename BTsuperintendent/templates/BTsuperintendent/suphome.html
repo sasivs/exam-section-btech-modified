@@ -353,6 +353,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous"></script>
+    <script>
+        document.querySelectorAll('[data-row-href]').forEach(item => {
+        item.style.cursor = "pointer";
+
+        item.querySelectorAll("button").forEach(item => {
+            item.addEventListener("click", event => {
+            event.stopPropagation();
+            });
+        });
+
+        item.querySelectorAll("input").forEach(item => {
+            item.addEventListener("click", event => {
+            event.stopPropagation();
+            });
+        });
+        
+        item.querySelectorAll("a").forEach(item => {
+            item.addEventListener("click", event => {
+            event.stopPropagation();
+            })
+        });
+
+        item.addEventListener("click", function() {
+            window.location = this.dataset.rowHref;
+        });
+        });
+    </script>
     {% block script_links %}{% endblock script_links %}
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--

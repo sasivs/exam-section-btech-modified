@@ -5,6 +5,7 @@ from BTco_ordinator.models import BTSubjects
 # from ExamStaffDB.models import BTFacultyInfo
 from ADEUGDB.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTStudentRegistrations
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 
