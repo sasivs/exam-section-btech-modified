@@ -246,8 +246,8 @@ def add_marks(file):
     invalid_rows=[]
     for rIndex, row in file.iterrows():
         print(row)
-        regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        registration = BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
+        regEvent = BTRegistrationStatus.objects.filter(AYear=row['AYear'], ASem=row['ASem'], BYear=row['BYear'], BSem=row['BSem'], Dept=row['Dept'], Regulation=row['Regulation'], Mode=row['Mode']).first()
+        registration = BTStudentRegistrations.objects.filter(student__student__RegNo=row['RegNo'], RegEventId_id=regEvent.id, sub_id__course__SubCode=row['SubCode']).first()
         marks_row = BTMarks_Staging.objects.filter(Registration_id=registration.id).first()
         if not marks_row:
             subject = BTSubjects.objects.get(id=registration.sub_id.id)
