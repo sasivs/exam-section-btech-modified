@@ -3,6 +3,8 @@ import pandas as pd
 from ADAUGDB.models import BTRegistrationStatus
 from BTco_ordinator.models import BTStudentRegistrations, BTNotPromoted
 from BTExamStaffDB.models import BTStudentInfo
+from BTfaculty.models import BTAttendance_Shortage
+from BTsuperintendent.models import BT
 
 def make_dir(home):
     if not os.path.exists(home):
