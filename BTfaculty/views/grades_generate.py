@@ -236,13 +236,13 @@ def generate_grades(**kwargs):
         for mark in marks_objects:
             subject = subject_objects.filter(id=mark.Registration.sub_id.id).first()
             if mark.Registration.Mode == 1:
-                thresholds = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=mark.Registration.RegEventId, Exam_Mode=False).order_by('-Threshold_Mark')
+                thresholds = BTGradesThreshold.objects.filter(Subject_id=subject.id, RegEventId=mark.Registration.RegEventId, Exam_Mode=False).order_by('-Threshold_Mark', 'Grade_id')
             else:
-                thresholds = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=mark.Registration.RegEventId, Exam_Mode=True).order_by('-Threshold_Mark')
+                thresholds = BTGradesThreshold.objects.filter(Subject_id=subject.id, RegEventId=mark.Registration.RegEventId, Exam_Mode=True).order_by('-Threshold_Mark', 'Grade_id')
             if not thresholds:
-                error_events.append(event)
+                error_events.append((event, subject.course.SubCode))
             if mark.Registration.Mode == 1:
-                promote_thresholds = subject.MarkDistribution.PromoteThreshold
+                promote_thresholds = subject.course.MarkDistribution.PromoteThreshold
                 promote_thresholds = promote_thresholds.split(',')
                 promote_thresholds = [thr.split('+') for thr in promote_thresholds]
                 marks_list = mark.Marks.split(',')
@@ -284,4 +284,5 @@ def generate_grades(**kwargs):
                                     Grade=threshold.Grade.Grade, AttGrade='X')
                             grade.save()
                             break
+    print(set(error_events))
             
