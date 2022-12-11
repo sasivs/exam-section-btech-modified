@@ -18,14 +18,13 @@ def dept_elective_regs_upload(request):
     regIDs =None
     if 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear,Mode__in=['R','B'])
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1,Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode__in=['R', 'B'])
     necessary_field_msg = False
-    subjects=[]
     if(request.method == "POST"):
-        form = DeptElectiveRegistrationsForm(regIDs,subjects,request.POST, request.FILES)
+        form = DeptElectiveRegistrationsForm(regIDs,request.POST,request.FILES)
         if request.POST.get('Submit'):
             if form.is_valid():
                 event = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
@@ -41,11 +40,6 @@ def dept_elective_regs_upload(request):
                         sub_id_id=form.cleaned_data.get('subId'))
                     reg.save()
                 return render(request, 'BTco_ordinator/Dec_Regs_success.html')
-        else:
-            event = BTRegistrationStatus.objects.filter(request.POST.get('regID')).first()
-            subjects = BTSubjects.objects.filter(RegEventId=event, course__CourseStructure__Category='DEC')
-            subjects = [(sub.id,str(sub.course.SubCode)+" "+str(sub.course.SubName)) for sub in subjects]
-            form = DeptElectiveRegistrationsForm(regIDs,subjects,request.POST)
     else:
         form = DeptElectiveRegistrationsForm(regIDs)
     return render(request, 'BTco_ordinator/Dec_Registrations_upload.html',{'form':form,'msg':necessary_field_msg})
