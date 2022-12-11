@@ -16,7 +16,7 @@ def mark_distribution_add(request):
             Distribution = form.cleaned_data['Distribution']
             marksDistribution = form.cleaned_data['DistributionName']
             promote_threshold = form.cleaned_data['PromoteThreshold']
-            mark_distribution = BTMarksDistribution(Regulation=-regulation, Distribution=Distribution, DistributionNames=marksDistribution, PromoteThreshold=promote_threshold)
+            mark_distribution = BTMarksDistribution(Regulation=regulation, Distribution=Distribution, DistributionNames=marksDistribution, PromoteThreshold=promote_threshold)
             mark_distribution.save()
             msg = 'Mark Distribution Added Successfully'
             return render(request, 'ADAUGDB/MarksDistribution.html', {'form':form, 'msg':msg})
