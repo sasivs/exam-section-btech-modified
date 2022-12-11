@@ -20,9 +20,9 @@ import datetime
 class DBYBSAYASSelectionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(DBYBSAYASSelectionForm, self).__init__(*args, **kwargs)
-        departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
-        deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
-        deptChoices = [(0,'--Select Dept--')] + deptChoices
+        # departments = BTProgrammeModel.objects.filter(ProgrammeType='UG')
+        # deptChoices =[(rec.Dept, rec.Specialization) for rec in departments ]
+        deptChoices = [(0,'--Select Dept--')] 
         bYearChoices = [(0,'--Select BYear--'),(1,1), (2, 2),(3, 3),(4, 4)]
         bSemChoices = [(0,'--Select BSem--'),(1,1),(2,2)]
         aYearChoices = [(0,'--Select AYear--')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
