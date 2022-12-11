@@ -29,7 +29,7 @@ def create_registration_event(request):
                     return render(request, 'ADAUGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
                 else:
                     rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
-                        Mode=Mode, RollListStatus=1, RegistrationStatus=1, MarksStatus=1, OERollListStatus=1, OERegistartionStatus=1, GradeStatus=1, Status=1)
+                        Mode=Mode, RollListStatus=1, RollListFeeStatus=0, RegistrationStatus=1, MarksStatus=1, OERollListStatus=1, OERegistartionStatus=1, GradeStatus=1, Status=1)
                     rg_status_obj.save()
                     msg = 'The Event {} has been created successfully'.format(rg_status_obj.__str__())
             else:
@@ -43,7 +43,7 @@ def create_registration_event(request):
                     if not BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
                         Mode=Mode).exists():
                         rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
-                            Mode=Mode, RollListStatus=1, RegistrationStatus=1, OERollListStatus=1, OERegistartionStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
+                            Mode=Mode, RollListStatus=1, RollListFeeStatus=0, RegistrationStatus=1, OERollListStatus=1, OERegistartionStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
                         rg_status_obj.save()
                         created_dept.append(department.Specialization)
                 created_dept = ','.join(created_dept)
