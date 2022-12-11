@@ -2,13 +2,12 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from ADAUGDB.models import BTRegistrationStatus
-from ADAUGDB.models import BTHOD, BTCancelledStudentInfo, BTCourseStructure, BTCycleCoordinator,BTCourses
-from BTExamStaffDB.models import BTFacultyInfo, BTStudentInfo
-from ADAUGDB.models import BTProgrammeModel, BTDepartments, BTRegulation
-from BTco_ordinator.models import BTSubjects
-from ADAUGDB.constants import DEPARTMENTS, YEARS, SEMS
-from ADAUGDB.validators import validate_file_extension
+from ADAUGDB.models import BTProgrammeModel, BTRegulation
+from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
+from BTfaculty.models import BTMarks_Staging
 import datetime
+from ADAUGDB.validators import validate_file_extension
+
 
 
 
@@ -88,7 +87,7 @@ class GradeChallengeForm(forms.Form):
                     self.subject = subject
                     EXAM_TYPE_CHOICES += subject.course.MarkDistribution.distributions()
                     self.fields['exam-type'] = forms.CharField(label='Choose Exam Type', required=False, widget=forms.Select(choices=EXAM_TYPE_CHOICES, attrs={'required':'True'}))
-                    self.fields['mark'] = forms.CharField(label='Enter Marks', required=False, widget=forms.TextInput(attrs={'type':'number', 'required':'True'}))
+                    self.fields['mark'] = forms.CharField(label='Enter Marks', required=False, widget=forms.TextInput(attrs={'type':'number', 'required':'True', 'step':'0.25'}))
 
     def clean_mark(self):
         if self.cleaned_data.get('mark'):
@@ -135,3 +134,56 @@ class HeldInForm(forms.Form):
             YEAR_CHOICES += [(i,i) for i in range(int(self.data.get('ayasbybs')[:4]),datetime.datetime.now().year+1)]
             self.fields['held_in_year'] = forms.ChoiceField(label='Held In Year', required=False, choices=YEAR_CHOICES, widget=forms.Select(attrs={'required':'True'}))
 
+
+
+class NotPromotedListForm(forms.Form):
+    def __init__(self, regIDs, *args,**kwargs):
+        super(NotPromotedListForm,self).__init__(*args, **kwargs)
+        regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \
+            str(option[0])+ ':'+str(option[3]), depts[option[2]-1]+':'+ years[option[1]]+':'+ \
+            str(option[0])+ ':'+str(option[3])) for oIndex, option in enumerate(regIDs)]
+        regEventIDKVs = list(set(regEventIDKVs))
+        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs)) 
+
+class NotPromotedUploadForm(forms.Form):
+    def __init__(self, regIDs, *args,**kwargs):
+        super(NotPromotedUploadForm,self).__init__(*args, **kwargs)
+        regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \
+            str(option[0])+ ':'+str(option[3]), depts[option[2]-1]+':'+ years[option[1]]+':'+ \
+            str(option[0])+ ':'+str(option[3])) for oIndex, option in enumerate(regIDs)]
+        regEventIDKVs = list(set(regEventIDKVs))
+        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        self.fields['RegEvent'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs))
+        self.fields['file'] = forms.FileField(label='Upload not promoted list', validators=[validate_file_extension])    
+
+class NotPromotedUpdateForm(forms.Form):
+    def __init__(self, Options=None, *args,**kwargs):
+        super(NotPromotedUpdateForm, self).__init__(*args, **kwargs)
+        self.myFields = []
+        self.checkFields = []
+        for fi in range(len(Options)):
+            self.fields['Check' + str(Options[fi][0])] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+            self.fields['Check'+str(Options[fi][0])].initial = False  
+            self.checkFields.append(self['Check' + str(Options[fi][0])])
+            self.myFields.append((Options[fi][0], Options[fi][1], Options[fi][2],Options[fi][3], Options[fi][4], Options[fi][5], Options[fi][6], self['Check' + str(Options[fi][0])])) 
+
+class NotPromotedStatusForm(forms.Form):
+      def __init__(self, regIDs, *args,**kwargs):
+        super(NotPromotedStatusForm, self).__init__(*args, **kwargs)
+        if regIDs:
+            regIDs = [(row.AYear, row.BYear, row.Dept, row.Regulation) for row in regIDs]
+        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
+        years = {1:'I',2:'II',3:'III',4:'IV'}
+        regEventIDKVs = [(depts[option[2]-1]+':'+ years[option[1]]+':'+ \
+            str(option[0])+ ':'+str(option[3]), depts[option[2]-1]+':'+ years[option[1]]+':'+ \
+            str(option[0])+ ':'+str(option[3])) for oIndex, option in enumerate(regIDs)]
+        regEventIDKVs = list(set(regEventIDKVs))
+        regEventIDKVs = [('-- Select Registration Event --','-- Select Registration Event --')] + regEventIDKVs
+        self.fields['RegEvent'] = forms.CharField(label='Registration Event', widget = forms.Select(choices=regEventIDKVs))

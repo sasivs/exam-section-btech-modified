@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from ADEUGDB.views import branch_change, heldin, grade_challenge, mandatory_credits
+from ADEUGDB.views import branch_change, heldin, grade_challenge, mandatory_credits, not_promoted
 
 
 urlpatterns = [
@@ -78,6 +78,11 @@ urlpatterns = [
     # path('BTRegulationChangeStatus', regulation_change.regulation_change_status, name='BTRegulationChangeStatus'),
 
     # path('BTRollListCycleHandler', first_year_cycle_handler.cycle_handler, name='BTRollListCycleHandler'),
+
+    path('BTNotPromotedList', not_promoted.not_promoted_list, name='BTNotPromotedList'),
+    path('BTNotPromotedUpload', not_promoted.not_promoted_upload, name='BTNotPromotedUpload'),
+    path('BTNotPromotedUploadErrorHandler', not_promoted.not_promoted_upload_error_handler, name='BTNotPromotedUploadErrorHandler'),
+    path('BTNotPromotedStatus', not_promoted.not_promoted_status, name='BTNotPromotedStatus'),
 
 ]
 

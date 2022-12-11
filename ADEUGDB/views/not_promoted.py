@@ -3,7 +3,7 @@ from BThod.models import BTCoordinator
 from ADAUGDB.user_access_test import not_promoted_access, not_promoted_status_access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from BTco_ordinator.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
+from ADEUGDB.forms import NotPromotedListForm, NotPromotedUploadForm, NotPromotedUpdateForm, NotPromotedStatusForm
 from BTco_ordinator.models import BTNotRegistered, BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, BTStudentRegistrations,\
     BTNPRDroppedRegularCourses, BTNPRMarks, BTNPRNotRegistered, BTNPRRollLists, BTNPRStudentGrades, BTNPRStudentRegistrations, BTRollLists_Staging, BTStudentRegistrations_Staging,\
         BTSubjects
@@ -120,10 +120,10 @@ def not_promoted_list(request):
                 workbook = BookGenerator.generate_workbook()
                 workbook.save(response)
                 return response
-            return render(request, 'BTco_ordinator/NotPromotedList.html', {'form':form, 'notPromoted':np})
+            return render(request, 'ADEUGDB/NotPromotedList.html', {'form':form, 'notPromoted':np})
     else:
         form = NotPromotedListForm(regIDs)
-    return render(request, 'BTco_ordinator/NotPromotedList.html', {'form':form})
+    return render(request, 'ADEUGDB/NotPromotedList.html', {'form':form})
 
 
 @login_required(login_url="/login/")
@@ -267,7 +267,7 @@ def not_promoted_upload(request):
                     request.session['npErrRows'] = npErrRows
                     request.session['RegEvent'] = regEvent
                     return redirect('BTNotPromotedUploadErrorHandler' )
-                return(render(request,'BTco_ordinator/NotPromotedUploadSuccess.html'))
+                return(render(request,'ADEUGDB/NotPromotedUploadSuccess.html'))
             else:
                 errors = result.row_errors()
                 indices = set([i for i in range(len(newDataset))])    
@@ -383,7 +383,7 @@ def not_promoted_upload(request):
                 return redirect('BTNotPromotedUploadErrorHandler')
     else:
         form = NotPromotedUploadForm(regIDs)
-    return render(request, 'BTco_ordinator/NotPromotedUpload.html', {'form':form})
+    return render(request, 'ADEUGDB/NotPromotedUpload.html', {'form':form})
 
 @transaction.atomic
 @login_required(login_url="/login/")
@@ -484,10 +484,10 @@ def not_promoted_upload_error_handler(request):
                         grades.delete()
                         not_registered.delete()
                         dropped_regular.delete()
-            return render(request, 'BTco_ordinator/NotPromotedUploadSuccess.html')
+            return render(request, 'ADEUGDB/NotPromotedUploadSuccess.html')
     else:
         form = NotPromotedUpdateForm(Options=npErrRows)
-    return(render(request, 'BTco_ordinator/NotPromotedUploadErrorHandler.html',{'form':form}))
+    return(render(request, 'ADEUGDB/NotPromotedUploadErrorHandler.html',{'form':form}))
 
 @login_required(login_url="/login/")
 @user_passes_test(not_promoted_status_access)
@@ -523,10 +523,10 @@ def not_promoted_status(request):
                 notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation, student__Cycle=dept).order_by('student__RegNo')
             else:
                 notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation).order_by('student__RegNo')
-            return render(request, 'BTco_ordinator/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
+            return render(request, 'ADEUGDB/NotPromotedStatus.html', {'notPromoted':notPromoted, 'form':form})
     else:
         form = NotPromotedStatusForm(regIDs)
-    return render(request, 'BTco_ordinator/NotPromotedStatus.html', {'form':form})
+    return render(request, 'ADEUGDB/NotPromotedStatus.html', {'form':form})
 
 
 # @login_required(login_url="/login/")
