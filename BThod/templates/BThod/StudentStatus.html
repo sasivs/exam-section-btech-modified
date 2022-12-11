@@ -1,0 +1,77 @@
+{% extends 'BTsuperintendent/rollList_home.html' %}
+{% block title %}Student Info{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+        </form>
+    </div>
+    {% if student_info %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">S.No. </td>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">RollNo</td>
+                    <td style="border: 1px solid black;">Name</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">Dept</td>
+                    <td style="border: 1px solid black;">AdmissionYear</td>
+                    <td style="border: 1px solid black;">Gender</td>
+                    <td style="border: 1px solid black;">Category</td>
+                    <td style="border: 1px solid black;">GuardianName</td>
+                    <td style="border: 1px solid black;">Phone</td>
+                    <td style="border: 1px solid black;">email</td>
+                    <td style="border: 1px solid black;">Address1</td>
+                    <td style="border: 1px solid black;">Address2</td>
+                    <td style="border: 1px solid black;">Cycle</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stud in student_info %}
+                <tr data-row-href="{% url 'BTStudentHistory' stud.id %}">
+                    <td style="border: 1px solid black;">{{forloop.counter}} </td>
+                    <td style="border: 1px solid black;">{{stud.RegNo}} </td>
+                    <td style="border: 1px solid black;">{{stud.RollNo}}</td>
+                    <td style="border: 1px solid black;">{{stud.Name}}</td>
+                    <td style="border: 1px solid black;">{{stud.Regulation}}</td>
+                    <td style="border: 1px solid black;">{{stud.Dept}}</td>
+                    <td style="border: 1px solid black;">{{stud.AdmissionYear}}</td>
+                    <td style="border: 1px solid black;">{{stud.Gender}}</td>
+                    <td style="border: 1px solid black;">{{stud.Category}}</td>
+                    <td style="border: 1px solid black;">{{stud.GuardianName}}</td>
+                    <td style="border: 1px solid black;">{{stud.Phone}}</td>
+                    <td style="border: 1px solid black;">{{stud.email}}</td>
+                    <td style="border: 1px solid black;">{{stud.Address1}}</td>
+                    <td style="border: 1px solid black;">{{stud.Address2}}</td>
+                    <td style="border: 1px solid black;">{{stud.Cycle}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

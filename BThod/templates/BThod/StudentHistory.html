@@ -1,0 +1,137 @@
+{% extends 'BTsuperintendent/rollList_home.html' %}
+{% block title %}Student Info{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" name="Submit" value="Submit">Submit</button>
+        </form>
+    </div>
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">RegNo </td>
+                    <td style="border: 1px solid black;">RollNo</td>
+                    <td style="border: 1px solid black;">Name</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">AdmissionYear</td>
+                    <td style="border: 1px solid black;">Gender</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid black;">{{student.RegNo}} </td>
+                    <td style="border: 1px solid black;">{{student.RollNo}}</td>
+                    <td style="border: 1px solid black;">{{student.Name}}</td>
+                    <td style="border: 1px solid black;">{{student.Regulation}}</td>
+                    <td style="border: 1px solid black;">{{student.AdmissionYear}}</td>
+                    <td style="border: 1px solid black;">{{student.Gender}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br><br>
+    {% if dropped_courses %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">CourseCode </td>
+                    <td style="border: 1px solid black;">CourseName</td>
+                    <td style="border: 1px solid black;">Category</td>
+                    <td style="border: 1px solid black;">Credits</td>
+                    <td style="border: 1px solid black;">Creditable</td>
+                    <td style="border: 1px solid black;">Dropped Event</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in dropped_courses %}
+                <tr>
+                    <td style="border: 1px solid black;">{{course.subject.course.SubCode}} </td>
+                    <td style="border: 1px solid black;">{{course.subject.course.SubName}}</td>
+                    <td style="border: 1px solid black;">{{course.subject.course.CourseStructure.Category}}</td>
+                    <td style="border: 1px solid black;">{{course.subject.course.CourseStructure.Credits}}</td>
+                    <td style="border: 1px solid black;">{{course.subject.course.CourseStructure.Creditable}}</td>
+                    <td style="border: 1px solid black;">{{course.RegEventId}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if not_promoted %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">Academic Year </td>
+                    <td style="border: 1px solid black;">BTech Year</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">Plan of Action(sem1)</td>
+                    <td style="border: 1px solid black;">Plan of Action(sem2)</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for np in not_promoted %}
+                <tr>
+                    <td style="border: 1px solid black;">{{np.AYear}} </td>
+                    <td style="border: 1px solid black;">{{np.BYear}}</td>
+                    <td style="border: 1px solid black;">{{np.Regulation}}</td>
+                    <td style="border: 1px solid black;">{{np.PoA_sem1}}</td>
+                    <td style="border: 1px solid black;">{{np.PoA_sem2}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if marks_list %}
+    <div class="row">
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">CourseCode </td>
+                    <td style="border: 1px solid black;">Course Name</td>
+                    <td style="border: 1px solid black;">Faculty</td>
+                    <td style="border: 1px solid black;">Total Marks</td>
+                    <td style="border: 1px solid black;">Grade</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mark in marks_list %}
+                <tr>
+                    <td style="border: 1px solid black;">{{mark.Registration.sub_id.course.SubCode}} </td>
+                    <td style="border: 1px solid black;">{{mark.Registration.sub_id.course.SubName}}</td>
+                    <td style="border: 1px solid black;">{{mark.Faculty.Name}}</td>
+                    <td style="border: 1px solid black;">{{mark.TotalMarks}}</td>
+                    <td style="border: 1px solid black;">{{mark.Grade}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script_links %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "lengthMenu": [[10, 25, 50, 100, 250, -1], [10, 25, 50, 100, 250, "All"]],
+            "info": false,
+            "dom": '<"row"<"col-md"l><"col-md"f><"col-md"p>>t',
+            "initComplete": function ()  {
+                var column = this.api().columns(2);
+                $('#floor_select').on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val : '', true, false).draw();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script_links %}

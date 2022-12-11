@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from numpy import require
 from BThod.models import BTCoordinator
 from BTExamStaffDB.models import BTFacultyInfo
+from BTco_ordinator.models import BTStudentRegistrations, BTNotRegistered
 
 
 
@@ -55,6 +56,30 @@ class GpaStagingForm(forms.Form):
         self.fields['regId'] = forms.ChoiceField(label='Choose Event', required=False, choices=REGID_CHOICES, widget=forms.Select(attrs={'required':'True'}))
         
             
+class DeptStudentStatusForm(forms.Form):
+    def __init__(self, *args,**kwargs):
+        import datetime
+        super(DeptStudentStatusForm, self).__init__(*args, **kwargs)
+        ADMISSION_YEAR_CHOICES = [(0,'Select AdmYear')] + [(i,i) for i in range(2015,datetime.datetime.now().year+1)]
+        self.fields['AdmYear'] = forms.IntegerField(label='Select AdmYear', required=False, widget=forms.Select(choices=ADMISSION_YEAR_CHOICES,attrs={'onchange':'submit();', 'required':'True'}))
+
+class StudentHistoryForm(forms.Form):
+    def __init__(self, student, *args,**kwargs):
+        super(StudentHistoryForm, self).__init__(*args, **kwargs)
+        registrations = BTStudentRegistrations.objects.filter(student__student__RegNo=student.RegNo).distinct('RegEventId__AYear').values_list('RegEventId__AYear', flat=True)
+        not_registered = BTNotRegistered.objects.filter(Student__RegNo=student.RegNo).distinct('RegEventId__AYear').values_list('RegEventId__AYear', flat=True)
+        ayears = registrations.distinct('RegEventId__AYear').values_list('RegEventId__AYear', flat=True)+not_registered.distinct('RegEventId__AYear').values_list('RegEventId__AYear', flat=True)
+        AYEAR_CHOICES = [('', 'Choose year')]+[(ayear, ayear) for ayear in set(ayears)]
+        self.fields['AYear'] = forms.IntegerField(label='Select Acad. year', required=False, widget=forms.Select(choices=AYEAR_CHOICES,attrs={'onchange':'submit();', 'required':'True'}))
+        if self.data.get('AYear'):
+            reg_events = registrations.distinct('RegEventId_id')
+            nr_events = not_registered.distinct('RegEventId_id')
+            REGEVENT_CHOICES = [('', 'Choose Event')]+[(event.id, event.__str__()) for event in reg_events]+\
+                [(event.id, event.__str__()) for event in nr_events]
+            REGEVENT_CHOICES = list(set(REGEVENT_CHOICES))
+            self.fields['event'] = forms.CharField(label='Select event', required=False, widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
+            
+
 # class AttendanceShoratgeStatusForm(forms.Form):
 #     def __init__(self,Option=None , *args,**kwargs):
 #         super(AttendanceShoratgeStatusForm, self).__init__(*args, **kwargs)

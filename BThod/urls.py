@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from BThod.views import faculty_user_assignment, grades_finalize, marks_finalize, gpa
+from BThod.views import faculty_user_assignment, grades_finalize, marks_finalize, gpa, student_history
 
 
 urlpatterns =[  
@@ -17,6 +17,10 @@ urlpatterns =[
 
     path('BTFacultyCoordinatorAssignment', faculty_user_assignment.faculty_Coordinator, name = 'BTFacultyCoordinatorAssignment'),
     path('BTCoordinatorAssignmentStatus', faculty_user_assignment.faculty_Coordinator_Status, name = 'BTCoordinatorAssignmentStatus'),
+
+    path('BTStudentList', student_history.student_status, name='BTStudentList'),
+    path('BTStudentHistory/<int:pk>', student_history.student_history, name='BTStudentHistory'),
+
     # path('BTFacultyCoordinatorDetail/<int:pk>', faculty_user_assignment.faculty_Coordinator_detail, name='BTFacultyCoordinatorDetail'),
     # path('BTFacultyCoordinatorRevoke/<int:pk>', faculty_user_assignment.faculty_Coordinator_revoke, name='BTFacultyCoordinatorRevoke'),
     
