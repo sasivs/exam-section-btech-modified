@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 
@@ -21,6 +22,7 @@ class BTStudentInfo(models.Model):
     Address1 = models.TextField()
     Address2 = models.TextField(null=True)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTStudentInfo'
@@ -38,6 +40,7 @@ class BTIXGradeStudents(models.Model):
     )
     Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     Grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTIXGradeStudents'
@@ -52,6 +55,7 @@ class BTFacultyInfo(models.Model):
     Email = models.CharField(max_length=255)
     Dept = models.IntegerField()
     Working = models.BooleanField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTFacultyInfo'
         constraints = [

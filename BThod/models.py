@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 from django.contrib.auth import get_user_model
@@ -11,6 +12,7 @@ class BTFaculty_user(models.Model):
     Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTFaculty_user'
         unique_together=(('User','Faculty','AssignDate','RevokeDate'))
@@ -24,6 +26,7 @@ class BTCoordinator(models.Model):
     BYear = models.IntegerField()
     AssignDate = models.DateTimeField(auto_now_add=True)
     RevokeDate = models.DateTimeField(null=True)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTFaculty_Coordinator'
         unique_together=(('User','Faculty','AssignDate','RevokeDate'))

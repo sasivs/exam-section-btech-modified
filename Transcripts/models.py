@@ -1,5 +1,6 @@
 
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 from django.db import models
@@ -17,6 +18,7 @@ class BTDegreeAwardees(models.Model):
     PassingYear=models.IntegerField()
     Regulation = models.IntegerField()
     Degree = models.CharField(max_length=30)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTDegreeAwardees'
         managed = True
@@ -28,6 +30,7 @@ class BTMandatoryCredits(models.Model):
     Credits = models.IntegerField()
     Category = models.CharField(max_length=10)
     NumberOfSubjects = models.IntegerField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTMandatoryCredits'
         unique_together = (('Regulation', 'Dept', 'BYear'))

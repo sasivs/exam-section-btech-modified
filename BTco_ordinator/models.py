@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 # from ExamStaffDB.models import BTFacultyInfo
 # from superintendent.models import BTRegistrationStatus, BTMarksDistribution
 # from ExamStaffDB.models import BTStudentInfo
@@ -11,6 +12,7 @@ from django.db import models
 class BTSubjects_Staging(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     course = models.ForeignKey('ADAUGDB.BTCourses', on_delete=models.CASCADE, default=0)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTSubjects_Staging'
         unique_together = ('course', 'RegEventId')
@@ -20,6 +22,7 @@ class BTSubjects_Staging(models.Model):
 class BTSubjects(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     course = models.ForeignKey('ADAUGDB.BTCourses', on_delete=models.CASCADE, default=0)
+    history = HistoricalRecords()
     
     class Meta:
         db_table = 'BTSubjects'
@@ -37,6 +40,7 @@ class BTRollLists(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTRollLists'
         unique_together = ('student', 'RegEventId')
@@ -53,6 +57,7 @@ class BTRollLists_Staging(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTRollLists_Staging'
         unique_together = ('student', 'RegEventId')
@@ -64,6 +69,7 @@ class BTRegulationChange(models.Model):
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PreviousRegulation = models.IntegerField()
     PresentRegulation = models.IntegerField()
+    history = HistoricalRecords()
     class Meta:
         db_table  = 'BTRegulationChange'
         managed = True
@@ -74,6 +80,7 @@ class BTNotRegistered(models.Model):
     RegEventId= models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     Registered = models.BooleanField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNotRegistered'
         unique_together = (('RegEventId', 'Student'))
@@ -85,6 +92,7 @@ class BTStudentRegistrations(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', db_column='RegEventId', on_delete=models.CASCADE)
     Mode = models.IntegerField()
     sub_id = models.ForeignKey('BTco_ordinator.BTSubjects', db_column='sub_id', on_delete=models.CASCADE)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTStudentRegistrations'
         unique_together = (('student', 'RegEventId', 'sub_id'))
@@ -95,6 +103,7 @@ class BTStudentRegistrations_Staging(models.Model):
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', db_column='RegEventId', on_delete=models.CASCADE)
     Mode = models.IntegerField()
     sub_id = models.ForeignKey('BTco_ordinator.BTSubjects', db_column='sub_id', on_delete=models.CASCADE)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTStudentRegistrations_Staging'
         unique_together = (('student', 'RegEventId', 'sub_id'))
@@ -106,6 +115,7 @@ class BTDroppedRegularCourses(models.Model):
     subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
     RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     Registered = models.BooleanField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTDroppedRegularCourses'
         unique_together = (('student', 'subject'))
@@ -238,6 +248,7 @@ class BTNotPromoted(models.Model):
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PoA_sem1 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     PoA_sem2 = models.CharField(max_length=1, default='R') #S for Study Mode and R for Cancellation and Repeat
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNotPromoted'
         unique_together=('AYear', 'BYear', 'Regulation', 'student')
@@ -251,6 +262,7 @@ class BTFacultyAssignment(models.Model):
     Section = models.CharField(max_length=2, default='NA')
     MarksStatus = models.IntegerField(default=1)
     GradesStatus = models.IntegerField(default=1)
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTFacultyAssignment'
@@ -266,6 +278,7 @@ class BTNPRStudentRegistrations(models.Model): # NPR=Not promoted repeat mode
     RegEventId_id = models.IntegerField()
     Mode = models.IntegerField()
     sub_id_id = models.IntegerField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNPRStudentRegistrations'
         unique_together = (('RegNo', 'RegEventId_id', 'sub_id_id'))
@@ -278,6 +291,7 @@ class BTNPRStudentGrades(models.Model):
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNPRStudentGrades'
         constraints = [
@@ -294,6 +308,7 @@ class BTNPRRollLists(models.Model):
     RegEventId_id =models.IntegerField()
     Cycle = models.IntegerField(default=0, choices=CYCLE_CHOICES)
     Section = models.CharField(max_length=2, default='NA')
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNPRRollLists'
         unique_together = (('student_id', 'RegEventId_id'))
@@ -303,6 +318,7 @@ class BTNPRNotRegistered(models.Model):
     RegEventId_id = models.IntegerField()
     Student_id = models.IntegerField()
     Registered = models.BooleanField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNPRNotRegistered'
         unique_together = (('RegEventId_id', 'Student_id'))
@@ -313,6 +329,7 @@ class BTNPRDroppedRegularCourses(models.Model):
     subject_id =models.IntegerField()
     RegEventId_id = models.IntegerField()
     Registered = models.BooleanField()
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTNPRDroppedRegularCourses'
         unique_together = (('student_id', 'subject_id'))
@@ -322,6 +339,7 @@ class BTNPRMarks(models.Model):
     Registration_id = models.IntegerField()
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTNPRMarks'

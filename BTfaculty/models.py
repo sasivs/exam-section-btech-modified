@@ -1,10 +1,13 @@
 from django.db import models
 from BTco_ordinator.models import BTSubjects
 import math
+from simple_history.models import HistoricalRecords
+
 # Create your models here.
 
 class BTAttendance_Shortage(models.Model):
     Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTAttendance_Shortage'
@@ -20,6 +23,7 @@ class BTGradesThreshold(models.Model):
     Threshold_Mark = models.FloatField()
     Section = models.CharField(max_length=2, default='NA')
     Exam_Mode = models.BooleanField() 
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTGradesThreshold'
         unique_together = (('Grade', 'Subject', 'RegEventId', 'Section',"Exam_Mode"))
@@ -29,6 +33,7 @@ class BTMarks_Staging(models.Model):
     Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTMarks_Staging'
@@ -67,6 +72,7 @@ class BTMarks(models.Model):
     Registration = models.ForeignKey('BTco_ordinator.BTStudentRegistrations', on_delete=models.CASCADE)
     Marks = models.TextField()
     TotalMarks = models.IntegerField()
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'BTMarks'
@@ -99,6 +105,7 @@ class BTStudentGrades(models.Model):
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTStudentGrades'
         constraints = [
@@ -114,6 +121,7 @@ class BTStudentGrades_Staging(models.Model):
     Regulation = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
+    history = HistoricalRecords()
     class Meta:
         db_table = 'BTStudentGrades_Staging'
         constraints = [
