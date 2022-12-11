@@ -174,7 +174,7 @@ def faculty_assignment(**kwargs):
             dept_sub = BTSubjects.objects.filter(RegEventId_id=regEventId)
             for sub in dept_sub:
                 print(sub.__dict__)
-                offering_dept = sub.OfferedBy
+                offering_dept = sub.course.OfferedBy
                 if offering_dept > 10: offering_dept -= 2
                 print(offering_dept)
                 fac_name = 'fac'+str(offering_dept)
@@ -200,7 +200,7 @@ def faculty_assignment(**kwargs):
             subjects = BTSubjects.objects.filter(id__in=student_regs.values_list('sub_id_id', flat=True))
             for sub in subjects:
                 print(sub.__dict__)
-                offering_dept = sub.OfferedBy
+                offering_dept = sub.course.OfferedBy
                 if offering_dept > 10: offering_dept -= 2
                 print(offering_dept)
                 fac_name = 'fac'+str(offering_dept)
