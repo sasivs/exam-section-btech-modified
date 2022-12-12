@@ -172,6 +172,7 @@ def grades_status(request):
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'BTfaculty/GradesStatus.html', {'form':form})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_access)
 def grades_hod_submission(request):

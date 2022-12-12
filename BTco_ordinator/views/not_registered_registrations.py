@@ -7,8 +7,9 @@ from BTco_ordinator.forms import NotRegisteredRegistrationsForm
 from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTCycleCoordinator
 from ADAUGDB.user_access_test import registration_access
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def not_registered_registrations(request):

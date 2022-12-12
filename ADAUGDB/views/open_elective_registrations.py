@@ -7,7 +7,9 @@ from ADAUGDB.forms import OpenElectiveRegistrationsFinalizeForm
 from ADAUGDB.models import BTOpenElectiveRollLists
 from ADAUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def open_elective_regs(request):
@@ -63,6 +65,7 @@ def open_elective_regs(request):
         form = OpenElectiveRegistrationsForm(regIDs)
     return render(request, 'ADAUGDB/OpenElectiveRegistrations.html',{'form':form,'msg':necessary_field_msg})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def open_elective_regs_finalize(request):

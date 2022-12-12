@@ -10,6 +10,7 @@ from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, B
 from BThod.models import BTCoordinator
 from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTHOD, BTCycleCoordinator
+from django.db import transaction
 
 
 @login_required(login_url="/login/")
@@ -57,6 +58,7 @@ def faculty_subject_assignment(request):
         form = FacultySubjectAssignmentForm(regIDs)
     return render(request, 'BTco_ordinator/FacultyAssignment.html',{'form':form})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(faculty_subject_assignment_access)
 def faculty_subject_assignment_detail(request, pk):

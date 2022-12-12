@@ -4,7 +4,9 @@ from django.shortcuts import render
 from django.utils import timezone
 from ADAUGDB.models import BTHOD
 from ADAUGDB.forms import HODAssignmentForm
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def hod_assignment(request):

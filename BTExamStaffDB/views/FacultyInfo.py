@@ -9,6 +9,7 @@ from ADAUGDB.models import BTHOD
 from BTExamStaffDB.resources import FacultyInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
+from django.db import transaction
 
 
 
@@ -82,6 +83,7 @@ def faculty_upload(request):
         form = FacultyUploadForm()
     return (render(request, 'BTExamStaffDB/FacultyUpload.html', {'form':form}))
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def FacultyInfo_upload_error_handler(request):
@@ -113,6 +115,7 @@ def FacultyInfo_upload_status(request):
         fac_info = BTFacultyInfo.objects.filter(Dept=co_ordinator.Dept)
     return render(request, 'BTExamStaffDB/FacultyInfoStatus.html',{'fac_info': fac_info})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def Faculty_delete(request):

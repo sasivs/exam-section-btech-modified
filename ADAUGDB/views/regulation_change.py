@@ -5,7 +5,9 @@ from ADAUGDB.forms import RegulationChangeForm, RegulationChangeStatusForm
 from BTco_ordinator.models import BTNotPromoted, BTRegulationChange
 from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def regulation_change(request):

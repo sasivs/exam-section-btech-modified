@@ -6,8 +6,9 @@ from BTco_ordinator.models import BTRollLists_Staging, BTSubjects, BTStudentRegi
 from ADAUGDB.models import BTCycleCoordinator
 from ADAUGDB.models import BTRegistrationStatus
 from BThod.models import BTCoordinator
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def dept_elective_regs_all(request):

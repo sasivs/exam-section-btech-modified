@@ -3,7 +3,9 @@ from django.shortcuts import render
 from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from ADAUGDB.models import BTRegulation
 from ADAUGDB.forms import AddRegulationForm
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def addRegulation(request):

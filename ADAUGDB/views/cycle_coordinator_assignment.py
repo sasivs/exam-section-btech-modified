@@ -4,8 +4,9 @@ from django.shortcuts import render
 from django.utils import timezone
 from ADAUGDB.models import BTCycleCoordinator
 from ADAUGDB.forms import CycleCoordinatorAssignmentForm
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def cycle_coordinator_assignment(request):

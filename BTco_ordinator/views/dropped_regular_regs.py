@@ -7,7 +7,9 @@ from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BThod.models import BTCoordinator
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def dropped_regular_registrations(request):

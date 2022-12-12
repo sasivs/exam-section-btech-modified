@@ -6,17 +6,14 @@ from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTHOD, BTStudentCGPAs_Staging
 from BThod.forms import GpaStagingForm
 import psycopg2
+from django.db import transaction, connection
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(gpa_staging_access)
 def gpa_staging(request):
-    from AWSP.settings import DATABASES
-    conn = psycopg2.connect(
-    host="localhost",
-    database=DATABASES['default']['NAME'],
-    user="postgres",
-    password=DATABASES['default']['PASSWORD'])
-    cursor = conn.cursor()
+    
+    cursor = connection.cursor()
 
     try:
         cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePointsMV\" WITH DATA;")
@@ -32,7 +29,6 @@ def gpa_staging(request):
         
     finally:
         cursor.close()
-        conn.commit()
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     regIds = None

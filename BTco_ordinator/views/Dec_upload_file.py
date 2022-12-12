@@ -8,8 +8,9 @@ from ADAUGDB.models import BTRegistrationStatus
 from BTco_ordinator.models import BTSubjects, BTStudentRegistrations_Staging, BTRollLists_Staging
 from import_export.formats.base_formats import XLSX
 from BThod.models import BTCoordinator
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def dept_elective_regs_upload(request):

@@ -8,7 +8,9 @@ from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BThod.models import BTCoordinator, BTFaculty_user
 from BTExamStaffDB.forms import IXGradeStudentsAddition, IXGradeStudentsStatus
 from BTExamStaffDB.models import BTIXGradeStudents
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def ix_student_assignment(request):

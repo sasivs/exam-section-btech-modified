@@ -8,6 +8,7 @@ from BTExamStaffDB.models import BTStudentInfo
 from BTExamStaffDB.resources import StudentInfoResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
+from django.db import transaction
 
 
 # Create your views here.
@@ -72,6 +73,7 @@ def StudInfoFileUpload(request):
         form = StudentInfoFileUpload()
     return  render(request, 'BTExamStaffDB/BTStudentInfoUpload.html',{'form':form})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def student_info_error_handler(request):
@@ -90,6 +92,7 @@ def student_info_error_handler(request):
         form = StudentInfoUpdateForm(Options = studInfoErrRows)
     return(render(request, 'BTExamStaffDB/BTStudentInfoUploadErrorHandler.html',{'form':form}))
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_ExamStaff)
 def update_rollno(request):

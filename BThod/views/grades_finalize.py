@@ -6,10 +6,10 @@ from BThod.forms import GradesFinalizeForm
 from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTHOD
 from BTfaculty.models import BTStudentGrades_Staging, BTStudentGrades
+from django.db import transaction, connection
 
-import psycopg2
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(grades_finalize_access)
 def grades_finalize(request):
@@ -42,14 +42,9 @@ def grades_finalize(request):
         form = GradesFinalizeForm(regIDs)
     return render(request, 'BThod/GradesFinalize.html', {'form':form})
 
+@transaction.atomic
 def RefreshMaterializedViews():
-    from AWSP.settings import DATABASES
-    conn = psycopg2.connect(
-    host="localhost",
-    database=DATABASES['default']['NAME'],
-    user="postgres",
-    password=DATABASES['default']['PASSWORD'])
-    cursor = conn.cursor()
+    cursor = connection.cursor()
 
     try:
         cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePointsMV\" WITH DATA;")
@@ -58,7 +53,6 @@ def RefreshMaterializedViews():
         cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentMakeupBacklogsMV\" WITH DATA;")
     finally:
         cursor.close()
-        conn.commit()
 
 def finalize_grades(**kwargs):
     print(kwargs)

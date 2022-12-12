@@ -6,8 +6,9 @@ from BTfaculty.models import BTStudentGrades,BTMarks,BTMarks_Staging,BTStudentGr
 from ADAUGDB.forms import StudentCancellationForm, StudentCancellationStatusForm
 from ADAUGDB.user_access_test import seat_cancellation_status_access, is_Associate_Dean_Academics
 from django.contrib.auth.decorators import login_required, user_passes_test 
-    
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def seat_cancellation(request):

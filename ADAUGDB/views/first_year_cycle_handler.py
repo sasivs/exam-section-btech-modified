@@ -3,8 +3,9 @@ from ADAUGDB.user_access_test import is_Associate_Dean_Academics
 from django.shortcuts import render
 from ADAUGDB.forms import CycleHandlerForm
 from BTco_ordinator.models import BTNotPromoted 
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def cycle_handler(request):

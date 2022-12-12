@@ -7,8 +7,9 @@ from ADAUGDB.models import BTHOD
 from BThod.forms import MarksFinalizeForm
 from BTco_ordinator.models import BTStudentRegistrations
 from BTfaculty.models import BTMarks_Staging, BTMarks, BTStudentGrades_Staging, BTStudentGrades
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Hod)
 def marks_finalize(request):

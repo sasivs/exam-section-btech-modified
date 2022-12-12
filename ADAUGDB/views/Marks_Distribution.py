@@ -4,8 +4,9 @@ from ADAUGDB.user_access_test import is_Associate_Dean_Academics, mark_distribut
 from django.shortcuts import render
 from ADAUGDB.forms import MarksDistributionForm
 from ADAUGDB.models import BTMarksDistribution
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def mark_distribution_add(request):
@@ -39,6 +40,7 @@ def mark_distribution_status(request):
             mark_distribution = BTMarksDistribution.objects.all()
     return render(request, 'ADAUGDB/MarkDistributionStatus.html', {'distributions':mark_distribution})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def mark_distribution_update(request, pk):

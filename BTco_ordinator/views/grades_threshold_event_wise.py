@@ -8,8 +8,9 @@ from BTco_ordinator.forms import GradesThresholdEventWise
 from BTco_ordinator.models import BTFacultyAssignment
 from BTfaculty.models import BTGradesThreshold
 from import_export.formats.base_formats import XLSX
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_event_wise_access)
 def grades_threshold_event_wise(request):

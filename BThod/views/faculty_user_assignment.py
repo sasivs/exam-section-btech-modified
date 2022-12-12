@@ -8,6 +8,7 @@ from ADAUGDB.models import BTHOD
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils import timezone
+from django.db import transaction
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Hod)
@@ -25,7 +26,8 @@ def faculty_user(request):
 
     return render(request, 'BThod/FacultyUser.html',{'faculty':faculty})
 
-login_required(login_url="/login/")
+@transaction.atomic
+@login_required(login_url="/login/")
 @user_passes_test(is_Hod)
 def faculty_user_detail(request,pk):
     faculty = BTFacultyInfo.objects.get(id=pk)
@@ -49,8 +51,8 @@ def faculty_user_detail(request,pk):
     return render(request, 'BThod/FacultyUserdetail.html', { 'faculty':faculty,\
         'Users':users,'assigned_user':assigned_user})
 
-
-login_required(login_url="/login/")
+@transaction.atomic
+@login_required(login_url="/login/")
 @user_passes_test(is_Hod)
 def faculty_user_revoke(request,pk):
     fac = BTFaculty_user.objects.filter(Faculty_id=pk,RevokeDate__isnull=True).first()
@@ -62,7 +64,7 @@ def faculty_user_revoke(request,pk):
 
 
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Hod)
 def faculty_Coordinator(request):

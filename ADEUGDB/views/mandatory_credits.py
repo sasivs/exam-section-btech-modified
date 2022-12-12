@@ -3,7 +3,9 @@ from ADAUGDB.user_access_test import is_Associate_Dean_Exams
 from django.shortcuts import render
 from ADEUGDB.forms import MandatoryCreditsForm
 from ADEUGDB.models import BTYearMandatoryCredits
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Exams)
 def mandatory_credits_upload(request):

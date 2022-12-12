@@ -8,8 +8,9 @@ from ADEUGDB.forms import GradeChallengeForm, GradeChallengeStatusForm
 from BTExamStaffDB.models import BTIXGradeStudents
 from BTfaculty.models import BTGradesThreshold
 from ADEUGDB.models import BTGradeChallenge
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Exams)
 def grade_challenge(request):

@@ -7,8 +7,9 @@ from ADAUGDB.models import BTCycleCoordinator
 from BThod.models import BTCoordinator
 from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(registration_access)
 def btech_backlog_registration(request):

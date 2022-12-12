@@ -11,7 +11,7 @@ from BThod.models import BTCoordinator
 from ADAUGDB.user_access_test import subject_access, subject_home_access, is_Associate_Dean_Academics
 from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
 def subject_upload(request):
@@ -84,6 +84,7 @@ def subject_upload(request):
         form = SubjectsUploadForm(Options=regIDs)
     return (render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(subject_access)
 def subject_upload_error_handler(request):

@@ -3,8 +3,9 @@ from django.shortcuts import render
 from ADAUGDB.user_access_test import is_Associate_Dean_Exams
 from ADEUGDB.forms import HeldInForm
 from ADEUGDB.models import BTHeldIn
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Exams)
 def update_heldin(request):

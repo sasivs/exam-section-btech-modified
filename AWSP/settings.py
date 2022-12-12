@@ -103,9 +103,9 @@ WSGI_APPLICATION = 'AWSP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
+        'NAME': 'public',
         'USER':'postgres',
-        'PASSWORD': '',
+        'PASSWORD': 'postgresql',
         'HOST':'localhost',
         'PORT': '5432',
     }

@@ -4,8 +4,10 @@ from django.shortcuts import render
 from ADAUGDB.models import BTProgrammeModel
 from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.forms import DBYBSAYASSelectionForm, CreateRegistrationEventForm
+from django.db import transaction
 
 # Create your views here.
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def create_registration_event(request):
@@ -52,7 +54,7 @@ def create_registration_event(request):
         form = CreateRegistrationEventForm()
     return render(request, 'ADAUGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def update_manage_registrations(request):

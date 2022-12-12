@@ -147,7 +147,8 @@ def marks_upload_status(request):
     else:
         form = MarksStatusForm(subjects=subjects)
     return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form})
-    
+
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(marks_upload_access)
 def marks_update(request, pk):
@@ -172,7 +173,7 @@ def marks_update(request, pk):
         form = MarksUpdateForm(mark=mark_obj)
     return render(request, 'BTfaculty/MarksUpdate.html', {'form':form, 'mark':mark_obj})
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(marks_upload_access)
 def marks_hod_submission(request):

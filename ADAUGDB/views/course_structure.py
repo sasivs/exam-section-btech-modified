@@ -7,6 +7,7 @@ from tablib import Dataset
 from django.http import HttpResponse
 from import_export.formats.base_formats import XLSX
 from BTco_ordinator.resources import CourseStructureResource
+from django.db import transaction
 
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
@@ -87,6 +88,7 @@ def course_structure_status(request):
         form = CourseStructureStatusForm()
     return render(request, 'ADAUGDB/BTCourseStructureStatus.html',{'form':form})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def course_structure_delete(request):

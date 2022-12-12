@@ -6,6 +6,7 @@ from ADAUGDB.models import BTGradePoints
 from ADAUGDB.resources import GradePointsResource
 from tablib import Dataset
 from import_export.formats.base_formats import XLSX
+from django.db import transaction
 
 
 @login_required(login_url="/login/")
@@ -71,6 +72,7 @@ def grade_points_upload(request):
         form = GradePointsUploadForm()
     return render(request, 'ADAUGDB/GradePointsUpload.html', {'form':form})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def grade_points_upload_error_handler(request):

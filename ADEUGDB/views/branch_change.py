@@ -5,8 +5,9 @@ from django.shortcuts import render
 from ADEUGDB.forms import  BranchChangeForm, BranchChangeStausForm
 from ADEUGDB.models import BTBranchChanges
 from BTExamStaffDB.models import BTStudentInfo
+from django.db import transaction
 
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Exams)
 def branch_change(request):
