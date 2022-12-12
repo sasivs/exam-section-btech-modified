@@ -217,8 +217,8 @@ def generate_grades(**kwargs):
         attendance_shortage = BTAttendance_Shortage.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
         grades_objects = BTStudentGrades_Staging.objects.filter(RegId_id__in=marks_objects.values_list('Registration', flat=True))
         for att in attendance_shortage:
-            if grades_objects.filter(RegId=att.Registration.id):
-                grades_objects.filter(RegId=att.Registration.id).update(Grade='R', AttGrade='X')
+            if grades_objects.filter(RegId_id=att.Registration.id):
+                grades_objects.filter(RegId_id=att.Registration.id).update(Grade='R', AttGrade='X')
             else:
                 grade = BTStudentGrades_Staging(RegId_id=att.Registration.id, RegEventId=att.Registration.RegEventId.id, Regulation=att.Registration.RegEventId.Regulation, \
                     Grade='R', AttGrade='X') 
@@ -226,8 +226,8 @@ def generate_grades(**kwargs):
             marks_objects = marks_objects.exclude(Registration=att.Registration)
         ix_grades = BTIXGradeStudents.objects.filter(Registration__in=marks_objects.values_list('Registration', flat=True))
         for ix_grade in ix_grades:
-                if grades_objects.filter(RegId=ix_grade.Registration.id):
-                    grades_objects.filter(RegId=ix_grade.Registration.id).update(Grade=ix_grade.Grade, AttGrade='P')
+                if grades_objects.filter(RegId_id=ix_grade.Registration.id):
+                    grades_objects.filter(RegId_id=ix_grade.Registration.id).update(Grade=ix_grade.Grade, AttGrade='P')
                 else:
                     grade = BTStudentGrades_Staging(RegId_id=ix_grade.Registration.id, RegEventId=ix_grade.Registration.RegEventId.id, Regulation=ix_grade.Registration.RegEventId.Regulation, \
                         Grade=ix_grade.Grade, AttGrade='P')
@@ -253,8 +253,8 @@ def generate_grades(**kwargs):
                     for inner_index in range(len(promote_thresholds[outer_index])):
                         if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
                             graded = True
-                            if grades_objects.filter(RegId=mark.Registration.id):
-                                grades_objects.filter(RegId=mark.Registration.id).update(Grade='F', AttGrade='P')
+                            if grades_objects.filter(RegId_id=mark.Registration.id):
+                                grades_objects.filter(RegId_id=mark.Registration.id).update(Grade='F', AttGrade='P')
                                 break
                             else:
                                 grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
@@ -266,8 +266,8 @@ def generate_grades(**kwargs):
                 if not graded:
                     for threshold in thresholds:
                         if mark.TotalMarks >= threshold.Threshold_Mark:
-                            if grades_objects.filter(RegId=mark.Registration.id):
-                                grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
+                            if grades_objects.filter(RegId_id=mark.Registration.id):
+                                grades_objects.filter(RegId_id=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
                                 break
                             else:
                                 grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
@@ -277,8 +277,8 @@ def generate_grades(**kwargs):
             else:
                 for threshold in thresholds:
                     if mark.TotalMarks >= threshold.Threshold_Mark:
-                        if grades_objects.filter(RegId=mark.Registration.id):
-                            grades_objects.filter(RegId=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='X')
+                        if grades_objects.filter(RegId_id=mark.Registration.id):
+                            grades_objects.filter(RegId_id=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='X')
                             break
                         else:
                             grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \

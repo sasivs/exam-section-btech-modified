@@ -66,7 +66,7 @@ def finalize_grades(**kwargs):
         registrations = BTStudentRegistrations.objects.filter(RegEventId_id=event.id)
         grades_objs = BTStudentGrades_Staging.objects.filter(RegId_id__in=registrations.values_list('id', flat=True))
         for grade in grades_objs:
-            fgrade = BTStudentGrades(RegId_id=grade.RegId, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
+            fgrade = BTStudentGrades(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
             fgrade.save()
         event.GradeStatus = 0
         event.save()
