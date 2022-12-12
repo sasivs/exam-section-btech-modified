@@ -14,11 +14,11 @@ join "BTRegistration_Status" btrs on bts."RegEventId_id"=btrs."id"
 
 def build_course_structure(file):
     import pandas as pd
-    file = pd.read_excel(file)
+    file = pd.read_csv(file)
     file = file.drop_duplicates(subset=['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'DistributionRatio', 'Distribution', 'DistributionNames', 'PromoteThreshold'])
-    file['lectures'] = 0
-    file['tutorials'] = 0
-    file['practicals'] = 0
+    # file['lectures'] = 0
+    # file['tutorials'] = 0
+    # file['practicals'] = 0
     course_structure_data = file[['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits']]
     pd.options.display.multi_sparse = False
     cs_file = course_structure_data.value_counts().reset_index(name='count')
@@ -26,31 +26,48 @@ def build_course_structure(file):
     # cs_file.index += 1
     pd.options.display.multi_sparse = True
     print(cs_file)
-    cs_file.to_excel("/home/examsection/Desktop/awsp_testing_v2/database_recreate/course_structure_from_2019.xlsx")
+    cs_file.to_excel(r"C:\Users\sasib\Desktop\db\btech\course_structure_from_2019.xlsx", index=False)
 
 def build_courses_file(file):
     import pandas as pd
-    file = pd.read_excel(file)
+    file = pd.read_csv(file)
     file = file.drop_duplicates(subset=['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'DistributionRatio', 'Distribution', 'DistributionNames', 'PromoteThreshold'])
     file['lectures'] = 0
     file['tutorials'] = 0
     file['practicals'] = 0
     file['MarkDistribution'] = ''
     for _, row in file.iterrows():
+        if row["Type"] == 'THEORY':
+            file.at[_,'lectures'] = row['Credits']
+        elif row["Type"] == 'LAB':
+            file.at[_,'practicals'] = row['Credits']-1
+            file.at[_,'tutorials'] = 1
+        else:
+            file.at[_,'lectures'] = row['Credits']
         distribution_marks = row['Distribution'].split(',')
-        ncolumns = len(distribution_marks)
         marks = [row.split('+') for row in distribution_marks]
+        ncolumns = 0
+        for dis in marks: ncolumns+=len(dis)
         t_marks = [['100' for _ in range(len(row))] for row in marks]
         t_marks = ['+'.join(mark) for mark in t_marks]
         t_marks = ','.join(t_marks)
-        if ncolumns == 4: dis_names = 'Minor-I'+','+'MID'+','+'Minor-II'+','+'END'
-        elif ncolumns == 2: dis_names = 'Internal'+','+'External'
-        distribution_string = t_marks+';'+str(file['PromoteThreshold'])+';'+dis_names
+        if ncolumns == 4: dis_names = 'Minor-I'+'+'+'MID'+'+'+'Minor-II'+'+'+'END'
+        elif ncolumns == 2: dis_names = 'Internal'+'+'+'External'
+        elif ncolumns == 6: dis_names = 'Minor-I'+'+'+'MID'+'+'+'Minor-II'+'+'+'END'+','+'Internal'+'+'+'External'
+        elif ncolumns == 1: dis_names = 'End'
+        elif ncolumns == 3: dis_names = 'Con+Mid+End'
+        else: print(ncolumns); print(row); break
+        # print(t_marks)
+        # print(row['PromoteThreshold'])
+        # print(dis_names)
+        distribution_string = t_marks+';'+str(row['PromoteThreshold'])+';'+dis_names
+        # print(distribution_string)
         file.at[_,'MarkDistribution'] = distribution_string
+        # break
 
     course_data = file[['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'lectures', 'tutorials', 'practicals', 'DistributionRatio', 'MarkDistribution']]
     course_data = course_data.drop_duplicates(subset=['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'lectures', 'tutorials', 'practicals', 'DistributionRatio', 'MarkDistribution'], ignore_index=True)
-    course_data.to_excel("/home/examsection/Desktop/awsp_testing_v2/database_recreate/courses_from_2019.xlsx")
+    course_data.to_excel(r"C:\Users\sasib\Desktop\db\btech\courses_from_2019.xlsx", index=False)
 
 def get_course_structure_file(file):
     import pandas as pd
@@ -74,8 +91,8 @@ def get_course_structure_file(file):
         t_marks = ['+'.join(mark) for mark in t_marks]
         t_marks = ','.join(t_marks)
         ncolumns = len(mark_dis.distributions())
-        if ncolumns == 4: dis_names = 'Minor-I'+','+'MID'+','+'Minor-II'+','+'END'
-        elif ncolumns == 2: dis_names = 'Internal'+','+'External'
+        if ncolumns == 4: dis_names = 'Minor-I'+'+'+'MID'+'+'+'Minor-II'+'+'+'END'
+        elif ncolumns == 2: dis_names = 'Internal'+'+'+'External'
         mark_dis_row = (row['Regulation'], t_marks, dis_names, mark_dis.PromoteThreshold)
         if mark_dis_row not in mark_dis_rows:
             mark_dis_rows.append(mark_dis_row)
