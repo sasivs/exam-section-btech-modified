@@ -218,7 +218,7 @@ class AddRegulationForm(forms.Form):
 class CourseStructureForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(CourseStructureForm, self).__init__(*args, **kwargs)
-        regulations = BTRegulation.objects.all().distinct()
+        regulations = BTRegulation.objects.all().distinct('Regulation')
         REGULATION_CHOICES = [('', 'Choose Regulation')]
         REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
         self.fields['regulation'] = forms.CharField(label='Regulation', widget = forms.Select(choices=REGULATION_CHOICES))
