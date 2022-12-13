@@ -8,7 +8,9 @@ from ADAUGDB.forms import AddCoursesForm, CoursesStatusForm
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 import copy
+from django.db import transaction
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def add_courses(request):
