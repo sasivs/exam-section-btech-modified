@@ -31,7 +31,7 @@ def add_courses(request):
                     if (row[2], row[6]) != (form.cleaned_data.get('BYear'), form.cleaned_data.get('Regulation')):
                         invalidData.append(row)
                         continue
-                    course_struct_obj = BTCourseStructure.objects.filter(Category=row[10], Type=row[9], Creditable=row[7], Credits=row[8],\
+                    course_struct_obj = BTCourseStructure.objects.filter(Category=row[10].upper(), Type=row[9].upper(), Creditable=row[7], Credits=row[8],\
                         Regulation=row[6], BYear=row[2], BSem=row[3], Dept=row[4]).first()
                     mark_dis = row[15].split(';')
                     mark_distribution = BTMarksDistribution.objects.filter(Regulation=form.cleaned_data.get('Regulation'), Distribution=mark_dis[0], \
