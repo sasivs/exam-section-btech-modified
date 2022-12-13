@@ -69,6 +69,28 @@ def build_courses_file(file):
     course_data = course_data.drop_duplicates(subset=['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'lectures', 'tutorials', 'practicals', 'DistributionRatio', 'MarkDistribution'], ignore_index=True)
     course_data.to_excel(r"C:\Users\sasib\Desktop\db\btech\courses_from_2019.xlsx", index=False)
 
+def get_marks_distribution_file(file):
+    import pandas as pd
+    file = pd.read_csv(file)
+    file = file.drop_duplicates(subset=['SubCode', 'SubName', 'BYear', 'BSem', 'Dept', 'OfferedBy', 'Regulation', 'Creditable', 'Credits', 'Type', 'Category', 'DistributionRatio', 'Distribution', 'DistributionNames', 'PromoteThreshold'])
+    for _, row in file.iterrows():
+        distribution_marks = row['Distribution'].split(',')
+        marks = [row.split('+') for row in distribution_marks]
+        ncolumns = 0
+        for dis in marks: ncolumns+=len(dis)
+        t_marks = [['100' for _ in range(len(row))] for row in marks]
+        t_marks = ['+'.join(mark) for mark in t_marks]
+        t_marks = ','.join(t_marks)
+        if ncolumns == 4: dis_names = 'Minor-I'+'+'+'MID'+'+'+'Minor-II'+'+'+'END'
+        elif ncolumns == 2: dis_names = 'Internal'+'+'+'External'
+        elif ncolumns == 6: dis_names = 'Minor-I'+'+'+'MID'+'+'+'Minor-II'+'+'+'END'+','+'Internal'+'+'+'External'
+        elif ncolumns == 1: dis_names = 'END'
+        elif ncolumns == 3: dis_names = 'Con+MID+END'
+        else: print(ncolumns); print(row); break
+        if not BTMarksDistribution.objects.filter(Regulation=row['Regulation'], Distribution=t_marks, DistributionNames=dis_names, PromoteThreshold=row['PromoteThreshold']).exists():
+            new_row = BTMarksDistribution(Regulation=row['Regulation'], Distribution=t_marks, DistributionNames=dis_names, PromoteThreshold=row['PromoteThreshold'])
+            new_row.save()
+
 def get_course_structure_file(file):
     import pandas as pd
     file = pd.read_csv(file)
