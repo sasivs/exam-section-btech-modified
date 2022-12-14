@@ -81,7 +81,7 @@ def course_structure_status(request):
     if(request.method=='POST'):
         form = CourseStructureStatusForm(request.POST)
         if form.is_valid():
-            event = [int(x) for x in form.cleaned_data.get('event').split(':')]
+            event = [float(x) for x in form.cleaned_data.get('event').split(':')]
             course_structure = BTCourseStructure.objects.filter(Dept=event[0], BYear=event[1], BSem=event[2], Regulation=event[3]) 
             return render(request, 'ADAUGDB/BTCourseStructureStatus.html',{'form':form, 'coursestructure':course_structure})
     else:
