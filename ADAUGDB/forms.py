@@ -184,7 +184,9 @@ class CycleHandlerForm(forms.Form):
                 not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem1='R', student__Regulation=event.Regulation)
             else:
                 not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem2='R', student__Regulation=event.Regulation)
-            REGNO_CHOICES += [(row.id, row.RegNo) for row in not_promoted_r_mode]
+            REGNO_CHOICES = [(row.id, row.student.RegNo) for row in not_promoted_r_mode]
+            REGNO_CHOICES = sorted(REGNO_CHOICES, key=lambda x:x[1])
+            REGNO_CHOICES = [('', 'Choose RegNo')] + REGNO_CHOICES
             self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget=forms.Select(choices=REGNO_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('regno'):
                 CYCLE_CHOICES = [('', 'Choose Cycle')]
