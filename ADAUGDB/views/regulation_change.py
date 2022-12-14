@@ -25,7 +25,7 @@ def regulation_change(request):
                     msg = 'Regulation change already performed for this candidate for this registration event.'
                 return render(request, 'ADAUGDB/RegulationChange.html', {'form':form, 'msg':msg})
         elif request.POST.get('regno'):
-            student = BTNotPromoted.objects.filter(RegNo=request.POST.get('regno')).first().student
+            student = BTNotPromoted.objects.filter(id=request.POST.get('regno')).first().student
             return render(request, 'ADAUGDB/RegulationChange.html', {'form':form, 'student':student})
     else:
         form = RegulationChangeForm()
