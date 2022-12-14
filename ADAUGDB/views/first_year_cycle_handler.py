@@ -19,7 +19,7 @@ def cycle_handler(request):
                 msg = 'Student {}, cycle is updated to {}'.format(student.RegNo, 'Physics' if student.Cycle == 10 else 'Chemistry')
                 return render(request, 'ADAUGDB/RollListCycleHandler.html', {'form':form, 'msg':msg})
         elif request.POST.get('regno'):
-            student = BTNotPromoted.objects.filter(RegNo=request.POST.get('regno')).first().student
+            student = BTNotPromoted.objects.filter(id=request.POST.get('regno')).first().student
             return render(request, 'ADAUGDB/RollListCycleHandler.html', {'form':form, 'student':student})
     else:
         form = CycleHandlerForm()
