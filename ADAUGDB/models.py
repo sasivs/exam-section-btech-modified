@@ -47,7 +47,7 @@ class BTRegulation(models.Model):
     AdmissionYear = models.IntegerField()
     AYear = models.IntegerField()
     BYear = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     history = HistoricalRecords()
 
     class Meta:
