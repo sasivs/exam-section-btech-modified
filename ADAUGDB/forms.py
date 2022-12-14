@@ -162,7 +162,7 @@ class RegulationChangeForm(forms.Form):
     def clean_newRegulation(self):
         if self.cleaned_data.get('newRegulation'):
             newRegulation = float(self.cleaned_data.get('newRegulation'))
-            student_obj = BTNotPromoted.objects.filter(id=self.cleaned_data.get('regno')).student
+            student_obj = BTNotPromoted.objects.filter(id=self.cleaned_data.get('regno')).first().student
             if student_obj.Regulation == newRegulation:
                 raise forms.ValidationError('Updated regulation and old regulation cannot be same')
             return newRegulation
