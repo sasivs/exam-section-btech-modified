@@ -212,7 +212,7 @@ FROM (SELECT row_number() OVER (ORDER BY s."RegNo", s."AYASBYBS")               
                             "BTStudentGradePointsMV"."AYASBYBS",
                             "BTStudentGradePointsMV"."BSem",
                             "BTStudentGradePointsMV"."BYear",
-                            mod("BTStudentGradePointsMV"."AYASBYBS", 100) AS "BYBS"
+                            mod("BTStudentGradePointsMV"."AYASBYBS"::int, 100) AS "BYBS"
             FROM "BTStudentGradePointsMV") s) "SS";
 
 alter materialized view "BTStudentExamEventsMV" owner to postgres;
@@ -673,7 +673,7 @@ REFRESH MATERIALIZED VIEW public."BTStudentSGPAs_StagingMV" WITH DATA;
 create materialized view if not exists "BTStudentSGPAsMV" as
 SELECT "H"."RegNo",
        "H"."AYASBYBS_G",
-       mod("H"."AYASBYBS_G", 100)                                                AS "BYBS",
+       mod("H"."AYASBYBS_G"::int, 100)                                                AS "BYBS",
        sum("H"."GP")                                                             AS "SGP",
        sum("H"."Credits")                                                        AS "SC",
        round(sum("H"."GP")::numeric / NULLIF(sum("H"."Credits"), 0)::numeric, 2) AS "SGPA"
