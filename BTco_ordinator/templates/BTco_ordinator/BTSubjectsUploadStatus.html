@@ -15,6 +15,7 @@
             <th>
                 <tr>
                     <td style="border: 1px solid black;">SubCode </td>
+                    <td style="border: 1px solid black;">S.No. </td>
                     <td style="border: 1px solid black;">SubName</td>
                     <td style="border: 1px solid black;">Creditable</td>
                     <td style="border: 1px solid black;">Credits</td>
@@ -27,6 +28,9 @@
             </th>
             {% for sub in subjects %}
             <tr>
+                <td style="border: 1px solid black;">
+                    {{ forloop.counter }}
+                </td>
                 <td style="border: 1px solid black;">
                     {{ sub.course.SubCode }}
                 </td>

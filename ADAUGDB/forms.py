@@ -152,7 +152,8 @@ class RegulationChangeForm(forms.Form):
             event = events.filter(id=self.data.get('regid')).first()
             not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem1='R', PoA_sem2='R').exclude(Regulation=event.Regulation)
             not_promoted_b_mode = BTNotPromoted.objects.filter(Q(PoA_sem1='B')|Q(PoA_sem2='B'), AYear=event.AYear-2, BYear=event.BYear-1).exclude(Regulation=event.Regulation)
-            REGNO_CHOICES += [(row.id, row.RegNo) for row in not_promoted_r_mode|not_promoted_b_mode]
+            REGNO_CHOICES += [(row.id, row.student.RegNo) for row in not_promoted_r_mode|not_promoted_b_mode]
+            REGNO_CHOICES = sorted(REGNO_CHOICES, key=lambda x:x[1])
             self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget=forms.Select(choices=REGNO_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('regno'):
                 self.fields['newRegulation'] = forms.CharField(label='Current Regulation', required=False, widget=forms.TextInput(attrs={'type':'number', 'required':'True'}))
@@ -259,7 +260,7 @@ class CourseStructureDeletionForm(forms.Form):
 class GradePointsUploadForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(GradePointsUploadForm, self).__init__(*args, **kwargs)
-        regulation = BTRegulation.objects.all()
+        regulation = BTRegulation.objects.all().order_by('Regulation')
         regulation = [(row.Regulation, row.Regulation) for row in regulation]
         regulation = list(set(regulation))
         reguChoices = [('-- Select Regulation --','-- Select Regulation --')] +regulation
@@ -269,7 +270,7 @@ class GradePointsUploadForm(forms.Form):
 class GradePointsStatusForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(GradePointsStatusForm, self).__init__(*args, **kwargs)
-        regulation = BTRegulation.objects.all()
+        regulation = BTRegulation.objects.all().order_by('Regulation')
         regulation = [(row.Regulation, row.Regulation) for row in regulation]
         regulation = list(set(regulation))
         reguChoices = [('','-- Select Regulation --')] +regulation
