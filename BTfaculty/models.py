@@ -102,7 +102,7 @@ class BTMarks(models.Model):
 class BTStudentGrades(models.Model):
     RegId = models.ForeignKey('BTco_ordinator.BTStudentRegistrations',db_column='RegId', on_delete=models.CASCADE)
     RegEventId = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     history = HistoricalRecords()
@@ -118,7 +118,7 @@ class BTStudentGrades(models.Model):
 class BTStudentGrades_Staging(models.Model):
     RegId = models.ForeignKey('BTco_ordinator.BTStudentRegistrations',db_column='RegId', on_delete=models.CASCADE)
     RegEventId = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     history = HistoricalRecords()

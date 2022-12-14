@@ -16,7 +16,7 @@ class BTDegreeAwardees(models.Model):
     Dept=models.IntegerField()
     Name=models.CharField(max_length=70)
     PassingYear=models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Degree = models.CharField(max_length=30)
     history = HistoricalRecords()
     class Meta:
@@ -24,7 +24,7 @@ class BTDegreeAwardees(models.Model):
         managed = True
 
 class BTMandatoryCredits(models.Model):
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     Credits = models.IntegerField()
@@ -111,7 +111,7 @@ class BTStudentBestGrades(models.Model):
     Dept = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Creditable = models.IntegerField()
     Credits = models.IntegerField()
     Type = models.CharField(max_length=10)

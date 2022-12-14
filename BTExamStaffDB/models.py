@@ -11,7 +11,7 @@ class BTStudentInfo(models.Model):
     RegNo = models.IntegerField()
     RollNo = models.IntegerField()
     Name = models.CharField(max_length=255)
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     AdmissionYear = models.IntegerField()
     Gender = models.CharField(max_length=10)

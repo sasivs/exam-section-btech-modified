@@ -67,8 +67,8 @@ class BTRollLists_Staging(models.Model):
 class BTRegulationChange(models.Model):
     RegEventId= models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
-    PreviousRegulation = models.IntegerField()
-    PresentRegulation = models.IntegerField()
+    PreviousRegulation = models.FloatField()
+    PresentRegulation = models.FloatField()
     history = HistoricalRecords()
     class Meta:
         db_table  = 'BTRegulationChange'
@@ -138,7 +138,7 @@ class BTStudentBacklogs(models.Model):
     BSem = models.IntegerField()
     Grade = models.CharField(max_length=2)
     GP = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     AYASBYBS = models.IntegerField()
     class Meta:
         db_table = 'BTStudentBacklogsMV'
@@ -162,7 +162,7 @@ class BTStudentMakeups(models.Model):
     BSem = models.IntegerField()
     Grade = models.CharField(max_length=2)
     GP = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     AYASBYBS = models.IntegerField()
     class Meta:
         db_table = 'BTStudentMakeupBacklogsMV'
@@ -182,7 +182,7 @@ class BTStudentGradePoints(models.Model):
     Dept = models.IntegerField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Creditable = models.IntegerField()
     Credits = models.IntegerField()
     Type = models.CharField(max_length=10)
@@ -204,7 +204,7 @@ class BTRegularRegistrationSummary(models.Model):
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     Dept = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     RegisteredSubjects = models.CharField(max_length=300)
     class Meta:
         db_table = 'BTRegularRegistrationSummaryV'
@@ -219,7 +219,7 @@ class BTBacklogRegistrationSummary(models.Model):
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     Dept = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     RegisteredSubjects = models.CharField(max_length=300)
     class Meta:
         db_table = 'BTBacklogRegistrationSummaryV'
@@ -234,7 +234,7 @@ class BTMakeupRegistrationSummary(models.Model):
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     Dept = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     RegisteredSubjects = models.CharField(max_length=300)
     class Meta:
         db_table = 'BTMakeupRegistrationSummaryV'
@@ -244,7 +244,7 @@ class BTMakeupRegistrationSummary(models.Model):
 class BTNotPromoted(models.Model):
     AYear = models.IntegerField()
     BYear = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     student = models.ForeignKey('BTExamStaffDB.BTStudentInfo', on_delete=models.CASCADE)
     PoA_sem1 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     PoA_sem2 = models.CharField(max_length=1, default='R') #S for Study Mode and R for Cancellation and Repeat
@@ -288,7 +288,7 @@ class BTNPRStudentRegistrations(models.Model): # NPR=Not promoted repeat mode
 class BTNPRStudentGrades(models.Model):
     RegId= models.IntegerField()
     RegEventId = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     history = HistoricalRecords()

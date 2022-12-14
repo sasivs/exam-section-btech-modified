@@ -59,7 +59,7 @@ class BTGradeChallenge(models.Model):
 
 
 class BTYearMandatoryCredits(models.Model):
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     BYear = models.IntegerField()
     Credits = models.IntegerField()

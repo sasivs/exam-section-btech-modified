@@ -16,7 +16,7 @@ class BTRegistrationStatus(models.Model):
     ASem = models.IntegerField()
     BYear = models.IntegerField()
     BSem = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     Mode = models.CharField(max_length=1) # R for Regular B for Backlog
     Status = models.IntegerField()
@@ -75,7 +75,7 @@ class BTCourseStructure(models.Model):
     BYear = models.IntegerField()
     BSem = models.IntegerField()
     Dept = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Category = models.CharField(max_length=10)
     Type = models.CharField(max_length=10)
     Creditable = models.IntegerField()
@@ -150,7 +150,7 @@ class BTDepartments(models.Model):
         managed = True
 
 class BTMarksDistribution(models.Model):
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Distribution = models.TextField()
     DistributionNames=models.TextField()
     PromoteThreshold = models.TextField()
@@ -204,7 +204,7 @@ class BTMarksDistribution(models.Model):
 
 
 class BTGradePoints(models.Model):
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Grade = models.CharField(max_length=2)
     Points = models.IntegerField()
     history = HistoricalRecords()
@@ -223,7 +223,7 @@ class BTCancelledStudentInfo(models.Model):
     RegNo = models.IntegerField()
     RollNo = models.IntegerField()
     Name = models.CharField(max_length=70)
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     AdmissionYear = models.IntegerField()
     Gender = models.CharField(max_length=10)
@@ -261,7 +261,7 @@ class BTCancelledStudentRegistrations(models.Model):
 class BTCancelledStudentGrades(models.Model):
     RegId= models.IntegerField()
     RegEventId = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Grade = models.CharField(max_length=2)
     AttGrade = models.CharField(max_length=2)
     history = HistoricalRecords()
@@ -300,7 +300,7 @@ class BTCancelledNotRegistered(models.Model):
 class BTCancelledNotPromoted(models.Model):
     AYear = models.IntegerField()
     BYear = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     student_id = models.IntegerField()
     PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     history = HistoricalRecords()
