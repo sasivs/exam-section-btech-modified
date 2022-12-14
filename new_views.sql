@@ -1069,7 +1069,7 @@ else
 case 
 when "TotalMarks">="G1" then
   case 
-  when "Regulation"=2 then 'S'
+  when "Regulation"=2.0 then 'S'
   else 'EX'
   end
 when "TotalMarks">="G2" then 'A'
@@ -1078,10 +1078,10 @@ when "TotalMarks">="G4" then 'C'
 when "TotalMarks">="G5" then 'D'
 when "TotalMarks">="G6" then
   case
-  when "Regulation"=2 then 'E'
+  when "Regulation"=2.0 then 'E'
   else 'P'
   end
-when "TotalMarks">="G7" and "Regulation"=2 then 'P'
+when "TotalMarks">="G7" and "Regulation"=2.0 then 'P'
 else 'F'
 end
 end "Grade"
