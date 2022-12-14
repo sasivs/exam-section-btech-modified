@@ -4,6 +4,7 @@ from django.shortcuts import render
 from ADAUGDB.forms import RegulationChangeForm, RegulationChangeStatusForm
 from BTco_ordinator.models import BTNotPromoted, BTRegulationChange
 from ADAUGDB.models import BTHOD, BTCycleCoordinator
+from BTExamStaffDB.models import BTStudentInfo
 from BThod.models import BTCoordinator
 from django.db import transaction
 
@@ -20,6 +21,7 @@ def regulation_change(request):
                     newRow = BTRegulationChange.objects.filter(RegEventId_id=form.cleaned_data.get('regid'), \
                         PreviiousRegulation=student.Regulation, PresentRegulation=form.cleaned_data.get('newRegulation'), student=student)
                     newRow.save()
+                    BTStudentInfo.objects.filter(RegNo=student.RegNo).update(Regulation=form.cleaned_data.get('newRegulation'))
                     msg = 'Regulation Change performed successfully.'
                 else:
                     msg = 'Regulation change already performed for this candidate for this registration event.'
