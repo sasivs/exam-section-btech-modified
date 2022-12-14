@@ -157,7 +157,7 @@ class RegulationChangeForm(forms.Form):
             REGNO_CHOICES = [('', 'Choose RegNo')] + REGNO_CHOICES
             self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget=forms.Select(choices=REGNO_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('regno'):
-                self.fields['newRegulation'] = forms.CharField(label='New Regulation', required=False, widget=forms.TextInput(attrs={'type':'number', 'required':'True'}))
+                self.fields['newRegulation'] = forms.CharField(label='New Regulation', required=False, widget=forms.TextInput(attrs={'type':'number', 'step':0.1, 'required':'True'}))
 
     def clean_newRegulation(self):
         if self.cleaned_data.get('newRegulation'):
