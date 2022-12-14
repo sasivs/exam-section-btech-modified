@@ -66,7 +66,7 @@ class DBYBSAYASSelectionForm(forms.Form):
             regulations +=  dropped_course_regulations + backlog_course_regulations
             regulations = list(set(regulations))
             rChoices += regulations
-            self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
+            self.fields['regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
             if self.data.get('bYear')!='1':
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
@@ -118,7 +118,7 @@ class CreateRegistrationEventForm(forms.Form):
             regulations +=  dropped_course_regulations + backlog_course_regulations
             regulations = list(set(regulations))
             rChoices += regulations
-            self.fields['regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
+            self.fields['regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
             if self.data.get('bYear')!='1':
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
             else:
@@ -345,7 +345,7 @@ class MarksDistributionForm(forms.Form):
         regulations = BTRegulation.objects.all().distinct()
         REGULATION_CHOICES = [('', 'Choose Regulation')]
         REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
-        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Regulation'] = forms.FloatField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
         self.fields['Distribution'] = forms.CharField(label='Distribution', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
         self.fields['DistributionName'] = forms.CharField(label='DistributionName', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
         self.fields['PromoteThreshold'] = forms.CharField(label='Passing Thresholds', widget=forms.Textarea(attrs={'rows':10, 'cols':10}))
@@ -479,7 +479,7 @@ class AddCoursesForm(forms.Form):
         regulations = BTRegulation.objects.all().distinct('Regulation')
         REGULATION_CHOICES = [('', 'Choose Regulation')]
         REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
-        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
         BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
         self.fields['BYear'] = forms.IntegerField(label='Select BYear', required=False, widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
         self.fields['file'] = forms.FileField(validators=[validate_file_extension], required=False)
@@ -490,7 +490,7 @@ class CoursesStatusForm(forms.Form):
         regulations = BTRegulation.objects.all().distinct('Regulation')
         REGULATION_CHOICES = [('', 'Choose Regulation')]
         REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
-        self.fields['Regulation'] = forms.IntegerField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Regulation'] = forms.FloatField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
         BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
         self.fields['BYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
 
