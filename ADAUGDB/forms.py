@@ -39,7 +39,7 @@ class DBYBSAYASSelectionForm(forms.Form):
         marksBox = forms.ChoiceField(label='Marks Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
         gradesBox = forms.ChoiceField(label='Grades Status', required=False, widget=forms.RadioSelect(attrs={'required':'True'}), choices=[(0, 'Disable'), (1, 'Enable')])
         modeBox = forms.ChoiceField(label='Select Mode', required=False, widget=forms.RadioSelect(attrs={'required':'True'}),choices = [('R', 'Regular'),('B','Backlog'),('D','DroppedRegular'),('M','Makeup')])
-        regulationBox = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
+        regulationBox = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
         self.fields['aYear'] = aYearBox
         self.fields['aSem'] = aSemBox
         self.fields['bYear'] = bYearBox
@@ -99,7 +99,7 @@ class CreateRegistrationEventForm(forms.Form):
         bSemBox = forms.IntegerField(label='Select BSem', required=False, widget=forms.Select(choices=bSemChoices, attrs={'required':'True'}))
         deptBox = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=deptChoices, attrs={'required':'True'}))
         rChoices = [('','--Select Regulation--')]
-        regulationBox = forms.IntegerField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
+        regulationBox = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
         modeBox = forms.ChoiceField(label='Select Mode', required=False, widget=forms.RadioSelect(attrs={'required':'True'}),choices = [('R', 'Regular'),('B','Backlog'),('D','DroppedRegular'),('M','Makeup')])
         self.fields['aYear'] = aYearBox
         self.fields['aSem'] = aSemBox
@@ -159,7 +159,7 @@ class RegulationChangeForm(forms.Form):
 
     def clean_newRegulation(self):
         if self.cleaned_data.get('newRegulation'):
-            newRegulation = int(self.cleaned_data.get('newRegulation'))
+            newRegulation = float(self.cleaned_data.get('newRegulation'))
             student_obj = BTNotPromoted.objects.filter(id=self.cleaned_data.get('regno')).student
             if student_obj.Regulation == newRegulation:
                 raise forms.ValidationError('Updated regulation and old regulation cannot be same')
@@ -429,7 +429,7 @@ class OpenElectiveRollListForm(forms.Form):
             rom2int = {'I':1,'II':2,'III':3,'IV':4}
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             # mode = strs[6]
 
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
@@ -463,7 +463,7 @@ class OERollListStatusForm(forms.Form):
             rom2int = {'I':1,'II':2,'III':3,'IV':4}
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             mode = strs[6]
 
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\

@@ -16,7 +16,7 @@ def grade_points_upload(request):
         form = GradePointsUploadForm(request.POST, request.FILES)
         if form.is_valid():
             if form.cleaned_data['Regulation'] != '-- Select Regulation --':
-                regulation = int(form.cleaned_data['Regulation'])
+                regulation = float(form.cleaned_data['Regulation'])
                 file = form.cleaned_data['file']
                 data = bytes()
                 for chunk in file.chunks():

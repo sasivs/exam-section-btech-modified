@@ -38,7 +38,7 @@ def open_elective_regs(request):
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             mode = strs[6]
             
             rolls = BTOpenElectiveRollLists.objects.filter(subject_id=subId,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
@@ -54,7 +54,7 @@ def open_elective_regs(request):
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             mode = strs[6]
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
             RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
@@ -87,7 +87,7 @@ def open_elective_regs_finalize(request):
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             mode = strs[6]
             rolls = BTRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)
             staging_regs = BTStudentRegistrations_Staging.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)

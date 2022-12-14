@@ -572,7 +572,7 @@ class RegularRegistrationsStatusForm(forms.Form):
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             mode = strs[6]
             regNoChoices = BTRegularRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept).values('RegNo').distinct()
@@ -611,7 +611,7 @@ class BacklogRegistrationSummaryForm(forms.Form):
             asem = int(strs[4])
             byear = rom2int[strs[1]]
             bsem = rom2int[strs[2]]
-            regulation = int(strs[5])
+            regulation = float(strs[5])
             mode = strs[6]
             regNoChoices = BTBacklogRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, BSem=bsem, Dept=dept).values('RegNo').distinct()
@@ -651,7 +651,7 @@ class MakeupRegistrationSummaryForm(forms.Form):
             asem = int(strs[3])
             byear = rom2int[strs[1]]
             # bsem = rom2int[strs[2]]
-            regulation = int(strs[4])
+            regulation = float(strs[4])
             mode = strs[5]
             regNoChoices = BTMakeupRegistrationSummary.objects.filter(Regulation=regulation,AYear=ayear, \
                     ASem = asem, BYear=byear, Dept=dept).values('RegNo').distinct()

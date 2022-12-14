@@ -59,7 +59,7 @@ def btech_regular_registration_status(request):
                 asem = int(strs[4])
                 byear = rom2int[strs[1]]
                 bsem = rom2int[strs[2]]
-                regulation = int(strs[5])
+                regulation = float(strs[5])
                 mode = strs[6]
                 studymode = strs[6]
                 deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
@@ -118,7 +118,7 @@ def btech_backlog_registration_status(request):
                 asem = int(strs[4])
                 byear = rom2int[strs[1]]
                 bsem = rom2int[strs[2]]
-                regulation = int(strs[5])
+                regulation = float(strs[5])
                 mode = strs[6]
                 studymode = strs[6]
                 deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
@@ -174,7 +174,7 @@ def btech_makeup_registration_status(request):
                 asem = int(strs[3])
                 byear = rom2int[strs[1]]
                 # bsem = rom2int[strs[2]]
-                regulation = int(strs[4])
+                regulation = float(strs[4])
                 mode = strs[5]
                 deptObj = BTProgrammeModel.objects.filter(Dept=dept,ProgrammeType='UG').values()
                 heading = ' Registrations for ' + deptObj[0]['Specialization'] + ': ' + str(ayear) + '-'+str(ayear+1) + ' ' + strs[4] + ' Semester'

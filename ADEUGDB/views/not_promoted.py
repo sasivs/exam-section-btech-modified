@@ -53,7 +53,7 @@ def not_promoted_list(request):
             dept = deptDict[strs[0]]
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
-            regulation = int(strs[3])
+            regulation = float(strs[3])
             currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,BYear=byear,Dept=dept,Regulation=regulation, Mode='R')
             rolls = BTRollLists.objects.filter(RegEventId__in=currentRegEventId).distinct('student__RegNo')
             
@@ -152,7 +152,7 @@ def not_promoted_upload(request):
             dept = deptDict[strs[0]]
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
-            regulation = int(strs[3])
+            regulation = float(strs[3])
             file = form.cleaned_data['file']
             data = bytes()
             for chunk in file.chunks():
@@ -518,7 +518,7 @@ def not_promoted_status(request):
             dept = deptDict[strs[0]]
             ayear =int(strs[2])
             byear = rom2int[strs[1]]
-            regulation = int(strs[3])
+            regulation = float(strs[3])
             if byear == 1:
                 notPromoted = BTNotPromoted.objects.filter(AYear=ayear, BYear=byear, Regulation=regulation, student__Cycle=dept).order_by('student__RegNo')
             else:
@@ -546,7 +546,7 @@ def not_promoted_status(request):
 #         asem = int(strs[4])
 #         byear = rom2int[strs[1]]
 #         bsem = rom2int[strs[2]]
-#         regulation = int(strs[5])
+#         regulation = float(strs[5])
 #         mode = strs[6]
 #         currentRegEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
 #                     Dept=dept,Mode=mode,Regulation=regulation)

@@ -43,7 +43,7 @@ def faculty_subject_assignment(request):
             asem = int(event_string[4])
             byear = ROMAN_TO_INT[event_string[1]]
             bsem = ROMAN_TO_INT[event_string[2]]
-            regulation = int(event_string[5])
+            regulation = float(event_string[5])
             mode = event_string[6]
             regEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
                     Dept=dept,Mode=mode,Regulation=regulation).first()
