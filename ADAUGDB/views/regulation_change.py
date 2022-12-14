@@ -52,6 +52,7 @@ def regulation_change_status(request):
     if request.method == 'POST':
         form = RegulationChangeStatusForm(regulation_change_objs, request.POST)
         if form.is_valid():
+            regulation_change_objs = regulation_change_objs.filter(RegEventId__AYear=form.cleaned_data.get('ayear'))
             return render(request, 'ADAUGDB/RegulationChangeStatus.html', {'form':form, 'objects':regulation_change_objs})
 
     else:
