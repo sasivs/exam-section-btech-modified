@@ -15,7 +15,7 @@ def addRegulation(request):
             admYear = form.cleaned_data['admYear']
             ayear = form.cleaned_data['aYear']
             byear = form.cleaned_data['bYear']
-            regulation = int(form.cleaned_data['regulation'])
+            regulation = float(form.cleaned_data['regulation'])
             if(( (form.cleaned_data['admYear']!=0) and (form.cleaned_data['aYear']!=0) and (form.cleaned_data['bYear']!=0))):
                 r = BTRegulation(AdmissionYear=admYear, AYear=ayear, BYear=byear, Regulation=regulation)
                 r.save()
