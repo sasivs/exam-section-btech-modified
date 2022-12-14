@@ -152,8 +152,9 @@ class RegulationChangeForm(forms.Form):
             event = events.filter(id=self.data.get('regid')).first()
             not_promoted_r_mode = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem1='R', PoA_sem2='R').exclude(Regulation=event.Regulation)
             not_promoted_b_mode = BTNotPromoted.objects.filter(Q(PoA_sem1='B')|Q(PoA_sem2='B'), AYear=event.AYear-2, BYear=event.BYear-1).exclude(Regulation=event.Regulation)
-            REGNO_CHOICES += [(row.id, row.student.RegNo) for row in not_promoted_r_mode|not_promoted_b_mode]
+            REGNO_CHOICES = [(row.id, row.student.RegNo) for row in not_promoted_r_mode|not_promoted_b_mode]
             REGNO_CHOICES = sorted(REGNO_CHOICES, key=lambda x:x[1])
+            REGNO_CHOICES = [('', 'Choose Event')] + REGNO_CHOICES
             self.fields['regno'] = forms.CharField(label='RegNo', required=False, widget=forms.Select(choices=REGNO_CHOICES, attrs={'onchange':"submit()", 'required':'True'}))
             if self.data.get('regno'):
                 self.fields['newRegulation'] = forms.CharField(label='Current Regulation', required=False, widget=forms.TextInput(attrs={'type':'number', 'required':'True'}))
