@@ -19,7 +19,7 @@ def regulation_change(request):
                 student = BTNotPromoted.objects.filter(id=form.cleaned_data.get('regno')).first().student
                 if not BTRegulationChange.objects.filter(RegEventId_id=form.cleaned_data.get('regid'),student=student).exists():
                     newRow = BTRegulationChange.objects.filter(RegEventId_id=form.cleaned_data.get('regid'), \
-                        PreviiousRegulation=student.Regulation, PresentRegulation=form.cleaned_data.get('newRegulation'), student=student)
+                        PreviousRegulation=student.Regulation, PresentRegulation=form.cleaned_data.get('newRegulation'), student=student)
                     newRow.save()
                     BTStudentInfo.objects.filter(RegNo=student.RegNo).update(Regulation=form.cleaned_data.get('newRegulation'))
                     msg = 'Regulation Change performed successfully.'
