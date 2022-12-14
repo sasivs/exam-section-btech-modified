@@ -45,7 +45,7 @@ def branch_change_status(request):
         form = BranchChangeStausForm(request.POST)
         if(form.is_valid()):
             ayear = request.POST['AYear']
-            results = BTBranchChanges.objects.filter(AYear=ayear).values()
+            results = BTBranchChanges.objects.filter(AYear=ayear)
             context['ayear'] = ayear
             context['rows'] = results
             return render(request, 'ADEUGDB/BTBranchChangeStatus.html', context)       
@@ -53,3 +53,14 @@ def branch_change_status(request):
         form = BranchChangeStausForm()
     context['form'] = form
     return render(request, 'ADEUGDB/BTBranchChangeStatus.html', context)
+
+
+def branch_change_script(file):
+    import pandas as pd
+    file = pd.read_csv(file)
+    for _,row in file.iterrows():
+        student = BTStudentInfo.objects.filter(RegNo=row['RegNo']).first()
+        if not BTBranchChanges.objects.filter(student=student, CurrentDept=row['CurrentDept'], NewDept=row['NewDept'], AYear=row['AYear']).exists():
+            branch_change = BTBranchChanges(student=student, CurrentDept=row['CurrentDept'], NewDept=row['NewDept'], AYear=row['AYear'])
+            branch_change.save()
+    return "Completed!!!"
