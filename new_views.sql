@@ -278,11 +278,14 @@ FROM ((SELECT "Q"."RegNo",
       WHERE "Q"."RegNo" = "S"."RegNo") "P" join 
       (SELECT  "Q"."RegNo" as "regd_no",
         "Q"."CourseStructure_id" as "cs_id",
-        count(*) as "ClearedCourses"
+        Sum(Case when not 
+        ("Q"."Grade"::text = ANY
+       (ARRAY ['F'::character varying::text, 'R'::character varying::text, 'I'::character varying::text, 'X'::character varying::text])) 
+       then 1 else 0 end)
+        as "ClearedCourses"
         FROM "BTStudentGradePointsMV" "Q",
            "BTStudentInfo" "S"
-      WHERE "Q"."RegNo" = "S"."RegNo" and not ("Q"."Grade"::text = ANY
-       (ARRAY ['F'::character varying::text, 'R'::character varying::text, 'I'::character varying::text, 'X'::character varying::text]))
+      WHERE "Q"."RegNo" = "S"."RegNo"
        group by "Q"."RegNo", "Q"."CourseStructure_id") "R" on "P"."RegNo"="R"."regd_no" and "P"."CourseStructure_id"="R"."cs_id")"nested_table"
 WHERE "nested_table"."count" > "nested_table"."ClearedCourses"
   AND ("nested_table"."Grade"::text = ANY
