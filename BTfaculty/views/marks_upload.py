@@ -76,9 +76,9 @@ def marks_upload(request):
                         marks = [mark.split('+') for mark in marks_string]
                         for outer in range(len(marks_dis_list)):
                             for inner in range(len(marks_dis_list[outer])):
-                                mark_dis_limit = int(marks_dis_list[outer][inner])
+                                mark_dis_limit = float(marks_dis_list[outer][inner])
                                 sheet_col_index = mark_distribution.get_excel_column_index(outer, inner)
-                                if mark_dis_limit < int(row[sheet_col_index]):
+                                if mark_dis_limit < float(row[sheet_col_index]):
                                     invalidMarks.append(row)
                                     continue
                                 marks[outer][inner] = str(row[sheet_col_index])
@@ -266,8 +266,8 @@ def add_marks(file):
         mark_index = 10
         for outer in range(len(distributions)):
             for inner in range(len(distributions[outer])):
-                mark_dis_limit = int(marks_dis_list[outer][inner])
-                if mark_dis_limit < int(row[mark_index]):
+                mark_dis_limit = float(marks_dis_list[outer][inner])
+                if mark_dis_limit < float(row[mark_index]):
                     invalid_rows.append((rIndex,row))
                 else:
                     marks[outer][inner] = str(row[mark_index])
