@@ -12,6 +12,7 @@
         <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
+                    <td style="border: 1px solid black">S.No.</td>
                     <td style="border: 1px solid black">CourseCode</td>
                     <td style="border: 1px solid black">CourseName</td>
                     <td style="border: 1px solid black">BTech Year</td>
@@ -33,6 +34,7 @@
             <tbody>
                 {% for row in courses %}
                     <tr>
+                        <td style="border: 1px solid black">{{forloop.counter}}</td>
                         <td style="border: 1px solid black">{{row.SubCode}}</td>
                         <td style="border: 1px solid black">{{row.SubName}}</td>
                         <td style="border: 1px solid black">{{row.CourseStructure.BYear}}</td>
