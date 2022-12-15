@@ -6,12 +6,22 @@
     <div class="row">
         <div class="col-md-2">
             <ul class="nav flex-column">
+                {% if user|BThas_group:'Associate-Dean-Academics' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSeatCancellation' %}">Seat Cancellation</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSeatCancellationStatus' %}">Seat Cancellation Status</a>
                 </li>
+                {% elif user|BThas_group:'Associate-Dean-Exams' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSeatCancellationStatus' %}">Seat Cancellation Status</a>
+                </li>
+                {% elif user|BThas_group:'Superintendent' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTSupBTSeatCancellationStatus' %}">Seat Cancellation Status</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-10">

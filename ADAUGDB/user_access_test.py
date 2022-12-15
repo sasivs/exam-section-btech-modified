@@ -51,6 +51,13 @@ def registration_home_access(user):
         return True
     return False
 
+def cancellation_home_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Superintendent' in groups\
+        or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
+        return True
+    return False
+
 def registration_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups:
