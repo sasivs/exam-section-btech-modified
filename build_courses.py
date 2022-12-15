@@ -207,7 +207,7 @@ def update_courses(file):
             (file['Mode']==sub.RegEventId.Mode)]
         
         #rs=required_subject
-        rs = esf[(esf['SubCode']==sub.course.SubCode)]
+        rs = esf.loc[(esf['SubCode']==sub.course.SubCode)].iloc[0]
         
         required_course_structure = BTCourseStructure.objects.filter(BYear=rs['BYear'], BSem=rs['BSem'], Dept=rs['Dept'], \
             Regulation=rs['Regulation'], Category=rs['Category'].upper(), Type=rs['Type'].upper(), Creditable=rs['Creditable'], \
@@ -217,7 +217,19 @@ def update_courses(file):
             errors.append(rs)
             continue
         
-        BTCourses.objects.filter(id=sub.course.id).update(CourseStructure_id=required_course_structure.id)
+        if BTCourses.objects.filter(SubCode=sub.course.SubCode, SubName=sub.course.SubName, \
+            CourseStructure_id=required_course_structure.id, DistributionRatio=sub.course.DistributionRatio, \
+                MarkDistribution_id=sub.course.MarkDistribution_id).exists():
+            required_course = BTCourses.objects.filter(SubCode=sub.course.SubCode, SubName=sub.course.SubName, \
+            CourseStructure_id=required_course_structure.id, DistributionRatio=sub.course.DistributionRatio, \
+                MarkDistribution_id=sub.course.MarkDistribution_id).first()
+            sub.course_id = required_course.id
+            sub.save()
+        
+        else:
+            BTCourses.objects.filter(id=sub.course.id).update(CourseStructure_id=required_course_structure.id)
+
 
     print(errors)
+    print("These rows do not have course structure")
     return "Completed!!!"        
