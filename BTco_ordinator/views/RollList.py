@@ -205,6 +205,10 @@ def generateRollList(request):
                 initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
 
                 backlog_students = BTStudentBacklogs.objects.filter(BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).exclude(AYASBYBS__startswith=event.AYear).order_by('RegNo').distinct('RegNo')
+                
+                valid_students = BTStudentInfo.objects.filter(Regulation=event.Regulation)
+                
+                backlog_students = backlog_students.filter(RegNo__in=valid_students.values_list('RegNo', flat=True))
 
                 if event.BYear == 1:
                     for student in backlog_students:
@@ -225,6 +229,10 @@ def generateRollList(request):
                 initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
                 
                 makeup_students = BTStudentMakeups.objects.filter(Dept=event.Dept, BYear=event.BYear, BSem=event.BSem).distinct('RegNo').order_by('RegNo')
+
+                valid_students = BTStudentInfo.objects.filter(Regulation=event.Regulation)
+                
+                makeup_students = makeup_students.filter(RegNo__in=valid_students.values_list('RegNo', flat=True))
 
                 if event.BYear == 1:
                     for student in makeup_students:
@@ -247,6 +255,10 @@ def generateRollList(request):
                 dropped_courses_students = BTDroppedRegularCourses.objects.filter(Registered=False, subject_RegEventId__BYear=event.BYear, subject__RegEventId__Regulation=event.Regulation).\
                     exclude(subject__RegEventId__AYear=event.AYear).distinct('student__RegNo').order_by('student__RegNo')
                 
+                valid_students = BTStudentInfo.objects.filter(Regulation=event.Regulation)
+                
+                dropped_courses_students = dropped_courses_students.filter(student__RegNo__in=valid_students.values_list('RegNo', flat=True))
+
                 for student in dropped_courses_students:
                     if not initial_rolllist.filter(student=student).exists():
                         roll = BTRollLists_Staging(student=student, RegEventId_id=event.id)
