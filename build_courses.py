@@ -1,4 +1,4 @@
-from ADAUGDB.models import BTMarksDistribution
+from ADAUGDB.models import BTMarksDistribution, BTCourseStructure
 import copy
 
 
@@ -19,14 +19,17 @@ def build_course_structure(file):
     # file['lectures'] = 0
     # file['tutorials'] = 0
     # file['practicals'] = 0
+    # course_structure_data = file.drop_duplicates(subset=['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits'])
+    # course_structure_data = course_structure_data[['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits']]
     course_structure_data = file[['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits']]
+    # print(course_structure_data)
     pd.options.display.multi_sparse = False
     cs_file = course_structure_data.value_counts().reset_index(name='count')
     # cs_file.index.name = 'id'
     # cs_file.index += 1
     pd.options.display.multi_sparse = True
-    print(cs_file)
-    cs_file.to_excel(r"C:\Users\sasib\Desktop\db\btech\course_structure_from_2019.xlsx", index=False)
+    # print(cs_file)
+    cs_file.to_excel(r"C:\Users\sasib\Desktop\db\btech\course_structure_from_2019_1.xlsx", index=False)
 
 def build_courses_file(file):
     import pandas as pd
@@ -164,3 +167,29 @@ def get_course_structure_file(file):
     course_data.to_csv("/home/examsection/Desktop/awsp_testing_v2/database_recreate/courses.csv")
     subjects_frame.to_csv("/home/examsection/Desktop/awsp_testing_v2/database_recreate/Subjects_new_db_2018.csv", index=False)
 # get_course_structure_file(r"C:\Users\sasib\Desktop\db\btech\phy_Subjects.xlsx")
+
+
+def course_structure_check(file):
+    import pandas as pd
+    file = pd.read_csv(file)
+    error=[]
+    error_rows = []
+    for _, row in file.iterrows():
+        if BTCourseStructure.objects.filter(BYear=row['BYear'], BSem=row['BSem'], Dept=row['Dept'], Regulation=row['Regulation'],\
+            Category=row['Category'], Type=row['Type'], Creditable=row['Creditable'], Credits=row['Credits']).exists():
+            BTCourseStructure.objects.filter(BYear=row['BYear'], BSem=row['BSem'], Dept=row['Dept'], Regulation=row['Regulation'],\
+            Category=row['Category'], Type=row['Type'], Creditable=row['Creditable'], Credits=row['Credits']).update(count=row['count'])
+        else:
+            error.append(row)
+    course_structure_rows = BTCourseStructure.objects.filter(Regulation=1.0)
+    for row in course_structure_rows:
+        sub_frame = file.loc[(file['BYear']==row.BYear) & (file['BSem']==row.BSem) & (file['Dept']==row.Dept) & \
+            (file['Regulation']==row.Regulation) & (file['Category']==row.Category) & (file['Type']==row.Type)& \
+                (file['Creditable']==row.Creditable)&(file['Credits']==row.Credits)&(file['count']==row.count)]
+        if sub_frame.shape[0] != 1:
+            error_rows.append(row)
+    print(error)
+    print("These rows are there in file but not in table")
+    print(error_rows)
+    print("These rows are there in table but not in file")
+    return "Completed!!"
