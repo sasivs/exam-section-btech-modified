@@ -189,9 +189,9 @@ def subject_finalize(request):
         form = SubjectFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
             subjects = []
-            if 'Superintendent' in groups:
+            if 'Associate-Dean-Academics' in groups:
                 subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), \
-                    course__CourseStructure__Category__in=['OEC', 'ODC'])
+                    course__CourseStructure__Category__in=['OEC', 'OPC'])
             else:
                 subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'))
             for sub in subjects:
