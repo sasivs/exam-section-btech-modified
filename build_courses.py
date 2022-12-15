@@ -1,4 +1,5 @@
-from ADAUGDB.models import BTMarksDistribution, BTCourseStructure
+from ADAUGDB.models import BTMarksDistribution, BTCourseStructure, BTCourses
+from BTco_ordinator.models import BTSubjects
 import copy
 
 
@@ -181,15 +182,42 @@ def course_structure_check(file):
             Category=row['Category'], Type=row['Type'], Creditable=row['Creditable'], Credits=row['Credits']).update(count=row['count'])
         else:
             error.append(row)
-    course_structure_rows = BTCourseStructure.objects.filter(Regulation=1.0)
+    course_structure_rows = BTCourseStructure.objects.filter(Regulation=1.0, Dept=row['Dept'])
     for row in course_structure_rows:
         sub_frame = file.loc[(file['BYear']==row.BYear) & (file['BSem']==row.BSem) & (file['Dept']==row.Dept) & \
             (file['Regulation']==row.Regulation) & (file['Category']==row.Category) & (file['Type']==row.Type)& \
                 (file['Creditable']==row.Creditable)&(file['Credits']==row.Credits)&(file['count']==row.count)]
         if sub_frame.shape[0] != 1:
-            error_rows.append(row)
+            error_rows.append(row.__dict__)
     print(error)
     print("These rows are there in file but not in table")
     print(error_rows)
     print("These rows are there in table but not in file")
     return "Completed!!"
+
+def update_courses(file):
+    import pandas as pd
+    file = pd.read_csv(file)
+    subjects = BTSubjects.objects.filter(RegEventId__AYear__lt=2019).order_by('id')
+    errors = []
+    for sub in subjects:
+        #esf = event_subjects_frame
+        esf = file[(file['AYear']==sub.RegEventId.AYear) & (file['ASem']==sub.RegEventId.ASem) & (file['BYear']==sub.RegEventId.BYear)\
+            & (file['BSem']==sub.RegEventId.BSem) & (file['Dept']==sub.RegEventId.Dept) & (file['Regulation']==sub.RegEventId.Regulation) & \
+            (file['Mode']==sub.RegEventId.Mode)]
+        
+        #rs=required_subject
+        rs = esf[(esf['SubCode']==sub.course.SubCode)]
+        
+        required_course_structure = BTCourseStructure.objects.filter(BYear=rs['BYear'], BSem=rs['BSem'], Dept=rs['Dept'], \
+            Regulation=rs['Regulation'], Category=rs['Category'].upper(), Type=rs['Type'].upper(), Creditable=rs['Creditable'], \
+                Credits=rs['Credits']).first()
+        
+        if not required_course_structure:
+            errors.append(rs)
+            continue
+        
+        BTCourses.objects.filter(id=sub.course.id).update(CourseStructure_id=required_course_structure.id)
+
+    print(errors)
+    return "Completed!!!"        
