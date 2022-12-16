@@ -529,6 +529,100 @@ def not_promoted_status(request):
     return render(request, 'ADEUGDB/NotPromotedStatus.html', {'form':form})
 
 
+def not_promoted_cleansing_script(file):
+    import pandas as pd
+    file = pd.read_csv(file)
+    not_prom = BTNotPromoted.objects.all()
+    for np in not_prom:
+        student_obj = np.student
+        if np.PoA_sem1 == 'R':
+            regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=1, student__student__RegNo=student_obj.RegNo)
+            subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
+            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+            rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=1, RegEventId__Regulation=np.Regulation)
+            grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
+            marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
+            not_registered = BTNotRegistered.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation)
+            dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, subject__id__in=subjects.values_list('id', flat=True))
+            for i in rolls:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRRollLists.objects.create(**i_dict)
+            for i in not_registered:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRNotRegistered.objects.create(**i_dict)
+            for i in total_regs:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRStudentRegistrations.objects.create(**i_dict)
+            for i in dropped_regular:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRDroppedRegularCourses.objects.create(**i_dict)
+            for i in marks:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRMarks.objects.create(**i_dict)
+            for i in grades:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRStudentGrades.objects.create(**i_dict)
+            BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation).delete()
+            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+            BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
+            BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
+            rolls.delete()
+            total_regs.delete()
+            marks.delete()
+            grades.delete()
+            not_registered.delete()
+            dropped_regular.delete()
+        if np.PoA_sem2 == 'R':
+            regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=2, student__student__RegNo=student_obj.RegNo)
+            subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
+            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+            rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=2, RegEventId__Regulation=np.Regulation)
+            grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
+            marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
+            not_registered = BTNotRegistered.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation)
+            dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, subject__id__in=subjects.values_list('id', flat=True))
+            for i in rolls:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRRollLists.objects.create(**i_dict)
+            for i in not_registered:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRNotRegistered.objects.create(**i_dict)
+            for i in total_regs:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRStudentRegistrations.objects.create(**i_dict)
+            for i in dropped_regular:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRDroppedRegularCourses.objects.create(**i_dict)
+            for i in marks:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRMarks.objects.create(**i_dict)
+            for i in grades:
+                i_dict = i.__dict__
+                i_dict.pop('_state')
+                BTNPRStudentGrades.objects.create(**i_dict)
+            BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation).delete()
+            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+            BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
+            BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
+            rolls.delete()
+            total_regs.delete()
+            marks.delete()
+            grades.delete()
+            not_registered.delete()
+            dropped_regular.delete()
+    return "Completed!!!"
+
 # @login_required(login_url="/login/")
 # @user_passes_test(is_Superintendent)
 # def not_promoted_backlog_mode_regs(request):
