@@ -242,7 +242,7 @@ def update_courses(file):
 def not_promoted_repopulate_script():
     not_prom = BTNotPromoted.objects.all()
     for np in not_prom:
-        with transaction.atomic:
+        with transaction.atomic():
             student_obj = np.student
             if np.PoA_sem1 == 'R' and np.PoA_sem2 == 'R':
                 rolls = BTNPRRollLists.objects.filter(student_id=student_obj.id)
