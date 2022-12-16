@@ -281,7 +281,7 @@ class BTNPRStudentRegistrations(models.Model): # NPR=Not promoted repeat mode
     history = HistoricalRecords()
     class Meta:
         db_table = 'BTNPRStudentRegistrations'
-        unique_together = (('RegNo', 'RegEventId_id', 'sub_id_id'))
+        unique_together = (('student_id', 'RegEventId_id', 'sub_id_id'))
         managed = True
 
 
