@@ -1,4 +1,4 @@
-from ADAUGDB.models import BTMarksDistribution, BTCourseStructure, BTCourses
+from ADAUGDB.models import BTMarksDistribution, BTCourseStructure, BTCourses, BTRegistrationStatus
 from BTco_ordinator.models import BTSubjects
 from BTco_ordinator.models import BTNotRegistered, BTStudentGradePoints, BTNotPromoted, BTRollLists, BTStudentBacklogs, BTDroppedRegularCourses, BTStudentRegistrations,\
     BTNPRDroppedRegularCourses, BTNPRMarks, BTNPRNotRegistered, BTNPRRollLists, BTNPRStudentGrades, BTNPRStudentRegistrations, BTRollLists_Staging, BTStudentRegistrations_Staging,\
@@ -246,9 +246,13 @@ def not_promoted_repopulate_script():
             student_obj = np.student
             if np.PoA_sem1 == 'R' and np.PoA_sem2 == 'R':
                 rolls = BTNPRRollLists.objects.filter(student_id=student_obj.id)
-                # regular_regs = BTNPRStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=1, student__student__RegNo=student_obj.RegNo)
-                # subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
+                events = BTRegistrationStatus.objects.filter(Mode='R', BYear=np.BYear, BSem=1)
+                regular_rolls = BTRollLists.objects.filter(RegEventId_id__in=events.values_list('id', flat=True), student__RegNo=student_obj.RegNo)
+                regular_regs = BTNPRStudentRegistrations.objects.filter(RegEventId_id__in=events.values_list('id', flat=True), student_id__in=regular_rolls.values_list('id', flat=True))
+                subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
+                total_regs_1 = BTNPRStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_id__in=regular_rolls.values_list('id', flat=True))
                 total_regs = BTNPRStudentRegistrations.objects.filter(student_id__in=rolls.values_list('id', flat=True))
+                total_regs = total_regs | total_regs_1
                 grades = BTNPRStudentGrades.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
                 marks = BTNPRMarks.objects.filter(Registration_id__in=total_regs.values_list('id', flat=True))
                 not_registered = BTNPRNotRegistered.objects.filter(Student_id=student_obj.id)
