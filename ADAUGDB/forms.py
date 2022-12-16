@@ -196,9 +196,10 @@ class CycleHandlerForm(forms.Form):
 class RegulationChangeStatusForm(forms.Form):
     def __init__(self, regulation_change_objs, *args, **kwargs):
         super(RegulationChangeStatusForm, self).__init__(*args, **kwargs)
-        YEAR_CHOICES = [('', 'Choose Year')]
-        YEAR_CHOICES += [(reg.RegEventId.AYear, reg.RegEventId.AYear) for reg in regulation_change_objs]
+        YEAR_CHOICES = [(reg.RegEventId.AYear, reg.RegEventId.AYear) for reg in regulation_change_objs]
         YEAR_CHOICES = list(set(YEAR_CHOICES))
+        YEAR_CHOICES = sorted(YEAR_CHOICES, key=lambda x:x[1])
+        YEAR_CHOICES = [('', 'Choose Year')] + YEAR_CHOICES
         self.fields['ayear'] = forms.CharField(label='Academic Year', required=False, widget=forms.Select(choices=YEAR_CHOICES, attrs={'required':'true'}))
 
 
