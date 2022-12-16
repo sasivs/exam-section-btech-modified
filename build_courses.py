@@ -238,7 +238,6 @@ def update_courses(file):
     print("These rows do not have course structure")
     return "Completed!!!"        
 
-
 def not_promoted_repopulate_script():
     not_prom = BTNotPromoted.objects.all()
     for np in not_prom:
@@ -246,7 +245,7 @@ def not_promoted_repopulate_script():
             student_obj = np.student
             if np.PoA_sem1 == 'R' and np.PoA_sem2 == 'R':
                 rolls = BTNPRRollLists.objects.filter(student_id=student_obj.id)
-                events = BTRegistrationStatus.objects.filter(Mode='R', BYear=np.BYear, BSem=1)
+                events = BTRegistrationStatus.objects.filter(BYear=np.BYear)
                 regular_rolls = BTRollLists.objects.filter(RegEventId_id__in=events.values_list('id', flat=True), student__RegNo=student_obj.RegNo)
                 regular_regs = BTNPRStudentRegistrations.objects.filter(RegEventId_id__in=events.values_list('id', flat=True), student_id__in=regular_rolls.values_list('id', flat=True))
                 subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
@@ -260,49 +259,55 @@ def not_promoted_repopulate_script():
                 for i in rolls:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
-                    BTRollLists.objects.create(**i_dict)
-                    if not BTRollLists_Staging.objects.filter(id=i_dict['id']).exists():
-                        BTRollLists_Staging.objects.create(**i_dict)
-                    else:
-                        i_dict.pop('id')
-                        BTRollLists_Staging.objects.create(**i_dict)
+                    if not BTRollLists.objects.filter(id=i_dict['id']).exists():
+                        BTRollLists.objects.create(**i_dict)
+                        if not BTRollLists_Staging.objects.filter(id=i_dict['id']).exists():
+                            BTRollLists_Staging.objects.create(**i_dict)
+                        else:
+                            i_dict.pop('id')
+                            BTRollLists_Staging.objects.create(**i_dict)
                 for i in not_registered:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
-                    BTNotRegistered.objects.create(**i_dict)
+                    if not BTNotRegistered.objects.filter(id=i_dict['id']).exists():
+                        BTNotRegistered.objects.create(**i_dict)
                 for i in total_regs:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
-                    BTStudentRegistrations.objects.create(**i_dict)
-                    if not BTStudentRegistrations_Staging.objects.filter(id=i_dict['id']).exists():
-                        BTStudentRegistrations_Staging.objects.create(**i_dict)
-                    else:
-                        i_dict.pop('id')
-                        BTStudentRegistrations_Staging.objects.create(**i_dict)
+                    if not BTStudentRegistrations.objects.filter(id=i_dict['id']).exists():
+                        BTStudentRegistrations.objects.create(**i_dict)
+                        if not BTStudentRegistrations_Staging.objects.filter(id=i_dict['id']).exists():
+                            BTStudentRegistrations_Staging.objects.create(**i_dict)
+                        else:
+                            i_dict.pop('id')
+                            BTStudentRegistrations_Staging.objects.create(**i_dict)
                 for i in dropped_regular:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
-                    BTDroppedRegularCourses.objects.create(**i_dict)
+                    if not BTDroppedRegularCourses.objects.filter(id=i_dict['id']).exists():
+                        BTDroppedRegularCourses.objects.create(**i_dict)
                 for i in marks:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
-                    BTMarks.objects.create(**i_dict)
-                    if not BTMarks_Staging.objects.filter(id=i_dict['id']).exists():
-                        BTMarks_Staging.objects.create(**i_dict)
-                    else:
-                        i_dict.pop('id')
-                        BTMarks_Staging.objects.create(**i_dict)
+                    if not BTMarks.objects.filter(id=i_dict['id']).exists():
+                        BTMarks.objects.create(**i_dict)
+                        if not BTMarks_Staging.objects.filter(id=i_dict['id']).exists():
+                            BTMarks_Staging.objects.create(**i_dict)
+                        else:
+                            i_dict.pop('id')
+                            BTMarks_Staging.objects.create(**i_dict)
                 for i in grades:
                     i_dict = i.__dict__
                     i_dict.pop('_state')
                     i_dict['RegId_id'] = i_dict['RegId']
                     i_dict.pop('RegId')
-                    BTStudentGrades.objects.create(**i_dict)
-                    if not BTStudentGrades_Staging.objects.filter(id=i_dict['id']).exists():
-                        BTStudentGrades_Staging.objects.create(**i_dict)
-                    else:
-                        i_dict.pop('id')
-                        BTStudentGrades_Staging.objects.create(**i_dict)
+                    if not BTStudentGrades.objects.filter(id=i_dict['id']).exists():
+                        BTStudentGrades.objects.create(**i_dict)
+                        if not BTStudentGrades_Staging.objects.filter(id=i_dict['id']).exists():
+                            BTStudentGrades_Staging.objects.create(**i_dict)
+                        else:
+                            i_dict.pop('id')
+                            BTStudentGrades_Staging.objects.create(**i_dict)
                 # BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation).delete()
                 # BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                 # BTMarks_Staging.objects.filter(Registration_id__in=total_regs.values_list('id', flat=True)).delete()

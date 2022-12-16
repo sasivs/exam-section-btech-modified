@@ -179,7 +179,7 @@ def not_promoted_upload(request):
                     if row[4] == 'R':
                         regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=row[2], RegEventId__BSem=1, student__student__RegNo=student_obj.RegNo)
                         subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+                        # total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo, RegEventId__AYear=)
                         rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=row[2], RegEventId__BSem=1, RegEventId__Regulation=row[3])
                         grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
                         marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
@@ -212,7 +212,7 @@ def not_promoted_upload(request):
                         BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=row[2], RegEventId__Regulation=row[3]).delete()
                         BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
                         BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
-                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                         rolls.delete()
                         total_regs.delete()
                         marks.delete()
@@ -222,7 +222,7 @@ def not_promoted_upload(request):
                     if row[5] == 'R':
                         regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=row[2], RegEventId__BSem=2, student__student__RegNo=student_obj.RegNo)
                         subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo)
                         rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=row[2], RegEventId__BSem=2, RegEventId__Regulation=row[3])
                         grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
                         marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
@@ -255,7 +255,7 @@ def not_promoted_upload(request):
                         BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=row[2], RegEventId__Regulation=row[3]).delete()
                         BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
                         BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
-                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                         rolls.delete()
                         total_regs.delete()
                         marks.delete()
@@ -286,7 +286,7 @@ def not_promoted_upload(request):
                         if row[4] == 'R':
                             regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=row[2], RegEventId__BSem=1, student__student__RegNo=student_obj.RegNo)
                             subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-                            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+                            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo)
                             rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=row[2], RegEventId__BSem=1, RegEventId__Regulation=row[3])
                             grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
                             marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
@@ -319,7 +319,7 @@ def not_promoted_upload(request):
                             BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=row[2], RegEventId__Regulation=row[3]).delete()
                             BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
                             BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
-                            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+                            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                             rolls.delete()
                             total_regs.delete()
                             marks.delete()
@@ -329,7 +329,7 @@ def not_promoted_upload(request):
                         if row[5] == 'R':
                             regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=row[2], RegEventId__BSem=2, student__student__RegNo=student_obj.RegNo)
                             subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-                            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+                            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo)
                             rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=row[2], RegEventId__BSem=2, RegEventId__Regulation=row[3])
                             grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
                             marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
@@ -362,7 +362,7 @@ def not_promoted_upload(request):
                             BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=row[2], RegEventId__Regulation=row[3]).delete()
                             BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
                             BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
-                            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+                            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                             rolls.delete()
                             total_regs.delete()
                             marks.delete()
@@ -401,7 +401,7 @@ def not_promoted_upload_error_handler(request):
                     if fRow[7] == 'R':
                         regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=fRow[5], RegEventId__BSem=1, student__student__RegNo=student_obj.RegNo)
                         subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo)
                         rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=fRow[5], RegEventId__BSem=1, RegEventId__Regulation=fRow[6])
                         grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
                         marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
@@ -434,7 +434,7 @@ def not_promoted_upload_error_handler(request):
                         BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=fRow[5], RegEventId__Regulation=fRow[6]).delete()
                         BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
                         BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
-                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                         rolls.delete()
                         total_regs.delete()
                         marks.delete()
@@ -444,7 +444,7 @@ def not_promoted_upload_error_handler(request):
                     if fRow[8] == 'R':
                         regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=fRow[5], RegEventId__BSem=2, student__student__RegNo=student_obj.RegNo)
                         subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
+                        total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo)
                         rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=fRow[5], RegEventId__BSem=2, RegEventId__Regulation=fRow[6])
                         grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
                         marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
@@ -477,7 +477,7 @@ def not_promoted_upload_error_handler(request):
                         BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=fRow[5], RegEventId__Regulation=fRow[6]).delete()
                         BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
                         BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
-                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
+                        BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
                         rolls.delete()
                         total_regs.delete()
                         marks.delete()
@@ -529,21 +529,19 @@ def not_promoted_status(request):
     return render(request, 'ADEUGDB/NotPromotedStatus.html', {'form':form})
 
 
-def not_promoted_cleansing_script(file):
-    import pandas as pd
-    file = pd.read_csv(file)
+def not_promoted_cleansing_script():
     not_prom = BTNotPromoted.objects.all()
     for np in not_prom:
         student_obj = np.student
         if np.PoA_sem1 == 'R':
-            regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=1, student__student__RegNo=student_obj.RegNo)
-            subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
-            rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=1, RegEventId__Regulation=np.Regulation)
+            regular_event = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=1, RegEventId__AYear__lte=np.AYear).first().RegEventId
+            regular_subjects = BTSubjects.objects.filter(RegEventId__id=regular_event.id)
+            rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=1, RegEventId__AYear__lte=np.AYear)
+            total_regs = BTStudentRegistrations.objects.filter(student_id__in=rolls.values_list('id', flat=True))
             grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
-            marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
-            not_registered = BTNotRegistered.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation)
-            dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, subject__id__in=subjects.values_list('id', flat=True))
+            marks = BTMarks.objects.filter(Registration_id__in=total_regs.values_list('id', flat=True))
+            not_registered = BTNotRegistered.objects.filter(Student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=np.BYear, RegEventId__AYear__lte=np.AYear)
+            dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, subject_id__in=regular_subjects.values_list('id', flat=True))
             for i in rolls:
                 i_dict = i.__dict__
                 i_dict.pop('_state')
@@ -567,10 +565,12 @@ def not_promoted_cleansing_script(file):
             for i in grades:
                 i_dict = i.__dict__
                 i_dict.pop('_state')
+                i_dict['RegId'] = i_dict['RegId_id']
+                i_dict.pop('RegId_id')
                 BTNPRStudentGrades.objects.create(**i_dict)
-            BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=1, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation).delete()
-            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
-            BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
+            BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=1, RegEventId__AYear__lte=np.AYear).delete()
+            # BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
+            BTMarks_Staging.objects.filter(Registration_id__in=total_regs.values_list('id', flat=True)).delete()
             BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
             rolls.delete()
             total_regs.delete()
@@ -579,14 +579,14 @@ def not_promoted_cleansing_script(file):
             not_registered.delete()
             dropped_regular.delete()
         if np.PoA_sem2 == 'R':
-            regular_regs = BTStudentRegistrations.objects.filter(RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=2, student__student__RegNo=student_obj.RegNo)
-            subjects = BTSubjects.objects.filter(id__in=regular_regs.values_list('sub_id_id', flat=True))
-            total_regs = BTStudentRegistrations.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo)
-            rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=2, RegEventId__Regulation=np.Regulation)
+            regular_event = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__Mode='R', RegEventId__BYear=np.BYear, RegEventId__BSem=2, RegEventId__AYear__lte=np.AYear).first().RegEventId
+            regular_subjects = BTSubjects.objects.filter(RegEventId__id=regular_event.id)
+            rolls = BTRollLists.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=2, RegEventId__AYear__lte=np.AYear)
+            total_regs = BTStudentRegistrations.objects.filter(student_id__in=rolls.values_list('id', flat=True))
             grades = BTStudentGrades.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True))
-            marks = BTMarks.objects.filter(RegId__in=total_regs.values_list('id', flat=True))
-            not_registered = BTNotRegistered.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation)
-            dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, subject__id__in=subjects.values_list('id', flat=True))
+            marks = BTMarks.objects.filter(Registration_id__in=total_regs.values_list('id', flat=True))
+            not_registered = BTNotRegistered.objects.filter(Student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=np.BYear, RegEventId__AYear__lte=np.AYear)
+            dropped_regular = BTDroppedRegularCourses.objects.filter(student__RegNo=student_obj.RegNo, subject_id__in=regular_subjects.values_list('id', flat=True))
             for i in rolls:
                 i_dict = i.__dict__
                 i_dict.pop('_state')
@@ -610,10 +610,12 @@ def not_promoted_cleansing_script(file):
             for i in grades:
                 i_dict = i.__dict__
                 i_dict.pop('_state')
+                i_dict['RegId'] = i_dict['RegId_id']
+                i_dict.pop('RegId_id')
                 BTNPRStudentGrades.objects.create(**i_dict)
-            BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BSem=2, RegEventId__BYear=np.BYear, RegEventId__Regulation=np.Regulation).delete()
-            BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student_student__RegNo=student_obj.RegNo).delete()
-            BTMarks_Staging.objects.filter(Registration__in=total_regs.values_list('id', flat=True)).delete()
+            BTRollLists_Staging.objects.filter(student__RegNo=student_obj.RegNo, RegEventId__BYear=np.BYear, RegEventId__BSem=1, RegEventId__AYear__lte=np.AYear).delete()
+            # BTStudentRegistrations_Staging.objects.filter(sub_id_id__in=subjects.values_list('id', flat=True), student__student__RegNo=student_obj.RegNo).delete()
+            BTMarks_Staging.objects.filter(Registration_id__in=total_regs.values_list('id', flat=True)).delete()
             BTStudentGrades_Staging.objects.filter(RegId_id__in=total_regs.values_list('id', flat=True)).delete()
             rolls.delete()
             total_regs.delete()
