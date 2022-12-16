@@ -274,7 +274,7 @@ class BTFacultyAssignment(models.Model):
 
 
 class BTNPRStudentRegistrations(models.Model): # NPR=Not promoted repeat mode
-    RegNo = models.IntegerField()
+    student_id = models.IntegerField()
     RegEventId_id = models.IntegerField()
     Mode = models.IntegerField()
     sub_id_id = models.IntegerField()
