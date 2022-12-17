@@ -273,7 +273,7 @@ FROM ((SELECT "Q"."RegNo",
              "Q"."Dept",
              "Q"."OfferedYear",
              "Q"."AYASBYBS",
-             row_number() over (partition by "Q"."RegNo", "Q"."SubCode" order by "Q"."RegNo", "Q"."AYASBYBS", "Q"."CourseStructure_id" desc) as "RNK_1"
+             row_number() over (partition by "Q"."RegNo", "Q"."SubCode" order by ("Q"."RegNo", "Q"."AYASBYBS", "Q"."CourseStructure_id") desc) as "RNK_1"
              FROM "BTStudentGradePointsMV" "Q",
            "BTStudentInfo" "S"
       WHERE "Q"."RegNo" = "S"."RegNo") "P" join 
@@ -355,7 +355,8 @@ FROM ((SELECT "Q"."RegNo",
              "Q"."Grade",
              "Q"."Dept",
              "Q"."OfferedYear",
-             "Q"."AYASBYBS"
+             "Q"."AYASBYBS",
+             row_number() over (partition by "Q"."RegNo", "Q"."SubCode" order by ("Q"."RegNo", "Q"."AYASBYBS", "Q"."CourseStructure_id") desc) as "RNK_1"
              FROM "BTStudentGradePointsMV" "Q",
            "BTStudentInfo" "S"
       WHERE "Q"."RegNo" = "S"."RegNo") "P" join 
@@ -369,7 +370,7 @@ FROM ((SELECT "Q"."RegNo",
         FROM "BTStudentGradePointsMV" "Q",
            "BTStudentInfo" "S"
       WHERE "Q"."RegNo" = "S"."RegNo"
-       group by "Q"."RegNo", "Q"."CourseStructure_id") "R" on "P"."RegNo"="R"."regd_no" and "P"."CourseStructure_id"="R"."cs_id")"nested_table"
+       group by "Q"."RegNo", "Q"."CourseStructure_id") "R" on "P"."RegNo"="R"."regd_no" and "P"."CourseStructure_id"="R"."cs_id" and "P"."RNK_1"=1)"nested_table"
 WHERE "nested_table"."count" > "nested_table"."ClearedCourses"
   AND ("nested_table"."Grade"::text = ANY
        (ARRAY ['F'::character varying::text, 'I'::character varying::text, 'X'::character varying::text]))) "final_table"
