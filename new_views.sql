@@ -605,7 +605,7 @@ FROM (SELECT p."RegNo",
              p."BSem",
              p."Dept",
              p."Regulation",
-             string_agg(p."SubCode"::text||'('||p."Mode"||')', ','::text) AS "RegisteredSubjects"
+             string_agg(p."SubCode"::text, ','::text) AS "RegisteredSubjects"
       FROM ((SELECT "BTStudentInfo"."RegNo",
                     reg_status."AYear",
                     reg_status."ASem",
@@ -613,8 +613,7 @@ FROM (SELECT p."RegNo",
                     reg_status."BSem",
                     reg_status."Dept",
                     reg_status."Regulation",
-                    sreg.sub_id,
-                    case when sreg."Mode"=1 then 'S' else 'E' end as "Mode"
+                    sreg.sub_id
 			        
              FROM "BTStudentRegistrations_Staging" sreg join "BTRollLists_Staging" on sreg."student_id" = "BTRollLists_Staging"."id" join "BTStudentInfo" on "BTRollLists_Staging"."student_id"="BTStudentInfo"."id"
                       JOIN "BTRegistration_Status" reg_status ON sreg."RegEventId" = reg_status.id
