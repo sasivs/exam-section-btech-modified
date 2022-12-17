@@ -525,7 +525,7 @@ FROM (SELECT
                     reg_status."Dept",
                     reg_status."Regulation",
                     sreg.sub_id,
-                    sreg."Mode",
+                    case when sreg."Mode"=1 then 'S' else 'E' end,
                     "BTStudentInfo"."RegNo"
 			 		
              FROM "BTStudentRegistrations_Staging" sreg join "BTRollLists_Staging" on sreg."student_id" = "BTRollLists_Staging"."id" join "BTStudentInfo" on "BTRollLists_Staging"."student_id"="BTStudentInfo"."id"
@@ -571,7 +571,8 @@ FROM (SELECT p."RegNo",
                     reg_status."Dept",
                     reg_status."Regulation",
                     sreg.sub_id,
-                    sreg."Mode"
+                    case when sreg."Mode"=1 then 'S' else 'E' end
+                    
              FROM "BTStudentRegistrations_Staging" sreg join "BTRollLists_Staging" on sreg."student_id" = "BTRollLists_Staging"."id" join "BTStudentInfo" on "BTRollLists_Staging"."student_id"="BTStudentInfo"."id"
                       JOIN "BTRegistration_Status" reg_status ON sreg."RegEventId" = reg_status.id
              WHERE reg_status."Mode"::text = 'M'::text) sreg_status
@@ -613,7 +614,7 @@ FROM (SELECT p."RegNo",
                     reg_status."Dept",
                     reg_status."Regulation",
                     sreg.sub_id,
-                    sreg."Mode"
+                    case when sreg."Mode"=1 then 'S' else 'E' end
 			        
              FROM "BTStudentRegistrations_Staging" sreg join "BTRollLists_Staging" on sreg."student_id" = "BTRollLists_Staging"."id" join "BTStudentInfo" on "BTRollLists_Staging"."student_id"="BTStudentInfo"."id"
                       JOIN "BTRegistration_Status" reg_status ON sreg."RegEventId" = reg_status.id
