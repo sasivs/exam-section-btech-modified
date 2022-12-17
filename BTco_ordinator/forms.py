@@ -246,8 +246,8 @@ class BacklogRegistrationForm(forms.Form):
         if self.data.get('RegEvent'):
             event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent')).first()
             
-            studentBacklogs_regnos = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).order_by('student__RegNo')
-            studentBacklogs_regnos = [(row.id, row.student.RegNo) for row in studentBacklogs_regnos]
+            studentBacklogs_rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).order_by('student__RegNo')
+            studentBacklogs_regnos = [(row.id, row.student.RegNo) for row in studentBacklogs_rolls]
             studentBacklogs_regnos = [('','--Select Reg Number--')] + studentBacklogs_regnos
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentBacklogs_regnos,\
                  attrs={'onchange':'submit();'}))  
@@ -262,13 +262,14 @@ class BacklogRegistrationForm(forms.Form):
                 studentRegularRegistrations = studentRegistrations.filter(RegEventId__ASem=event.ASem, RegEventId__Mode='R')
                 dropped_subjects = studentRegistrations.filter(RegEventId__ASem=event.ASem, RegEventId__Mode='D')
                 registeredBacklogs = studentRegistrations.filter(RegEventId__ASem=event.ASem, RegEventId__Mode='B')
+                roll = studentBacklogs_rolls.filter(id=self.data['RegNo']).first()
                 if event.BYear == 1:
-                    studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], BYear=event.BYear, BSem=event.BSem).\
+                    studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo, BYear=event.BYear, BSem=event.BSem).\
                         exclude(AYASBYBS__startswith=event.AYear)
                     subjects = BTSubjects.objects.filter(id__in=studentBacklogs.values_list('sub_id', flat=True))
                     studentBacklogs = studentBacklogs.exclude(sub_id__in=subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']))
                 else:
-                    studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).\
+                    studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).\
                         exclude(AYASBYBS__startswith=event.AYear)
                     subjects = BTSubjects.objects.filter(id__in=studentBacklogs.values_list('sub_id', flat=True))
                     studentBacklogs = studentBacklogs.exclude(sub_id__in=subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']))
