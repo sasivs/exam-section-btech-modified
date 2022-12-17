@@ -119,17 +119,17 @@ def backlog_registrations(file):
     for rIndex, row in file.iterrows():
         print(row)
         if row[2] == 1:
-            backlogs = BTStudentBacklogs.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4])
+            backlogs = BTStudentBacklogs.objects.filter(RegNo=row['RegNo'], BYear=row['BYear'], Dept=row['Dept'])
         else:
-            backlogs = BTStudentBacklogs.objects.filter(RegNo=row[9], BYear=row[2], Dept=row[4], BSem=row[3])
-        regEventId = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        subject_id = backlogs.filter(SubCode=row[7]).first()
-        student = BTRollLists_Staging.objects.filter(student__RegNo=row[9], RegEventId_id=regEventId.id).first()
-        if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
-            registration_obj = BTStudentRegistrations_Staging(student=student, RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row[8])
+            backlogs = BTStudentBacklogs.objects.filter(RegNo=row['RegNo'], BYear=row['BYear'], Dept=row['Dept'], BSem=row['BSem'])
+        regEventId = BTRegistrationStatus.objects.filter(AYear=row['AYear'], ASem=row['ASem'], BYear=row['BYear'], BSem=row['BSem'], Dept=row['Dept'], Regulation=row['Regulation'], Mode=row['Mode']).first()
+        subject_id = backlogs.filter(SubCode=row['SubCode']).first()
+        student = BTRollLists_Staging.objects.filter(student__RegNo=row['RegNo'], RegEventId_id=regEventId.id).first()
+        if not BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row['RegNo'], RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).exists():
+            registration_obj = BTStudentRegistrations_Staging(student=student, RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id, Mode=row['RMode'])
             registration_obj.save()
         else:
-            BTStudentRegistrations_Staging.objects.filter(student=student, RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row[8])
+            BTStudentRegistrations_Staging.objects.filter(student=student, RegEventId_id=regEventId.id, sub_id_id=subject_id.sub_id).update(Mode=row['RMode'])
     return "Completed!!"
 
 
