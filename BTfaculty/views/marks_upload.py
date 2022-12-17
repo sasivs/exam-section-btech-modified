@@ -256,7 +256,7 @@ def add_marks(file):
             BTMarks_Staging.objects.create(Registration=registration, Marks=mark_distribution.get_zeroes_string(), TotalMarks=0)
             BTMarks.objects.create(Registration=registration, Marks=mark_distribution.get_zeroes_string(), TotalMarks=0)
             marks_row = BTMarks_Staging.objects.filter(Registration_id=registration.id).first()
-        mark_dis = registration.sub_id.MarkDistribution
+        mark_dis = registration.sub_id.course.MarkDistribution
         dis_names = mark_dis.DistributionNames.split(',')
         distributions = [dis.split('+') for dis in dis_names]
         marks_dis_list = mark_dis.Distribution.split(',')
