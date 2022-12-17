@@ -7,7 +7,7 @@ def verify_rollLists():
     gen_df = pd.read_excel(dprefix+f_name)
     error_df = error_df[error_df['_merge']=='left_only']
     for _,row in error_df.iterrows():
-        gen_df.drop(gen_df.loc[gen_df['RegNo'] == row['RegNo']], inplace=True)
+        gen_df = gen_df[gen_df['RegNo']!=row['RegNo']]
         
     gen_df.to_excel(dprefix+f_name, index=False)
     print("done")
