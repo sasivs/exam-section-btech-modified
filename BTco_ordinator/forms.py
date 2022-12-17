@@ -247,8 +247,8 @@ class BacklogRegistrationForm(forms.Form):
             event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent')).first()
             
             studentBacklogs_regnos = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
-            studentBacklogs_regnos = [(row.id, row.student.RegNo) for row in studentBacklogs]
-            studentBacklogs_regnos = [('','--Select Reg Number--')] + studentBacklogs
+            studentBacklogs_regnos = [(row.id, row.student.RegNo) for row in studentBacklogs_regnos]
+            studentBacklogs_regnos = [('','--Select Reg Number--')] + studentBacklogs_regnos
             self.fields['RegNo'] = forms.IntegerField(label='RegNo/RollNo', widget = forms.Select(choices=studentBacklogs_regnos,\
                  attrs={'onchange':'submit();'}))  
             if self.data.get('RegNo'):
