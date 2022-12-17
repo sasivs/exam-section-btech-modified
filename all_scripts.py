@@ -110,9 +110,15 @@ def add_marks(file):
     return "Completed!!!!"
 
 
-def add_grades_threshold(file):
+def add_grades_threshold(file, kwargs=None):
     file = pd.read_excel(file)
     error_rows=[]
+    if kwargs:
+        if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+            return "Provide the required arguments!!!!"
+        file = file[(file['AYear']==kwargs.get('AYear')) & (file['ASem']==kwargs.get('ASem')) & (file['BYear']==kwargs.get('BYear'))\
+            & (file['BSem']==kwargs.get('BSem')) & (file['Dept']==kwargs.get('Dept')) & (file['Regulation']==kwargs.get('Regulation')) & \
+            file['Mode']==kwargs.get('Mode')]
     for rIndex, row in file.iterrows():
         print(str(row['Dept'])+':'+row['SubCode'])
         fac_assign_objs = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, RegEventId__AYear=row['AYear'], RegEventId__ASem=row['ASem'], RegEventId__BYear=row['BYear'], RegEventId__BSem=row['BSem'], \
