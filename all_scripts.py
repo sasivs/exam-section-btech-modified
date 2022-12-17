@@ -118,7 +118,7 @@ def add_grades_threshold(file, kwargs=None):
             return "Provide the required arguments!!!!"
         file = file[(file['AYear']==kwargs.get('AYear')) & (file['ASem']==kwargs.get('ASem')) & (file['BYear']==kwargs.get('BYear'))\
             & (file['BSem']==kwargs.get('BSem')) & (file['Dept']==kwargs.get('Dept')) & (file['Regulation']==kwargs.get('Regulation')) & \
-            file['Mode']==kwargs.get('Mode')]
+            (file['Mode']==kwargs.get('Mode'))]
     for rIndex, row in file.iterrows():
         print(str(row['Dept'])+':'+row['SubCode'])
         fac_assign_objs = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, RegEventId__AYear=row['AYear'], RegEventId__ASem=row['ASem'], RegEventId__BYear=row['BYear'], RegEventId__BSem=row['BSem'], \
@@ -244,3 +244,6 @@ def generate_grades(**kwargs):
                             grade.save()
                             break
     print(set(error_events))
+
+dataPrefix = 'home/examsection/Desktop/Data/MarksDB/'
+kwargs = {'AYear':2019, 'ASem':1, 'BYear':1, 'BSem':1, 'Dept':10, 'Regulation':3.1, 'Mode':'R'}
