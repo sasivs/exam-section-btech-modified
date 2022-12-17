@@ -104,25 +104,31 @@ def download_sample_attendance_shortage_sheet(request):
     workbook.save(response)
     return response
 
-def add_Rixgrades(file):
+def add_Rixgrades(file, kwargs=None):
     import pandas as pd
     file = pd.read_excel(file)
+    if kwargs:
+        if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+            return "Provide the required arguments!!!!"
+        file = file[(file['AYear']==kwargs.get('AYear')) & (file['ASem']==kwargs.get('ASem')) & (file['BYear']==kwargs.get('BYear'))\
+            & (file['BSem']==kwargs.get('BSem')) & (file['Dept']==kwargs.get('Dept')) & (file['Regulation']==kwargs.get('Regulation')) & \
+            (file['Mode']==kwargs.get('Mode'))]
     error_rows=[]
     for rIndex, row in file.iterrows():
         print(row)
-        regEvent = BTRegistrationStatus.objects.filter(AYear=row[0], ASem=row[1], BYear=row[2], BSem=row[3], Dept=row[4], Regulation=row[5], Mode=row[6]).first()
-        registration = BTStudentRegistrations.objects.filter(student__student__RegNo=row[9], RegEventId_id=regEvent.id, sub_id__SubCode=row[7]).first()
+        regEvent = BTRegistrationStatus.objects.filter(AYear=row['AYear'], ASem=row['ASem'], BYear=row['BYear'], BSem=row['BSem'], Dept=row['Dept'], Regulation=row['Regulation'], Mode=row['Mode']).first()
+        registration = BTStudentRegistrations.objects.filter(student__student__RegNo=row['RegNo'], RegEventId_id=regEvent.id, sub_id__course__SubCode=row['SubCode']).first()
         if registration:
-            if row[10] == 'R':
+            if row['Grade'] == 'R':
                 if not BTAttendance_Shortage.objects.filter(Registration_id=registration.id).exists():
                     att_short = BTAttendance_Shortage(Registration_id=registration.id)
                     att_short.save()
             else:
                 if not BTIXGradeStudents.objects.filter(Registration_id=registration.id).exists():
-                    ix_grade = BTIXGradeStudents(Registration_id=registration.id, Grade=row[10])
+                    ix_grade = BTIXGradeStudents(Registration_id=registration.id, Grade=row['Grade'])
                     ix_grade.save()
                 else:
-                    BTIXGradeStudents.objects.filter(Registration_id=registration.id).update(Grade=row[10])
+                    BTIXGradeStudents.objects.filter(Registration_id=registration.id).update(Grade=row['Grade'])
         else:
             error_rows.append(row)
     print(error_rows)
