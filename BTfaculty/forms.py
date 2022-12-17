@@ -146,7 +146,7 @@ class MarksUpdateForm(forms.Form):
         exam_type = self.cleaned_data.get('exam-type')
         exam_inner_index = int(exam_type.split(',')[1])
         exam_outer_index = int(exam_type.split(',')[0])
-        mark_dis_limit = self.subject.MarkDistribution.get_marks_limit(exam_outer_index, exam_inner_index)
+        mark_dis_limit = self.subject.course.MarkDistribution.get_marks_limit(exam_outer_index, exam_inner_index)
         if float(mark) > mark_dis_limit:
             raise forms.ValidationError('Entered mark is greater than the maximum marks.')
         return mark
