@@ -302,7 +302,8 @@ class BTCancelledNotPromoted(models.Model):
     BYear = models.IntegerField()
     Regulation = models.FloatField()
     student_id = models.IntegerField()
-    PoA = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
+    PoA_sem1 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
+    PoA_sem2 = models.CharField(max_length=1) #S for Study Mode and R for Cancellation and Repeat
     history = HistoricalRecords()
     class Meta:
         db_table = 'BTCancelledNotPromoted'
