@@ -118,7 +118,7 @@ def backlog_registrations(file):
     file = pd.read_excel(file)
     for rIndex, row in file.iterrows():
         print(row)
-        if row[2] == 1:
+        if row['BYear'] == 1:
             backlogs = BTStudentBacklogs.objects.filter(RegNo=row['RegNo'], BYear=row['BYear'], Dept=row['Dept'])
         else:
             backlogs = BTStudentBacklogs.objects.filter(RegNo=row['RegNo'], BYear=row['BYear'], Dept=row['Dept'], BSem=row['BSem'])
