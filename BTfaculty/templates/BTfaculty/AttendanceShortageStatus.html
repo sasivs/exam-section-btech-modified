@@ -17,6 +17,7 @@
         <table class="table table-hover table-muted table-striped">
             <thead>
                 <tr>
+                    <td style="border: 1px solid black;">S.No. </td>
                     <td style="border: 1px solid black;">RegNo </td>
                     <td style="border: 1px solid black;">RollNo </td>
                     <td style="border: 1px solid black;">Name </td>
@@ -25,6 +26,9 @@
             </thead>
             {% for field in att_short %}
             <tr>
+                <td style="border: 1px solid black;">
+                    {{ forloop.counter }}
+                </td>
                 <td style="border: 1px solid black;">
                     {{ field.Registration.student.student.RegNo }}
                 </td>
