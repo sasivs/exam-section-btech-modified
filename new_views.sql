@@ -290,7 +290,7 @@ FROM ((SELECT "Q"."RegNo",
 WHERE "nested_table"."count" > "nested_table"."ClearedCourses"
   AND ("nested_table"."Grade"::text = ANY
        (ARRAY ['F'::character varying::text, 'R'::character varying::text, 'I'::character varying::text, 'X'::character varying::text]))) "final_table"
-	where "final_table"."RNK" between 1 and ("final_table"."count"-"final_table"."ClearedCourses");
+	where "final_table"."RNK" between 1 and ("final_table"."count"-"final_table"."ClearedCourses"+1);
 
 alter materialized view "BTStudentBacklogsMV" owner to postgres;
 
