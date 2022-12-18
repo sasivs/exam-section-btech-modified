@@ -18,9 +18,10 @@
             <table class="table table-hover table-muted table-striped">
                 <thead>
                     <tr>
-                        <td style="border: 1px solid black;">Id</td>
+                        <td style="border: 1px solid black;">S.No.</td>
                         <td style="border: 1px solid black;">RegNo</td>
-                        <td style="border: 1px solid black;">sub_id</td>
+                        <td style="border: 1px solid black;">SubCode</td>
+                        <td style="border: 1px solid black;">SubName</td>
                         <td style="border: 1px solid black;">Grade</td>
                         {% if user|BThas_group:'ExamStaff' %}
                         <td style="border: 1px solid black;">Action</td>
@@ -30,9 +31,12 @@
                 <tbody>
                     {% for student in students %}
                     <tr>
-                        <td style="border: 1px solid black;">{{student.id}}</td>
+                        <td style="border: 1px solid black;">{{forloop.counter}}</td>
                         <td style="border: 1px solid black;">{{student.Registration.RegNo}}</td>
-                        <td style="border: 1px solid black;">{{student.Registration.sub_id}}</td>
+                        <td style="border: 1px solid black;">{{student.Registration.RollNo}}</td>
+                        <td style="border: 1px solid black;">{{student.Registration.Name}}</td>
+                        <td style="border: 1px solid black;">{{student.Registration.sub_id.course.SubCode}}</td>
+                        <td style="border: 1px solid black;">{{student.Registration.sub_id.course.SubName}}</td>
                         <td style="border: 1px solid black;">{{student.Grade}}</td>
                         {% if user|BThas_group:'ExamStaff' %}
                         <td style="border: 1px solid black;">
