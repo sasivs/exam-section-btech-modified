@@ -111,8 +111,6 @@ def registrations_finalize(request):
 def regular_regs_script(kwargs):
     if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
         return "Provide the required arguments!!!!"
-    if not kwargs.get('Mode') == 'R':
-        return "This is not regular mode."
     events = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'), BSem__in=kwargs.get('BSem'),\
         Regulation__in=kwargs.get('Regulation'), Dept__in=kwargs.get('Dept'), Mode__in=kwargs.get('Mode'))
     for event in events:
@@ -155,3 +153,24 @@ def regular_regs_script(kwargs):
             msg = 'Your data upload for Student Registrations has been done successfully.'
             BTStudentRegistrations_Staging.objects.filter(~Q(student__student__RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=event.id).delete()
             return msg
+
+def registrations_finalize(kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    events = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'), BSem__in=kwargs.get('BSem'),\
+        Regulation__in=kwargs.get('Regulation'), Dept__in=kwargs.get('Dept'), Mode__in=kwargs.get('Mode'))
+    for event in events:
+        print(event.__dict__)
+        regs = BTStudentRegistrations_Staging.objects.filter(RegEventId=event.id).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC'])
+        rolllist = BTRollLists.objects.filter(RegEventId_id=event.id)
+        for reg in regs:
+            roll = rolllist.filter(student=reg.student.student).first()
+            if not BTStudentRegistrations.objects.filter(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
+                s=BTStudentRegistrations(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id)
+                s.save()
+        event.RegistrationStatus = 0 
+        oesubs = BTSubjects.objects.filter(RegEventId=event.id,course__CourseStructure__Category__in=['OEC','OPC'])
+        if len(oesubs) == 0:
+            event.OERegistartionStatus=0
+        event.save()
+    return "done"
