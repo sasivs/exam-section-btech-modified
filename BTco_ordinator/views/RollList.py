@@ -463,3 +463,268 @@ def rolllist_finalize(request):
     return render(request, 'BTco_ordinator/RollListsFinalize.html', {'form':form})
 
 
+def roll_list_script(kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    events = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'), BSem__in=kwargs.get('BSem'),\
+        Regulation__in=kwargs.get('Regulation'), Dept__in=kwargs.get('Dept'), Mode__in=kwargs.get('Mode'))
+    for event in events:
+        BTNotRegistered.objects.filter(RegEventId_id=event.id).delete()
+        if event.Mode == 'R':
+            if event.BYear == 1:
+                if event.ASem == 1:
+                    students = BTStudentInfo.objects.filter(AdmissionYear=event.AYear,Cycle=event.Dept,Regulation=event.Regulation)
+                    not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1,BYear=1, PoA_sem1='R', student__Regulation=event.Regulation, student__Cycle=event.Dept)
+                    not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                        Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+                    
+                    initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+                    valid_regnos = []
+                    for stu_obj in students:
+                        if not BTRollLists.objects.filter(student__RegNo=stu_obj.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                                    RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=stu_obj.RegNo).exists():
+                                roll = BTRollLists_Staging(student=stu_obj, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(stu_obj.RegNo)
+                    
+                    for not_prom_obj in not_prom_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_prom_obj.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                                RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=not_prom_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_prom_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_prom_obj.student.RegNo)
+                    
+                    for not_reg_obj in not_registered_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_reg_obj.Student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                                RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=not_reg_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_reg_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_reg_obj.Student.RegNo)
+                    BTRollLists_Staging.objects.filter(~Q(student__RegNo__in=valid_regnos), RegEventId_id=event.id).delete()
+
+                elif event.ASem == 2:
+                    previous_sem_event = BTRegistrationStatus.objects.filter(AYear=event.AYear, ASem=1, BYear=event.BYear, BSem=1, Regulation=event.Regulation, Mode='R', Dept=event.Dept).first()
+                    previous_sem_rolllist = BTRollLists_Staging.objects.filter(RegEventId__id=previous_sem_event.id)
+                    previous_sem_not_reg_students = BTNotRegistered.objects.filter(RegEventId_id=previous_sem_event.id)
+
+                    not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1,BYear=1, PoA_sem2='R', student__Regulation=event.Regulation, student__Cycle=event.Dept)
+
+                    not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                        Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+
+                    initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+                    valid_regnos = []
+
+                    for roll in previous_sem_rolllist:
+                        if not BTRollLists.objects.filter(student__RegNo=roll.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=roll.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=roll.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(roll.student.RegNo)
+                        
+                    for not_prom_obj in not_prom_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_prom_obj.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=not_prom_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_prom_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_prom_obj.student.RegNo)
+
+                    for not_reg_obj in not_registered_students|previous_sem_not_reg_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_reg_obj.Student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                                RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(not_prom_obj__student__RegNo=not_reg_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_reg_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_reg_obj.Student.RegNo)
+                    
+
+                    BTRollLists_Staging.objects.filter(~Q(student__RegNo__in=valid_regnos), RegEventId_id=event.id).delete()
+            
+            else:
+                if event.ASem == 1:
+                    if event.BYear == 2:
+                        prev_yr_not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear-1, Regulation=event.Regulation)
+                        previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
+                            RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
+                    else:
+                        prev_yr_not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear-1, Regulation=event.Regulation, student__Dept=event.Dept)
+                        previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
+                            RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode, RegEventId__Dept=event.Dept).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
+                    
+                    not_prom_r_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, student__Regulation=event.Regulation, PoA_sem1='R')
+
+                    not_prom_b_students = BTNotPromoted.objects.filter(AYear=event.AYear-2, BYear=event.BYear-1, student__Regulation=event.Regulation, PoA_sem1='B', PoA_sem2='B')
+
+                    not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                        Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+                    
+                    initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+                    valid_regnos = []
+                    
+                    for roll in previous_year_rolllist:
+                        if not BTRollLists.objects.filter(student__regNo=roll.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                                RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=roll.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=roll.student, RegEventId_id=event.id)
+                                roll.save()
+                            valid_regnos.append(roll.student.RegNo)
+                    
+                    for not_prom_obj in not_prom_r_students|not_prom_b_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_prom_obj.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=not_prom_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_prom_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_prom_obj.student.RegNo)
+                    
+                    for not_reg_obj in not_registered_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_reg_obj.Student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(not_prom_obj__student__RegNo=not_reg_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_reg_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_reg_obj.Student.RegNo)
+                    
+                    BTRollLists_Staging.objects.filter(~Q(student__RegNo__in=valid_regnos), RegEventId_id=event.id).delete()
+                
+                if event.ASem == 2:
+                    previous_sem_event = BTRegistrationStatus.objects.filter(AYear=event.AYear, ASem=1, BYear=event.BYear, BSem=1, Regulation=event.Regulation, Mode='R', Dept=event.Dept).first()
+                    previous_sem_rolllist = BTRollLists.objects.filter(RegEventId_id=previous_sem_event.id)
+                    previous_sem_not_reg_students = BTNotRegistered.objects.filter(RegEventId_id=previous_sem_event.id)
+
+                    not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, PoA_sem2='R', student__Regulation=event.Regulation, student__Dept=event.Dept)
+
+                    not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                        Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+                    
+                    initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+                    valid_regnos = []
+
+                    for roll in previous_sem_rolllist:
+                        if not BTRollLists.objects.filter(student__RegNo=roll.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=roll.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=roll.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(roll.student.RegNo)
+                    
+                    for not_prom_obj in not_prom_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_prom_obj.student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(student__RegNo=not_prom_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_prom_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_prom_obj.student.RegNo)
+                    
+                    for not_reg_obj in not_registered_students|previous_sem_not_reg_students:
+                        if not BTRollLists.objects.filter(student__RegNo=not_reg_obj.Student.RegNo, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Mode=event.Mode, \
+                            RegEventId__AYear__lt=event.AYear).exists():
+                            if not initial_rolllist.filter(not_prom_obj__student__RegNo=not_reg_obj.student.RegNo).exists():
+                                roll = BTRollLists_Staging(student=not_reg_obj.student, RegEventId_id=event.id, Cycle=event.Dept)
+                                roll.save()
+                            valid_regnos.append(not_reg_obj.Student.RegNo)
+                    
+                    BTRollLists_Staging.objects.filter(~Q(student__RegNo__in=valid_regnos), RegEventId_id=event.id).delete()
+
+        elif event.Mode == 'B':
+            initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+
+            backlog_students = BTStudentBacklogs.objects.filter(BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Regulation=event.Regulation).exclude(AYASBYBS__startswith=event.AYear).order_by('RegNo').distinct('RegNo')
+
+            if event.BYear == 1:
+                for student in backlog_students:
+                    student = BTStudentInfo.objects.get(RegNo=student.RegNo)
+                    if not initial_rolllist.filter(student=student).exists():
+                        roll = BTRollLists_Staging(student=student, RegEventId_id=event.id, Cycle=event.Dept)
+                        roll.save()
+            else:
+                for student in backlog_students:
+                    student = BTStudentInfo.objects.get(RegNo=student.RegNo)
+                    if not initial_rolllist.filter(student=student).exists():
+                        roll = BTRollLists_Staging(student=student, RegEventId_id=event.id)
+                        roll.save()
+                    
+            BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__RegNo__in=backlog_students.values_list('RegNo', flat=True)).delete()
+
+        elif event.Mode == 'M':
+            initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+            
+            makeup_students = BTStudentMakeups.objects.filter(Dept=event.Dept, BYear=event.BYear, BSem=event.BSem, Regulation=event.Regulation).distinct('RegNo').order_by('RegNo')
+
+            if event.BYear == 1:
+                for student in makeup_students:
+                    student = BTStudentInfo.objects.get(RegNo=student.RegNo)
+                    if not initial_rolllist.filter(student=student).exists():
+                        roll = BTRollLists_Staging(student=student, RegEventId_id=event.id, Cycle=event.Dept)
+                        roll.save()
+            else:
+                for student in makeup_students:
+                    student = BTStudentInfo.objects.get(RegNo=student.RegNo)
+                    if not initial_rolllist.filter(student=student).exists():
+                        roll = BTRollLists_Staging(student=student, RegEventId_id=event.id)
+                        roll.save()
+            
+            BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__RegNo__in=makeup_students.values_list('RegNo', flat=True)).delete()
+
+        elif event.Mode == 'D':
+            initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+
+            dropped_courses_students = BTDroppedRegularCourses.objects.filter(Registered=False, subject_RegEventId__BYear=event.BYear, subject__RegEventId__Regulation=event.Regulation).\
+                exclude(subject__RegEventId__AYear=event.AYear).distinct('student__RegNo').order_by('student__RegNo')
+
+            for student in dropped_courses_students:
+                if not initial_rolllist.filter(student=student).exists():
+                    roll = BTRollLists_Staging(student=student, RegEventId_id=event.id)
+                    roll.save()
+
+def rollList_fee_upload_script(file, kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    file = open(file)
+    data = bytes()
+    for chunk in file.chunks():
+        data += chunk
+    dataset = XLSX().create_dataset(data)
+    event = BTRegistrationStatus.objects.filter(AYear=kwargs.get('AYear'), ASem=kwargs.get('ASem'), BYear=kwargs.get('BYear'), BSem=kwargs.get('BSem'),\
+        Regulation=kwargs.get('Regulation'), Dept=kwargs.get('Dept'), Mode=kwargs.get('Mode')).first()
+    mode = event.Mode
+    paid_regd_no = []
+    for row in dataset:
+        paid_regd_no.append(row[1])
+    rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+    unpaid_regd_no = rolls.exclude(student__RegNo__in=paid_regd_no)
+    rolls = rolls.values_list('student__RegNo', flat=True)
+    error_regd_no = set(paid_regd_no).difference(set(rolls))
+    if mode == 'R':
+        for regd_no in unpaid_regd_no:
+            not_registered = BTNotRegistered(Student=regd_no.student, RegEventId_id=event.id, Registered=False)
+            not_registered.save()
+    unpaid_regd_no = unpaid_regd_no.values_list('student__RegNo', flat=True) 
+    BTStudentRegistrations_Staging.objects.filter(student__student__RegNo__in=unpaid_regd_no, RegEventId=event.id).delete()
+    BTRollLists_Staging.objects.filter(student__RegNo__in=unpaid_regd_no, RegEventId_id=event.id).delete() 
+    currentRegEvent = BTRegistrationStatus.objects.get(id=event.id)
+    currentRegEvent.RollListFeeStatus = 1
+    currentRegEvent.save()
+    print(error_regd_no)
+    print('These roll numbers are not there in roll list')
+    return "Done!"
+
+def rolls_finalize_script(kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    events = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'), BSem__in=kwargs.get('BSem'),\
+        Regulation__in=kwargs.get('Regulation'), Dept__in=kwargs.get('Dept'), Mode__in=kwargs.get('Mode'))
+    for event in events:
+        rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+        for roll in rolls:
+            if(not BTRollLists.objects.filter(student=roll.student, RegEventId=roll.RegEventId).exists()):
+                finalized_roll = BTRollLists(student=roll.student, RegEventId=roll.RegEventId, Section=roll.Section, Cycle=roll.Cycle)
+                finalized_roll.save()
+        event.RollListStatus = 0
+        event.save()
+    return "Done! "
