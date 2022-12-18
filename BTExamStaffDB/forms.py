@@ -57,7 +57,7 @@ class IXGradeStudentsAddition(forms.Form):
         self.fields['regId'] = forms.CharField(label='Choose Registration Event', max_length=30, widget=forms.Select(choices=REG_CHOICES, attrs={'onchange':'submit();', 'required':'True'}))
         if self.data.get('regId'):
             registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regId'))
-            subjects = BTSubjects.objects.filter(id__in=registrations.values_list('sub_id', flat=True)).order_by('SubCode')
+            subjects = BTSubjects.objects.filter(id__in=registrations.values_list('sub_id_id', flat=True)).order_by('course__SubCode')
             SUBJECT_CHOICES = [(sub.id, sub.SubCode) for sub in subjects]
             SUBJECT_CHOICES = [('', 'Select Subject')] + SUBJECT_CHOICES
             self.fields['subject'] = forms.CharField(label='Select Subject', max_length=30, required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
