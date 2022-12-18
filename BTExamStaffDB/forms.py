@@ -58,10 +58,10 @@ class IXGradeStudentsAddition(forms.Form):
         if self.data.get('regId'):
             registrations = BTStudentRegistrations.objects.filter(RegEventId=self.data.get('regId'))
             subjects = BTSubjects.objects.filter(id__in=registrations.values_list('sub_id_id', flat=True)).order_by('course__SubCode')
-            SUBJECT_CHOICES = [(sub.id, sub.SubCode) for sub in subjects]
+            SUBJECT_CHOICES = [(sub.id, sub.course.SubCode) for sub in subjects]
             SUBJECT_CHOICES = [('', 'Select Subject')] + SUBJECT_CHOICES
             self.fields['subject'] = forms.CharField(label='Select Subject', max_length=30, required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
-            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True',  "onkeypress":"return isNumberKey(event);"}))
+            self.fields['regd_no'] = forms.CharField(label='Registration Number', max_length=10, required=False, widget=forms.TextInput(attrs={'size':10, 'type':'number', 'required':'True', "onkeypress":"return isNumberKey(event);"}))
             self.fields['grade'] = forms.CharField(label='Select Grade', required=False, max_length=30, widget=forms.Select(choices=GRADE_CHOICES, attrs={'required':'True'}))
 
     
@@ -70,7 +70,7 @@ class IXGradeStudentsAddition(forms.Form):
         subject = self.cleaned_data.get('subject')
         regd_no = self.cleaned_data.get('regd_no')
         if subject and regd_no:
-            if not BTStudentRegistrations.objects.filter(RegEventId=regId, sub_id=subject, student__student__RegNo=regd_no):
+            if not BTStudentRegistrations.objects.filter(RegEventId_id=regId, sub_id=subject, student__student__RegNo=regd_no):
                 raise forms.ValidationError('Invalid Registration Number')
         return regd_no
 

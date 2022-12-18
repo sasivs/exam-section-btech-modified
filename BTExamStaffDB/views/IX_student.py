@@ -62,14 +62,14 @@ def ix_student_status(request):
         if request.POST.get('submit'):
             regEvent = request.POST.get('regId')
             if 'Faculty' in groups:
-                students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__in=faculty_assign.values_list('Subject_id', flat=True))
+                students = BTIXGradeStudents.objects.filter(Registration__RegEventId_id=regEvent, Registration__sub_id_id__in=faculty_assign.values_list('Subject_id', flat=True))
             else:
-                students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+                students = BTIXGradeStudents.objects.filter(Registration__RegEventId_id=regEvent)
         elif request.POST.get('delete'):
             if 'ExamStaff' in groups:
                 BTIXGradeStudents.objects.filter(id=request.POST.get('delete')).delete()
                 regEvent = request.POST.get('regId')
-                students = BTIXGradeStudents.objects.filter(Registration__RegEventId=regEvent)
+                students = BTIXGradeStudents.objects.filter(Registration__RegEventId_id=regEvent)
                 msg = 'Record Deleted Successfully.'
             else:
                 raise Http404('You are not authorized to view this page')
