@@ -108,3 +108,50 @@ def registrations_finalize(request):
         form = RegistrationsFinalizeEventForm(regIDs)
     return render(request, 'BTco_ordinator/BTRegistrationsFinalize.html',{'form':form})
     
+def regular_regs_script(kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    if not kwargs.get('Mode') == 'R':
+        return "This is not regular mode."
+    events = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'), BSem__in=kwargs.get('BSem'),\
+        Regulation__in=kwargs.get('Regulation'), Dept__in=kwargs.get('Dept'), Mode__in=kwargs.get('Mode'))
+    for event in events:
+        not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem,\
+            Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+        mode = 1
+        if(event.BYear==1):
+            rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', flat=True))
+            if len(rolls)==0:
+                msg = 'There is no roll list for the selected registration event.'
+                return msg
+            subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event)
+            if len(subs)==0:
+                msg = 'There are no subjects for the selected registration event.'
+                return msg
+            initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=event.id, Mode=1)
+            for roll in rolls:
+                for sub in subs:
+                    if not initial_registrations.filter(student=roll, sub_id_id=sub.id).exists():
+                        regRow = BTStudentRegistrations_Staging(student=roll, Mode=mode, RegEventId_id=event.id, sub_id_id=sub.id)
+                        regRow.save()
+            BTStudentRegistrations_Staging.objects.filter(~Q(student__student__RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=event.id).delete()
+            msg = 'Your data upload for Student Registrations has been done successfully.'
+            return msg
+        else:
+            rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', values=True))
+            if len(rolls)==0:
+                msg = 'There is no roll list for the selected registration event.'
+                return msg
+            subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event)
+            if len(subs)==0:
+                msg = 'There are no subjects for the selected registration event.'
+                return msg
+            initial_registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=event.id, Mode=1)
+            for roll in rolls:
+                for sub in subs:
+                    if not initial_registrations.filter(student=roll, sub_id_id=sub.id).exists():
+                        regRow = BTStudentRegistrations_Staging(student=roll, Mode=mode, RegEventId_id=event.id, sub_id_id=sub.id)
+                        regRow.save()
+            msg = 'Your data upload for Student Registrations has been done successfully.'
+            BTStudentRegistrations_Staging.objects.filter(~Q(student__student__RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=event.id).delete()
+            return msg
