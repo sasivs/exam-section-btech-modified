@@ -734,5 +734,6 @@ def rollList_download_script(event):
     rollListStatus=BTRollLists_Staging.objects.filter(RegEventId_id=event.id).order_by('student__RegNo')
     BookGenerator = RollListBookGenerator(rollListStatus, event)
     workbook = BookGenerator.generate_workbook()
+    filename = 'RollList({event}).xlsx'.format(event=event.__str__())
     workbook.save()
     return "Done!!"
