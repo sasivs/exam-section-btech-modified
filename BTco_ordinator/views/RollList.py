@@ -728,3 +728,11 @@ def rolls_finalize_script(kwargs):
         event.RollListStatus = 0
         event.save()
     return "Done! "
+
+def rollList_download_script(event):
+    from BTco_ordinator.utils import RollListBookGenerator
+    rollListStatus=BTRollLists_Staging.objects.filter(RegEventId_id=event.id).order_by('student__RegNo')
+    BookGenerator = RollListBookGenerator(rollListStatus, event)
+    workbook = BookGenerator.generate_workbook()
+    workbook.save()
+    return "Done!!"
