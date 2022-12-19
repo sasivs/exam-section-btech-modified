@@ -120,7 +120,7 @@ def generateRollList(request):
                         if event.BYear == 2:
                             prev_yr_not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear-1, Regulation=event.Regulation)
                             previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
-                                RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
+                                RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode, student__Dept=event.Dept).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
                         else:
                             prev_yr_not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear-1, Regulation=event.Regulation, student__Dept=event.Dept)
                             previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
@@ -550,7 +550,7 @@ def roll_list_script(kwargs):
                     if event.BYear == 2:
                         prev_yr_not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear-1, Regulation=event.Regulation)
                         previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
-                            RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
+                            RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode, student__Dept=event.Dept).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
                     else:
                         prev_yr_not_prom_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear-1, Regulation=event.Regulation, student__Dept=event.Dept)
                         previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
