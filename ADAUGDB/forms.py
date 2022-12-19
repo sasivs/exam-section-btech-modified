@@ -57,7 +57,7 @@ class DBYBSAYASSelectionForm(forms.Form):
         if 'aYear' in self.data and 'bYear' in self.data and self.data['aYear']!='' and \
             self.data['bYear']!='' and self.data['aYear']!='0' and \
             self.data['bYear']!='0':
-            regulations = BTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
+            regulations = BTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear')).order_by('Regulation')
             dropped_course_regulations = BTRegulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
             backlog_course_regulations = BTStudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
             backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
@@ -109,7 +109,7 @@ class CreateRegistrationEventForm(forms.Form):
         self.fields['regulation'] = regulationBox
         self.fields['mode'] = modeBox
         if self.data.get('aYear') and self.data.get('bYear'):
-            regulations = BTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear'))
+            regulations = BTRegulation.objects.filter(AYear=self.data.get('aYear')).filter(BYear = self.data.get('bYear')).order_by('Regulation')
             dropped_course_regulations = BTRegulation.objects.filter(AYear=str(int(self.data.get('aYear'))-1),BYear=self.data.get('bYear'))
             backlog_course_regulations = BTStudentBacklogs.objects.filter(BYear=self.data.get('bYear'))
             backlog_course_regulations = [(regu.Regulation,regu.Regulation) for regu in backlog_course_regulations]
