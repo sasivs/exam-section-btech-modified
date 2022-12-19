@@ -62,7 +62,7 @@ def btech_backlog_registration(request):
                     else:
                         form = BacklogRegistrationForm(regIDs, request.POST)
                         context = {'form':form, 'msg': 2}  
-                        if(len(studentInfo)!=0):
+                        if(studentInfo):
                             context['RollNo'] = studentInfo.RollNo
                             context['Name'] = studentInfo.Name  
                         return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
