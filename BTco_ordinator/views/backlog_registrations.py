@@ -37,7 +37,7 @@ def btech_backlog_registration(request):
             pass 
         elif 'RegEvent' in request.POST and 'RegNo' in request.POST and not 'Submit' in request.POST:
             roll = BTRollLists_Staging.objects.filter(id=request.POST.get('RegNo')).first()
-            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student=roll, \
+            studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=roll.student.RegNo, \
                 RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation)
             mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in studentRegistrations}
             student_obj = roll.student
