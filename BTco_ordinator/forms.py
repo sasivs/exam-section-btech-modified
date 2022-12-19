@@ -256,13 +256,13 @@ class BacklogRegistrationForm(forms.Form):
                 self.checkFields = []
                 self.radioFields = []
                 self.selectFields = [self.fields['RegEvent'], self.fields['RegNo']]
-                studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=self.data['RegNo'],\
+                roll = studentBacklogs_rolls.filter(id=self.data['RegNo']).first()
+                studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=roll.student.RegNo,\
                     RegEventId__AYear=event.AYear, RegEventId__Regulation=event.Regulation)
                 Selection={reg.sub_id.id:reg.Mode for reg in studentRegistrations.filter(RegEventId__ASem=event.ASem)}
                 studentRegularRegistrations = studentRegistrations.filter(RegEventId__ASem=event.ASem, RegEventId__Mode='R')
                 dropped_subjects = studentRegistrations.filter(RegEventId__ASem=event.ASem, RegEventId__Mode='D')
                 registeredBacklogs = studentRegistrations.filter(RegEventId__ASem=event.ASem, RegEventId__Mode='B')
-                roll = studentBacklogs_rolls.filter(id=self.data['RegNo']).first()
                 if event.BYear == 1:
                     studentBacklogs = BTStudentBacklogs.objects.filter(RegNo=roll.student.RegNo, BYear=event.BYear, BSem=event.BSem).\
                         exclude(AYASBYBS__startswith=event.AYear)
