@@ -257,6 +257,7 @@ class BacklogRegistrationForm(forms.Form):
                 self.radioFields = []
                 self.selectFields = [self.fields['RegEvent'], self.fields['RegNo']]
                 roll = studentBacklogs_rolls.filter(id=self.data['RegNo']).first()
+                self.data['roll'] = roll.student.RegNo
                 studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=roll.student.RegNo,\
                     RegEventId__AYear=event.AYear, RegEventId__Regulation=event.Regulation)
                 Selection={reg.sub_id.id:reg.Mode for reg in studentRegistrations.filter(RegEventId__ASem=event.ASem)}
@@ -314,7 +315,7 @@ class BacklogRegistrationForm(forms.Form):
         for row in registeredBacklogs:
             # if row.sub_id.id not in validBacklogs:
             if not studentBacklogs.filter(sub_id=row.sub_id_id).exists():
-                bRow = BTStudentBacklogs.objects.filter(RegNo=self.data['RegNo'], sub_id=row.sub_id.id)
+                bRow = BTStudentBacklogs.objects.filter(RegNo=self.data['roll'], sub_id=row.sub_id.id)
                 bRow = bRow[0]
                 self.fields['Check' + str(bRow.sub_id)] = forms.BooleanField(required=False, \
                     widget=forms.CheckboxInput(attrs={'checked':True}))
