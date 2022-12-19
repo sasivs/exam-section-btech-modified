@@ -100,7 +100,7 @@ def btech_backlog_registration(request):
                 context = {'form':form, 'msg':1}
                 context['study']=studyModeCredits
                 context['exam']=examModeCredits
-                if(len(studentInfo)!=0):
+                if(studentInfo):
                     context['RollNo'] = studentInfo.RollNo
                     context['Name'] = studentInfo.Name  
                 return render(request, 'BTco_ordinator/BTBacklogRegistration.html',context)
