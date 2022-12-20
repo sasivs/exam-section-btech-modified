@@ -129,7 +129,7 @@
       let elems = document.querySelectorAll(query_select_string+":not(:checked)");
       for (let i=0; i<elems.length; i++){
         elems[i].required = false;
-        if (c_str[obj.getAttribute('group')][1] != 'OEC' || c_str[obj.getAttribute('group')][1] != 'OEC'){
+        if (!(c_str[obj.getAttribute('group')][1] in ['OEC', 'OPC', 'DEC'])){
           elems[i].disabled = true;
         }
       }
