@@ -34,6 +34,24 @@ def grades_threshold_assign(request, pk):
     grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
     prev_thresholds = BTGradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty.RegEventId)
     marks = BTMarks_Staging.objects.filter(Registration__RegEventId_id=subject_faculty.RegEventId.id, Registration__sub_id_id=subject.id)
+    promote_thresholds = subject.course.MarkDistribution.PromoteThreshold
+    promote_thresholds = promote_thresholds.split(',')
+    promote_thresholds = [thr.split('+') for thr in promote_thresholds]
+    failed_marks_objs = BTMarks_Staging.objects.none()
+    for mark in marks:
+        if mark.Registration.Mode == 1:
+            marks_list = mark.Marks.split(',')
+            marks_list = [m.split('+') for m in marks_list]
+            failed = False
+            for outer_index in range(len(promote_thresholds)):
+                for inner_index in range(len(promote_thresholds[outer_index])):
+                    if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
+                        failed_marks_objs |= mark
+                        failed = True
+                        break
+                if failed:
+                    break
+    marks.exclude(id__in=failed_marks_objs.values_list('id', flat=True))
     marks_list = marks.values_list('TotalMarks', flat=True)
     mean = round(stat.mean(marks_list), 2)
     stdev = round(stat.stdev(marks_list), 2)
@@ -100,6 +118,7 @@ def grades_threshold_assign(request, pk):
                 msg = 'Grades Threshold noted successfully'
                 return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject_faculty, 'msg':msg})
         else:
+            grades = grades.exclude(Grade='F')
             grades_data = [grade.Grade for grade in grades]
             no_of_students = {grade.Grade:0 for grade in grades}
             for index, grade in enumerate(grades):
