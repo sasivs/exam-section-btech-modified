@@ -51,7 +51,7 @@ def grades_threshold_assign(request, pk):
                         break
                 if failed:
                     break
-    marks.exclude(id__in=failed_marks_objs.values_list('id', flat=True))
+    marks = marks.exclude(id__in=failed_marks_objs.values_list('id', flat=True))
     marks_list = marks.values_list('TotalMarks', flat=True)
     mean = round(stat.mean(marks_list), 2)
     stdev = round(stat.stdev(marks_list), 2)
@@ -121,8 +121,10 @@ def grades_threshold_assign(request, pk):
             grades = grades.exclude(Grade='F')
             grades_data = [grade.Grade for grade in grades]
             no_of_students = {grade.Grade:0 for grade in grades}
+            passed_marks_objs = BTMarks_Staging.objects.none()
             for index, grade in enumerate(grades):
                 if request.POST.get(str(grade.id)):
+                    passed_marks_objs = passed_marks_objs.union(marks.filter(TotalMarks__gte=float(request.POST.get(str(grade.id)))))
                     no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=float(request.POST.get(str(grade.id)))))
             for index in range(len(grades)-1, 0, -1):
                 no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
@@ -134,11 +136,14 @@ def grades_threshold_assign(request, pk):
         form = GradeThresholdForm(subject_faculty)
         no_of_students = None
         if prev_thresholds:
+            grades = grades.exclude(Grade='F')
             grades_data = [grade.Grade for grade in grades]
             no_of_students = {grade.Grade:0 for grade in grades}
+            # passed_marks_objs = BTMarks_Staging.objects.none()
             for index, grade in enumerate(grades):
                 if prev_thresholds.filter(Grade=grade.id):
                     threshold_mark = prev_thresholds.filter(Grade=grade.id).first().Threshold_Mark
+                    # passed_marks_objs = passed_marks_objs.union(marks.filter(TotalMarks__gte=threshold_mark))
                     no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=threshold_mark))
             total = 0
             for index in range(len(grades)-1, 0, -1):
