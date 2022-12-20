@@ -46,7 +46,7 @@ def grades_threshold_assign(request, pk):
             for outer_index in range(len(promote_thresholds)):
                 for inner_index in range(len(promote_thresholds[outer_index])):
                     if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
-                        failed_marks_objs |= mark
+                        failed_marks_objs |= marks.filter(id=mark.id)
                         failed = True
                         break
                 if failed:
