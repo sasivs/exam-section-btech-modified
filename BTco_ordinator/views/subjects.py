@@ -36,7 +36,7 @@ def subject_upload(request):
                 courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
                 excessCourses = []
                 slackCourses = []
-                BTSubjects_Staging.objects.filter(RegEventId_id=event.id).exclude(course__CourseStructure__Category__in=['OEC', 'OPC',]).delete()
+                BTSubjects_Staging.objects.filter(RegEventId_id=event.id).exclude(course__CourseStructure__Category__in=['OEC', 'OPC']).delete()
                 for c_str in course_structure:
                     related_courses = courses.filter(CourseStructure_id=c_str.id)
                     if len(related_courses)==c_str.count:
