@@ -36,7 +36,7 @@ def subject_upload(request):
                 courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
                 excessCourses = []
                 slackCourses = []
-                BTSubjects_Staging.objects.filter(RegEventId_id=event.id).exclude(course__CourseStructure__Category__in=['OEC', 'ODC']).delete()
+                BTSubjects_Staging.objects.filter(RegEventId_id=event.id).exclude(course__CourseStructure__Category__in=['OEC', 'OPC',]).delete()
                 for c_str in course_structure:
                     related_courses = courses.filter(CourseStructure_id=c_str.id)
                     if len(related_courses)==c_str.count:
@@ -209,7 +209,7 @@ def open_subject_upload(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = []
     msg = ''
-    if 'Superintendent' in groups:
+    if 'Associate-Dean-Academics' in groups:
         course_structure_obj = BTCourseStructure.objects.filter(Category__in=['OEC', 'OPC'])
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R', Regulation__in=course_structure_obj.values_list('Regulation', flat=True), \
             BYear__in=course_structure_obj.values_list('BYear', flat=True), BSem__in=course_structure_obj.values_list('BSem', flat=True), \
