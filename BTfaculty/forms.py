@@ -121,10 +121,10 @@ class MarksUploadForm(forms.Form):
                 subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
             else:
                 if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())):
-                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())] = [[sub.RegEventId.id], [sub.Subject.id]]
+                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
                 else:
-                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][0].append(sub.RegEventId.id)
-                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][1].append(sub.Subject.id)
+                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
+                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         EXAM_CHOICES = [('', '----------')]
@@ -150,10 +150,10 @@ class MarksStatusForm(forms.Form):
                         str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
                 else:
                     if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())):
-                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())] = [[sub.RegEventId.id], [sub.Subject.id]]
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
                     else:
-                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][0].append(sub.RegEventId.id)
-                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][1].append(sub.Subject.id)
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]        
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))

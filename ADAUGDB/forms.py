@@ -448,7 +448,7 @@ class OpenElectiveRollListForm(forms.Form):
                 RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC']).distinct('course__SubCode')
             oe_subjects = {}
             for sub in subjects.distinct('course__SubCode'):
-                oe_subjects[(sub.course.SubCode, sub.course.SubName)] = subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True)
+                oe_subjects[(sub.course.SubCode, sub.course.SubName)] = list(map(str, subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True)))
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             SUBJECT_CHOICES += [(','.join(value), str(key[0])+', '+str(key[1]))for key, value in oe_subjects.items()]
             self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
