@@ -32,8 +32,9 @@ class AttendanceShoratgeStatusForm(forms.Form):
 class GradeThresholdForm(forms.Form):
     def __init__(self, faculty_subject, *args,**kwargs):
         super(GradeThresholdForm, self).__init__(*args, **kwargs)
-        grades = BTGradePoints.objects.filter(Regulation=faculty_subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
-        prev_thresholds = BTGradesThreshold.objects.filter(Subject=faculty_subject.Subject, RegEventId=faculty_subject.RegEventId)
+        subject = faculty_subject[0].Subject
+        grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
+        prev_thresholds = BTGradesThreshold.objects.filter(Subject=subject, RegEventId=faculty_subject[0].RegEventId)
         prev_thresholds_study_mode = prev_thresholds.filter(Exam_Mode=False)
         prev_thresholds_exam_mode = prev_thresholds.filter(Exam_Mode=True)
         for grade in grades:
@@ -96,9 +97,17 @@ class GradeThresholdStatusForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):
         super(GradeThresholdStatusForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
+        oe_subjects = {}
         for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
-
+            if sub.Subject.course.Category not in ['OEC', 'OPC']:
+                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
+            else:
+                if not oe_subjects.get((sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())):
+                    oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())] = [[sub.RegEventId.id], [sub.Subject.id]]
+                else:
+                    oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][0].append(sub.RegEventId.id)
+                    oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][1].append(sub.Subject.id)
+        subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0])),key[1]+', '+str(key[0])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
@@ -106,8 +115,17 @@ class MarksUploadForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):
         super(MarksUploadForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
+        oe_subjects = {}
         for sub in subjects:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+            if sub.Subject.course.Category not in ['OEC', 'OPC']:
+                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+            else:
+                if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())):
+                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())] = [[sub.RegEventId.id], [sub.Subject.id]]
+                else:
+                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][0].append(sub.RegEventId.id)
+                    oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][1].append(sub.Subject.id)
+        subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         EXAM_CHOICES = [('', '----------')]
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, required=False, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()", 'required':'True'}))
@@ -124,10 +142,19 @@ class MarksStatusForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):
         super(MarksStatusForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
+        oe_subjects = {}
         if subjects:
             for sub in subjects:
-                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
-                    str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+                if sub.Subject.course.Category not in ['OEC', 'OPC']:
+                    subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
+                        str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+                else:
+                    if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())):
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())] = [[sub.RegEventId.id], [sub.Subject.id]]
+                    else:
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][0].append(sub.RegEventId.id)
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())][1].append(sub.Subject.id)
+        subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]        
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
