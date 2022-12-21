@@ -41,7 +41,7 @@ def open_elective_rollList(request):
                     data+=chunk
                 dataset = XLSX().create_dataset(data)
                 newDataset = Dataset()
-                newDataset.headers = ['student_id','RegEventId_id','subject_id','Section']
+                newDataset.headers = ['student','RegEventId','subject','Section']
                 for i in range(len(dataset)):
                     row = dataset[i]
                     rolls = BTRollLists_Staging.objects.filter(student__RegNo=row[0],RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).first()
@@ -118,7 +118,7 @@ def OERollList_Status(request):
                 regulation = float(strs[4])
                 mode = strs[5]
                 subid = form.cleaned_data.get('sub').split(',')
-                rows = BTOpenElectiveRollLists.objects.filter(subject_id__in=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
+                rows = BTOpenElectiveRollLists.objects.filter(subject_id__in=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__student__RegNo')
                 return (render(request, 'ADAUGDB/OERollListStatus.html',{'form':form,'rows':rows})) 
         # return render(request, 'ADAUGDB/OERollListStatus.html', {'form':form,'rows':rows})
   
