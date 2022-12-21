@@ -56,7 +56,7 @@ class BTMarks_Staging(models.Model):
             sub_total = 0
             for mark in marks_row:
                 sub_total += float(mark)
-            total = sub_total*int(ratio[index])
+            total += sub_total*int(ratio[index])
         return math.ceil(total/total_parts)
 
     def get_marks_list(self):
