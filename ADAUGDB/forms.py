@@ -469,8 +469,8 @@ class OERollListStatusForm(forms.Form):
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in subjects.distinct('RegEventId')]
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+list(set(myChoices))
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
-            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()', 'required':'True'}))
         if self.data.get('regID'):
             regid = self.data.get('regID')
             strs = regid.split(':')
@@ -487,7 +487,7 @@ class OERollListStatusForm(forms.Form):
                 RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC']).distinct('course__SubCode')
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             SUBJECT_CHOICES += [(sub.id, str(sub.course.SubCode)+', '+str(sub.course.SubName))for sub in subjects]
-            self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
+            self.fields['sub'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
             
 class AddCoursesForm(forms.Form):
     def __init__(self, *args, **kwargs):
