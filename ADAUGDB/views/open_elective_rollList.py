@@ -25,7 +25,7 @@ def open_elective_rollList(request):
             if form.is_valid() and request.POST['regid'] != 'Choose Event' and request.POST['sub'] != 'Choose Subject' and request.POST['file'] != '':
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
                 subid = form.cleaned_data.get('sub').split(',')
-                regid = form.cleaned_data.get('redID')
+                regid = form.cleaned_data.get('regID')
                 strs = regid.split(':')
                 ayear = int(strs[2])
                 asem = int(strs[3])
