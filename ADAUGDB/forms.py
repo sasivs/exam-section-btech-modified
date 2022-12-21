@@ -453,7 +453,7 @@ class OpenElectiveRollListForm(forms.Form):
             SUBJECT_CHOICES += [(','.join(value), str(key[0])+', '+str(key[1]))for key, value in oe_subjects.items()]
             self.fields['sub'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
             self.fields['file'] =forms.FileField(label='OE RollList', validators=[validate_file_extension])
-            self.fields['file'].attrs['required'] = 'True'
+            self.fields['file'].widget.attrs['required'] = 'True'
 
         
 class OERollListStatusForm(forms.Form):
