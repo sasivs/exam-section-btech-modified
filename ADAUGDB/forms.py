@@ -430,8 +430,8 @@ class OpenElectiveRollListForm(forms.Form):
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in self.regIDs.distinct('RegEventId')]
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+list(set(myChoices))
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
-            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()', 'required':'True'}))
         if self.data.get('regID'):
             regid = self.data.get('regID')
             strs = regid.split(':')
@@ -451,8 +451,9 @@ class OpenElectiveRollListForm(forms.Form):
                 oe_subjects[(sub.course.SubCode, sub.course.SubName)] = list(map(str, subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True)))
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             SUBJECT_CHOICES += [(','.join(value), str(key[0])+', '+str(key[1]))for key, value in oe_subjects.items()]
-            self.fields['sub'] = forms.CharField(label='Subject', widget=forms.Select(choices=SUBJECT_CHOICES))
+            self.fields['sub'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
             self.fields['file'] =forms.FileField(label='OE RollList', validators=[validate_file_extension])
+            self.fields['file'].attrs['required'] = 'True'
 
         
 class OERollListStatusForm(forms.Form):
