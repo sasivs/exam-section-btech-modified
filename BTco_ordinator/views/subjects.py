@@ -202,6 +202,7 @@ def subject_finalize(request):
         form = SubjectFinalizeEventForm(regIDs)
     return render(request, 'BTco_ordinator/BTSubjectFinalize.html',{'form':form, 'msg':msg})
 
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def open_subject_upload(request):
@@ -211,9 +212,10 @@ def open_subject_upload(request):
     msg = ''
     if 'Associate-Dean-Academics' in groups:
         course_structure_obj = BTCourseStructure.objects.filter(Category__in=['OEC', 'OPC'])
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Mode='R', Regulation__in=course_structure_obj.values_list('Regulation', flat=True), \
-            BYear__in=course_structure_obj.values_list('BYear', flat=True), BSem__in=course_structure_obj.values_list('BSem', flat=True), \
-                Dept__in=course_structure_obj.values_list('Dept', flat=True))
+        regIDs = BTRegistrationStatus.objects.none()
+        for course_struc in course_structure_obj:
+            regIDs |= BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode='R', Regulation=course_struc.Regulation, \
+                BYear=course_struc.BYear, BSem=course_struc.BSem,Dept=course_struc.Dept)
     if regIDs:
         regIDs = [(row.id, row.__str__()) for row in regIDs]
     if(request.method=='POST'):
