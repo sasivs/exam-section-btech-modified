@@ -35,7 +35,7 @@ def open_elective_rollList(request):
                 mode = strs[5]
                 file = form.cleaned_data.get('file')
                 subjects = BTSubjects.objects.filter(id__in=subid)
-                BTOpenElectiveRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,subject_id=subid).delete()
+                BTOpenElectiveRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,subject_id__in=subid).delete()
                 data = bytes()
                 for chunk in file.chunks():
                     data+=chunk

@@ -445,7 +445,7 @@ class OpenElectiveRollListForm(forms.Form):
 
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
             RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode='R',\
-                RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC']).distinct('course__SubCode')
+                RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
             oe_subjects = {}
             for sub in subjects.distinct('course__SubCode'):
                 oe_subjects[(sub.course.SubCode, sub.course.SubName)] = list(map(str, subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True)))
