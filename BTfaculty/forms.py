@@ -38,12 +38,12 @@ class GradeThresholdForm(forms.Form):
         prev_thresholds_study_mode = prev_thresholds.filter(Exam_Mode=False)
         prev_thresholds_exam_mode = prev_thresholds.filter(Exam_Mode=True)
         for grade in grades:
-            self.fields[str(grade.id)] = forms.CharField(label=grade.Grade, required=False, widget=forms.TextInput(attrs={'type':'number','step':'0.25', 'max':100, 'required':'True', 'class':'threshold'}))
+            self.fields[str(grade.id)] = forms.CharField(label=grade.Grade, required=False, widget=forms.TextInput(attrs={'type':'number','step':'0.1', 'max':100, 'required':'True', 'class':'threshold'}))
             if prev_thresholds_study_mode.filter(Grade=grade):
                 self.fields[str(grade.id)].widget.attrs.update({'value':prev_thresholds_study_mode.filter(Grade=grade).first().Threshold_Mark})
         exam_mode_grades = grades.filter(Grade__in=['P','F'])
         for grade in exam_mode_grades:
-            self.fields[str('exam_mode_')+str(grade.id)] = forms.CharField(label='Exam-Mode-('+str(grade.Grade)+')', required=False, widget=forms.TextInput(attrs={'type':'number','step':'0.25', 'max':100, 'required':'True'}))
+            self.fields[str('exam_mode_')+str(grade.id)] = forms.CharField(label='Exam-Mode-('+str(grade.Grade)+')', required=False, widget=forms.TextInput(attrs={'type':'number','step':'0.1', 'max':100, 'required':'True'}))
             if prev_thresholds_exam_mode.filter(Grade=grade):
                 self.fields[str('exam_mode_')+str(grade.id)].widget.attrs.update({'value':prev_thresholds_exam_mode.filter(Grade=grade).first().Threshold_Mark})
         # self.fields['uniform_grading'] = forms.ChoiceField(label='Uniform Grading', required=False, choices=[(1,'Yes'),(0,'No')], initial=1, widget=forms.RadioSelect(attrs={'onchange':"submit()", 'required':'True'}))
