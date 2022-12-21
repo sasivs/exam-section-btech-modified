@@ -58,9 +58,11 @@ def dept_elective_regs_upload(request):
                     mode = 1
                     if event.Mode == 'B':
                         mode = int(dataset[i][1])
-                    reg = BTStudentRegistrations_Staging(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
-                        sub_id_id=form.cleaned_data.get('subId'))
-                    reg.save()
+                    if not BTStudentRegistrations_Staging.objects.filter(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
+                        sub_id_id=form.cleaned_data.get('subId')).exists():
+                        reg = BTStudentRegistrations_Staging(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
+                            sub_id_id=form.cleaned_data.get('subId'))
+                        reg.save()
                 return render(request, 'BTco_ordinator/Dec_Regs_success.html')
     else:
         form = DeptElectiveRegistrationsForm(regIDs)
