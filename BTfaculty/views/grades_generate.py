@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from ADAUGDB.user_access_test import grades_threshold_access, grades_status_access
-from ADAUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus, BTOpenElectiveRollLists
 from ADAUGDB.models import BTCycleCoordinator, BTHOD
 from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment, BTRollLists, BTStudentRegistrations, BTSubjects
@@ -32,13 +32,20 @@ def grades_generate(request):
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             regEvent = BTRegistrationStatus.objects.get(id=regEvent)
             section = form.cleaned_data.get('subject').split(':')[2]
-
-            roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
-
-            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent.id, Registration__sub_id=subject, \
-                Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
+            if regEvent.startswith('OE'):
+                regEvent = regEvent[2:].split(',')
+                regEvent = [int(_) for _ in regEvent]
+                subject = subject.split(',')
+                subject = [int(_) for _ in subject]
+                oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
+                marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
+                    Registration__sub_id_id__in=subject)
+                subject_obj = BTSubjects.objects.get(id=subject[0])
+            else:
+                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
+                    Registration__student__Section=section).order_by('Registration__student__student__RegNo')
+                subject_obj = BTSubjects.objects.get(id=subject)
             
-            subject_obj = BTSubjects.objects.get(id=subject)
             promote_thresholds = subject_obj.course.MarkDistribution.PromoteThreshold
             promote_thresholds = promote_thresholds.split(',')
             promote_thresholds = [thr.split('+') for thr in promote_thresholds]
@@ -154,17 +161,25 @@ def grades_status(request):
         if form.is_valid():
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
-            regEvent = BTRegistrationStatus.objects.get(id=regEvent)
             section = form.cleaned_data.get('subject').split(':')[2]
+            if regEvent.startswith('OE'):
+                regEvent = regEvent[2:].split(',')
+                regEvent = [int(_) for _ in regEvent]
+                subject = subject.split(',')
+                subject = [int(_) for _ in subject]
+                oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
+                grades = BTStudentGrades_Staging.objects.filter(RegId__sub_id_id__in=subject, RegId__student__in=oe_rolls.values_list('student', flat=True))
+                grades = list(grades)
+            else:
             # roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
             # student_registrations = BTStudentRegistrations.objects.filter(RegEventId_id=regEvent.id, sub_id_id=subject, \
             #     student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
-            grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent.id, RegId__sub_id_id=subject, RegId__student__Section=section)
-            grades = list(grades)
+                grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__sub_id_id=subject, RegId__student__Section=section)
+                grades = list(grades)
             for grade in grades:
                 grade.RegNo = grade.RegId.student.student.RegNo
-                grade.regEvent = regEvent.__str__()
-                grade.Marks = BTMarks_Staging.objects.filter(Registration_id=grade.RegId).first().TotalMarks
+                grade.regEvent = grade.RegId.RegEventId.__str__()
+                grade.Marks = BTMarks_Staging.objects.filter(Registration_id=grade.RegId_id).first().TotalMarks
             import operator
             grades = sorted(grades, key=operator.attrgetter('RegNo'))
             return render(request, 'BTfaculty/GradesStatus.html', {'form':form, 'grades':grades})
@@ -194,9 +209,17 @@ def grades_hod_submission(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
-            fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
-            fac_assign_obj.GradesStatus = 0
-            fac_assign_obj.save()
+            if regEvent.startswith('OE'):
+                regEvent = regEvent[2:].split(',')
+                regEvent = [int(_) for _ in regEvent]
+                subject = subject.split(',')
+                subject = [int(_) for _ in subject]
+                fac_assign_objs = subjects.filter(Subject_id__in=subject, RegEventId_id__in=regEvent, Section=section)
+            else:
+               fac_assign_objs = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section)
+            for fac_assign_obj in fac_assign_objs:
+                fac_assign_obj.GradesStatus = 0
+                fac_assign_obj.save()
             msg = 'Grades have been submitted to HOD successfully.'
     else:
         form = MarksStatusForm(subjects)
