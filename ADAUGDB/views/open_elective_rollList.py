@@ -20,7 +20,7 @@ from BTco_ordinator.models import BTRollLists_Staging, BTSubjects, BTFacultyAssi
 @user_passes_test(is_Associate_Dean_Academics)
 def open_elective_rollList(request):
     if(request.method == "POST"):
-        form = OpenElectiveRollListForm(request.POST)
+        form = OpenElectiveRollListForm(request.POST, request.FILES)
         if 'submit-form' in request.POST.keys():
             if form.is_valid() and request.POST['regid'] != 'Choose Event' and request.POST['sub'] != 'Choose Subject' and request.POST['file'] != '':
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
@@ -88,17 +88,17 @@ def OERollList_Status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__Course__Category__in=['OEC', 'OPC'])
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__Course__CourseStructure__Category__in=['OEC', 'OPC'])
         # regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1, Subject__Course__Category__in=['OEC', 'OPC'])
+        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1, Subject__Course__CourseStructure__Category__in=['OEC', 'OPC'])
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1, Subject__Course__Category__in=['OEC', 'OPC'])
+        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1, Subject__Course__CourseStructure__Category__in=['OEC', 'OPC'])
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1, Subject__Course__Category__in=['OEC', 'OPC'])
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1, Subject__Course__CourseStructure__Category__in=['OEC', 'OPC'])
     if request.method == 'POST':
         form = OERollListStatusForm(subjects, request.POST)
         if(form.is_valid()):
