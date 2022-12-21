@@ -86,8 +86,8 @@ def faculty_subject_assignment_detail(request, pk):
             if request.POST.get('faculty-'+str(sec)):
                 if faculty_assigned and faculty_assigned.get(Section=sec):
                     faculty_row = faculty_assigned.get(Section=sec)
-                    faculty_row.co_ordinator_id = request.POST.get('course-coordinator') or 0
-                    faculty_row.faculty_id = request.POST.get('faculty-'+str(sec))
+                    faculty_row.Coordinator_id = request.POST.get('course-coordinator') or 0
+                    faculty_row.Faculty_id = request.POST.get('faculty-'+str(sec))
                     faculty_row.save()
                 else:
                     faculty_row = BTFacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
