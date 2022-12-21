@@ -111,8 +111,8 @@ def OERollList_Status(request):
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
                 regid = form.cleaned_data.get('redID')
                 strs = regid.split(':')
-                ayear = int(strs[2])
-                asem = int(strs[3])
+                ayear = int(strs[1])
+                asem = int(strs[2])
                 byear = rom2int[strs[0]]
                 bsem = rom2int[strs[1]]
                 regulation = float(strs[4])
