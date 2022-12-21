@@ -73,8 +73,7 @@ def open_elective_rollList(request):
                     errorData = Dataset()
                     for i in list(errorIndices):
                         errorData.append(dataset[i])
-                    OERollsErrRows = [ (errorData[i][0],errorData[i][1],errorData[i][2])\
-                                for i in range(len(errorData))]
+                    OERollsErrRows = [ (errorData[i][0],errorData[i][1]) for i in range(len(errorData))]
                     return render(request,'ADAUGDB/BTOERoleListErrorHandler.html',{'errorrows':OERollsErrRows})
                     
         return render(request, 'ADAUGDB/OpenElectiveRollList.html',{'form':form})
