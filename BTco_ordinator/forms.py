@@ -391,7 +391,15 @@ class DeptElectiveRegistrationsForm(forms.Form):
         self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
         self.fields['file'].widget.attrs['required']='True'
         if self.data.get('regID'):
-            subjects = BTSubjects.objects.filter(RegEventId=self.data.get('regID'), course__CourseStructure__Category='DEC')
+            event = regIDs.filter(id=self.data.get('regID')).first()
+            if event.Mode == 'R':
+                subjects = BTSubjects.objects.filter(RegEventId=event, course__CourseStructure__Category__in=['DEC'])
+            elif event.Mode == 'B':
+                subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['DEC'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                    RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+            elif event.Mode == 'D':
+                subjects = BTSubjects.objects.filter(subject__course__CourseStructure__Category__in=['DEC'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                    RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
             subjects = [(sub.id,str(sub.course.SubCode)+" "+str(sub.course.SubName)) for sub in subjects]
             subChoices += subjects
             self.fields['subId'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=subChoices, attrs={'required':'True'}))
@@ -405,7 +413,7 @@ class DeptElectiveRegsForm(forms.Form):
             myChoices = [(row.id, row.__str__()) for row in regIDs]
         myChoices = [('','--Choose Event--')]+myChoices
         self.fields['regID'] = forms.CharField(label='Registration ID', \
-            max_length=30, widget=forms.Select(choices=myChoices, required=False, attrs={'onchange': 'submit()','required':'True'}))
+            max_length=30, required=False, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()','required':'True'}))
         subChoices = [('','--Select Subject--')]
         self.fields['subId'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=subChoices, attrs={'required':'True'}))
         if self.data.get('regID'):
@@ -812,3 +820,38 @@ class SubjectsSelectForm(forms.Form):
             self.fields['event'].initial = event.id
         self.fields['name'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['name'].initial = 'SubjectsSelectForm'
+
+class MDACoursesUploadForm(forms.Form):
+    def __init__(self, regIds, *args, **kwargs):
+        super(MDACoursesUploadForm, self).__init__(*args, **kwargs)
+        REGEVENT_CHOICES = [(event.id, event.__str__()) for event in regIds]
+        REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False, max_length=26, widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
+        self.fields['file'] = forms.FileField(validators=validate_file_extension)
+
+class MDARegistrationsForm(forms.Form):
+    def __init__(self, regIDs, *args, **kwargs):
+        super(MDARegistrationsForm, self).__init__(*args, **kwargs)
+        REGEVENT_CHOICES = [(row.id, row.__str__()) for row in regIDs]
+        REGEVENT_CHOICES = [('','Choose Event')]+REGEVENT_CHOICES
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
+            max_length=30, required=False, widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'onchange': 'submit()', 'required':'True'}))
+        SUBJECT_CHOICES = [('','--Select Subject--')]
+        self.fields['subId'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
+        self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
+        self.fields['file'].widget.attrs['required']='True'
+        if self.data.get('regID'):
+            event = regIDs.filter(id=self.data.get('regID')).first()
+            if event.Mode == 'R':
+                subjects = BTSubjects.objects.filter(RegEventId=event, course__CourseStructure__Category__in=['MDA'])
+            elif event.Mode == 'B':
+                subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['MDA'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                    RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+            elif event.Mode == 'D':
+                subjects = BTSubjects.objects.filter(subject__course__CourseStructure__Category__in=['MDA'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                    RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
+            subjects = [(sub.id,str(sub.course.SubCode)+" "+str(sub.course.SubName)) for sub in subjects]
+            SUBJECT_CHOICES += subjects
+            self.fields['subId'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
+
+
