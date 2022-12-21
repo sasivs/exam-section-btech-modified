@@ -22,7 +22,7 @@ def open_elective_rollList(request):
     if(request.method == "POST"):
         form = OpenElectiveRollListForm(request.POST, request.FILES)
         if 'submit-form' in request.POST.keys():
-            if form.is_valid() and request.POST['regID'] != 'Choose Event' and request.POST['sub'] != 'Choose Subject' and request.POST['file'] != '':
+            if form.is_valid():
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
                 subid = form.cleaned_data.get('sub').split(',')
                 regid = form.cleaned_data.get('regID')
