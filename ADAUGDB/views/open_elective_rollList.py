@@ -10,7 +10,7 @@ from ADAUGDB.models import BTRegistrationStatus
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 from ADAUGDB.user_access_test import  roll_list_status_access
-from BTco_ordinator.models import BTRollLists_Staging
+from BTco_ordinator.models import BTRollLists_Staging, BTSubjects
 
 
 
@@ -24,7 +24,7 @@ def open_elective_rollList(request):
         if 'submit-form' in request.POST.keys():
             if form.is_valid() and request.POST['regid'] != 'Choose Event' and request.POST['sub'] != 'Choose Subject' and request.POST['file'] != '':
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
-                subid = form.cleaned_data.get('sub')
+                subid = form.cleaned_data.get('sub').split(',')
                 regid = form.cleaned_data.get('redID')
                 strs = regid.split(':')
                 ayear = int(strs[3])
@@ -34,6 +34,7 @@ def open_elective_rollList(request):
                 regulation = float(strs[5])
                 mode = strs[6]
                 file = form.cleaned_data.get('file')
+                subjects = BTSubjects.objects.filter(id__in=subid)
                 BTOpenElectiveRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,subject_id=subid).delete()
                 data = bytes()
                 for chunk in file.chunks():
@@ -43,8 +44,9 @@ def open_elective_rollList(request):
                 newDataset.headers = ['student','RegEventID','Subject','Section']
                 for i in range(len(dataset)):
                     row = dataset[i]
-                    rolls = BTRollLists_Staging.objects.get(student__RegNo=row[0],RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)
-                    newRow = (rolls.id,rolls.RegEventId.id,subid,row[2])
+                    rolls = BTRollLists_Staging.objects.get(student__RegNo=row[0],RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).first()
+                    subject = subjects.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem,RegEventId__Regulation=regulation, RegEventId__Mode='R', RegEventId__Dept=rolls.RegEventId.Dept).first()
+                    newRow = (rolls.id,rolls.RegEventId.id,subject.id,row[2])
                     newDataset.append(newRow)
                 oerolllist_resourse = BTOpenElectiveRollListsResource()
                 result = oerolllist_resourse.import_data(newDataset,dry_run=True)
@@ -62,9 +64,9 @@ def open_elective_rollList(request):
                         cleanDataset.append(newDataset[i])
                     cleanDataset.headers = newDataset.headers
 
-                    result1 = oerolllist_resourse.import_data(newDataset,dry_run=True)
+                    result1 = oerolllist_resourse.import_data(cleanDataset,dry_run=True)
                     if not result1.has_errors():
-                        oerolllist_resourse.import_data(newDataset,dry_run=False)
+                        oerolllist_resourse.import_data(cleanDataset,dry_run=False)
                     else:
                         print('Something went wrong in plain import')
                     
