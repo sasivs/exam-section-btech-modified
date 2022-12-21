@@ -108,6 +108,7 @@ def OERollList_Status(request):
     if request.method == 'POST':
         form = OERollListStatusForm(subjects, request.POST)
         if(form.is_valid()):
+            if request.POST.get('Submit'):
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
                 regid = form.cleaned_data.get('redID')
                 strs = regid.split(':')
