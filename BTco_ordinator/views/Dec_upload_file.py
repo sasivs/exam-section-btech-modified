@@ -22,7 +22,7 @@ def dept_elective_regs_upload(request):
         subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['DEC'], RegEventId__Status=1, RegEventId__RegistrationStatus=1, RegEventId__Dept=coordinator.Dept, \
             RegEventId__BYear=coordinator.BYear)
         backlogs = BTStudentBacklogs.objects.filter(Category__in=['DEC'], Dept=coordinator.Dept, BYear=coordinator.BYear)
-        dropped = BTDroppedRegularCourses.objects.filter(subject__course__CourseStructure__in=['DEC'], RegEventId__BYear=coordinator.BYear, RegEventId__Dept=coordinator.Dept)
+        dropped = BTDroppedRegularCourses.objects.filter(subject__course__CourseStructure__Category__in=['DEC'], RegEventId__BYear=coordinator.BYear, RegEventId__Dept=coordinator.Dept)
         regular_regIds = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
         backlog_regIds = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='B', \
             BSem__in=backlogs.values_list('BSem', flat=True))
@@ -34,7 +34,7 @@ def dept_elective_regs_upload(request):
         subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['DEC'], RegEventId__Status=1, RegEventId__RegistrationStatus=1, RegEventId__Dept=cycle_cord.Cycle, \
             RegEventId__BYear=1)
         backlogs = BTStudentBacklogs.objects.filter(Category__in=['DEC'], Dept=cycle_cord.Cycle, BYear=1)
-        dropped = BTDroppedRegularCourses.objects.filter(subject__course__CourseStructure__in=['DEC'], RegEventId__BYear=1, RegEventId__Dept=cycle_cord.Cycle)
+        dropped = BTDroppedRegularCourses.objects.filter(subject__course__CourseStructure__Category__in=['DEC'], RegEventId__BYear=1, RegEventId__Dept=cycle_cord.Cycle)
         regular_regIds = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
         backlog_regIds = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='B', \
             BSem__in=backlogs.values_list('BSem', flat=True))
