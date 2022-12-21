@@ -48,8 +48,9 @@ def dept_elective_regs_all(request):
 
                 rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
                 for i in rolls:
-                    reg = BTStudentRegistrations_Staging(student=i, RegEventId_id=event.id, Mode=1,sub_id_id=form.cleaned_data.get('subId'))
-                    reg.save()
+                    if BTStudentRegistrations_Staging.objects.filter(student=i, RegEventId_id=event.id, Mode=1,sub_id_id=form.cleaned_data.get('subId')).exists():
+                        reg = BTStudentRegistrations_Staging(student=i, RegEventId_id=event.id, Mode=1,sub_id_id=form.cleaned_data.get('subId'))
+                        reg.save()
                 rolls = rolls.values_list('student__RegNo', flat=True)
                 BTStudentRegistrations_Staging.objects.filter(RegEventId=event).exclude(student__student__RegNo__in=rolls).delete()
                 return render(request, 'BTco_ordinator/Dec_Regs_success.html')
