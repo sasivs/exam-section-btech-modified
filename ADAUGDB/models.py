@@ -23,7 +23,7 @@ class BTRegistrationStatus(models.Model):
     RollListStatus = models.IntegerField()
     RollListFeeStatus = models.IntegerField()
     OERollListStatus = models.IntegerField()
-    OERegistartionStatus = models.IntegerField()
+    OERegistrationStatus = models.IntegerField()
     RegistrationStatus = models.IntegerField()
     MarksStatus = models.IntegerField()
     GradeStatus = models.IntegerField()
