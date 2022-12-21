@@ -40,6 +40,11 @@ class BTRegistrationStatus(models.Model):
         name =  str(DEPARTMENTS[self.Dept-1]) + ':' + str(YEARS[self.BYear]) + ':' + str(SEMS[self.BSem]) + ':' + \
             str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
         return name
+    
+    def __open_str__(self):
+        name =  str(YEARS[self.BYear]) + ':' + str(SEMS[self.BSem]) + ':' + \
+            str(self.AYear) + ':' + str(self.ASem) + ':' + str(self.Regulation) + ':' + str(self.Mode)
+        return name
 
 
 
