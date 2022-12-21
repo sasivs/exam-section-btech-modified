@@ -28,7 +28,7 @@ def dept_elective_regs_upload(request):
             BSem__in=backlogs.values_list('BSem', flat=True))
         dropped_regIds = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=coordinator.Dept, BYear=coordinator.BYear, Mode='D', \
             BSem__in=dropped.values_list('RegEventId__BSem', flat=True))
-        regIDs = regular_regIds.union(dropped_regIds.union(backlog_regIds))
+        regIDs = regular_regIds | dropped_regIds | backlog_regIds
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['DEC'], RegEventId__Status=1, RegEventId__RegistrationStatus=1, RegEventId__Dept=cycle_cord.Cycle, \
@@ -40,7 +40,7 @@ def dept_elective_regs_upload(request):
             BSem__in=backlogs.values_list('BSem', flat=True))
         dropped_regIds = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, Dept=cycle_cord.Cycle, BYear=1, Mode='D', \
             BSem__in=dropped.values_list('RegEventId__BSem', flat=True))
-        regIDs = regular_regIds.union(dropped_regIds.union(backlog_regIds))
+        regIDs = regular_regIds | dropped_regIds | backlog_regIds
     necessary_field_msg = False
     if(request.method == "POST"):
         form = DeptElectiveRegistrationsForm(regIDs,request.POST,request.FILES)
