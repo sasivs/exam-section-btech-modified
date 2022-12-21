@@ -41,7 +41,7 @@ def open_elective_rollList(request):
                     data+=chunk
                 dataset = XLSX().create_dataset(data)
                 newDataset = Dataset()
-                newDataset.headers = ['student','RegEventID','Subject','Section']
+                newDataset.headers = ['student_id','RegEventID_id','Subject_id','Section']
                 for i in range(len(dataset)):
                     row = dataset[i]
                     rolls = BTRollLists_Staging.objects.filter(student__RegNo=row[0],RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).first()
