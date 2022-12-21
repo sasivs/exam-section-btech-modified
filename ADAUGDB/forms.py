@@ -435,13 +435,13 @@ class OpenElectiveRollListForm(forms.Form):
         if self.data.get('regID'):
             regid = self.data.get('regID')
             strs = regid.split(':')
-            ayear = int(strs[3])
-            asem = int(strs[4])
+            ayear = int(strs[2])
+            asem = int(strs[3])
             rom2int = {'I':1,'II':2,'III':3,'IV':4}
-            byear = rom2int[strs[1]]
-            bsem = rom2int[strs[2]]
-            regulation = float(strs[5])
-            # mode = strs[6]
+            byear = rom2int[strs[0]]
+            bsem = rom2int[strs[1]]
+            regulation = float(strs[4])
+            mode = strs[5]
 
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
             RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode='R',\
