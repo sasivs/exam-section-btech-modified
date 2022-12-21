@@ -429,7 +429,7 @@ class OpenElectiveRollListForm(forms.Form):
         #             for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in self.regIDs.distinct('RegEventId')]
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
-        myChoices = [('','Choose Event')]+set(myChoices)
+        myChoices = [('','Choose Event')]+list(set(myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
         if self.data.get('regID'):
@@ -467,7 +467,7 @@ class OERollListStatusForm(forms.Form):
         #             for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in subjects.distinct('RegEventId')]
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
-        myChoices = [('','Choose Event')]+set(myChoices)
+        myChoices = [('','Choose Event')]+list(set(myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
         if self.data.get('regID'):
