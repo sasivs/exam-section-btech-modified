@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from ADEUGDB.views import not_promoted
 from BTco_ordinator.views import faculty_subject_assignment, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
-    dropped_regular_regs, makeupReg, status, grades_threshold_event_wise
+    dropped_regular_regs, makeupReg, status, grades_threshold_event_wise, mda_courses_upload, mda_registrations_upload_file
 
 # create your urls here
 
@@ -20,6 +20,10 @@ urlpatterns = [
 
     path('BTSupBTOpenSubjectUpload', subjects.open_subject_upload,name='BTSupBTOpenSubjectUpload'),
     path('BTSupBTOpenSubjectFinalize', subjects.subject_finalize,name='BTSupBTOpenSubjectFinalize'),
+
+    path('BTMDASubjectUpload', mda_courses_upload.add_mda_courses, name = 'BTMDASubjectUpload'),
+    path('BTMDASubjectFinalize', mda_courses_upload.mda_subject_finalize, name = 'BTMDASubjectFinalize'),
+    path('BTMDARegistrationsUpload',mda_registrations_upload_file.mda_elective_regs_upload, name='BTMDARegistrationsUpload'),
 
 
     path('BTGenerateRollList',RollList.generateRollList,name='BTGenerateRollList'),
