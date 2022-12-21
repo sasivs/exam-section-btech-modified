@@ -27,12 +27,12 @@ def open_elective_rollList(request):
                 subid = form.cleaned_data.get('sub').split(',')
                 regid = form.cleaned_data.get('redID')
                 strs = regid.split(':')
-                ayear = int(strs[3])
-                asem = int(strs[4])
-                byear = rom2int[strs[1]]
-                bsem = rom2int[strs[2]]
-                regulation = float(strs[5])
-                mode = strs[6]
+                ayear = int(strs[2])
+                asem = int(strs[3])
+                byear = rom2int[strs[0]]
+                bsem = rom2int[strs[1]]
+                regulation = float(strs[4])
+                mode = strs[5]
                 file = form.cleaned_data.get('file')
                 subjects = BTSubjects.objects.filter(id__in=subid)
                 BTOpenElectiveRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,subject_id=subid).delete()
@@ -105,12 +105,12 @@ def OERollList_Status(request):
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
                 regid = form.cleaned_data.get('redID')
                 strs = regid.split(':')
-                ayear = int(strs[3])
-                asem = int(strs[4])
-                byear = rom2int[strs[1]]
-                bsem = rom2int[strs[2]]
-                regulation = float(strs[5])
-                mode = strs[6]
+                ayear = int(strs[2])
+                asem = int(strs[3])
+                byear = rom2int[strs[0]]
+                bsem = rom2int[strs[1]]
+                regulation = float(strs[4])
+                mode = strs[5]
                 subid = form.cleaned_data.get('sub')
                 rows = BTOpenElectiveRollLists.objects.filter(subject_id=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
                 return (render(request, 'BTco_ordinator/OERollListStatus.html',{'form':form,'rows':rows})) 

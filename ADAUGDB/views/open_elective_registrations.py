@@ -34,12 +34,12 @@ def open_elective_regs(request):
         
         if regId != '--Choose Event--' and subId != '--Select Subject--' :
             strs = regId.split(':')
-            ayear = int(strs[3])
-            asem = int(strs[4])
-            byear = rom2int[strs[1]]
-            bsem = rom2int[strs[2]]
-            regulation = float(strs[5])
-            mode = strs[6]
+            ayear = int(strs[2])
+            asem = int(strs[3])
+            byear = rom2int[strs[0]]
+            bsem = rom2int[strs[1]]
+            regulation = float(strs[4])
+            mode = strs[5]
             
             rolls = BTOpenElectiveRollLists.objects.filter(subject_id=subId,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
             BTRollLists_Staging.objects.filter()
@@ -50,12 +50,12 @@ def open_elective_regs(request):
             return render(request, 'ADAUGDB/OecRegistrationsSuccess.html')
         elif regId != '--Choose Event--':
             strs = regId.split(':')
-            ayear = int(strs[3])
-            asem = int(strs[4])
-            byear = rom2int[strs[1]]
-            bsem = rom2int[strs[2]]
-            regulation = float(strs[5])
-            mode = strs[6]
+            ayear = int(strs[2])
+            asem = int(strs[3])
+            byear = rom2int[strs[0]]
+            bsem = rom2int[strs[1]]
+            regulation = float(strs[4])
+            mode = strs[5]
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
             RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
                 RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
@@ -83,12 +83,12 @@ def open_elective_regs_finalize(request):
             rom2int = {'I':1,'II':2,'III':3,'IV':4}
             regid = form.cleaned_data.get('redID')
             strs = regid.split(':')
-            ayear = int(strs[3])
-            asem = int(strs[4])
-            byear = rom2int[strs[1]]
-            bsem = rom2int[strs[2]]
-            regulation = float(strs[5])
-            mode = strs[6]
+            ayear = int(strs[2])
+            asem = int(strs[3])
+            byear = rom2int[strs[0]]
+            bsem = rom2int[strs[1]]
+            regulation = float(strs[4])
+            mode = strs[5]
             rolls = BTRollLists.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)
             staging_regs = BTStudentRegistrations_Staging.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode)
             for reg in staging_regs:
