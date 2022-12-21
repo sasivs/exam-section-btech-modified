@@ -12,7 +12,7 @@
         <table class="table table-hover table-muted table-striped">
             <thead>
               <tr>
-                <td style="border: 1px solid black;">id</td>
+                <td style="border: 1px solid black;">S.No.</td>
                 <td style="border: 1px solid black;">SubCode</td>
                 <td style="border: 1px solid black;">SubName</td>
                 <td style="border: 1px solid black;">Creditable</td>
@@ -26,7 +26,7 @@
             </thead>
             {% for sub in subjects %}
             <tr>
-              <td style="border: 1px solid black;">{{sub.Subject.id}}</td>
+              <td style="border: 1px solid black;">{{forloop.counter}}</td>
               <td style="border: 1px solid black;">{{sub.Subject.course.SubCode}}</td>
               <td style="border: 1px solid black;">{{sub.Subject.course.SubName}}</td>
               <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Creditable}}</td>
