@@ -88,17 +88,23 @@ def OERollList_Status(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
+        subjects = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        # subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
         # regIDs = BTRegistrationStatus.objects.filter(Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
+        subjects = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, RegEventId__Dept=hod.Dept, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        # subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
+        subjects = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, RegEventId__Dept=co_ordinator.Dept, \
+            RegEventId__BYear=co_ordinator.BYear, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        # subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
+        subjects = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, RegEventId__Dept=cycle_cord.Cycle, \
+            RegEventId__BYear=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        # subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1, Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
     if request.method == 'POST':
         form = OERollListStatusForm(subjects, request.POST)
         if(form.is_valid()):
