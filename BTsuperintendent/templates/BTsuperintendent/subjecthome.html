@@ -75,6 +75,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMDASubjectUpload' %}">MDA Subjects Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMDASubjectFinalize' %}">Finalize MDA Subjects</a>
+                </li>
                 {% elif user|BThas_group:"Cycle-Co-ordinator" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>
@@ -84,6 +90,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectFinalize' %}">Finalize Subjects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMDASubjectUpload' %}">MDA Subjects Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTMDASubjectFinalize' %}">Finalize MDA Subjects</a>
                 </li>
                 {% endif %}
             </ul>
