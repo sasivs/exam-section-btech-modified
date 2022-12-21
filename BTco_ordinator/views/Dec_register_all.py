@@ -54,7 +54,7 @@ def dept_elective_regs_all(request):
                 BTStudentRegistrations_Staging.objects.filter(RegEventId=event).exclude(student__student__RegNo__in=rolls).delete()
                 return render(request, 'BTco_ordinator/Dec_Regs_success.html')
         else:
-            event = BTRegistrationStatus.objects.filter(id=request.POST.get('regID'))
+            event = BTRegistrationStatus.objects.filter(id=request.POST.get('regID')).first()
             if event.Mode == 'R':
                 subjects = BTSubjects.objects.filter(RegEventId=event, course__CourseStructure__Category='DEC')
             elif event.Mode == 'B':
