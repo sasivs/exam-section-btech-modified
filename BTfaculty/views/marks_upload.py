@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from ADAUGDB.user_access_test import marks_upload_access, marks_status_access
 from django.shortcuts import render
 from import_export.formats.base_formats import XLSX
-from ADAUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus, BTOpenElectiveRollLists
 from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
 from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
@@ -31,9 +31,19 @@ def marks_upload(request):
                 subject = form.cleaned_data.get('subject').split(':')[0]
                 regEvent = form.cleaned_data.get('subject').split(':')[1]
                 section = form.cleaned_data.get('subject').split(':')[2]
-                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=regEvent, Registration__sub_id_id=subject, \
-                    Registration__student__Section=section)
-                mark_distribution = BTSubjects.objects.get(id=subject).course.MarkDistribution
+                if regEvent.startswith('OE'):
+                    regEvent = regEvent[2:].split(',')
+                    regEvent = [int(_) for _ in regEvent]
+                    subject = subject.split(',')
+                    subject = [int(_) for _ in subject]
+                    oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId_id__in=regEvent, subject_id__in=subject, Section=section)
+                    marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
+                        Registration__sub_id_id__in=subject)
+                    mark_distribution = BTSubjects.objects.get(id=subject[0]).course.MarkDistribution
+                else:
+                    marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
+                        Registration__student__Section=section)
+                    mark_distribution = BTSubjects.objects.get(id=subject).course.MarkDistribution
                 file = form.cleaned_data.get('file')
                 data = bytes()
                 for chunk in file.chunks():
@@ -134,10 +144,20 @@ def marks_upload_status(request):
                 names_list.extend(name)
 
             # roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id=subject, \
-                Registration__student__Section=section).order_by('Registration__student__student__RegNo')
-            fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
+            if regEvent.startswith('OE'):
+                regEvent = regEvent[2:].split(',')
+                regEvent = [int(_) for _ in regEvent]
+                subject = subject.split(',')
+                subject = [int(_) for _ in subject]
+                oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
+                marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
+                    Registration__sub_id_id__in=subject)
+            else:
+                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
+                    Registration__student__Section=section).order_by('Registration__student__student__RegNo')
+
             for rindex, mark in enumerate(marks_objects):
+                fac_assign_obj = subjects.filter(Subject_id=mark.Registration.sub_id_id, RegEventId_id=mark.Registration.RegEventId_id, Section=section).first()
                 mark.s_no = rindex+1
                 # student_obj = BTStudentInfo.objects.filter(RegNo=mark.Registration.RegNo).first()
                 # mark.student = student_obj
@@ -195,9 +215,17 @@ def marks_hod_submission(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
-            fac_assign_obj = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section).first()
-            fac_assign_obj.MarksStatus = 0
-            fac_assign_obj.save()
+            if regEvent.startswith('OE'):
+                regEvent = regEvent[2:].split(',')
+                regEvent = [int(_) for _ in regEvent]
+                subject = subject.split(',')
+                subject = [int(_) for _ in subject]
+                fac_assign_objs = subjects.filter(Subject_id__in=subject, RegEventId_id__in=regEvent, Section=section)
+            else:
+               fac_assign_objs = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section)
+            for fac_assign_obj in fac_assign_objs:
+                fac_assign_obj.MarksStatus = 0
+                fac_assign_obj.save()
             msg = 'Marks have been submitted to HOD successfully.'
     else:
         form = MarksStatusForm(subjects)
@@ -223,12 +251,22 @@ def download_sample_excel_sheet(request):
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
             section = form.cleaned_data.get('subject').split(':')[2]
-            # roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-            subject = BTSubjects.objects.get(id=subject)
-            regEvent = BTRegistrationStatus.objects.get(id=regEvent)
-            student_registrations = BTStudentRegistrations.objects.filter(RegEventId_id=regEvent.id, sub_id_id=subject.id, \
-                student__Section=section)
-            students = BTStudentInfo.objects.filter(RegNo__in=student_registrations.values_list('student__student__RegNo', flat=True))
+            if regEvent.startswith('OE'):
+                regEvent = regEvent[2:].split(',')
+                regEvent = [int(_) for _ in regEvent]
+                subject = subject.split(',')
+                subject = [int(_) for _ in subject]
+                oe_rolllist = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
+                students = BTStudentInfo.objects.filter(id__in=oe_rolllist.values_list('student__student__id', flat=True))
+                subject = BTSubjects.objects.get(id=subject[0])
+                regEvent = BTRegistrationStatus.objects.get(id=regEvent[0])
+            else:
+                # roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
+                subject = BTSubjects.objects.get(id=subject)
+                regEvent = BTRegistrationStatus.objects.get(id=regEvent)
+                student_registrations = BTStudentRegistrations.objects.filter(RegEventId_id=regEvent.id, sub_id_id=subject.id, \
+                    student__Section=section)
+                students = BTStudentInfo.objects.filter(RegNo__in=student_registrations.values_list('student__student__RegNo', flat=True))
             
             from BTfaculty.utils import SampleMarksUploadExcelSheetGenerator
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
