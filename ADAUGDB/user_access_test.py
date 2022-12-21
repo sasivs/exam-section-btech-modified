@@ -37,6 +37,12 @@ def subject_access(user):
         return True
     return False
 
+def mda_subject_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups :
+        return True
+    return False
+
 def subject_home_access(user):
     groups = user.groups.all().values_list('name', flat=True)
     if 'Superintendent' in groups or 'Co-ordinator' in groups or 'Cycle-Co-ordinator' in groups or 'HOD' in groups \
