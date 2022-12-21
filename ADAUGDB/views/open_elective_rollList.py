@@ -120,10 +120,10 @@ def OERollList_Status(request):
                 subid = form.cleaned_data.get('sub')
                 rows = BTOpenElectiveRollLists.objects.filter(subject_id=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__id')
                 return (render(request, 'BTco_ordinator/OERollListStatus.html',{'form':form,'rows':rows})) 
-        return render(request, 'ADAUGDB/OERollListStatus.html', {'form':form,'rows':rows})
+        # return render(request, 'ADAUGDB/OERollListStatus.html', {'form':form,'rows':rows})
   
     else:
         form = OERollListStatusForm(subjects)
-        return render(request, 'ADAUGDB/OERollListStatus.html', {'form':form})
+    return render(request, 'ADAUGDB/OERollListStatus.html', {'form':form})
 
 
