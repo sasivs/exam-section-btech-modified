@@ -18,7 +18,6 @@ from django.db import transaction
 def faculty_subject_assignment(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
-    regIDs = None
     if 'Co-ordinator' in groups:
         current_user = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         current_user.group = 'Co-ordinator'
@@ -26,7 +25,7 @@ def faculty_subject_assignment(request):
         current_user = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
         current_user.group = 'HOD'
     if(request.method =='POST'):
-        form = FacultySubjectAssignmentForm(regIDs, request.POST)
+        form = FacultySubjectAssignmentForm(current_user, request.POST)
         if(form.is_valid()):
             regEvent=form.cleaned_data['regID'].split(',')
             
@@ -54,7 +53,7 @@ def faculty_subject_assignment(request):
             request.session['currentRegEvent']=regEvent
             return render(request, 'BTco_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
     else:
-        form = FacultySubjectAssignmentForm(regIDs)
+        form = FacultySubjectAssignmentForm(current_user)
     return render(request, 'BTco_ordinator/FacultyAssignment.html',{'form':form})
 
 @transaction.atomic
