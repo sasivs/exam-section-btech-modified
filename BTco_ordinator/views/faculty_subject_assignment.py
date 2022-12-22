@@ -38,7 +38,7 @@ def faculty_subject_assignment(request):
                 for sub in distinct_oe_subjects:
                     sub.id = '?'.join(list(map(str, oe_subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True))))
                     sub.Dept = 'Open Elective'
-                subjects = regular_subjects | distinct_oe_subjects 
+                subjects = regular_subjects.union(distinct_oe_subjects) 
 
             else:
                 student_Registrations = BTStudentRegistrations.objects.filter(RegEventId_id_in=regEvent).values_list('sub_id_id', flat=True)
@@ -49,7 +49,7 @@ def faculty_subject_assignment(request):
                 for sub in distinct_oe_subjects:
                     sub.id = '?'.join(list(map(str,oe_subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True))))
                     sub.Dept = 'Open Elective'
-                subjects = regular_subjects | distinct_oe_subjects 
+                subjects = regular_subjects.union(distinct_oe_subjects) 
             request.session['currentRegEvent']=regEvent
             return render(request, 'BTco_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
     else:
