@@ -37,7 +37,11 @@
           <td style="border: 1px solid black;">{{sub.course.CourseStructure.Credits}}</td>
           <td style="border: 1px solid black;">{{sub.course.CourseStructure.Type}}</td>
           <td style="border: 1px solid black;">{{sub.course.CourseStructure.Category}}</td>
+          {% if sub.course.CourseStructure=='OEC' or sub.course.CourseStructure=='OPC' %}
+          <td style="border: 1px solid black;">{{sub.Dept}}</td>
+          {% else %}
           <td style="border: 1px solid black;">{{sub.RegEventId.Dept}}</td>
+          {% endif %}
           <td style="border: 1px solid black;">
               <a href="{% url 'BTFacultySubjectAssignmentDetail' sub.id %}">Assign</a>
           </td>
