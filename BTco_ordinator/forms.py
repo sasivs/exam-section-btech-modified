@@ -714,7 +714,7 @@ class FacultySubjectAssignmentForm(forms.Form):
             regIDs = BTRegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regular_regIDs))
             oe_regIDs = BTRegistrationStatus.objects.filter(Q(id__in=oe_regIDs)|Q(id__in=other_oe_regIDs))
         REGEVENT_CHOICES = [(event.id, event.__str__()) for event in regIDs]
-        REGEVENT_CHOICES += list(set([(','.join(oe_regIDs.filter(AYear=event.AYear, ASem=event.ASem, BYear=event.BYear, BSem=event.BSem, Regulation=event.Regulation, Mode=event.Mode).values_list('id', flat=True)),\
+        REGEVENT_CHOICES += list(set([(','.join(list(map(str,oe_regIDs.filter(AYear=event.AYear, ASem=event.ASem, BYear=event.BYear, BSem=event.BSem, Regulation=event.Regulation, Mode=event.Mode).values_list('id', flat=True)))),\
             'OE'+':'+event.__open_str__()) for event in oe_regIDs.distinct('AYear', 'ASem', 'BYear', 'BSem', 'Regulation', 'Mode')]))
 
         REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
