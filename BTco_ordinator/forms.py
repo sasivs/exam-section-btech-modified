@@ -357,25 +357,40 @@ class BacklogRegistrationForm(forms.Form):
  
 
 class OpenElectiveRegistrationsForm(forms.Form):
-    def __init__(self,regIDs, subjects=None, *args,**kwargs):
+    def __init__(self, *args,**kwargs):
         super(OpenElectiveRegistrationsForm, self).__init__(*args, **kwargs)
-        depts = ['BTE','CHE','CE','CSE','EEE','ECE','ME','MME','CHEMISTRY','PHYSICS']
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        sems = {1:'I',2:'II'}
-        self.regIDs = regIDs
-        myChoices = [( 'OE'+':'+years[option[2]]+':'+ sems[option[3]]+':'+ \
-            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]),'OE'+':'+\
-                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
-                    for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
-            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
-        subChoices = [('--Select Subject--','--Select Subject--')]
-        self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))
-        # self.fields['file'] = forms.FileField(label='Select File', required=False, validators=[validate_file_extension])
-        if 'regID' in self.data and self.data['regID'] != '--Choose Event--':
-            subChoices += subjects
-            self.fields['subId'] = forms.CharField(label='Subject', widget=forms.Select(choices=subChoices))
+        subjects = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+
+        myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in subjects.distinct('RegEventId')]
+
+        # myChoices = [( 'OE'+':'+years[option[2]]+':'+ sems[option[3]]+':'+ \
+        #     str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]),'OE'+':'+\
+        #         years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
+        #             for oIndex, option in enumerate(self.regIDs)]
+
+        myChoices = [('','--Choose Event--')]+list(set(myChoices))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()', 'required':'True'}))
+        if self.data.get('regID'):
+            regid = self.data.get('regID')
+            strs = regid.split(':')
+            ayear = int(strs[2])
+            asem = int(strs[3])
+            rom2int = {'I':1,'II':2,'III':3,'IV':4}
+            byear = rom2int[strs[0]]
+            bsem = rom2int[strs[1]]
+            regulation = float(strs[4])
+            mode = strs[5]
+
+            subjects = subjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode='R',\
+                RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+            oe_subjects = {}
+            for sub in subjects.distinct('course__SubCode'):
+                oe_subjects[(sub.course.SubCode, sub.course.SubName)] = list(map(str, subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True)))
+            SUBJECT_CHOICES = [('', 'Choose Subject')]
+            SUBJECT_CHOICES += [(','.join(value), str(key[0])+', '+str(key[1]))for key, value in oe_subjects.items()]
+            self.fields['sub'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
 
 class DeptElectiveRegistrationsForm(forms.Form):
     def __init__(self,regIDs, *args,**kwargs):

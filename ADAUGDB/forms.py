@@ -405,16 +405,17 @@ class StudentCancellationStatusForm(forms.Form):
 class OpenElectiveRegistrationsFinalizeForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):
         super(OpenElectiveRegistrationsFinalizeForm, self).__init__(*args, **kwargs)
-        years = {1:'I',2:'II',3:'III',4:'IV'}
-        sems = {1:'I',2:'II'}
-        self.regIDs = regIDs
-        myChoices = [( 'OE'+':'+years[option[2]]+':'+ sems[option[3]]+':'+ \
-            str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5]),'OE'+':'+\
-                years[option[2]]+':'+ sems[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+':'+str(option[5])) \
-                    for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('--Choose Event--','--Choose Event--')]+myChoices
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', \
-            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()'}))
+
+        self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        # myChoices = [( years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+        #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.ASem)+':'+str(option.RegEventId.Regulation), years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
+        #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.ASem)+':'+str(option.RegEventId.Regulation)) \
+        #             for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
+        myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in self.regIDs.distinct('RegEventId')]
+        # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
+        myChoices = [('','Choose Event')]+list(set(myChoices))
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()', 'required':'True'}))
 
             
 class OpenElectiveRollListForm(forms.Form):
