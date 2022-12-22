@@ -6,11 +6,11 @@ from import_export.formats.base_formats import XLSX
 from ADAUGDB.models import BTRegistrationStatus, BTOpenElectiveRollLists
 from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
-from BTco_ordinator.models import BTRollLists, BTSubjects, BTStudentRegistrations
+from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
 from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment
 from BTfaculty.models import BTMarks, BTMarks_Staging
-from BTfaculty.forms import MarksUploadForm, MarksStatusForm, MarksUpdateForm
+from BTfaculty.forms import MarksStatusUpdatedForm, MarksUploadForm, MarksStatusForm, MarksUpdateForm
 from django.db import transaction
 
 
@@ -128,7 +128,7 @@ def marks_upload_status(request):
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Dept=cycle_cord.Cycle, RegEventId__BYear=1, RegEventId__Status=1)
     if request.method == 'POST':
-        form = MarksStatusForm(subjects, request.POST)
+        form = MarksStatusUpdatedForm(subjects, request.POST)
         if form.is_valid():
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
@@ -144,17 +144,17 @@ def marks_upload_status(request):
                 names_list.extend(name)
 
             # roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-            if regEvent.startswith('OE'):
-                regEvent = regEvent[2:].split(',')
-                regEvent = [int(_) for _ in regEvent]
-                subject = subject.split(',')
-                subject = [int(_) for _ in subject]
-                oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
-                marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
-                    Registration__sub_id_id__in=subject)
-            else:
-                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
-                    Registration__student__Section=section).order_by('Registration__student__student__RegNo')
+            # if regEvent.startswith('OE'):
+            #     regEvent = regEvent[2:].split(',')
+            #     regEvent = [int(_) for _ in regEvent]
+            #     subject = subject.split(',')
+            #     subject = [int(_) for _ in subject]
+            #     oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
+            #     marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
+            #         Registration__sub_id_id__in=subject)
+            # else:
+            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
+                Registration__student__Section=section).order_by('Registration__student__student__RegNo')
 
             for rindex, mark in enumerate(marks_objects):
                 fac_assign_obj = subjects.filter(Subject_id=mark.Registration.sub_id_id, RegEventId_id=mark.Registration.RegEventId_id, Section=section).first()
@@ -165,7 +165,7 @@ def marks_upload_status(request):
                 mark.Status = fac_assign_obj.MarksStatus
             return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form, 'marks':marks_objects,'names':names_list})
     else:
-        form = MarksStatusForm(subjects=subjects)
+        form = MarksStatusUpdatedForm(subjects=subjects)
     return render(request, 'BTfaculty/MarksUploadStatus.html', {'form':form})
 
 @transaction.atomic
