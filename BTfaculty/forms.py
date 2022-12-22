@@ -131,7 +131,7 @@ class MarksUploadForm(forms.Form):
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, required=False, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()", 'required':'True'}))
         self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, required=False, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
         if self.data.get('subject'):
-            subject = self.data.get('subject').split(':')[0]
+            subject = self.data.get('subject').split(':')[0].split(',')
             subject = BTSubjects.objects.filter(id__in=subject).first()
             EXAM_CHOICES += subject.course.MarkDistribution.distributions() + [('all', 'All')]
             self.fields['exam-type'] = forms.CharField(label='Select Exam Type', required=False, max_length=26, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
