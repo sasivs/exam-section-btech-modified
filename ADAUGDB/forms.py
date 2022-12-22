@@ -415,7 +415,7 @@ class OpenElectiveRegistrationsFinalizeForm(forms.Form):
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+list(set(myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
-            max_length=30, widget=forms.Select(choices=myChoices, attrs={'onchange': 'submit()', 'required':'True'}))
+            max_length=30, widget=forms.Select(choices=myChoices, attrs={'required':'True'}))
 
             
 class OpenElectiveRollListForm(forms.Form):
