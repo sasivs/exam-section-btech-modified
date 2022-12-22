@@ -40,9 +40,9 @@ def grades_threshold_assign(request, pk):
     subjects = subject_faculty.all().values_list('Subject_id', flat=True)
     regEventIds = subject_faculty.all().values_list('RegEventId_id', flat=True)
     subject = subject_faculty[0].Subject
-    if subject.Subject.course.CourseStructure.Category in ['OEC', 'OPC']:
-        subject.offered_RegEventId_open = subject.Subject.RegEventId.__open_str__()
-        subject.current_RegEventId_open = subject.RegEventId.__open_str__()
+    if subject_faculty[0].Subject.course.CourseStructure.Category in ['OEC', 'OPC']:
+        subject_faculty[0].offered_RegEventId_open = subject.Subject.RegEventId.__open_str__()
+        subject_faculty[0].current_RegEventId_open = subject.RegEventId.__open_str__()
     grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
     # prev_thresholds = BTGradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty[0].RegEventId)
     marks = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEventIds, Registration__sub_id_id__in=subjects)
@@ -139,7 +139,7 @@ def grades_threshold_assign(request, pk):
                     #                     Threshold_Mark=int(form.cleaned_data[section+str(grade.id)]))
                     #             threshold_mark.save()
                 msg = 'Grades Threshold noted successfully'
-                return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject, 'msg':msg})
+                return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject_faculty[0], 'msg':msg})
         else:
             grades = grades.exclude(Grade='F')
             grades_data = [grade.Grade for grade in grades]
@@ -165,7 +165,7 @@ def grades_threshold_assign(request, pk):
             for index in range(len(grades)-1, 0, -1):
                 no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
             no_of_students = dumps(no_of_students)
-            return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject, 'form':form, 'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
+            return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject_faculty[0], 'form':form, 'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
 
 
     else:
@@ -200,7 +200,7 @@ def grades_threshold_assign(request, pk):
                 no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
                 total += no_of_students[grades_data[index]]
             no_of_students = dumps(no_of_students)
-    return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject, 'form':form,  'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
+    return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject_faculty[0], 'form':form,  'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
 
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_status_access)
