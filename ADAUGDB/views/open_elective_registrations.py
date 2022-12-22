@@ -15,27 +15,27 @@ from django.db import transaction
 def open_elective_regs(request):
     if(request.method == "POST"):
         form = OpenElectiveRegistrationsForm(request.POST)
-        
-        if form.is_valid():
-            rom2int = {'I':1,'II':2,'III':3,'IV':4}
-            subid = form.cleaned_data.get('sub').split(',')
-            regid = form.cleaned_data.get('regID')
-            strs = regid.split(':')
-            ayear = int(strs[2])
-            asem = int(strs[3])
-            byear = rom2int[strs[0]]
-            bsem = rom2int[strs[1]]
-            regulation = float(strs[4])
-            mode = strs[5]
-            
-            rolls = BTOpenElectiveRollLists.objects.filter(subject_id__in=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__student__RegNo')
+        if request.POST.get('Submit'):
+            if form.is_valid():
+                rom2int = {'I':1,'II':2,'III':3,'IV':4}
+                subid = form.cleaned_data.get('sub').split(',')
+                regid = form.cleaned_data.get('regID')
+                strs = regid.split(':')
+                ayear = int(strs[2])
+                asem = int(strs[3])
+                byear = rom2int[strs[0]]
+                bsem = rom2int[strs[1]]
+                regulation = float(strs[4])
+                mode = strs[5]
+                
+                rolls = BTOpenElectiveRollLists.objects.filter(subject_id__in=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__student__RegNo')
 
-            for roll in rolls:
-                if mode == 'R' or mode == 'D':
-                    if not BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id).exists():
-                        reg = BTStudentRegistrations_Staging(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id)
-                        reg.save()
-            return render(request, 'ADAUGDB/OecRegistrationsSuccess.html')
+                for roll in rolls:
+                    if mode == 'R' or mode == 'D':
+                        if not BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id).exists():
+                            reg = BTStudentRegistrations_Staging(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id)
+                            reg.save()
+                return render(request, 'ADAUGDB/OecRegistrationsSuccess.html')
     else:
         form = OpenElectiveRegistrationsForm()
     return render(request, 'ADAUGDB/OpenElectiveRegistrations.html',{'form':form})
