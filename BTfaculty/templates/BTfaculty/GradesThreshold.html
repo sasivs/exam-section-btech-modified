@@ -40,6 +40,22 @@
               </td>
             </tr>
             {% endfor %}
+            {% for sub in oe_subjects %}
+            <tr>
+              <td style="border: 1px solid black;">{{forloop.counter}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.SubCode}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.SubName}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Creditable}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Credits}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Type}}</td>
+              <td style="border: 1px solid black;">{{sub.Subject.course.CourseStructure.Category}}</td>
+              <td style="border: 1px solid black;">Open Elective</td>
+              <td style="border: 1px solid black;">{{sub.Subject.RegEventId_open}}</td>
+              <td style="border: 1px solid black;">
+                  <a href="{% url 'BTGradesThresholdAssign' sub.id %}">Assign</a>
+              </td>
+            </tr>
+            {% endfor %}
           </table>
     </div>
 </div>

@@ -24,13 +24,13 @@ def grades_threshold(request):
     subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty).distinct('Subject','RegEventId_id')
     oe_subjects = subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC']).distinct('Subject__course__SubCode')
     for sub in oe_subjects:
-        id_string = '?'.join(subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'], Subject__course__SubCode=sub.course.SubCode).values_list('id', flat=True))
+        id_string = '?'.join(list(map(str, subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'], Subject__course__SubCode=sub.Subject.course.SubCode).values_list('id', flat=True))))
         sub.id = id_string
-        sub.RegEventId = sub.RegEventId.__open_str__()
-        subjects = subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC']).exclude(~Q(id=sub.id), Subject__course__SubCode=sub.course.SubCode)
+        sub.RegEventId_open = sub.RegEventId.__open_str__()
+        subjects = subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC']).exclude(~Q(id=sub.id), Subject__course__SubCode=sub.Subject.course.SubCode)
     if not subjects:
         raise Http404('You are not allowed to add threshold marks')
-    return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': subjects})
+    return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': subjects, 'oe_subjects':oe_subjects})
 
 @transaction.atomic
 @login_required(login_url="/login/")
