@@ -65,8 +65,8 @@ class DBYBSAYASSelectionForm(forms.Form):
             regulations = [(regu.Regulation,regu.Regulation) for regu in regulations]
             regulations +=  dropped_course_regulations + backlog_course_regulations
             regulations = list(set(regulations))
+            regulations = sorted(regulations, key=lambda x:x[1])
             rChoices += regulations
-            rChoices = rChoices[0] + sorted(rChoices, key=lambda x:x[1])
             self.fields['regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=rChoices, attrs={'required':'True'}))
             if self.data.get('bYear')!='1':
                 departments = BTProgrammeModel.objects.filter(ProgrammeType='UG').exclude(Dept__in=[10,9])
