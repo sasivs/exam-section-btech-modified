@@ -97,17 +97,17 @@ class GradeThresholdStatusForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):
         super(GradeThresholdStatusForm, self).__init__(*args, **kwargs)
         subject_Choices=[]
-        oe_subjects = {}
+        # oe_subjects = {}
         for sub in subjects:
-            if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
-                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
-            else:
-                if not oe_subjects.get((sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())):
-                    oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
-                else:
-                    oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
-                    oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
-        subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0])),key[1]+', '+str(key[0])) for key,value in oe_subjects.items() ]
+            # if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
+            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
+        #     else:
+        #         if not oe_subjects.get((sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())):
+        #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
+        #         else:
+        #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
+        #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
+        # subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0])),key[1]+', '+str(key[0])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=100, widget=forms.Select(choices=subject_Choices))
 
