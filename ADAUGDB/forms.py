@@ -403,7 +403,7 @@ class StudentCancellationStatusForm(forms.Form):
         self.fields['AYear'] = forms.CharField(label='Academic Year',\
             widget = forms.Select(choices=AYEAR_CHOICES, attrs={'onchange':'submit();'}))
 class OpenElectiveRegistrationsFinalizeForm(forms.Form):
-    def __init__(self, regIDs, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(OpenElectiveRegistrationsFinalizeForm, self).__init__(*args, **kwargs)
 
         self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
