@@ -41,8 +41,8 @@ def grades_threshold_assign(request, pk):
     regEventIds = subject_faculty.all().values_list('RegEventId_id', flat=True)
     subject = subject_faculty[0].Subject
     if subject_faculty[0].Subject.course.CourseStructure.Category in ['OEC', 'OPC']:
-        subject_faculty[0].offered_RegEventId_open = subject.Subject.RegEventId.__open_str__()
-        subject_faculty[0].current_RegEventId_open = subject.RegEventId.__open_str__()
+        subject_faculty[0].offered_RegEventId_open = subject_faculty[0].Subject.RegEventId.__open_str__()
+        subject_faculty[0].current_RegEventId_open = subject_faculty[0].RegEventId.__open_str__()
     grades = BTGradePoints.objects.filter(Regulation=subject.RegEventId.Regulation).exclude(Grade__in=['I', 'X', 'R','W'])
     # prev_thresholds = BTGradesThreshold.objects.filter(Subject=subject, RegEventId=subject_faculty[0].RegEventId)
     marks = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEventIds, Registration__sub_id_id__in=subjects)
