@@ -9,7 +9,7 @@ from BTco_ordinator.forms import FacultySubjectAssignmentForm, FacultyAssignment
 from BTco_ordinator.models import BTFacultyAssignment, BTStudentRegistrations, BTSubjects, BTRollLists
 from BThod.models import BTCoordinator
 from ADAUGDB.models import BTRegistrationStatus
-from ADAUGDB.models import BTHOD, BTCycleCoordinator
+from ADAUGDB.models import BTHOD, BTCycleCoordinator, BTOpenElectiveRollLists
 from django.db import transaction
 
 
@@ -21,38 +21,37 @@ def faculty_subject_assignment(request):
     regIDs = None
     if 'Co-ordinator' in groups:
         current_user = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        valid_subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear)
-        regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
-        active_regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=current_user.BYear).exclude(Mode='R')
-        other_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
-        regIDs = BTRegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regIDs))
+        current_user.group = 'Co-ordinator'
     elif 'HOD' in groups:
         current_user = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        valid_subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, RegEventId__BYear=1)
-        regular_regIDs = valid_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
-        active_regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1).exclude(Mode='R')
-        other_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
-        regIDs = BTRegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regIDs))
+        current_user.group = 'HOD'
     if(request.method =='POST'):
         form = FacultySubjectAssignmentForm(regIDs, request.POST)
         if(form.is_valid()):
-            regEvent=form.cleaned_data['regID']
-            event_string = regEvent.split(':')
-            dept = DEPT_DICT[event_string[0]]
-            ayear = int(event_string[3])
-            asem = int(event_string[4])
-            byear = ROMAN_TO_INT[event_string[1]]
-            bsem = ROMAN_TO_INT[event_string[2]]
-            regulation = float(event_string[5])
-            mode = event_string[6]
-            regEventId = BTRegistrationStatus.objects.filter(AYear=ayear,ASem=asem,BYear=byear,BSem=bsem,\
-                    Dept=dept,Mode=mode,Regulation=regulation).first()
-            if mode == 'R':
-                subjects = BTSubjects.objects.filter(RegEventId_id=regEventId.id, course__OfferedBy=current_user.Dept)
+            regEvent=form.cleaned_data['regID'].split(',')
+            
+            regEvents = BTRegistrationStatus.objects.filter(id__in=regEvent)
+            if regEvents[0].Mode == 'R':
+                subjects = BTSubjects.objects.filter(RegEventId_id_in=regEvents.filter(Mode='R').values_list('id', flat=True), course__OfferedBy=current_user.Dept)
+                regular_subjects = subjects.exclude(course__Category__in=['OEC', 'OPC'])
+                oe_subjects = subjects.filter(course__Category__in=['OEC', 'OPC'])
+                distinct_oe_subjects = oe_subjects.distinct('course__SubCode')
+                for sub in distinct_oe_subjects:
+                    sub.id = '?'.join(oe_subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True))
+                    sub.RegEventId = regEvent
+                subjects = regular_subjects | distinct_oe_subjects 
+
             else:
-                student_Registrations = BTStudentRegistrations.objects.filter(RegEventId=regEventId.id).values_list('sub_id', flat=True)
-                subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, id__in=student_Registrations.values_list('sub_id', flat=True))
-            request.session['currentRegEvent']=regEventId.id
+                student_Registrations = BTStudentRegistrations.objects.filter(RegEventId_id_in=regEvent).values_list('sub_id_id', flat=True)
+                subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, id__in=student_Registrations)
+                regular_subjects = subjects.exclude(course__Category__in=['OEC', 'OPC'])
+                oe_subjects = subjects.filter(course__Category__in=['OEC', 'OPC'])
+                distinct_oe_subjects = oe_subjects.distinct('course__SubCode')
+                for sub in distinct_oe_subjects:
+                    sub.id = '?'.join(oe_subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True))
+                    sub.RegEventId = regEvent
+                subjects = regular_subjects | distinct_oe_subjects 
+            request.session['currentRegEvent']=regEvent
             return render(request, 'BTco_ordinator/FacultyAssignment.html', {'form': form, 'subjects':subjects})
     else:
         form = FacultySubjectAssignmentForm(regIDs)
@@ -68,10 +67,15 @@ def faculty_subject_assignment_detail(request, pk):
         current_user = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
     elif 'HOD' in groups:
         current_user = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subject = BTSubjects.objects.get(id=pk)
+    id_list = pk.split('?')
+    subjects = BTSubjects.objects.filter(id__in=id_list)
+    subject = subjects[0]
     faculty = BTFacultyInfo.objects.filter(Dept=current_user.Dept, Working=True)
-    sections = BTRollLists.objects.filter(RegEventId_id=request.session.get('currentRegEvent')).values_list('Section', flat=True).distinct().order_by('Section')
-    faculty_assigned = BTFacultyAssignment.objects.filter(Subject=subject, RegEventId_id=request.session.get('currentRegEvent'))
+    if not subjects[0].course.CourseStructure.Category in ['OEC', 'OPC']:
+        sections = BTRollLists.objects.filter(RegEventId_id__in=request.session.get('currentRegEvent')).values_list('Section', flat=True).distinct().order_by('Section')
+    else:
+        sections = BTOpenElectiveRollLists.objects.filter(RegEventId_id__in=request.session.get('currentRegEvent')).values_list('Section', flat=True).distinct().order_by('Section')
+    faculty_assigned = BTFacultyAssignment.objects.filter(Subject__in=subjects, RegEventId_id__in=request.session.get('currentRegEvent'))
     co_ordinator=''
     if faculty_assigned:
         co_ordinator = faculty_assigned[0].Coordinator_id
@@ -82,17 +86,20 @@ def faculty_subject_assignment_detail(request, pk):
                 fac.Section.append(fac_assign.Section)
     
     if request.method == 'POST':
-        for sec in sections:
-            if request.POST.get('faculty-'+str(sec)):
-                if faculty_assigned and faculty_assigned.get(Section=sec):
-                    faculty_row = faculty_assigned.get(Section=sec)
-                    faculty_row.Coordinator_id = request.POST.get('course-coordinator') or 0
-                    faculty_row.Faculty_id = request.POST.get('faculty-'+str(sec))
-                    faculty_row.save()
-                else:
-                    faculty_row = BTFacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
-                        Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=request.session['currentRegEvent'])
-                    faculty_row.save()
+        for subject in subjects:
+            for event in request.session.get('currentRegEvent'):
+                faculty_assigned_subject = faculty_assigned.filter(Subject=subject, RegEventId_id=event)
+                for sec in sections:
+                    if request.POST.get('faculty-'+str(sec)):
+                        if faculty_assigned_subject and faculty_assigned_subject.get(Section=sec):
+                            faculty_row = faculty_assigned_subject.get(Section=sec)
+                            faculty_row.Coordinator_id = request.POST.get('course-coordinator') or 0
+                            faculty_row.Faculty_id = request.POST.get('faculty-'+str(sec))
+                            faculty_row.save()
+                        else:
+                            faculty_row = BTFacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
+                                Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=event)
+                            faculty_row.save()
         return redirect('BTFacultySubjectAssignment')
     return render(request, 'BTco_ordinator/FacultyAssignmentDetail.html', {'subject':subject, 'faculty':faculty,\
         'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_assigned})

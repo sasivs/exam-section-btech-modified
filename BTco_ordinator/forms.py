@@ -9,7 +9,7 @@ from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
 
 from ADAUGDB.validators import validate_file_extension
-
+from BTco_ordinator.models import BTStudentRegistrations
 #Create your forms here
 
 
@@ -688,18 +688,39 @@ class MakeupRegistrationSummaryForm(forms.Form):
 
 
 class FacultySubjectAssignmentForm(forms.Form):
-    def __init__(self, regIDs, *args,**kwargs):
+    def __init__(self, current_user, *args,**kwargs):
         super(FacultySubjectAssignmentForm, self).__init__(*args, **kwargs)
-        self.regIDs = []
-        if regIDs:
-            self.regIDs = [(row.AYear, row.ASem, row.BYear, row.BSem, row.Dept, row.Mode, row.Regulation) for row in regIDs]
-        myChoices = [(DEPARTMENTS[option[4]-1]+':'+ YEARS[option[2]]+':'+ SEMS[option[3]]+':'+ str(option[0])+ ':'+\
-            str(option[1])+':'+str(option[6])+':'+str(option[5]), DEPARTMENTS[option[4]-1]+':'+ \
-                YEARS[option[2]]+':'+ SEMS[option[3]]+':'+ str(option[0])+ ':'+str(option[1])+':'+str(option[6])+\
-                    ':'+str(option[5])) for oIndex, option in enumerate(self.regIDs)]
-        myChoices = [('','--Choose Event--')]+myChoices
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, \
-        widget=forms.Select(choices=myChoices))
+        
+        if current_user.group=='Co-ordinator' :
+            valid_subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear)
+            valid_regular_subjects = valid_subjects.exclude(course__CourseStructure__Category__in=['OEC', 'OPC'])
+            regular_regIDs = valid_regular_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+            valid_oe_subjects = valid_subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC'])
+            oe_regIDs = valid_oe_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+            active_regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=current_user.BYear).exclude(Mode='R')
+            other_regular_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_regular_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
+            other_oe_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_oe_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
+            regIDs = BTRegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regular_regIDs))
+            oe_regIDs = BTRegistrationStatus.objects.filter(Q(id__in=oe_regIDs)|Q(id__in=other_oe_regIDs))
+        elif current_user.group=='HOD':
+            valid_subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, RegEventId__BYear=1)
+            valid_regular_subjects = valid_subjects.exclude(course__CourseStructure__Category__in=['OEC', 'OPC'])
+            regular_regIDs = valid_regular_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+            valid_oe_subjects = valid_subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC'])
+            oe_regIDs = valid_oe_subjects.filter(RegEventId__Status=1).values_list('RegEventId_id', flat=True)
+            active_regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=1).exclude(Mode='R')
+            other_regular_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_regular_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
+            other_oe_regIDs = BTStudentRegistrations.objects.filter(RegEventId__in=active_regIDs.values_list('id', flat=True), sub_id__in=valid_oe_subjects.values_list('id', flat=True)).values_list('RegEventId', flat=True)
+            regIDs = BTRegistrationStatus.objects.filter(Q(id__in=regular_regIDs)|Q(id__in=other_regular_regIDs))
+            oe_regIDs = BTRegistrationStatus.objects.filter(Q(id__in=oe_regIDs)|Q(id__in=other_oe_regIDs))
+        REGEVENT_CHOICES = [(event.id, event.__str__()) for event in regIDs]
+        REGEVENT_CHOICES += list(set([(','.join(oe_regIDs.filter(AYear=event.AYear, ASem=event.ASem, BYear=event.BYear, BSem=event.BSem, Regulation=event.Regulation, Mode=event.Mode).values_list('id', flat=True)),\
+            'OE'+':'+event.__open_str__()) for event in oe_regIDs.distinct('AYear', 'ASem', 'BYear', 'BSem', 'Regulation', 'Mode')]))
+
+        REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
+        
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, required=False,\
+        widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
 
 class FacultyAssignmentStatusForm(forms.Form):
     def __init__(self, regIDs, *args,**kwargs):
