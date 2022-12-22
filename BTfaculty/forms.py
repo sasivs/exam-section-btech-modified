@@ -99,7 +99,7 @@ class GradeThresholdStatusForm(forms.Form):
         subject_Choices=[]
         oe_subjects = {}
         for sub in subjects:
-            if sub.Subject.course.Category not in ['OEC', 'OPC']:
+            if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
                 subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
             else:
                 if not oe_subjects.get((sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())):
@@ -117,7 +117,7 @@ class MarksUploadForm(forms.Form):
         subject_Choices=[]
         oe_subjects = {}
         for sub in subjects:
-            if sub.Subject.course.Category not in ['OEC', 'OPC']:
+            if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
                 subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
             else:
                 if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+sub.RegEventId.__open_str__())):
@@ -145,7 +145,7 @@ class MarksStatusForm(forms.Form):
         oe_subjects = {}
         if subjects:
             for sub in subjects:
-                if sub.Subject.course.Category not in ['OEC', 'OPC']:
+                if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
                     subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
                         str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
                 else:
