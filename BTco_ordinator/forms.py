@@ -719,7 +719,7 @@ class FacultySubjectAssignmentForm(forms.Form):
 
         REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
         
-        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=30, required=False,\
+        self.fields['regID'] = forms.CharField(label='Choose Registration ID', max_length=60, required=False,\
         widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
 
 class FacultyAssignmentStatusForm(forms.Form):
