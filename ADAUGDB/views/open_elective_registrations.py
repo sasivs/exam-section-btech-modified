@@ -48,7 +48,7 @@ def open_elective_regs_finalize(request):
         form = OpenElectiveRegistrationsFinalizeForm(request.POST)
         if form.is_valid():
             rom2int = {'I':1,'II':2,'III':3,'IV':4}
-            regid = form.cleaned_data.get('redID')
+            regid = form.cleaned_data.get('regID')
             strs = regid.split(':')
             ayear = int(strs[2])
             asem = int(strs[3])
