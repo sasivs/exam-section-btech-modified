@@ -109,7 +109,7 @@ class GradeThresholdStatusForm(forms.Form):
                     oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0])),key[1]+', '+str(key[0])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
-        self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
+        self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=100, widget=forms.Select(choices=subject_Choices))
 
 class MarksUploadForm(forms.Form):
     def __init__(self, subjects, *args,**kwargs):
