@@ -27,8 +27,8 @@ def grades_threshold(request):
         id_string = '?'.join(list(map(str, subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'], Subject__course__SubCode=sub.Subject.course.SubCode).values_list('id', flat=True))))
         sub.id = id_string
         sub.RegEventId_open = sub.RegEventId.__open_str__()
-        subjects = subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC']).exclude(~Q(id=sub.id), Subject__course__SubCode=sub.Subject.course.SubCode)
-    if not subjects:
+    subjects = subjects.exclude(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
+    if not subjects and not oe_subjects:
         raise Http404('You are not allowed to add threshold marks')
     return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': subjects, 'oe_subjects':oe_subjects})
 
