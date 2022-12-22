@@ -64,7 +64,7 @@ urlpatterns = [
     path('BTSupBTMakeupRegistrationStatus', status.btech_makeup_registration_status, name='BTSupBTMakeupRegistrationStatus'),
 
     path('BTFacultySubjectAssignment', faculty_subject_assignment.faculty_subject_assignment, name='BTFacultySubjectAssignment'),
-    path('BTFacultySubjectAssignmentDetail/<int:pk>', faculty_subject_assignment.faculty_subject_assignment_detail, name='BTFacultySubjectAssignmentDetail'),
+    path('BTFacultySubjectAssignmentDetail/<str:pk>', faculty_subject_assignment.faculty_subject_assignment_detail, name='BTFacultySubjectAssignmentDetail'),
     path('BTFacultyAssignmentStatus', faculty_subject_assignment.faculty_assignment_status, name = 'BTFacultyAssignmentStatus'),
 
     path('BTGradesThresholdEventWise', grades_threshold_event_wise.grades_threshold_event_wise, name = 'BTGradesThresholdEventWise'),

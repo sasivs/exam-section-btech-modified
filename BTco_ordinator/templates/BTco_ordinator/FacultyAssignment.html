@@ -47,6 +47,21 @@
           </td>
         </tr>
         {% endfor %}
+        {% for sub in oe_subjects %}
+        <tr data-row-href="{% url 'BTFacultySubjectAssignmentDetail' sub.id %}">
+          <td style="border: 1px solid black;">{{forloop.counter}}</td>
+          <td style="border: 1px solid black;">{{sub.course.SubCode}}</td>
+          <td style="border: 1px solid black;">{{sub.course.SubName}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Creditable}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Credits}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Type}}</td>
+          <td style="border: 1px solid black;">{{sub.course.CourseStructure.Category}}</td>
+          <td style="border: 1px solid black;">Open Elective</td>
+          <td style="border: 1px solid black;">
+              <a href="{% url 'BTFacultySubjectAssignmentDetail' sub.open_id %}">Assign</a>
+          </td>
+        </tr>
+        {% endfor %}
       </table>
     </div>
 </div>
