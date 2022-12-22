@@ -6,7 +6,7 @@ from import_export.formats.base_formats import XLSX
 from ADAUGDB.models import BTRegistrationStatus, BTOpenElectiveRollLists
 from ADAUGDB.models import BTHOD, BTCycleCoordinator
 from BTExamStaffDB.models import BTStudentInfo
-from BTco_ordinator.models import BTSubjects, BTStudentRegistrations
+from BTco_ordinator.models import BTSubjects, BTStudentRegistrations, BTRollLists
 from BThod.models import BTFaculty_user, BTCoordinator
 from BTco_ordinator.models import BTFacultyAssignment
 from BTfaculty.models import BTMarks, BTMarks_Staging
@@ -37,7 +37,9 @@ def marks_upload(request):
                     subject = subject.split(',')
                     subject = [int(_) for _ in subject]
                     oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId_id__in=regEvent, subject_id__in=subject, Section=section)
-                    marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
+                    final_rolls = BTRollLists.objects.filter(student_id__in=oe_rolls.values_list('student_id', flat=True), \
+                        RegEventId_id__in=oe_rolls.values_list('student__RegEventId_id', flat=True))
+                    marks_objects = BTMarks_Staging.objects.filter(Registration__student_id__in=final_rolls.values_list('id', flat=True),\
                         Registration__sub_id_id__in=subject)
                     mark_distribution = BTSubjects.objects.get(id=subject[0]).course.MarkDistribution
                 else:
