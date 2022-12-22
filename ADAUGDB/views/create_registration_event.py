@@ -31,7 +31,7 @@ def create_registration_event(request):
                     return render(request, 'ADAUGDB/BTRegistrationStatus.html', {'form':form, 'msg':msg})
                 else:
                     rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
-                        Mode=Mode, RollListStatus=1, RollListFeeStatus=0, RegistrationStatus=1, MarksStatus=1, OERollListStatus=1, OERegistartionStatus=1, GradeStatus=1, Status=1)
+                        Mode=Mode, RollListStatus=1, RollListFeeStatus=0, RegistrationStatus=1, MarksStatus=1, OERollListStatus=1, OERegistrationStatus=1, GradeStatus=1, Status=1)
                     rg_status_obj.save()
                     msg = 'The Event {} has been created successfully'.format(rg_status_obj.__str__())
             else:
@@ -45,7 +45,7 @@ def create_registration_event(request):
                     if not BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
                         Mode=Mode).exists():
                         rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=dept, Regulation=regulation, \
-                            Mode=Mode, RollListStatus=1, RollListFeeStatus=0, RegistrationStatus=1, OERollListStatus=1, OERegistartionStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
+                            Mode=Mode, RollListStatus=1, RollListFeeStatus=0, RegistrationStatus=1, OERollListStatus=1, OERegistrationStatus=1, MarksStatus=1, GradeStatus=1, Status=1)
                         rg_status_obj.save()
                         created_dept.append(department.Specialization)
                 created_dept = ','.join(created_dept)
@@ -88,7 +88,7 @@ def update_manage_registrations(request):
             if(len(rg_status)==0):
                 rg_status_obj = BTRegistrationStatus(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode, RollListStatus=rollStatus, RegistrationStatus=regStatus, MarksStatus=marksStatus, GradeStatus=gradesStatus, \
-                    OERollListStatus=oerollstatus, OERegistartionStatus=oeregstatus, Status=Status)
+                    OERollListStatus=oerollstatus, OERegistrationStatus=oeregstatus, Status=Status)
                 msg = f'The event {rg_status_obj.AYear}:{rg_status_obj.ASem}:{rg_status_obj.BYear}:{rg_status_obj.BSem}:\
                         {rg_status_obj.Dept}:{rg_status_obj.Regulation} has been successfully updated(Status:{rg_status_obj.Status}),  \
                         (RegistrationStatus:{rg_status_obj.RegistrationStatus}), (MarksStatus:{rg_status_obj.MarksStatus}), (GradesStatus:{rg_status_obj.GradeStatus}) \
@@ -97,7 +97,7 @@ def update_manage_registrations(request):
                 
             else:
                 rg_status.update(Status=Status,RollListStatus=rollStatus,RegistrationStatus=regStatus, MarksStatus=marksStatus, \
-                    GradeStatus=gradesStatus, OERollListStatus=oerollstatus, OERegistartionStatus=oeregstatus)
+                    GradeStatus=gradesStatus, OERollListStatus=oerollstatus, OERegistrationStatus=oeregstatus)
                 rg_status_obj = BTRegistrationStatus.objects.filter(AYear=AYear, ASem=ASem, BYear=BYear, BSem=BSem, Dept=Dept, Regulation=regulation, \
                 Mode=Mode).first()
                 msg = f'The event {rg_status_obj.AYear}:{rg_status_obj.ASem}:{rg_status_obj.BYear}:{rg_status_obj.BSem}:\

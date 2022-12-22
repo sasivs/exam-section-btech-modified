@@ -101,7 +101,7 @@ def registrations_finalize(request):
             currentRegEvent.RegistrationStatus = 0
             oesubs = BTSubjects.objects.filter(RegEventId=currentRegEventId,course__CourseStructure__Category__in=['OEC','OPC'])
             if len(oesubs) == 0:
-                currentRegEvent.OERegistartionStatus=0
+                currentRegEvent.OERegistrationStatus=0
             currentRegEvent.save()
             return render(request, 'BTco_ordinator/BTRegistrationsFinalizeSuccess.html')
     else:
@@ -171,6 +171,6 @@ def registrations_finalize(kwargs):
         event.RegistrationStatus = 0 
         oesubs = BTSubjects.objects.filter(RegEventId=event.id,course__CourseStructure__Category__in=['OEC','OPC'])
         if len(oesubs) == 0:
-            event.OERegistartionStatus=0
+            event.OERegistrationStatus=0
         event.save()
     return "done"
