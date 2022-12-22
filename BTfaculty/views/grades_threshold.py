@@ -79,7 +79,7 @@ def grades_threshold_assign(request, pk):
         if request.POST.get('submit-form'):
             if form.is_valid():
                 for sub in subject_faculty:
-                    prev_thresholds = BTGradesThreshold.objects.filter(Subject=sub, RegEventId=sub.RegEventId)
+                    prev_thresholds = BTGradesThreshold.objects.filter(Subject=sub.Subject, RegEventId=sub.RegEventId)
                     if prev_thresholds:
                     # if (form.cleaned_data.get('uniform_grading')=='1' and prev_thresholds.first().uniform_grading) or \
                     #     (form.cleaned_data.get('uniform_grading')=='0' and not prev_thresholds.first().uniform_grading):
