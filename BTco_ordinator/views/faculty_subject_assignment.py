@@ -81,22 +81,23 @@ def faculty_subject_assignment_detail(request, pk):
             fac.Section = []
             for fac_assign in faculty_assigned.filter(Faculty=fac):
                 fac.Section.append(fac_assign.Section)
-    
+    events = BTRegistrationStatus.objects.filter(id__in=request.session.get('currentRegEvent'))
     if request.method == 'POST':
         for subject in subjects:
-            for event in request.session.get('currentRegEvent'):
-                faculty_assigned_subject = faculty_assigned.filter(Subject=subject, RegEventId_id=event)
-                for sec in sections:
-                    if request.POST.get('faculty-'+str(sec)):
-                        if faculty_assigned_subject and faculty_assigned_subject.get(Section=sec):
-                            faculty_row = faculty_assigned_subject.get(Section=sec)
-                            faculty_row.Coordinator_id = request.POST.get('course-coordinator') or 0
-                            faculty_row.Faculty_id = request.POST.get('faculty-'+str(sec))
-                            faculty_row.save()
-                        else:
-                            faculty_row = BTFacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
-                                Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=event)
-                            faculty_row.save()
+            for event in events:
+                if event.Dept == subject.RegEventId.Dept:
+                    faculty_assigned_subject = faculty_assigned.filter(Subject=subject, RegEventId_id=event.id)
+                    for sec in sections:
+                        if request.POST.get('faculty-'+str(sec)):
+                            if faculty_assigned_subject and faculty_assigned_subject.get(Section=sec):
+                                faculty_row = faculty_assigned_subject.get(Section=sec)
+                                faculty_row.Coordinator_id = request.POST.get('course-coordinator') or 0
+                                faculty_row.Faculty_id = request.POST.get('faculty-'+str(sec))
+                                faculty_row.save()
+                            else:
+                                faculty_row = BTFacultyAssignment(Subject=subject, Coordinator_id=request.POST.get('course-coordinator'),\
+                                    Faculty_id=request.POST.get('faculty-'+str(sec)), Section=sec, RegEventId_id=event)
+                                faculty_row.save()
         return redirect('BTFacultySubjectAssignment')
     return render(request, 'BTco_ordinator/FacultyAssignmentDetail.html', {'subject':subject, 'faculty':faculty,\
         'section':sections, 'co_ordinator':co_ordinator, 'faculty_section':faculty_assigned})
