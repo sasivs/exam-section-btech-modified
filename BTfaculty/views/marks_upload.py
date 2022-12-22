@@ -153,7 +153,7 @@ def marks_upload_status(request):
             #     marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
             #         Registration__sub_id_id__in=subject)
             # else:
-            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
+            marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=regEvent, Registration__sub_id_id=subject, \
                 Registration__student__Section=section).order_by('Registration__student__student__RegNo')
 
             for rindex, mark in enumerate(marks_objects):
