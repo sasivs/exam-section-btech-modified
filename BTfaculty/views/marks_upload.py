@@ -37,7 +37,7 @@ def marks_upload(request):
                     subject = subject.split(',')
                     subject = [int(_) for _ in subject]
                     oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId_id__in=regEvent, subject_id__in=subject, Section=section)
-                    final_rolls = BTRollLists.objects.filter(student_id__in=oe_rolls.values_list('student_id', flat=True), \
+                    final_rolls = BTRollLists.objects.filter(student_id__in=oe_rolls.values_list('student__student_id', flat=True), \
                         RegEventId_id__in=oe_rolls.values_list('student__RegEventId_id', flat=True))
                     marks_objects = BTMarks_Staging.objects.filter(Registration__student_id__in=final_rolls.values_list('id', flat=True),\
                         Registration__sub_id_id__in=subject)
