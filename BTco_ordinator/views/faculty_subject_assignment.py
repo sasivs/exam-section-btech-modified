@@ -31,7 +31,7 @@ def faculty_subject_assignment(request):
             
             regEvents = BTRegistrationStatus.objects.filter(id__in=regEvent)
             if regEvents[0].Mode == 'R':
-                subjects = BTSubjects.objects.filter(RegEventId_id_in=regEvents.filter(Mode='R').values_list('id', flat=True), course__OfferedBy=current_user.Dept)
+                subjects = BTSubjects.objects.filter(RegEventId_id__in=regEvents.filter(Mode='R').values_list('id', flat=True), course__OfferedBy=current_user.Dept)
                 regular_subjects = subjects.exclude(course__Category__in=['OEC', 'OPC'])
                 oe_subjects = subjects.filter(course__Category__in=['OEC', 'OPC'])
                 distinct_oe_subjects = oe_subjects.distinct('course__SubCode')
