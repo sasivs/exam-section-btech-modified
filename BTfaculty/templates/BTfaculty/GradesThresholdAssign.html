@@ -15,6 +15,16 @@
                 <th>SubName</th>
                 <td>{{ subject.Subject.course.SubName }}</td>
             </tr>
+            {% if subject.Subject.course.CourseStructure.Category == "OEC" or subject.Subject.course.CourseStructure.Category == "OPC" %}
+            <tr>
+                <th>Offered RegEvent</th>
+                <td>{{ subject.offered_RegEventId_open }}</td>
+            </tr>
+            <tr>
+                <th>Current RegEvent</th>
+                <td>{{ subject.current_RegEventId_open }}</td>
+            </tr>
+            {% else %}
             <tr>
                 <th>Offered RegEvent</th>
                 <td>{{ subject.Subject.RegEventId }}</td>
@@ -23,6 +33,7 @@
                 <th>Current RegEvent</th>
                 <td>{{ subject.RegEventId }}</td>
             </tr>
+            {% endif %}
         </table>
     </div>
     <hr>
