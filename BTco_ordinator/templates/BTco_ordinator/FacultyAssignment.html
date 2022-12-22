@@ -38,7 +38,7 @@
           <td style="border: 1px solid black;">{{sub.course.CourseStructure.Type}}</td>
           <td style="border: 1px solid black;">{{sub.course.CourseStructure.Category}}</td>
           {% if sub.course.CourseStructure.Category == "OEC" or sub.course.CourseStructure.Category == "OPC" %}
-          <td style="border: 1px solid black;">{{sub.Dept}}</td>
+          <td style="border: 1px solid black;">Open Elective</td>
           {% else %}
           <td style="border: 1px solid black;">{{sub.RegEventId.Dept}}</td>
           {% endif %}
