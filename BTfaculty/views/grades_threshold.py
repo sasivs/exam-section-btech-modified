@@ -117,13 +117,13 @@ def grades_threshold_assign(request, pk):
                         # if form.cleaned_data.get('uniform_grading')=='1':
                         for grade in grades:
                             if form.cleaned_data[str(grade.id)]:
-                                threshold_mark = BTGradesThreshold(Grade=grade, Subject=subject, RegEventId=sub.RegEventId, \
+                                threshold_mark = BTGradesThreshold(Grade=grade, Subject=sub.Subject, RegEventId=sub.RegEventId, \
                                     Threshold_Mark=float(form.cleaned_data[str(grade.id)]), Exam_Mode=False)
                                 threshold_mark.save()
                         exam_mode_grade = grades.filter(Grade__in=['P','F'])
                         for grade in exam_mode_grade:
                             if form.cleaned_data[str('exam_mode_')+str(grade.id)]:
-                                threshold_mark = BTGradesThreshold(Grade=grade, Subject=subject, RegEventId=sub.RegEventId, \
+                                threshold_mark = BTGradesThreshold(Grade=grade, Subject=sub.Subject, RegEventId=sub.RegEventId, \
                                         Threshold_Mark=float(form.cleaned_data[str('exam_mode_')+str(grade.id)]), Exam_Mode=True)
                                 threshold_mark.save()
 
