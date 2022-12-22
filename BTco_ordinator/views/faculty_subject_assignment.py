@@ -32,8 +32,8 @@ def faculty_subject_assignment(request):
             regEvents = BTRegistrationStatus.objects.filter(id__in=regEvent)
             if regEvents[0].Mode == 'R':
                 subjects = BTSubjects.objects.filter(RegEventId_id__in=regEvents.filter(Mode='R').values_list('id', flat=True), course__OfferedBy=current_user.Dept)
-                regular_subjects = subjects.exclude(course__Category__in=['OEC', 'OPC'])
-                oe_subjects = subjects.filter(course__Category__in=['OEC', 'OPC'])
+                regular_subjects = subjects.exclude(course__CourseStructure__Category__in=['OEC', 'OPC'])
+                oe_subjects = subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC'])
                 distinct_oe_subjects = oe_subjects.distinct('course__SubCode')
                 for sub in distinct_oe_subjects:
                     sub.id = '?'.join(oe_subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True))
@@ -43,8 +43,8 @@ def faculty_subject_assignment(request):
             else:
                 student_Registrations = BTStudentRegistrations.objects.filter(RegEventId_id_in=regEvent).values_list('sub_id_id', flat=True)
                 subjects = BTSubjects.objects.filter(course__OfferedBy=current_user.Dept, id__in=student_Registrations)
-                regular_subjects = subjects.exclude(course__Category__in=['OEC', 'OPC'])
-                oe_subjects = subjects.filter(course__Category__in=['OEC', 'OPC'])
+                regular_subjects = subjects.exclude(course__CourseStructure__Category__in=['OEC', 'OPC'])
+                oe_subjects = subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC'])
                 distinct_oe_subjects = oe_subjects.distinct('course__SubCode')
                 for sub in distinct_oe_subjects:
                     sub.id = '?'.join(oe_subjects.filter(course__SubCode=sub.course.SubCode).values_list('id', flat=True))
