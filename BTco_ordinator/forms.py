@@ -1,15 +1,13 @@
 from django import forms 
 from django.db.models import Q 
 from BTco_ordinator.models import  BTStudentRegistrations_Staging
-from ADAUGDB.constants import DEPARTMENTS, YEARS, SEMS
 from BTco_ordinator.models import BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary,\
     BTRollLists_Staging
 from ADAUGDB.models import BTRegistrationStatus
 from BTExamStaffDB.models import BTStudentInfo
-
 from ADAUGDB.validators import validate_file_extension
-from BTco_ordinator.models import BTStudentRegistrations
+from BTco_ordinator.models import BTStudentRegistrations, BTFacultyAssignment
 #Create your forms here
 
 
@@ -890,4 +888,29 @@ class MDARegistrationsForm(forms.Form):
             SUBJECT_CHOICES += subjects
             self.fields['subId'] = forms.CharField(label='Subject', required=False, widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
 
+class TemplateDownloadForm(forms.Form):
+    def __init__(self, current_user, *args, **kwargs):
+        super(TemplateDownloadForm, self).__init__(*args, **kwargs)
+        if current_user.group == 'Co-ordinator':
+            valid_subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__OfferedBy=current_user.Dept)
+            regIDs = valid_subjects.values('RegEventId')
+            REGEVENT_CHOICES = [(event.id, event.__str__()) for event in regIDs]
+            REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
+            self.fields['regID'] = forms.CharField(label='Choose Registration Event', required=False, max_length=100, \
+                widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
+        elif current_user.group == 'Faculty':
+            valid_subjects = BTFacultyAssignment.objects.filter(Faculty_id=current_user.Faculty_id, RegEventId__Status=1)
+            SUBJECT_CHOICES = [('', 'Choose Subject')]
+            subjects = {}
+            for sub in valid_subjects:
+                if valid_subjects.filter(Subject__course__SubCode=sub.Subject.course.SubCode).distinct('RegEventId__AYear', 'RegEventId__ASem', 'RegEventId__BYear', 'RegEventId__BSem',\
+                     'RegEventId__Regulation', 'RegEventId__Mode').count() > 1:
+                    if not subjects.get(sub.Subject.course.SubCode):
+                        subjects[sub.Subject.course.SubCode] = set({sub.RegEventId.__open_str__()})
+                    else:
+                        subjects[sub.Subject.course.SubCode].add(sub.RegEventId.__open_str__())
+            SUBJECT_CHOICES += [(value+':'+key, value+','+key) for key, value in subjects.items()]
+            self.fields['regID'] = forms.CharField(label='Choose Subject', required=False, max_length=100, \
+                widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
+        
 

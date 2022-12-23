@@ -106,6 +106,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTGradesThreshold' %}">Grades Threshold</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradeTemplateDownload' %}">Grade Template Download</a>
+                </li>
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTGradesThresholdStatus' %}">Grades Threshold Status</a>
@@ -143,6 +146,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTIXGradeStudentsStatus' %}">IX grade students status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTGradeTemplateDownload' %}">Grade Template Download</a>
                 </li>
                 {% elif user|BThas_group:'Cycle-Co-ordinator' %}
                 <li class="nav-item">
