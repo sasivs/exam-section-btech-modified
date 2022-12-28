@@ -18,7 +18,8 @@
                     <td style="border: 1px solid black;">S.No. </td>
                     <td style="border: 1px solid black;">SubName</td>
                     <td style="border: 1px solid black;">Creditable</td>
-                    <td style="border: 1px solid black;">Credits</td>
+                    <td style="border: 1px solid black;">Course Credits</td>
+                    <td style="border: 1px solid black;">Curriculum Credits</td>
                     <td style="border: 1px solid black;">OfferedBy</td>
                     <td style="border: 1px solid black;">Type</td>
                     <td style="border: 1px solid black;">Category</td>
@@ -39,6 +40,9 @@
                 </td>
                 <td style="border: 1px solid black;">
                     {{ sub.course.CourseStructure.Creditable }}
+                </td>
+                <td style="border: 1px solid black;">
+                    {{ sub.course.Credits }}
                 </td>
                 <td style="border: 1px solid black;">
                     {{ sub.course.CourseStructure.Credits }}
