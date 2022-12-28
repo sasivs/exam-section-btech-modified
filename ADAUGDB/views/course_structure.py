@@ -27,13 +27,13 @@ def add_course_structre(request):
                 newDataset = Dataset()
                 invalidDataset = []
                 errorData = []
-                newDataset.headers = ['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits', 'count']
+                newDataset.headers = ['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits', 'Rigid', 'count']
                 for row in dataset:
                     if row[3] == float(form.cleaned_data.get('regulation')):
-                        newRow = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+                        newRow = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
                         newDataset.append(newRow)
                     else:
-                        newRow = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+                        newRow = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
                         invalidDataset.append(newRow)
                 course_str_resource = CourseStructureResource()
                 result = course_str_resource.import_data(newDataset, dry_run=True)
@@ -54,7 +54,7 @@ def add_course_structre(request):
                         course_str_resource.import_data(cleanDataset, dry_run=False)
                     for i in list(errorIndices):
                         newRow = (newDataset[i][0],newDataset[i][1],newDataset[i][2],\
-                            newDataset[i][3],newDataset[i][4],newDataset[i][5],newDataset[i][6], newDataset[i][7], newDataset[i][8])
+                            newDataset[i][3],newDataset[i][4],newDataset[i][5],newDataset[i][6], newDataset[i][7], newDataset[i][8], newDataset[i][9])
                         errorData.append(newRow)
                 if invalidDataset:
                     invalid_data_msg = 'This data has regulation different from the selected regulation.'

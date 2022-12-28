@@ -116,6 +116,55 @@
         </table>
     </div>
     {% endif %}
+    {% if errorRows %}
+    <div class="row">
+        <strong>These rows do not have corresponding course structure rows.</strong>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black">CourseCode</td>
+                    <td style="border: 1px solid black">CourseName</td>
+                    <td style="border: 1px solid black">BTech Year</td>
+                    <td style="border: 1px solid black">BTech Sem</td>
+                    <td style="border: 1px solid black">Departments</td>
+                    <td style="border: 1px solid black">OfferedBy</td>
+                    <td style="border: 1px solid black">Regulation</td>
+                    <td style="border: 1px solid black">Creditable</td>
+                    <td style="border: 1px solid black">Credits</td>
+                    <td style="border: 1px solid black">Type</td>
+                    <td style="border: 1px solid black">Category</td>
+                    <td style="border: 1px solid black">lectures</td>
+                    <td style="border: 1px solid black">tutorials</td>
+                    <td style="border: 1px solid black">practicals</td>
+                    <td style="border: 1px solid black">Distribution Ratio</td>
+                    <td style="border: 1px solid black">Marks Distribution</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in errorRows %}
+                    <tr>
+                        <td style="border: 1px solid black">{{row.0}}</td>
+                        <td style="border: 1px solid black">{{row.1}}</td>
+                        <td style="border: 1px solid black">{{row.2}}</td>
+                        <td style="border: 1px solid black">{{row.3}}</td>
+                        <td style="border: 1px solid black">{{row.4}}</td>
+                        <td style="border: 1px solid black">{{row.5}}</td>
+                        <td style="border: 1px solid black">{{row.6}}</td>
+                        <td style="border: 1px solid black">{{row.7}}</td>
+                        <td style="border: 1px solid black">{{row.8}}</td>
+                        <td style="border: 1px solid black">{{row.9}}</td>
+                        <td style="border: 1px solid black">{{row.10}}</td>
+                        <td style="border: 1px solid black">{{row.11}}</td>
+                        <td style="border: 1px solid black">{{row.12}}</td>
+                        <td style="border: 1px solid black">{{row.13}}</td>
+                        <td style="border: 1px solid black">{{row.14}}</td>
+                        <td style="border: 1px solid black">{{row.15}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 {% block script_links %}
