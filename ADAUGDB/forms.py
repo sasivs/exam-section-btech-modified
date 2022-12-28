@@ -260,7 +260,7 @@ class CourseStructureDeletionForm(forms.Form):
                 self.fields['Check'+str(cs.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput())
                 if self.data.get('Check'+str(cs.id)) == True:
                     self.fields['check'+str(cs.id)].initial = True
-                self.myFields.append((cs.BYear, cs.BSem, cs.Dept, cs.Regulation, cs.Category, cs.Type, cs.Creditable, cs.Credits, self['Check'+str(cs.id)], cs.id))
+                self.myFields.append((cs.BYear, cs.BSem, cs.Dept, cs.Regulation, cs.Category, cs.Type, cs.Creditable, cs.Credits, cs.Rigid, self['Check'+str(cs.id)], cs.id))
             
 
 
@@ -406,12 +406,16 @@ class OpenElectiveRegistrationsFinalizeForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(OpenElectiveRegistrationsFinalizeForm, self).__init__(*args, **kwargs)
 
-        self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        self.regIDs = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERegistrationStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
+        backlog_events = BTRegistrationStatus.objects.filter(BYear__in=self.regIDs.values_list('RegEventId__BYear', flat=True), BSem__in=self.regIDs.values_list('RegEventId__BSem', flat=True), \
+            Dept__in=self.regIDs.values_list('RegEventId__Dept', flat=True), Regulation__in=self.regIDs.values_list('RegEventId__Regulation', flat=True), Mode='B')
+        mybacklogChoices = [(event.__open_str__(), event.__open_str__()) for event in backlog_events]
         # myChoices = [( years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
         #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.ASem)+':'+str(option.RegEventId.Regulation), years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
         #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.ASem)+':'+str(option.RegEventId.Regulation)) \
         #             for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in self.regIDs.distinct('RegEventId')]
+        myChoices += mybacklogChoices 
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+list(set(myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
@@ -428,7 +432,11 @@ class OpenElectiveRollListForm(forms.Form):
         #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.ASem)+':'+str(option.RegEventId.Regulation), years[option.RegEventId.BYear]+':'+ sems[option.RegEventId.BSem]+':'+ \
         #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.ASem)+':'+str(option.RegEventId.Regulation)) \
         #             for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
+        backlog_events = BTRegistrationStatus.objects.filter(BYear__in=self.regIDs.values_list('RegEventId__BYear', flat=True), BSem__in=self.regIDs.values_list('RegEventId__BSem', flat=True), \
+            Dept__in=self.regIDs.values_list('RegEventId__Dept', flat=True), Regulation__in=self.regIDs.values_list('RegEventId__Regulation', flat=True), Mode='B')
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in self.regIDs.distinct('RegEventId')]
+        mybacklogChoices = [(event.__open_str__(), event.__open_str__()) for event in backlog_events]
+        myChoices += mybacklogChoices 
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+list(set(myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
@@ -468,6 +476,10 @@ class OERollListStatusForm(forms.Form):
         #     str(option.RegEventId.AYear)+ ':'+str(option.RegEventId.BSem)+':'+str(option.RegEventId.Regulation)) \
         #             for oIndex, option in enumerate(self.regIDs.distinct('RegEventId'))]
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in subjects.distinct('RegEventId')]
+        backlog_events = BTRegistrationStatus.objects.filter(BYear__in=subjects.values_list('RegEventId__BYear', flat=True), BSem__in=subjects.values_list('RegEventId__BSem', flat=True), \
+            Dept__in=subjects.values_list('RegEventId__Dept', flat=True), Regulation__in=subjects.values_list('RegEventId__Regulation', flat=True), Mode='B')
+        mybacklogChoices = [(event.__open_str__(), event.__open_str__()) for event in backlog_events]
+        myChoices += mybacklogChoices 
         # myChoices = [(option[0]+':'+mode, option[1]+':'+mode) for option in myChoices for mode in ['R', 'B']]
         myChoices = [('','Choose Event')]+list(set(myChoices))
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,
@@ -484,7 +496,7 @@ class OERollListStatusForm(forms.Form):
             mode = strs[5]
 
             subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
-            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode='R',\
                 RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
             oe_subjects = {}
             for sub in subjects.distinct('course__SubCode'):
