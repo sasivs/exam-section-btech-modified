@@ -30,7 +30,6 @@ def grades_generate(request):
         if form.is_valid():
             subject = form.cleaned_data.get('subject').split(':')[0]
             regEvent = form.cleaned_data.get('subject').split(':')[1]
-            regEvent = BTRegistrationStatus.objects.get(id=regEvent)
             section = form.cleaned_data.get('subject').split(':')[2]
             if regEvent.startswith('OE'):
                 regEvent = regEvent[2:].split(',')
@@ -38,11 +37,13 @@ def grades_generate(request):
                 subject = subject.split(',')
                 subject = [int(_) for _ in subject]
                 oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
-                marks_objects = BTMarks_Staging.objects.filter(Registration__student__in=oe_rolls.values_list('student', flat=True),\
-                    Registration__sub_id_id__in=subject)
+                marks_objects = BTMarks_Staging.objects.filter(Registration__student__student__id__in=oe_rolls.values_list('student__student__id', flat=True),\
+                    Registration__sub_id_id__in=subject, Registration__RegEventId_id__in=regEvent)
                 subject_obj = BTSubjects.objects.get(id=subject[0])
+                regEvent = BTRegistrationStatus.objects.get(id=regEvent[0])
             else:
-                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id_id=subject, \
+                regEvent = BTRegistrationStatus.objects.get(id=regEvent)
+                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=regEvent.id, Registration__sub_id_id=subject, \
                     Registration__student__Section=section).order_by('Registration__student__student__RegNo')
                 subject_obj = BTSubjects.objects.get(id=subject)
             
@@ -57,7 +58,7 @@ def grades_generate(request):
                 if grades_objects.filter(RegId_id=att.Registration.id):
                     grades_objects.filter(RegId_id=att.Registration.id).update(Grade='R', AttGrade='X')
                 else:
-                    grade = BTStudentGrades_Staging(RegId_id=att.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                    grade = BTStudentGrades_Staging(RegId_id=att.Registration.id, RegEventId=att.Registration.RegEventId.id, Regulation=att.Registration.RegEventId.Regulation, \
                         Grade='R', AttGrade='X') 
                     grade.save()
                 marks_objects = marks_objects.exclude(Registration=att.Registration)
@@ -68,14 +69,14 @@ def grades_generate(request):
                 if grades_objects.filter(RegId=ix_grade.Registration.id):
                     grades_objects.filter(RegId=ix_grade.Registration.id).update(Grade=ix_grade.Grade, AttGrade='P')
                 else:
-                    grade = BTStudentGrades_Staging(RegId_id=ix_grade.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                    grade = BTStudentGrades_Staging(RegId_id=ix_grade.Registration.id, RegEventId=att.Registration.RegEventId.id, Regulation=att.Registration.RegEventId.Regulation, \
                         Grade=ix_grade.Grade, AttGrade='P')
                     grade.save()
                 marks_objects = marks_objects.exclude(Registration=ix_grade.Registration)
             
-            if BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent).exists():
-                thresholds_study_mode = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, Exam_Mode=False).order_by('-Threshold_Mark')
-                thresholds_exam_mode = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId=regEvent, Exam_Mode=True).order_by('-Threshold_Mark')
+            if BTGradesThreshold.objects.filter(Subject_id=subject_obj.id, RegEventId=regEvent).exists():
+                thresholds_study_mode = BTGradesThreshold.objects.filter(Subject_id=subject_obj.id, RegEventId=regEvent, Exam_Mode=False).order_by('-Threshold_Mark')
+                thresholds_exam_mode = BTGradesThreshold.objects.filter(Subject_id=subject_obj.id, RegEventId=regEvent, Exam_Mode=True).order_by('-Threshold_Mark')
             
             if not thresholds_study_mode or not thresholds_exam_mode:
                 msg = 'Grade Threshold(study/exam) is not updated for this subject.'
@@ -94,7 +95,7 @@ def grades_generate(request):
                                     grades_objects.filter(RegId_id=mark.Registration.id).update(Grade='F', AttGrade='P')
                                     break
                                 else:
-                                    grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                    grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
                                         Grade='F', AttGrade='P')
                                     grade.save()
                                     break
@@ -107,7 +108,7 @@ def grades_generate(request):
                                     grades_objects.filter(RegId_id=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='P')
                                     break
                                 else:
-                                    grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                    grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
                                         Grade=threshold.Grade.Grade, AttGrade='P')
                                     grade.save()
                                     break
@@ -118,7 +119,7 @@ def grades_generate(request):
                                 grades_objects.filter(RegId_id=mark.Registration.id).update(Grade=threshold.Grade.Grade, AttGrade='X')
                                 break
                             else:
-                                grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=regEvent.id, Regulation=regEvent.Regulation, \
+                                grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
                                         Grade=threshold.Grade.Grade, AttGrade='X')
                                 grade.save()
                                 break
@@ -167,8 +168,8 @@ def grades_status(request):
                 regEvent = [int(_) for _ in regEvent]
                 subject = subject.split(',')
                 subject = [int(_) for _ in subject]
-                oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId__in=regEvent, subject_id__in=subject, Section=section)
-                grades = BTStudentGrades_Staging.objects.filter(RegId__sub_id_id__in=subject, RegId__student__in=oe_rolls.values_list('student', flat=True))
+                oe_rolls = BTOpenElectiveRollLists.objects.filter(RegEventId_id__in=regEvent, subject_id__in=subject, Section=section)
+                grades = BTStudentGrades_Staging.objects.filter(RegId__sub_id_id__in=subject, RegId__student__student__in=oe_rolls.values_list('student__student', flat=True))
                 grades = list(grades)
             else:
             # roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)

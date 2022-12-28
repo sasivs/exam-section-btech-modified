@@ -21,7 +21,63 @@
         {% endif %}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {% if form.backlog_submit %}
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form.regID }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form.sub }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form.backlog_submit }}
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <table class="table table-hover table-muted table-striped">
+                        <thead>
+                            <tr>
+                                <td style="border: 1px solid black;">S.No. </td>
+                                <td style="border: 1px solid black;">RegNo</td>
+                                <td style="border: 1px solid black;">RollNo</td>
+                                <td style="border: 1px solid black;">Name</td>
+                                <td style="border: 1px solid black;">Dept</td>
+                                <td style="border: 1px solid black;">Corresponding Backlogs(Grades)</td>
+                                <td style="border: 1px solid black;">Mode(Study/Exam)</td>
+                            </tr>
+                        </thead>
+                        {% for field in form.backlog_fields %}
+                            <tr>
+                                <td style="border: 1px solid black;">
+                                    {{ forloop.counter }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.0.student.student.RegNo }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.0.student.student.RollNo }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                  {{ field.0.student.student.Name }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                  {{ field.0.RegEventId.Dept }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    {{ field.1 }}
+                                </td>
+                                <td style="border: 1px solid black;">
+                                  {{ field.2 }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            {% else %}
             {{ form.as_p }}
+            {% endif %}
             <button type="submit" name="Submit" value="submit">Upload</button>
             <br><br>
             <hr>

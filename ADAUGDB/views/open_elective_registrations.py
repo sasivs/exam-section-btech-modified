@@ -30,12 +30,30 @@ def open_elective_regs(request):
                 
                 rolls = BTOpenElectiveRollLists.objects.filter(subject_id__in=subid,RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).order_by('student__student__RegNo')
 
-                for roll in rolls:
-                    if mode == 'R' or mode == 'D':
+                if mode == 'R' or mode == 'D':
+                    for roll in rolls:
                         if not BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id).exists():
                             reg = BTStudentRegistrations_Staging(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id)
                             reg.save()
-                return render(request, 'ADAUGDB/OecRegistrationsSuccess.html')
+                    return render(request, 'ADAUGDB/OecRegistrationsSuccess.html')
+                elif mode == 'B':
+                    if form.cleaned_data.get('backlog_submit'):
+                        for roll in rolls:
+                            if form.cleaned_data.get('Radio'+str(roll.id)) == '1':
+                                if not BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, sub_id_id=roll.subject_id).exists():
+                                    reg = BTStudentRegistrations_Staging(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=1,sub_id_id=roll.subject_id)
+                                    reg.save()
+                                else:
+                                    BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, sub_id_id=roll.subject_id).update(Mode=1)
+                            else:
+                                if not BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, sub_id_id=roll.subject_id).exists():
+                                    reg = BTStudentRegistrations_Staging(student=roll.student, RegEventId_id=roll.RegEventId_id, Mode=0,sub_id_id=roll.subject_id)
+                                    reg.save()
+                                else:
+                                    BTStudentRegistrations_Staging.objects.filter(student=roll.student, RegEventId_id=roll.RegEventId_id, sub_id_id=roll.subject_id).update(Mode=0)  
+                        return render(request, 'ADAUGDB/OecRegistrationsSuccess.html')
+                    else:
+                        return render(request, 'ADAUGDB/OpenElectiveRegistrations.html', {'form':form})
     else:
         form = OpenElectiveRegistrationsForm()
     return render(request, 'ADAUGDB/OpenElectiveRegistrations.html',{'form':form})

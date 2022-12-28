@@ -9,7 +9,7 @@ from BTfaculty.models import BTStudentGrades_Staging, BTStudentGrades
 from django.db import transaction, connection
 
 
-@transaction.atomic
+# @transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(grades_finalize_access)
 def grades_finalize(request):
@@ -18,7 +18,7 @@ def grades_finalize(request):
     regIDs = None
     if 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Subject__OfferedBy=hod.Dept)
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Subject__course__OfferedBy=hod.Dept)
         regIDs = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
     if request.method == 'POST':
         form = GradesFinalizeForm(regIDs, request.POST)
@@ -29,9 +29,10 @@ def grades_finalize(request):
             if BTStudentGrades.objects.filter(RegEventId=regEvent, RegId_id__in=student_registrations.values_list('id', flat=True)).exists():
                 msg = 'Grades Have already been finalized.'
             else:
-                for g in grades:
-                    gr = BTStudentGrades(RegId_id=g.RegId, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
-                    gr.save()
+                with transaction.atomic():
+                    for g in grades:
+                        gr = BTStudentGrades(RegId_id=g.RegId.id, Regulation=g.Regulation, RegEventId=g.RegEventId, Grade=g.Grade, AttGrade=g.AttGrade)
+                        gr.save()
                 RefreshMaterializedViews()
                 msg = 'Grades have been finalized.'
             reg_status_obj = BTRegistrationStatus.objects.get(id=regEvent)

@@ -11,11 +11,9 @@ from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 from ADAUGDB.user_access_test import  roll_list_status_access
 from BTco_ordinator.models import BTRollLists_Staging, BTSubjects, BTFacultyAssignment
+from django.db import transaction
 
-
-
-
-
+@transaction.atomic
 @login_required(login_url="/login/")
 @user_passes_test(is_Associate_Dean_Academics)
 def open_elective_rollList(request):

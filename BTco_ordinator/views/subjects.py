@@ -234,6 +234,10 @@ def open_subject_upload(request):
                         slackCourses.append((c_str, related_courses))
                     elif len(related_courses) > c_str.count:
                         excessCourses.append((c_str, related_courses))
+                    elif len(related_courses) == c_str.count:
+                        for course in related_courses:
+                            subject_row = BTSubjects_Staging(RegEventId_id=event.id, course_id=course.id)
+                            subject_row.save()
                 if excessCourses:
                     excessCoursesDict = {c_str.id:[c_str.count, c_str.Category] for c_str, _ in excessCourses}
                     form = SubjectsSelectForm(excessCourses, event)
