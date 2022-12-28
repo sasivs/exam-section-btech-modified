@@ -1,7 +1,7 @@
 
 
 
-create materialized view "BTStudentGradePointsMV" as
+create materialized view if not exists "BTStudentGradePointsMV" as
 SELECT row_number() OVER (ORDER BY (ROW (g."RegNo", g."AYASBYBS", g."SubName"))) AS id,
        g."RegNo",
        g.sub_id,
@@ -19,6 +19,7 @@ SELECT row_number() OVER (ORDER BY (ROW (g."RegNo", g."AYASBYBS", g."SubName")))
        g."CourseStructure_id",
        g."count",
        g."Creditable",
+       g."Course_Credits",
        g."Credits",
        g."Type",
        g."Category",
@@ -37,16 +38,17 @@ FROM (SELECT final_table."RegNo",
              final_table."Dept",
              final_table."Grade",
              final_table."AttGrade",
+             final_table."Regulation",
              final_table."CourseStructure_id",
              final_table."count",
-             final_table."Regulation",
              final_table."Creditable",
-             final_table."Credits",
+             final_table."Curriculum_Credits"as "Credits",
+             final_table."Course_Credits",
              final_table."Type",
              final_table."Category",
              final_table."Points",
-             final_table."Credits" * final_table."Points" * final_table."Creditable"                                AS "GP",
-             ((final_table."AYear" * 10 + final_table."ASem"::INTEGER) * 10 + final_table."BYear") * 10 +
+             final_table."Curriculum_Credits"::INTEGER * final_table."Points" * final_table."Creditable"                                AS "GP",
+             ((final_table."AYear" * 10 + final_table."ASem") * 10 + final_table."BYear") * 10 +
              final_table."BSem"                                                                                     AS "AYASBYBS"
       FROM (((SELECT sg_reg."Regulation",
                      sg_reg."Grade",
@@ -56,41 +58,44 @@ FROM (SELECT final_table."RegNo",
                      sg_reg."ASem",
                      sg_reg."BYear",
                      sg_reg.sub_id,
+			  sg_reg."SubCode",
+			  sg_reg."SubName",
+                    sg_reg."CourseStructure_id",
+                    sg_reg."count",
+			  sg_reg."Creditable",
+			  sg_reg."Type",
+			  sg_reg."Course_Credits",
+			  sg_reg."Curriculum_Credits",
+			  sg_reg."Category",
                      "BTGradePoints"."Points"
+			         
               FROM (((SELECT "BTStudentGrades"."Grade",
                              "BTStudentGrades"."AttGrade",
                              "BTStudentGrades"."RegId",
                              "BTStudentGrades"."RegEventId"
                       FROM "BTStudentGrades") sg
-                  JOIN (SELECT "BTStudentInfo"."RegNo",
-                               "BTStudentRegistrations".sub_id,"BTCourseStructure"."Category" as "Category","BTCourseStructure"."Creditable" as "Creditable","BTCourseStructure"."Credits" as "Credits","BTCourseStructure"."Type" as "Type","BTCourseStructure"."Regulation" as "Regulation",
-                               "BTStudentRegistrations".id from "BTStudentRegistrations" join "BTRollLists" on "BTStudentRegistrations"."student_id"="BTRollLists"."id" join "BTStudentInfo" on "BTRollLists"."student_id"="BTStudentInfo"."id"
-                               join "BTSubjects" on "BTStudentRegistrations"."sub_id"="BTSubjects"."id" join "BTCourses" on "BTSubjects"."course_id"="BTCourses"."id" join "BTCourseStructure" on "BTCourses"."CourseStructure_id"="BTCourseStructure"."id"
+                 JOIN (SELECT "BTStudentInfo"."RegNo","BTCourses"."SubCode" as "SubCode","BTCourses"."SubName" as "SubName" ,
+                               "BTCourses"."CourseStructure_id" as "CourseStructure_id",
+                               "BTCourses"."Credits" as "Course_Credits",
+                               "BTCourseStructure"."count" as "count",     
+					   "BTCourseStructure"."Creditable" as "Creditable",
+					   "BTCourseStructure"."Type" as "Type",
+					   "BTCourseStructure"."Credits" as "Curriculum_Credits",
+					   "BTCourseStructure"."Category" as "Category",
+                               "BTStudentRegistrations"."sub_id",
+                               "BTStudentRegistrations"."id" from "BTStudentRegistrations" join "BTRollLists" on "BTStudentRegistrations"."student_id"="BTRollLists"."id" join "BTStudentInfo" on "BTRollLists"."student_id"="BTStudentInfo"."id" join "BTSubjects" on 
+                               "BTStudentRegistrations"."sub_id" = "BTSubjects".id join "BTCourses" on "BTSubjects"."course_id" = "BTCourses".id join "BTCourseStructure" on "BTCourseStructure"."id" = "BTCourses"."CourseStructure_id"
                         ) sreg ON sg."RegId" = sreg.id) sg_regs
-                  JOIN "BTRegistration_Status" ON "BTRegistration_Status".id = sg_regs."RegEventId") sg_reg("Grade",
-                                                                                                        "AttGrade",
-                                                                                                        "RegId",
-                                                                                                        "RegEventId",
-                                                                                                        "RegNo", sub_id,
-                                                                                                        id, id_1,
-                                                                                                        "AYear", "ASem",
-                                                                                                        "BYear", "BSem",
-                                                                                                        "Regulation",
-                                                                                                        "Dept", "Mode",
-                                                                                                        "Status",
-                                                                                                        "RegistrationStatus",
-                                                                                                        "MarksStatus",
-                                                                                                        "GradeStatus",
-                                                                                                        "RollListStatus",
-                                                                                                        "RollListFeeStatus")
+                  JOIN "BTRegistration_Status" ON "BTRegistration_Status".id = sg_regs."RegEventId") sg_reg
                        JOIN "BTGradePoints" ON sg_reg."Regulation" = "BTGradePoints"."Regulation" AND
                                              sg_reg."Grade"::text = "BTGradePoints"."Grade"::text) gp_table
-          JOIN (select btc."SubCode" as "SubCode",btc."SubName" as "SubName", btc."CourseStructure_id" as "CourseStructure_id", bts."id" as "id",bts."RegEventId_id" as "RegEventId_id", bts."course_id",btcs."Category" as "Category",btcs."Creditable" as "Creditable",btcs."Credits" as "Credits", btcs."count" as "count", btcs."Type" as "Type" from ("BTSubjects" bts JOIN "BTCourses" btc on bts."course_id"=btc."id" join "BTCourseStructure" btcs on btc."CourseStructure_id"=btcs."id")) subs ON gp_table.sub_id = subs.id) grades
+          JOIN "BTSubjects" subs ON gp_table.sub_id::bigint = subs.id) grades
           JOIN (SELECT "BTRegistration_Status".id,
                        "BTRegistration_Status"."AYear" AS "OfferedYear",
                        "BTRegistration_Status"."Dept",
                        "BTRegistration_Status"."BSem"
                 FROM "BTRegistration_Status") rg_status ON grades."RegEventId_id" = rg_status.id) final_table) g;
+
 
 alter materialized view "BTStudentGradePointsMV" owner to postgres;
 
@@ -115,6 +120,7 @@ SELECT row_number() OVER (ORDER BY (ROW (g."RegNo", g."AYASBYBS", g."SubName")))
        g."CourseStructure_id",
        g."count",
        g."Creditable",
+       g."Course_Credits",
        g."Credits",
        g."Type",
        g."Category",
@@ -137,11 +143,12 @@ FROM (SELECT final_table."RegNo",
              final_table."CourseStructure_id",
              final_table."count",
              final_table."Creditable",
-             final_table."Credits",
+             final_table."Curriculum_Credits"as "Credits",
+             final_table."Course_Credits",
              final_table."Type",
              final_table."Category",
              final_table."Points",
-             final_table."Credits"::INTEGER * final_table."Points" * final_table."Creditable"                                AS "GP",
+             final_table."Curriculum_Credits"::INTEGER * final_table."Points" * final_table."Creditable"                                AS "GP",
              ((final_table."AYear" * 10 + final_table."ASem") * 10 + final_table."BYear") * 10 +
              final_table."BSem"                                                                                     AS "AYASBYBS"
       FROM (((SELECT sg_reg."Regulation",
@@ -158,7 +165,8 @@ FROM (SELECT final_table."RegNo",
                     sg_reg."count",
 			  sg_reg."Creditable",
 			  sg_reg."Type",
-			  sg_reg."Credits",
+			  sg_reg."Course_Credits",
+			  sg_reg."Curriculum_Credits",
 			  sg_reg."Category",
                      "BTGradePoints"."Points"
 			         
@@ -169,10 +177,11 @@ FROM (SELECT final_table."RegNo",
                       FROM "BTStudentGrades_Staging") sg
                  JOIN (SELECT "BTStudentInfo"."RegNo","BTCourses"."SubCode" as "SubCode","BTCourses"."SubName" as "SubName" ,
                                "BTCourses"."CourseStructure_id" as "CourseStructure_id",
+                               "BTCourses"."Credits" as "Course_Credits",
                                "BTCourseStructure"."count" as "count",     
 					   "BTCourseStructure"."Creditable" as "Creditable",
 					   "BTCourseStructure"."Type" as "Type",
-					   "BTCourseStructure"."Credits" as "Credits",
+					   "BTCourseStructure"."Credits" as "Curriculum_Credits",
 					   "BTCourseStructure"."Category" as "Category",
                                "BTStudentRegistrations"."sub_id",
                                "BTStudentRegistrations"."id" from "BTStudentRegistrations" join "BTRollLists" on "BTStudentRegistrations"."student_id"="BTRollLists"."id" join "BTStudentInfo" on "BTRollLists"."student_id"="BTStudentInfo"."id" join "BTSubjects" on 
@@ -229,6 +238,7 @@ SELECT row_number() OVER (ORDER BY "final_table"."RegNo", "final_table"."SubCode
        "final_table"."Type",
        "final_table"."Category",
        "final_table"."Credits",
+       "final_table"."Course_Credits",
        "final_table"."CourseStructure_id",
        "final_table"."count",
 	 "final_table"."ClearedCourses",
@@ -247,6 +257,7 @@ from(select "nested_table"."RegNo",
        "nested_table"."SubName",
        "nested_table"."Type",
        "nested_table"."Category",
+       "nested_table"."Course_Credits",
        "nested_table"."Credits",
        "nested_table"."CourseStructure_id",
        "nested_table"."count",
@@ -269,6 +280,7 @@ FROM ((SELECT "Q"."RegNo",
              "Q"."Type",
              "Q"."Category",
              "Q"."Credits",
+             "Q"."Course_Credits",
              "Q"."CourseStructure_id",
              "Q"."count",
              "Q"."BYear",
@@ -318,6 +330,7 @@ SELECT row_number() OVER (ORDER BY "final_table"."RegNo", "final_table"."SubCode
        "final_table"."Type",
        "final_table"."Category",
        "final_table"."Credits",
+       "final_table"."Course_Credits",
        "final_table"."CourseStructure_id",
        "final_table"."count",
 	   "final_table"."ClearedCourses",
@@ -336,6 +349,7 @@ from(select "nested_table"."RegNo",
        "nested_table"."SubName",
        "nested_table"."Type",
        "nested_table"."Category",
+       "nested_table"."Course_Credits",
        "nested_table"."Credits",
        "nested_table"."CourseStructure_id",
        "nested_table"."count",
@@ -357,6 +371,7 @@ FROM ((SELECT "Q"."RegNo",
              "Q"."SubName",
              "Q"."Type",
              "Q"."Category",
+             "Q"."Course_Credits",
              "Q"."Credits",
              "Q"."CourseStructure_id",
              "Q"."count",
@@ -508,7 +523,7 @@ REFRESH MATERIALIZED VIEW public."BTStudentPresentPastResultsMV" WITH DATA;
 
 ------------------------------------------------------------------------------------------------------------------------
 
-create view "BTBacklogRegistrationSummaryV"(id, "RegNo", "RollNo", "Name", "BYear", "BSem", "Dept", "AYear", "ASem", "Regulation", "RegisteredSubjects") as
+create or replace view "BTBacklogRegistrationSummaryV"(id, "RegNo", "RollNo", "Name", "BYear", "BSem", "Dept", "AYear", "ASem", "Regulation", "RegisteredSubjects") as
 SELECT row_number() OVER () AS id,
        r."RegNo",
        r."RollNo",
@@ -555,7 +570,7 @@ WHERE q."RegNo" = r."RegNo";
 alter table "BTBacklogRegistrationSummaryV" owner to postgres;
 
 
-create view "BTMakeupRegistrationSummaryV"(id, "RegNo", "RollNo", "Name", "BYear", "BSem", "Dept", "AYear", "ASem", "Regulation", "RegisteredSubjects") as
+create or replace view "BTMakeupRegistrationSummaryV"(id, "RegNo", "RollNo", "Name", "BYear", "BSem", "Dept", "AYear", "ASem", "Regulation", "RegisteredSubjects") as
 SELECT row_number() OVER () AS id,
        q."RegNo",
        r."RollNo",
@@ -598,7 +613,7 @@ WHERE q."RegNo" = r."RegNo";
 
 alter table "BTMakeupRegistrationSummaryV" owner to postgres;
 
-create view "BTRegularRegistrationSummaryV"(id, "RegNo", "RollNo", "Name", "BYear", "BSem", "Dept", "AYear", "ASem", "Regulation", "RegisteredSubjects") as
+create or replace view "BTRegularRegistrationSummaryV"(id, "RegNo", "RollNo", "Name", "BYear", "BSem", "Dept", "AYear", "ASem", "Regulation", "RegisteredSubjects") as
 SELECT row_number() OVER () AS id,
        q."RegNo",
        r."RollNo",
@@ -867,7 +882,7 @@ SELECT row_number() OVER (ORDER BY (ROW(s."Dept", s."AYASBYBS", s."RegNo"))) AS 
 
 REFRESH MATERIALIZED VIEW public."BTDeptExamEventStudentsMV" WITH DATA;
 
-create view "BTStudentExcessSubjectsV" as 
+create or replace view "BTStudentExcessSubjectsV" as 
 select * from (
 select ROW_NUMBER() over (partition by "RegNo" Order by "RegNo","GP" desc, "SubCode") as "RNK",
 						  * from "BTStudentGradePointsMV" 
@@ -877,7 +892,7 @@ select ROW_NUMBER() over (partition by "RegNo" Order by "RegNo","GP" desc, "SubC
 
 
 
-create view "BTStudentBestGradesV" as
+create or replace view "BTStudentBestGradesV" as
 select sgp.*,sgp."BYear"*10+sgp."BSem" as "BYBS", CASE when ses."RegNo" is NULL THEN 1 ELSE 0 END as "Required" from "BTStudentGradePointsMV" as sgp LEFT OUTER JOIN "BTStudentExcessSubjectsV" ses 
 	ON sgp."RegNo" = ses."RegNo" and sgp."SubCode"=ses."SubCode" where sgp."GP">0;
 
@@ -976,7 +991,7 @@ Create View public."BTStudentMakeupBacklogsVsRegistrationsV" AS
 
 
 
-create view "BTStudentCreditsCompletionInfoV" as 
+create or replace view "BTStudentCreditsCompletionInfoV" as 
 Select cgp.id, std.*, fsc."FailedSubjectCount", "PassedCredits", "CGPA",
 		"Sem-I","Sem-II","Sem-III","Sem-IV", 
 		"Sem-V","Sem-VI","Sem-VII", "Sem-VIII", 
