@@ -86,6 +86,7 @@ class BTCourseStructure(models.Model):
     Creditable = models.IntegerField()
     Credits = models.IntegerField()
     count = models.IntegerField()
+    Rigid = models.BooleanField(default=True)
     history = HistoricalRecords()
 
     class Meta:
@@ -98,6 +99,7 @@ class BTCourseStructure(models.Model):
 class BTCourses(models.Model):
     SubCode = models.CharField(max_length=10)
     SubName = models.CharField(max_length=255)
+    Credits = models.IntegerField(default=0)
     OfferedBy = models.IntegerField()
     CourseStructure = models.ForeignKey('ADAUGDB.BTCourseStructure', on_delete=models.CASCADE)
     lectures = models.IntegerField()
