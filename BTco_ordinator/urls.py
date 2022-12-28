@@ -5,7 +5,7 @@ from ADEUGDB.views import not_promoted
 from BTco_ordinator.views import faculty_subject_assignment, not_registered_registrations, subjects, RollList,\
     regular_registrations, backlog_registrations, Dec_register_all, Dec_upload_file, \
     dropped_regular_regs, makeupReg, status, grades_threshold_event_wise, mda_courses_upload, mda_registrations_upload_file, \
-    template_download
+    template_download, check_registrations
 
 # create your urls here
 
@@ -53,6 +53,8 @@ urlpatterns = [
     path('BTSupBTRegistrationsFinalize',regular_registrations.registrations_finalize, name = 'BTSupBTRegistrationsFinalize'),
 
     path('BTGradeTemplateDownload', template_download.download_template, name='BTGradeTemplateDownload'),
+    
+    path('BTCheckRegistrations', check_registrations.check_registrations_finalize, name='BTCheckRegistrations'),
 
     # path('BTGradeChallengeUpdate', grade_challenge.grade_challenge, name='BTGradeChallengeUpdate'),
     # path('BTGradeChallengeStatus', grade_challenge.grade_challenge_status, name='BTGradeChallengeStatus'),

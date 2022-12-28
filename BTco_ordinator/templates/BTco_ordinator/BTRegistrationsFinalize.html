@@ -26,5 +26,59 @@ Registration status option would be helpful for verifying the uploaded list
           <button type="submit" value="submit" onclick="return confirm('Are you sure you want to finalize the registrations?')">Finalize</button> 
         </form>
     </div>
+    {% if excess_credits %}
+    <div class="row">
+      <strong>These students have registrations whose aggregate credits exceed the prescribed credits limit(Study:32, Study+Exam:34)</strong>
+      <table class="table table-hover table-muted table-striped">
+        <thead>
+          <tr>
+            <td style="border: 1px solid black;">S.No. </td>
+            <td style="border: 1px solid black;">RegNo </td>
+            <td style="border: 1px solid black;">RollNo </td>
+            <td style="border: 1px solid black;">Name </td>
+            <td style="border: 1px solid black;">Study Mode Credits </td>
+            <td style="border: 1px solid black;">Exam Mode Credits </td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stud in excess_credits %}
+          <tr>
+            <td style="border: 1px solid black;">{{forloop.counter}} </td>
+            <td style="border: 1px solid black;">{{stud.student.RegNo}} </td>
+            <td style="border: 1px solid black;">{{stud.student.RollNo}} </td>
+            <td style="border: 1px solid black;">{{stud.student.Name}} </td>
+            <td style="border: 1px solid black;">{{stud.student.study}} </td>
+            <td style="border: 1px solid black;">{{stud.student.exam}} </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    {% if insuff_credits %}
+    <div class="row">
+      <strong>These students have unequal number of registrations compared to their curriculum</strong>
+      <table class="table table-hover table-muted table-striped">
+        <thead>
+          <tr>
+            <td style="border: 1px solid black;">S.No. </td>
+            <td style="border: 1px solid black;">RegNo </td>
+            <td style="border: 1px solid black;">RollNo </td>
+            <td style="border: 1px solid black;">Name </td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stud in excess_credits %}
+          <tr>
+            <td style="border: 1px solid black;">{{forloop.counter}} </td>
+            <td style="border: 1px solid black;">{{stud.student.RegNo}} </td>
+            <td style="border: 1px solid black;">{{stud.student.RollNo}} </td>
+            <td style="border: 1px solid black;">{{stud.student.Name}} </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

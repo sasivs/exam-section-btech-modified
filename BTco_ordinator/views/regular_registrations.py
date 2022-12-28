@@ -1,13 +1,16 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BTco_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
-from ADAUGDB.models import BTRegistrationStatus
+from ADAUGDB.models import BTRegistrationStatus, BTCourseStructure
 from ADAUGDB.models import BTCycleCoordinator
-from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects, BTNotRegistered
+from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects, BTNotRegistered,\
+    BTDroppedRegularCourses
 from BThod.models import BTCoordinator
 from django.db.models import Q
 from django.db import transaction
 from ADAUGDB.user_access_test import registration_access
+from django.db.models import Sum
+
 
 @transaction.atomic
 @login_required(login_url="/login/")
@@ -91,8 +94,34 @@ def registrations_finalize(request):
         if(form.is_valid()):
             currentRegEvent = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
             currentRegEventId = currentRegEvent.id
-            regs = BTStudentRegistrations_Staging.objects.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC'])
             rolllist = BTRollLists.objects.filter(RegEventId_id=currentRegEventId)
+            execess_credits_students = []
+            insuff_credits_students = []
+            regs = BTStudentRegistrations_Staging.objects.filter(student__student__id__in=rolllist.values_list('student_id',flat=True), \
+                RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear,\
+                RegEventId__Dept=currentRegEvent.Dept)
+            curriculum = BTCourseStructure.objects.filter(BYear=currentRegEvent.BYear, BSem=currentRegEvent.BSem, Dept=currentRegEvent.Dept, Regulation=currentRegEvent.Regulation)
+            
+            for roll in rolllist:
+                study_credits = regs.filter(student__student=roll.student, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                exam_credits = regs.filter(student__student=roll.student, Mode=0).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                
+                if study_credits > 32 or (study_credits+exam_credits) > 34:
+                    roll.study = study_credits
+                    roll.exam = exam_credits
+                    execess_credits_students.append(roll)
+                if currentRegEvent.Mode == 'R':
+                    dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear, RegEventId__Dept=currentRegEvent.Dept, RegEventId__Regulation=currentRegEvent.Regulation, RegEventId__Mode='R')
+                    student_regs = regs.filter(student__student=roll.student)
+                    for cs in curriculum:
+                        cs_count = student_regs.filter(sub_id__course__CourseStructure_id=cs.id).count()
+                        dropped_cs_count = dropped_courses.filter(subject__course__CourseStructure_id=cs.id).count()
+                        if (dropped_cs_count+cs_count) != cs.count:
+                            insuff_credits_students.append(roll)
+                            break
+            if execess_credits_students or insuff_credits_students:
+                return render(request, 'BTco_ordinator/BTRegistrationsFinalize.html',{'form':form, 'excess_credits':execess_credits_students, 'insuff_credits':insuff_credits_students})
+            regs = regs.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC'])
             for reg in regs:
                 roll = rolllist.filter(student=reg.student.student).first()
                 if not BTStudentRegistrations.objects.filter(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
@@ -154,7 +183,7 @@ def regular_regs_script(kwargs):
             BTStudentRegistrations_Staging.objects.filter(~Q(student__student__RegNo__in=rolls.values_list('student__RegNo', flat=True)), RegEventId_id=event.id).delete()
             return msg
 
-def registrations_finalize(kwargs):
+def registrations_finalize_script(kwargs):
     if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
         return "Provide the required arguments!!!!"
     events = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'), BSem__in=kwargs.get('BSem'),\

@@ -1,0 +1,141 @@
+{% extends 'BTsuperintendent/registrationhome.html' %}
+{% block title %}Check Registrations{% endblock title %}
+
+{% load static %}
+
+{% block sub %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<div class="container">
+  {% if msg == 2 %}
+  <div class="row">
+    <p><strong>Registrations are done successfully</strong></p>
+  </div>
+  {% endif %} 
+    <div class="row">
+        <form action="" method="post" id="regs_finalize_form">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-sm-3">
+                 {{ form.regID }}
+            </div>
+            <div class="col-sm-3">
+                {{ form.excess_credits_RegNo }}
+            </div>
+            <div class="col-sm-3">
+              {{ form.insuff_credits_RegNo }}
+          </div>
+          </div>
+          <div class="container">
+            {% if form.student %}
+            <div class="row">
+              <table class="table table-hover table-muted table-striped">
+                <tr>
+                  <th>RegNo</th>
+                  <td>{{form.student.RegNo}}</td>
+                </tr>
+                <tr>
+                  <th>RollNo</th>
+                  <td>{{form.student.RollNo}}</td>
+                </tr>
+                <tr>
+                  <th>RollNo</th>
+                  <td>{{form.student.Name}}</td>
+                </tr>
+              </table>
+            </div>
+            {% endif %}
+            {% if msg == 1 %}
+            <div class="row">
+              <p><strong>Number of credits exceeded</strong></p>
+              <p><strong>Study mode({{ study }}) + Exam mode({{ exam }}) credits should be less than 34 while Study mode ({{ study }}) credits should be less than 32</strong></p>
+            </div>
+            {% endif %} 
+            {% if msg == 2 %}
+            <div class="row">
+              <p><strong>Please select mode of study for checked subjects</strong></p>
+            </div>
+            {% endif %} 
+            {% if form.myFields %}
+            <div class="row">
+              <table class="table table-hover table-muted table-striped">
+                  <thead>
+                      <tr>
+                          <td style="border: 1px solid black;">SubCode </td>
+                          <td style="border: 1px solid black;">SubName</td>
+                          <td style="border: 1px solid black;">Credits</td>
+                          <td style="border: 1px solid black;">Registration Event</td>
+                          <td style="border: 1px solid black;">Mode of Registration</td>
+                          <td style="border: 1px solid black;">Selection(Y/N)</td>
+                          <td style="border: 1px solid black;">Mode(Study/Exam)</td>
+                          <td style="border: 1px solid black;">Curriculum Count</td>
+                          <td style="border: 1px solid black;">Registered Courses Count</td>
+                          <td style="border: 1px solid black;">Delete(Y/N)</td>
+                      </tr>
+                  </thead>
+                  {% for field in form.myFields %}
+                      <tr>
+                          <td style="border: 1px solid black;">
+                              {{ field.0 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                              {{ field.1 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                              {{ field.2 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.7 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.5 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                              {{ field.3 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.4 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.9 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.10 }}
+                          </td>
+                          <td style="border: 1px solid black;">
+                            {{ field.11 }}
+                          </td>
+                      </tr>
+                  {% endfor %}
+              </table>
+            </div>
+            {% endif %}
+            <input type='submit' name="submit-form" value='Submit' class="text-center">
+          </div>
+        </form>
+    </div>
+</div>
+<script>
+  {% if (modes) %}
+  var modes = JSON.parse("{{modes|escapejs}}");
+  for (const [key, value] of Object.entries(modes)){
+    var radios = document.getElementsByName(key);
+    for (let i=0; i<radios.length; i++){
+      if (radios[i].value == value){
+        radios[i].checked = true;
+      }
+    }
+  }
+  {% endif %}
+  function checkFields(event){
+    if (event.id == 'id_excess_credits_RegNo' && event.value != ''){
+      document.getElementById('id_insuff_credits_RegNo').value = '';
+      document.getElementById('regs_finalize_form').submit();
+    } 
+    else if (event.id == 'id_insuff_credits_RegNo' && event.value != ''){
+      document.getElementById('id_excess_credits_RegNo').value = '';
+      document.getElementById('regs_finalize_form').submit();
+    }
+  }
+</script>
+{% endblock %}
