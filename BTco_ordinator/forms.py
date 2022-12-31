@@ -921,6 +921,8 @@ class TemplateDownloadForm(forms.Form):
             REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
             self.fields['regID'] = forms.CharField(label='Choose Registration Event', required=False, max_length=100, \
                 widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
+            self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
+                widget=forms.Select(choices=[('', 'Choose Template'), ('1', 'Regular'), ('2', 'Open Elective'), ('3', 'MDC')], attrs={'required':'True'}))
         elif current_user.group == 'Faculty':
             valid_subjects = BTFacultyAssignment.objects.filter(Faculty_id=current_user.Faculty_id, RegEventId__Status=1)
             SUBJECT_CHOICES = [('', 'Choose Subject')]
