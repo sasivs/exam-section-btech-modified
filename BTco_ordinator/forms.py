@@ -919,9 +919,17 @@ class TemplateDownloadForm(forms.Form):
             REGEVENT_CHOICES = [(event.RegEventId.id, event.RegEventId.__str__()) for event in valid_subjects]
             REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
             self.fields['regID'] = forms.CharField(label='Choose Registration Event', required=False, max_length=100, \
-                widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
+                widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True', 'onchange':'submit()'}))
+            OPTION_CHOICES = [('', 'Choose Template')]
             self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
-                widget=forms.Select(choices=[('', 'Choose Template'), ('1', 'Regular'), ('2', 'Open Elective'), ('3', 'MDC')], attrs={'required':'True'}))
+                widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))
+            if self.data.get('regID'):
+                OPTION_CHOICES.append(('1', 'Regular'))
+                student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID')).distinct('sub_id_id')
+                if student_regs.filter(course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
+                    OPTION_CHOICES.append(('2', 'Open Elective'))
+                if student_regs.filter(course__CourseStructure__Category__in=['MDC']).exists():
+                    OPTION_CHOICES.append(('3', 'MDC'))
         elif current_user.group == 'Faculty':
             valid_subjects = BTFacultyAssignment.objects.filter(Faculty_id=current_user.Faculty_id, RegEventId__Status=1)
             SUBJECT_CHOICES = [('', 'Choose Subject')]

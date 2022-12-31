@@ -19,31 +19,32 @@ def download_template(request):
         current_user.group = 'Faculty'
     if request.method == 'POST':
         form = TemplateDownloadForm(current_user, request.POST)
-        if form.is_valid():
-            if current_user.group == 'Co-ordinator':
-                event = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
-                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-                response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
-                if event.Mode == 'R':
-                    workbook = generate_template(event.AYear, event.ASem, event.BYear, event.BSem, event.Dept, event.Mode, event.Regulation, form.cleaned_data.get('option'), response)
+        if request.POST.get('submit-form'):
+            if form.is_valid():
+                if current_user.group == 'Co-ordinator':
+                    event = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
+                    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+                    response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
+                    if event.Mode == 'R':
+                        workbook = generate_template(event.AYear, event.ASem, event.BYear, event.BSem, event.Dept, event.Mode, event.Regulation, form.cleaned_data.get('option'), response)
+                        workbook.save(response)
+                    return response
+                elif current_user.group == 'Faculty':
+                    rom2int = {'I':1,'II':2,'III':3,'IV':4}
+                    regid = form.cleaned_data.get('regID').split(',')[0]
+                    subject = form.cleaned_data.get('regID').split(',')[1]
+                    strs = regid.split(':')
+                    ayear = int(strs[2])
+                    asem = int(strs[3])
+                    byear = rom2int[strs[0]]
+                    bsem = rom2int[strs[1]]
+                    regulation = float(strs[4])
+                    mode = strs[5]
+                    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+                    response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
+                    workbook = generate_template(ayear, asem, byear, bsem, mode, regulation, subject)
                     workbook.save(response)
-                return response
-            elif current_user.group == 'Faculty':
-                rom2int = {'I':1,'II':2,'III':3,'IV':4}
-                regid = form.cleaned_data.get('regID').split(',')[0]
-                subject = form.cleaned_data.get('regID').split(',')[1]
-                strs = regid.split(':')
-                ayear = int(strs[2])
-                asem = int(strs[3])
-                byear = rom2int[strs[0]]
-                bsem = rom2int[strs[1]]
-                regulation = float(strs[4])
-                mode = strs[5]
-                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-                response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
-                workbook = generate_template(ayear, asem, byear, bsem, mode, regulation, subject)
-                workbook.save(response)
-                return response
+                    return response
     else:
         form = TemplateDownloadForm(current_user)
     return render(request, 'BTco_ordinator/TemplateDownload.html', {'form':form})
