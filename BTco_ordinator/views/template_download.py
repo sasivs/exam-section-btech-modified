@@ -55,7 +55,6 @@ def download_template(request):
                     response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=filename)
                     if mode == 'R':
                         workbook = generate_template(ayear, asem, byear, bsem, mode, regulation, subject, depts, response)
-                        workbook.save(response)
                     return response
     else:
         form = TemplateDownloadForm(current_user)
