@@ -935,8 +935,8 @@ class TemplateDownloadForm(forms.Form):
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             subjects = {}
             for sub in valid_subjects:
-                if valid_subjects.filter(Subject__course__SubCode=sub.Subject.course.SubCode).distinct('RegEventId__AYear', 'RegEventId__ASem', 'RegEventId__BYear', 'RegEventId__BSem',\
-                     'RegEventId__Regulation', 'RegEventId__Mode').count() > 1:
+                if valid_subjects.filter(Subject__course__SubCode=sub.Subject.course.SubCode, RegEventId__AYear=sub.RegEventId.AYear, RegEventId__ASem=sub.RegEventId.ASem, RegEventId__BYear=sub.RegEventId.BYear, RegEventId__BSem=sub.RegEventId.BSem,\
+                     RegEventId__Regulation=sub.RegEventId.Regulation, RegEventId__Mode=sub.RegEventId.Mode).count() > 1:
                     if not subjects.get(sub.Subject.course.SubCode):
                         subjects[sub.Subject.course.SubCode] = set({sub.RegEventId.__open_str__()})
                     else:

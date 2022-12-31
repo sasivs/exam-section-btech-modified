@@ -42,7 +42,7 @@ def download_template(request):
                     mode = strs[5]
                     depts = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1, Subject__course__SubCode=subject,\
                         RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem, RegEventId__Regulation=regulation, RegEventId__Mode=mode).\
-                        values_list('Dept', flat=True)
+                        values_list('RegEventId__Dept', flat=True)
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
                     if mode == 'R':
