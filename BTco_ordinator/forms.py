@@ -930,6 +930,8 @@ class TemplateDownloadForm(forms.Form):
                     OPTION_CHOICES.append(('2', 'Open Elective'))
                 if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC']).exists():
                     OPTION_CHOICES.append(('3', 'MDC'))
+                self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
+                widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))
         elif current_user.group == 'Faculty':
             valid_subjects = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1)
             SUBJECT_CHOICES = [('', 'Choose Subject')]
