@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from ADAUGDB.user_access_test import template_download_access 
 from BThod.models import BTCoordinator, BTFaculty_user
-from BTco_ordinator.forms import TemplateDownloadForm
+from BTco_ordinator.forms import TemplateDownloadForm, BTFacultyAssignment
 from ADAUGDB.models import BTRegistrationStatus
 
 @login_required(login_url="/login/")
@@ -40,10 +40,14 @@ def download_template(request):
                     bsem = rom2int[strs[1]]
                     regulation = float(strs[4])
                     mode = strs[5]
+                    depts = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1, Subject__course__SubCode=subject,\
+                        RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem, RegEventId__Regulation=regulation, RegEventId__Mode=mode).\
+                        values_list('Dept', flat=True)
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
-                    workbook = generate_template(ayear, asem, byear, bsem, mode, regulation, subject)
-                    workbook.save(response)
+                    if mode == 'R':
+                        workbook = generate_template(ayear, asem, byear, bsem, mode, regulation, subject, depts, response)
+                        workbook.save(response)
                     return response
     else:
         form = TemplateDownloadForm(current_user)

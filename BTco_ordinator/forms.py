@@ -931,7 +931,7 @@ class TemplateDownloadForm(forms.Form):
                 if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC']).exists():
                     OPTION_CHOICES.append(('3', 'MDC'))
         elif current_user.group == 'Faculty':
-            valid_subjects = BTFacultyAssignment.objects.filter(Faculty_id=current_user.Faculty_id, RegEventId__Status=1)
+            valid_subjects = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1)
             SUBJECT_CHOICES = [('', 'Choose Subject')]
             subjects = {}
             for sub in valid_subjects:
@@ -941,7 +941,7 @@ class TemplateDownloadForm(forms.Form):
                         subjects[sub.Subject.course.SubCode] = set({sub.RegEventId.__open_str__()})
                     else:
                         subjects[sub.Subject.course.SubCode].add(sub.RegEventId.__open_str__())
-            SUBJECT_CHOICES += [(value+':'+key, value+','+key) for key, value in subjects.items()]
+            SUBJECT_CHOICES += [(value+':'+key, value+','+key) for key, values in subjects.items() for value in values]
             self.fields['regID'] = forms.CharField(label='Choose Subject', required=False, max_length=100, \
                 widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
         
