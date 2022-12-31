@@ -926,9 +926,9 @@ class TemplateDownloadForm(forms.Form):
             if self.data.get('regID'):
                 OPTION_CHOICES.append(('1', 'Regular'))
                 student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID')).distinct('sub_id_id')
-                if student_regs.filter(course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
+                if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
                     OPTION_CHOICES.append(('2', 'Open Elective'))
-                if student_regs.filter(course__CourseStructure__Category__in=['MDC']).exists():
+                if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC']).exists():
                     OPTION_CHOICES.append(('3', 'MDC'))
         elif current_user.group == 'Faculty':
             valid_subjects = BTFacultyAssignment.objects.filter(Faculty_id=current_user.Faculty_id, RegEventId__Status=1)
