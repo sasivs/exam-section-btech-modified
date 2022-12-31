@@ -915,7 +915,7 @@ class TemplateDownloadForm(forms.Form):
     def __init__(self, current_user, *args, **kwargs):
         super(TemplateDownloadForm, self).__init__(*args, **kwargs)
         if current_user.group == 'Co-ordinator':
-            valid_subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__course__OfferedBy=current_user.Dept).distinct('RegEventId')
+            valid_subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__course__OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear).distinct('RegEventId')
             REGEVENT_CHOICES = [(event.RegEventId.id, event.RegEventId.__str__()) for event in valid_subjects]
             REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
             self.fields['regID'] = forms.CharField(label='Choose Registration Event', required=False, max_length=100, \
