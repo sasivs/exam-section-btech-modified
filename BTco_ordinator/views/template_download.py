@@ -5,6 +5,7 @@ from ADAUGDB.user_access_test import template_download_access
 from BThod.models import BTCoordinator, BTFaculty_user
 from BTco_ordinator.forms import TemplateDownloadForm, BTFacultyAssignment
 from ADAUGDB.models import BTRegistrationStatus
+from ADAUGDB.constants import DEPARTMENTS, YEARS, SEMS, REGULATIONS
 
 @login_required(login_url="/login/")
 @user_passes_test(template_download_access)
@@ -23,8 +24,14 @@ def download_template(request):
             if form.is_valid():
                 if current_user.group == 'Co-ordinator':
                     event = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
+                    if int(form.cleaned_data.get('option')) == 1:
+                        filename = DEPARTMENTS[event.Dept-1]+'-'+YEARS[event.BYear]+'-Sem-'+SEMS[event.ASem]+'-'+REGULATIONS[event.Regulation]+'-'+event.Mode
+                    elif int(form.cleaned_data.get('option')) == 2:
+                        filename = DEPARTMENTS[event.Dept-1]+'-'+YEARS[event.BYear]+'-Sem-'+SEMS[event.ASem]+'-'+REGULATIONS[event.Regulation]+'-Open-'+event.Mode
+                    elif int(form.cleaned_data.get('option')) == 3:
+                        filename = DEPARTMENTS[event.Dept-1]+'-'+YEARS[event.BYear]+'-Sem-'+SEMS[event.ASem]+'-'+REGULATIONS[event.Regulation]+'-MDC-'+event.Mode
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-                    response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
+                    response['Content-Disposition'] = 'attachment; filename={regevent}.xlsx'.format(regevent=filename)
                     if event.Mode == 'R':
                         workbook = generate_template(event.AYear, event.ASem, event.BYear, event.BSem, event.Dept, event.Mode, event.Regulation, form.cleaned_data.get('option'), response)
                         workbook.save(response)
@@ -40,11 +47,12 @@ def download_template(request):
                     bsem = rom2int[strs[1]]
                     regulation = float(strs[4])
                     mode = strs[5]
+                    filename = subject + '-' + YEARS[byear] + '-Sem-' + SEMS[bsem] + '-' + REGULATIONS[regulation] + '-' + mode
                     depts = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1, Subject__course__SubCode=subject,\
                         RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem, RegEventId__Regulation=regulation, RegEventId__Mode=mode).\
                         values_list('RegEventId__Dept', flat=True)
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-                    response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
+                    response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=filename)
                     if mode == 'R':
                         workbook = generate_template(ayear, asem, byear, bsem, mode, regulation, subject, depts, response)
                         workbook.save(response)
