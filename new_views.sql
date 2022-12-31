@@ -1195,3 +1195,184 @@ on btsrg."sub_id"=bts."id")btsrgs
  join "BTRegistration_Status" btrs on btrs."id"=btsrgs."RegEventId";
 
 REFRESH MATERIALIZED VIEW public."BTStudentGradeDetailsMV" WITH DATA;
+
+
+create or replace view "BTRegistrationDetailsV" as 
+select sr."id",
+       rs."AYear",
+       rs."ASem",
+       rs."BYear",
+       rs."BSem",
+       rs."Dept",
+       rs."Regulation",
+       rs."Mode",
+       btc."SubCode",
+       sr."Mode" as "RMode",
+       bts."RegNo",
+       bts."RollNo",
+       bts."Name",
+       sr."sub_id",
+       sr."RegEventId",
+       btc."SubName",
+       btcs."Credits",
+       btcs."Category",
+       hi."HeldInMonth",
+       hi."HeldInYear"
+from "BTStudentRegistrations" sr join "BTSubjects" sub on sub."id"=sr."sub_id"
+join "BTRegistration_Status" rs on sr."RegEventId"=rs."id"
+join "BTCourses" btc on sub."course_id"=btc."id"
+join "BTCourseStructure" btcs on btc."CourseStructure_id"=btcs."id"
+join "BTRollLists" btr on sr."student_id"=btr."id"
+join "BTStudentInfo" bts on bts."id"=btr."student_id"
+join "BTHeldIn" hi on rs."AYear"=hi."AYear" and rs."ASem"=hi."ASem" and rs."BYear"=hi."BYear" and rs."BSem"=hi."BSem";
+
+create or replace view "BTStudentSubjectMarkDetailsV" as
+SELECT ms.id,
+    rs."AYear",
+    rs."ASem",
+    rs."BYear",
+    rs."BSem",
+    rs."Regulation",
+    rs."Dept",
+    rs.id AS "RegEventId",
+    rs."Mode",
+    sub.id AS "SubId",
+    btc."SubCode",
+    sr."Mode" AS "RMode",
+    md."Distribution",
+    md."DistributionNames",
+    btc."DistributionRatio",
+    bts."RegNo",
+    ms."Marks",
+    ms."TotalMarks",
+    ms."Registration_id"
+   FROM "BTMarks_Staging" ms
+     JOIN "BTStudentRegistrations" sr ON ms."Registration_id" = sr.id
+     JOIN "BTSubjects" sub ON sr.sub_id = sub.id
+     join "BTCourses" btc on sub."course_id" = btc."id"
+     JOIN "BTRegistration_Status" rs ON rs.id = sr."RegEventId"
+     JOIN "BTMarksDistribution" md ON btc."MarkDistribution_id" = md.id
+     join "BTRollLists" btr on btr."id"=sr."student_id"
+     join "BTStudentInfo" bts on bts."id"=btr."student_id";
+
+
+
+CREATE OR REPLACE VIEW public."BTStudentGradeDetailsV"
+ AS
+ SELECT row_number() OVER () AS id,
+    a."RegNo",
+    a."AYear",
+    a."ASem",
+    a."BYear",
+    a."BSem",
+    a."Mode",
+    a."Dept",
+    a."Regulation",
+    a."SubCode",
+    a."Grade"
+   FROM ( SELECT btsgrs."RegNo",
+            btsgrs."AYear",
+            btsgrs."ASem",
+            btsgrs."BYear",
+            btsgrs."BSem",
+            btsgrs."Mode",
+            btsgrs."Dept",
+            btsgrs."Regulation",
+            btc."SubCode",
+            btsgrs."Grade"
+           FROM ( SELECT btsgr."RegNo",
+                    btsgr.sub_id,
+                    btsgr."RegEventId",
+                    btsgr."Grade",
+                    btrs.id,
+                    btrs."AYear",
+                    btrs."ASem",
+                    btrs."BYear",
+                    btrs."BSem",
+                    btrs."Regulation",
+                    btrs."Dept",
+                    btrs."Mode",
+                    btrs."Status",
+                    btrs."RollListStatus",
+                    btrs."RollListFeeStatus",
+                    btrs."RegistrationStatus",
+                    btrs."MarksStatus",
+                    btrs."GradeStatus"
+                   FROM ( SELECT btst."RegNo",
+                            btsr.sub_id,
+                            btsr."RegEventId",
+                            btsg."Grade"
+                           FROM "BTStudentGrades_Staging" btsg
+                             JOIN "BTStudentRegistrations" btsr ON btsg."RegId" = btsr.id
+                             join "BTRollLists" btr on btr."id"=btsr."student_id"
+                             join "BTStudentInfo" btst on btst."id"=btr."student_id") btsgr
+                     JOIN "BTRegistration_Status" btrs ON btsgr."RegEventId" = btrs.id) btsgrs
+             JOIN "BTSubjects" bts ON bts.id = btsgrs.sub_id
+             join "BTCourses" btc on btc."id"=bts."course_id") a;
+
+CREATE OR REPLACE VIEW public."BTGradeThresholdDetailsV"
+ AS
+ SELECT row_number() OVER () AS id,
+    tv."AYear",
+    tv."ASem",
+    tv."BYear",
+    tv."BSem",
+    tv."Regulation",
+    tv."Mode",
+    tv."Dept",
+    tv."RegEventId",
+    tv."SubCode",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'EX'::text OR tv."Grade"::text = 'S'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G1",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'A'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G2",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'B'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G3",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'C'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G4",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'D'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G5",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'E'::text OR tv."Grade"::text = 'P'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G6",
+    max(
+        CASE
+            WHEN tv."Grade"::text = 'P'::text THEN tv."Threshold_Mark"
+            ELSE 0::double precision
+        END) AS "G7"
+   FROM ( SELECT gt."Threshold_Mark",
+            gp."Grade",
+            btc."SubCode",
+            rs."AYear",
+            rs."ASem",
+            rs."BYear",
+            rs."BSem",
+            rs."Regulation",
+            rs."Dept",
+            rs.id AS "RegEventId",
+            rs."Mode"
+           FROM "BTGradesThreshold" gt
+             JOIN "BTGradePoints" gp ON gt."Grade_id" = gp.id
+             JOIN "BTSubjects" sub ON gt."Subject_id" = sub.id
+             join "BTCourses" btc on btc."id" = sub."course_id"
+             JOIN "BTRegistration_Status" rs ON rs.id = gt."RegEventId_id") tv
+  GROUP BY tv."AYear", tv."ASem", tv."BYear", tv."BSem", tv."Regulation", tv."Dept", tv."Mode", tv."RegEventId", tv."SubCode";
+
+

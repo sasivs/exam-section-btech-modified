@@ -370,3 +370,27 @@ class BTNPRMarks(models.Model):
                 sub_total += int(mark)
             total = sub_total*int(ratio[index])
         return round(total/total_parts)
+
+class BTRegistrationDetails(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    Mode = models.CharField(max_length=1) 
+    SubCode = models.CharField(max_length=10)
+    RMode = models.IntegerField()
+    RegNo = models.IntegerField()
+    RollNo= models.IntegerField()
+    Name = models.CharField(max_length=255)
+    sub_id = models.IntegerField()
+    RegEventId = models.IntegerField()
+    SubName = models.CharField(max_length=100)
+    Credits = models.IntegerField()
+    Category= models.CharField(max_length=10)
+    HeldInMonth = models.CharField(max_length=10)
+    HeldInYear = models.IntegerField()
+    class Meta:
+        db_table = 'BTRegistrationDetailsV'
+        managed = False 
