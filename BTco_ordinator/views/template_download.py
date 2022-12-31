@@ -24,8 +24,9 @@ def download_template(request):
                 event = BTRegistrationStatus.objects.filter(id=form.cleaned_data.get('regID')).first()
                 response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                 response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=event.__str__())
-                workbook = generate_template(event.AYear, event.ASem, event.BYear, event.BSem, event.Dept, event.Mode, event.Regulation, form.cleaned_data.get('option'))
-                workbook.save(response)
+                if event.Mode == 'R':
+                    workbook = generate_template(event.AYear, event.ASem, event.BYear, event.BSem, event.Dept, event.Mode, event.Regulation, form.cleaned_data.get('option'))
+                    workbook.save(response)
                 return response
             elif current_user.group == 'Faculty':
                 rom2int = {'I':1,'II':2,'III':3,'IV':4}
