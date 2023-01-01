@@ -22,9 +22,8 @@ class AttendanceShoratgeUploadForm(forms.Form):
                         oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
                         oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]        
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
+        subject_Choices = [('','--Select Subject--')] + list(set(subject_Choices))
 
-        subject_Choices = list(set(subject_Choices))
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', max_length=100, widget=forms.Select(choices=subject_Choices))
         self.fields['file'] = forms.FileField(validators=[validate_file_extension])
 
@@ -118,8 +117,8 @@ class GradeThresholdStatusForm(forms.Form):
         #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
         #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         # subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0])),key[1]+', '+str(key[0])) for key,value in oe_subjects.items() ]
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
-        subject_Choices = list(set(subject_Choices))
+        subject_Choices = [('','--Select Subject--')] + list(set(subject_Choices))
+
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=100, widget=forms.Select(choices=subject_Choices))
 
 class MarksUploadForm(forms.Form):
@@ -137,8 +136,8 @@ class MarksUploadForm(forms.Form):
                     oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
                     oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
-        subject_Choices = list(set(subject_Choices))
+        subject_Choices = [('','--Select Subject--')] + list(set(subject_Choices))
+
         EXAM_CHOICES = [('', '----------')]
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=80, required=False, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()", 'required':'True'}))
         self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, required=False, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
@@ -158,8 +157,8 @@ class MarksStatusUpdatedForm(forms.Form):
             for sub in subjects:
                 subject_Choices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
                     str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
-        subject_Choices = list(set(subject_Choices))
+        subject_Choices = [('','--Select Subject--')] + list(set(subject_Choices))
+
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
 class MarksStatusForm(forms.Form):
@@ -182,7 +181,7 @@ class MarksStatusForm(forms.Form):
                         oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
                         oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]        
-        subject_Choices = [('','--Select Subject--')] + subject_Choices
+        subject_Choices = [('','--Select Subject--')] + list(set(subject_Choices))
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=80, widget=forms.Select(choices=subject_Choices))
 
 class MarksUpdateForm(forms.Form):
