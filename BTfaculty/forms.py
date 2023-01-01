@@ -6,16 +6,26 @@ from ADAUGDB.validators import validate_file_extension
 
 
 class AttendanceShoratgeUploadForm(forms.Form):
-    def __init__(self,Option=None , *args,**kwargs):
+    def __init__(self,subjects , *args,**kwargs):
         super(AttendanceShoratgeUploadForm, self).__init__(*args, **kwargs)
-        myChoices=[]
-        for sub in Option:
-            myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
-                str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+        subject_Choices=[]
+        oe_subjects = {}
+        if subjects:
+            for sub in subjects:
+                if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
+                    subject_Choices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
+                        str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+                else:
+                    if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())):
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
+                    else:
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][0].append(str(sub.RegEventId.id))
+                        oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
+        subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]        
+        subject_Choices = [('','--Select Subject--')] + subject_Choices
 
-        myChoices = [('','--Select Subject--')]+myChoices
-        self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
-            max_length=26, widget=forms.Select(choices=myChoices))
+        subject_Choices = list(set(subject_Choices))
+        self.fields['Subjects'] = forms.CharField(label='Choose Subject', max_length=100, widget=forms.Select(choices=subject_Choices))
         self.fields['file'] = forms.FileField(validators=[validate_file_extension])
 
 class AttendanceShoratgeStatusForm(forms.Form):
@@ -23,7 +33,7 @@ class AttendanceShoratgeStatusForm(forms.Form):
         super(AttendanceShoratgeStatusForm, self).__init__(*args, **kwargs)
         myChoices=[]
         for sub in Option:
-            myChoices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
+            myChoices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+','+\
                 str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
         myChoices = [('','--Select Subject--')]+myChoices
         self.fields['Subjects'] = forms.CharField(label='Choose Subject', \
@@ -100,7 +110,7 @@ class GradeThresholdStatusForm(forms.Form):
         # oe_subjects = {}
         for sub in subjects:
             # if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
-            subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
+            subject_Choices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode))]
         #     else:
         #         if not oe_subjects.get((sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())):
         #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
@@ -109,6 +119,7 @@ class GradeThresholdStatusForm(forms.Form):
         #             oe_subjects[(sub.Subject.course.SubCode, 'OE'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         # subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0])),key[1]+', '+str(key[0])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
+        subject_Choices = list(set(subject_Choices))
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=100, widget=forms.Select(choices=subject_Choices))
 
 class MarksUploadForm(forms.Form):
@@ -118,7 +129,7 @@ class MarksUploadForm(forms.Form):
         oe_subjects = {}
         for sub in subjects:
             if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
-                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
+                subject_Choices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
             else:
                 if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())):
                     oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())] = [[str(sub.RegEventId.id)], [str(sub.Subject.id)]]
@@ -127,6 +138,7 @@ class MarksUploadForm(forms.Form):
                     oe_subjects[(sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())][1].append(str(sub.Subject.id))
         subject_Choices+= [(','.join(value[1])+':'+('OE'+','.join(value[0]))+':'+str(key[1]),key[2]+', '+str(key[0])+', '+str(key[1])) for key,value in oe_subjects.items() ]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
+        subject_Choices = list(set(subject_Choices))
         EXAM_CHOICES = [('', '----------')]
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=80, required=False, widget=forms.Select(choices=subject_Choices, attrs={'onchange':"submit()", 'required':'True'}))
         self.fields['exam-type'] = forms.CharField(label='Select Exam Type', max_length=26, required=False, widget=forms.Select(choices=EXAM_CHOICES, attrs={'required':'True'}))
@@ -144,9 +156,10 @@ class MarksStatusUpdatedForm(forms.Form):
         subject_Choices=[]
         if subjects:
             for sub in subjects:
-                subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
+                subject_Choices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
                     str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
         subject_Choices = [('','--Select Subject--')] + subject_Choices
+        subject_Choices = list(set(subject_Choices))
         self.fields['subject'] = forms.CharField(label='Choose Subject', max_length=26, widget=forms.Select(choices=subject_Choices))
 
 class MarksStatusForm(forms.Form):
@@ -160,7 +173,7 @@ class MarksStatusForm(forms.Form):
         if subjects:
             for sub in subjects:
                 if sub.Subject.course.CourseStructure.Category not in ['OEC', 'OPC']:
-                    subject_Choices+= [(str(sub.Subject.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
+                    subject_Choices+= [(str(sub.Subject.course.id)+':'+str(sub.RegEventId.id)+':'+str(sub.Section),sub.RegEventId.__str__()+', '+\
                         str(sub.Subject.course.SubCode)+', '+str(sub.Section))]
                 else:
                     if not oe_subjects.get((sub.Subject.course.SubCode, sub.Section, 'OE'+':'+sub.RegEventId.__open_str__())):

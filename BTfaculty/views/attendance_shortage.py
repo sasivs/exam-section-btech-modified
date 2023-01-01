@@ -80,11 +80,11 @@ def attendance_shortage_status(request):
         section = request.POST['Subjects'].split(':')[2]
         msg = ''
         roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-        att_short = BTAttendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id_id=sub, Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__student__student__RegNo')
+        att_short = BTAttendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__course_id=sub, Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__student__student__RegNo')
         if request.POST.get('delete'):
             att_short.filter(id=request.POST.get('delete')).delete()
             roll_list = BTRollLists.objects.filter(RegEventId_id=regEvent, Section=section)
-            att_short = BTAttendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id_id=sub, Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__student__student__RegNo')
+            att_short = BTAttendance_Shortage.objects.filter(Registration__RegEventId=regEvent, Registration__sub_id__course_id=sub, Registration__student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True)).order_by('Registration__student__student__RegNo')
             msg = 'Attendance shortage record has been deleted successfully'
         return render(request, 'BTfaculty/AttendanceShortageStatus.html',{'form':form ,'att_short':att_short, 'msg':msg})
 

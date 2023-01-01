@@ -43,9 +43,9 @@ def grades_generate(request):
                 regEvent = BTRegistrationStatus.objects.get(id=regEvent[0])
             else:
                 regEvent = BTRegistrationStatus.objects.get(id=regEvent)
-                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=regEvent.id, Registration__sub_id_id=subject, \
+                marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=regEvent.id, Registration__sub_id__course_id=subject, \
                     Registration__student__Section=section).order_by('Registration__student__student__RegNo')
-                subject_obj = BTSubjects.objects.get(id=subject)
+                subject_obj = marks_objects.first().Registration.sub_id
             
             promote_thresholds = subject_obj.course.MarkDistribution.PromoteThreshold
             promote_thresholds = promote_thresholds.split(',')
@@ -175,7 +175,7 @@ def grades_status(request):
             # roll_list = BTRollLists.objects.filter(RegEventId=regEvent, Section=section)
             # student_registrations = BTStudentRegistrations.objects.filter(RegEventId_id=regEvent.id, sub_id_id=subject, \
             #     student__student__RegNo__in=roll_list.values_list('student__RegNo', flat=True))
-                grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__sub_id_id=subject, RegId__student__Section=section)
+                grades = BTStudentGrades_Staging.objects.filter(RegEventId=regEvent, RegId__sub_id__course_id=subject, RegId__student__Section=section)
                 grades = list(grades)
             for grade in grades:
                 grade.RegNo = grade.RegId.student.student.RegNo
@@ -217,7 +217,7 @@ def grades_hod_submission(request):
                 subject = [int(_) for _ in subject]
                 fac_assign_objs = subjects.filter(Subject_id__in=subject, RegEventId_id__in=regEvent, Section=section)
             else:
-               fac_assign_objs = subjects.filter(Subject_id=subject, RegEventId_id=regEvent, Section=section)
+               fac_assign_objs = subjects.filter(Subject__course_id=subject, RegEventId_id=regEvent, Section=section)
             for fac_assign_obj in fac_assign_objs:
                 fac_assign_obj.GradesStatus = 0
                 fac_assign_obj.save()

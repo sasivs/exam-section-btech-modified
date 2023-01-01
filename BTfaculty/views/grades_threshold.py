@@ -21,8 +21,12 @@ def grades_threshold(request):
     user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     faculty = BTFaculty_user.objects.filter(User=user, RevokeDate__isnull=True).first()
-    subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty).distinct('Subject','RegEventId_id')
+    subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__GradeStatus=1, Coordinator=faculty.Faculty)
+    distinct_subjects = subjects.distinct('Subject__course', 'RegEventId_id')
     oe_subjects = subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC']).distinct('Subject__course__SubCode')
+    for sub in distinct_subjects:
+        id_string = '?'.join(list(map(str, subjects.filter(Subject__course_id=sub.Subject.course.id, RegEventId_id=sub.RegEventId.id).values_list('id', flat=True)))) 
+        sub.id = id_string
     for sub in oe_subjects:
         id_string = '?'.join(list(map(str, subjects.filter(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'], Subject__course__SubCode=sub.Subject.course.SubCode).values_list('id', flat=True))))
         sub.id = id_string
@@ -30,7 +34,7 @@ def grades_threshold(request):
     subjects = subjects.exclude(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
     if not subjects and not oe_subjects:
         raise Http404('You are not allowed to add threshold marks')
-    return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': subjects, 'oe_subjects':oe_subjects})
+    return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': distinct_subjects, 'oe_subjects':oe_subjects})
 
 @transaction.atomic
 @login_required(login_url="/login/")
@@ -229,7 +233,7 @@ def grades_threshold_status(request):
         if form.is_valid():
             subject = request.POST['subject'].split(':')[0].split(',')[0]
             regEvent = request.POST['subject'].split(':')[1].split(',')[0]
-            thresholds = BTGradesThreshold.objects.filter(Subject_id=subject, RegEventId_id=regEvent)
+            thresholds = BTGradesThreshold.objects.filter(Subject__course_id=subject, RegEventId_id=regEvent)
             return render(request, 'BTfaculty/GradesThresholdStatus.html', {'form':form, 'thresholds':thresholds})
     else: 
         form = GradeThresholdStatusForm(subjects=subjects)
