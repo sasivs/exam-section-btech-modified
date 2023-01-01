@@ -72,7 +72,7 @@ def attendance_shortage_status(request):
         subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=coordinator.BYear, Subject__OfferedBy=coordinator.Dept, RegEventId__Status=1).order_by('Subject__course__SubCode','Section')
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1).order_by('Subject__course__SubCode','Section')
+        subjects = BTFacultyAssignment.objects.filter(RegEventId__BYear=1, Subject__course__OfferedBy=cycle_cord.Cycle, RegEventId__Status=1).order_by('Subject__course__SubCode','Section')
     if(request.method == 'POST'):
         form = AttendanceShoratgeStatusForm(subjects,request.POST)
         sub = request.POST['Subjects'].split(':')[0]
