@@ -362,7 +362,7 @@ class OpenElectiveRegistrationsForm(forms.Form):
         subjects = BTSubjects.objects.filter(RegEventId__Status=1, RegEventId__OERegistrationStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
 
         myChoices = [(event.RegEventId.__open_str__(), event.RegEventId.__open_str__()) for event in subjects.distinct('RegEventId')]
-        backlog_events = BTRegistrationStatus.objects.filter(BYear__in=subjects.values_list('RegEventId__BYear', flat=True), BSem__in=subjects.values_list('RegEventId__BSem', flat=True), \
+        backlog_events = BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, BYear__in=subjects.values_list('RegEventId__BYear', flat=True), BSem__in=subjects.values_list('RegEventId__BSem', flat=True), \
             Dept__in=subjects.values_list('RegEventId__Dept', flat=True), Regulation__in=subjects.values_list('RegEventId__Regulation', flat=True), Mode='B')
         mybacklogChoices = [(event.__open_str__(), event.__open_str__()) for event in backlog_events]
         myChoices += mybacklogChoices 
