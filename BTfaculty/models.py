@@ -128,3 +128,17 @@ class BTStudentGrades_Staging(models.Model):
             models.UniqueConstraint(fields=['RegId'], name='unique_BTStudentGrades_Staging_registration')
         ]
         managed = True
+
+class BTMarksStatistics(models.Model):
+    subject = models.ForeignKey('BTco_ordinator.BTSubjects', on_delete=models.CASCADE)
+    RegEventId = models.ForeignKey('ADAUGDB.BTRegistrationStatus', on_delete=models.CASCADE)
+    mean = models.FloatField()
+    std = models.FloatField()
+    maximum_marks = models.FloatField()
+    history = HistoricalRecords()
+    class Meta:
+        db_table = 'BTMarksStatistics'
+        constraints = [
+            models.UniqueConstraint(fields=['subject', 'RegEventId'], name='unique_BTMarksStatistics_subjects')
+        ]
+        managed = True

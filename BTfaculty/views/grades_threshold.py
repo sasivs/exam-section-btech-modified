@@ -1,19 +1,16 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from ADAUGDB.user_access_test import grades_threshold_access, grades_threshold_status_access
-from BTfaculty.models import BTGradesThreshold, BTMarks_Staging
+from BTfaculty.models import BTGradesThreshold, BTMarks_Staging, BTMarksStatistics
 from BThod.models import BTFaculty_user, BTCoordinator
-from BTco_ordinator.models import BTFacultyAssignment, BTSubjects
+from BTco_ordinator.models import BTFacultyAssignment
 from ADAUGDB.models import BTGradePoints, BTHOD, BTCycleCoordinator
 from BTfaculty.forms import GradeThresholdForm, GradeThresholdStatusForm
-from ADAUGDB.models import BTRegistrationStatus
 from json import dumps
 import statistics as stat
-from import_export.formats.base_formats import XLSX
 import pandas as pd
 from django.db import transaction
-from django.db.models import Q
 
 @login_required(login_url="/login/")
 @user_passes_test(grades_threshold_access)
@@ -83,10 +80,43 @@ def grades_threshold_assign(request, pk):
         maximum = 0
     if request.method == 'POST':
         form = GradeThresholdForm(subject_faculty, request.POST)
+        grades = grades.exclude(Grade='F')
+        grades_data = [grade.Grade for grade in grades]
+        no_of_students = {grade.Grade:0 for grade in grades}
+        passed_marks_objs = BTMarks_Staging.objects.none()
+        for index, grade in enumerate(grades):
+            if request.POST.get(str(grade.id)):
+                passed_marks_objs = passed_marks_objs.union(marks.filter(TotalMarks__gte=float(request.POST.get(str(grade.id)))))
+                no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=float(request.POST.get(str(grade.id)))))
+        passed_marks_list = passed_marks_objs.values_list('TotalMarks', flat=True)
+        if len(passed_marks_list)>1:
+            mean = round(stat.mean(passed_marks_list), 2)
+            stdev = round(stat.stdev(passed_marks_list), 2)
+            maximum = max(passed_marks_list)
+        elif len(passed_marks_list) == 1:
+            mean = passed_marks_list[0]
+            stdev = passed_marks_list[0]
+            maximum = passed_marks_list[0]
+        else:
+            mean = 0
+            stdev = 0
+            maximum = 0
+        for index in range(len(grades)-1, 0, -1):
+            no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
+        no_of_students = dumps(no_of_students)
         if request.POST.get('submit-form'):
             if form.is_valid():
                 for sub in subject_faculty:
                     prev_thresholds = BTGradesThreshold.objects.filter(Subject=sub.Subject, RegEventId=sub.RegEventId)
+                    marks_statistics_obj = BTMarksStatistics.objects.filter(subject=sub.Subject, RegEventId=sub.RegEventId).first()
+                    if marks_statistics_obj:
+                        marks_statistics_obj.mean = mean
+                        marks_statistics_obj.std = stdev
+                        marks_statistics_obj.maximum_marks = maximum
+                        marks_statistics_obj.save()
+                    else:
+                        marks_statistics_obj = BTMarksStatistics(subject=sub.Subject, RegEventId=sub.RegEventId, mean=mean, std=stdev, maximum_marks=maximum)
+                        marks_statistics_obj.save()
                     if prev_thresholds:
                     # if (form.cleaned_data.get('uniform_grading')=='1' and prev_thresholds.first().uniform_grading) or \
                     #     (form.cleaned_data.get('uniform_grading')=='0' and not prev_thresholds.first().uniform_grading):
@@ -145,30 +175,6 @@ def grades_threshold_assign(request, pk):
                 msg = 'Grades Threshold noted successfully'
                 return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject_faculty[0], 'msg':msg})
         else:
-            grades = grades.exclude(Grade='F')
-            grades_data = [grade.Grade for grade in grades]
-            no_of_students = {grade.Grade:0 for grade in grades}
-            passed_marks_objs = BTMarks_Staging.objects.none()
-            for index, grade in enumerate(grades):
-                if request.POST.get(str(grade.id)):
-                    passed_marks_objs = passed_marks_objs.union(marks.filter(TotalMarks__gte=float(request.POST.get(str(grade.id)))))
-                    no_of_students[grades_data[index]] = len(list(mark for mark in marks_list if mark>=float(request.POST.get(str(grade.id)))))
-            passed_marks_list = passed_marks_objs.values_list('TotalMarks', flat=True)
-            if len(passed_marks_list)>1:
-                mean = round(stat.mean(passed_marks_list), 2)
-                stdev = round(stat.stdev(passed_marks_list), 2)
-                maximum = max(passed_marks_list)
-            elif len(passed_marks_list) == 1:
-                mean = passed_marks_list[0]
-                stdev = passed_marks_list[0]
-                maximum = passed_marks_list[0]
-            else:
-                mean = 0
-                stdev = 0
-                maximum = 0
-            for index in range(len(grades)-1, 0, -1):
-                no_of_students[grades_data[index]] = no_of_students[grades_data[index]] - no_of_students[grades_data[index-1]]
-            no_of_students = dumps(no_of_students)
             return render(request, 'BTfaculty/GradesThresholdAssign.html', {'subject':subject_faculty[0], 'form':form, 'students':no_of_students, 'mean':mean, 'stdev':stdev, 'max':maximum})
 
 
