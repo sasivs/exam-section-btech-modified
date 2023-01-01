@@ -32,8 +32,8 @@ def grades_threshold(request):
         sub.id = id_string
         sub.RegEventId_open = sub.RegEventId.__open_str__()
     subjects = subjects.exclude(Subject__course__CourseStructure__Category__in=['OEC', 'OPC'])
-    if not subjects and not oe_subjects:
-        raise Http404('You are not allowed to add threshold marks')
+    # if not distinct_subjects and not oe_subjects:
+    #     raise Http404('You are not allowed to add threshold marks')
     return render(request, 'BTfaculty/GradesThreshold.html', {'subjects': distinct_subjects, 'oe_subjects':oe_subjects})
 
 @transaction.atomic
