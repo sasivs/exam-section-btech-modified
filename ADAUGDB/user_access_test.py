@@ -72,7 +72,7 @@ def registration_access(user):
 
 def template_download_access(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Co-ordinator' in groups:
+    if 'Co-ordinator' in groups or 'Faculty' in groups:
         return True
     return False
 
