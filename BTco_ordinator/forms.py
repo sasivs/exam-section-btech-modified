@@ -1113,7 +1113,7 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                         for reg in cs_registrations:
                             self.fields['Check'+str(reg.sub_id_id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':'True'}))
                             self.fields['RadioMode' + str(reg.sub_id_id)] = forms.ChoiceField(required=False, widget=forms.RadioSelect(attrs={'checked': 'True'}), choices=[('1', 'Study Mode')])
-                            self.fields['Delete'+str(reg.sub_id.id)] = forms.BoolenField(required=False, widget=forms.CheckboxInput(attrs={'checked':'False'}))
+                            self.fields['Delete'+str(reg.sub_id.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':'False'}))
                             self.checkFields.append(self['Check' + str(reg.sub_id_id)])
                             self.radioFields.append(self['RadioMode' + str(reg.sub_id_id)])
                             self.deleteFields.append(self['Delete'+str(reg.sub_id.id)])
@@ -1123,7 +1123,7 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                         for reg in dropped_cs_registrations:
                             self.fields['Check'+str(reg.subject.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':'False'}))
                             self.fields['RadioMode' + str(reg.subject.id)] = forms.ChoiceField(required=False, widget=forms.RadioSelect(attrs={'checked': 'False', 'disabled':'True'}), choices=[('1', 'Study Mode')])
-                            self.fields['Delete'+str(reg.subject.id)] = forms.BoolenField(required=False, widget=forms.CheckboxInput(attrs={'checked':'False'}))
+                            self.fields['Delete'+str(reg.subject.id)] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'checked':'False'}))
                             self.checkFields.append(self['Check' + str(reg.subject.id)])
                             self.radioFields.append(self['RadioMode' + str(reg.subject.id)])
                             self.deleteFields.append(self['Delete'+str(reg.subject.id)])
