@@ -116,7 +116,7 @@
     </div>
 </div>
 <script>
-  {% if (modes) %}
+  {% if modes %}
   var modes = JSON.parse("{{modes|escapejs}}");
   for (const [key, value] of Object.entries(modes)){
     var radios = document.getElementsByName(key);
