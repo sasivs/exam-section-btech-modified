@@ -182,7 +182,7 @@ def subject_finalize(request):
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
-        backlog_regIDs = BTSubjects_Staging.objects.filter(RegEventId__Status=1, RegEventId__RegistrationsStatus=1, RegEventId__BYear=coordinator.BYear, RegEventId__Dept=coordinator.Dept, RegEventId__Mode='B')
+        backlog_regIDs = BTSubjects_Staging.objects.filter(RegEventId__Status=1, RegEventId__RegistrationStatus=1, RegEventId__BYear=coordinator.BYear, RegEventId__Dept=coordinator.Dept, RegEventId__Mode='B')
         regIDs |= BTRegistrationStatus.objects.filter(id__in=backlog_regIDs.values_list('RegEventId_id', flat=True))
     elif 'Associate-Dean-Academics' in groups:
         subjects = BTSubjects_Staging.objects.filter(RegEventId__Status=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
