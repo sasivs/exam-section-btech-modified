@@ -562,7 +562,7 @@ class MakeupRegistrationsForm(forms.Form):
                 self.myFields = []
                 self.checkFields = []
                 self.radioFields = []
-                roll = BTRollLists_Staging.objects.filter(id=self.data.get('RegNo')).first()
+                roll = studentMakeupRolls.filter(id=self.data.get('RegNo')).first()
                 studentMakeups = BTStudentMakeups.objects.filter(RegNo=roll.student.RegNo, BYear=event.BYear, BSem=event.BSem)
                 already_registered = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=event.id)
                 for mk in studentMakeups:
