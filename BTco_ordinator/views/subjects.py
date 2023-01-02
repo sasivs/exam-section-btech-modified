@@ -298,7 +298,7 @@ def dept_elective_subject_upload(request):
             form = SubjectsUploadForm(regIDs, request.POST)
             if form.is_valid():
                 event = BTRegistrationStatus.objects.get(id=form.cleaned_data.get('regID'))
-                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['OEC', 'OPC'])
+                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['DEC'])
                 courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
                 excessCourses = []
                 slackCourses = []
