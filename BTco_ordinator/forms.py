@@ -564,9 +564,9 @@ class MakeupRegistrationsForm(forms.Form):
                 self.radioFields = []
                 roll = studentMakeupRolls.filter(id=self.data.get('RegNo')).first()
                 studentMakeups = BTStudentMakeups.objects.filter(RegNo=roll.student.RegNo, BYear=event.BYear, BSem=event.BSem)
-                already_registered = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=event.id)
+                already_registered = BTStudentRegistrations_Staging.objects.filter(RegEventId_id=event.id, student__student__RegNo=roll.student.RegNo)
                 for mk in studentMakeups:
-                    if already_registered.filter(student=roll, sub_id_id=mk.sub_id):
+                    if already_registered.filter(sub_id_id=mk.sub_id):
                         self.fields['Check' + str(mk.sub_id)] = forms.BooleanField(required=False, \
                         widget=forms.CheckboxInput(attrs={'checked':True}))
                     else:
