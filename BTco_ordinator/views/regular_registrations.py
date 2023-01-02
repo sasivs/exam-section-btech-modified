@@ -121,7 +121,7 @@ def registrations_finalize(request):
                             break
             if execess_credits_students or insuff_credits_students:
                 return render(request, 'BTco_ordinator/BTRegistrationsFinalize.html',{'form':form, 'excess_credits':execess_credits_students, 'insuff_credits':insuff_credits_students})
-            regs = regs.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC'])
+            regs = regs.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC'])
             for reg in regs:
                 roll = rolllist.filter(student=reg.student.student).first()
                 if not BTStudentRegistrations.objects.filter(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
