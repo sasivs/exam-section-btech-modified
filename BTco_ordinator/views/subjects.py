@@ -58,7 +58,7 @@ def subject_upload(request):
                 return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses, 'msg':msg} )
         elif request.POST.get('name') == 'SubjectsSelectForm':
             event = BTRegistrationStatus.objects.get(id=request.POST.get('event'))
-            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept)
+            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).exclude(Category__in=['OEC', 'OPC'])
             courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
             excessCourses = []
             slackCourses = []
