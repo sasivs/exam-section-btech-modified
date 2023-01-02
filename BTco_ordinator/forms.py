@@ -551,7 +551,7 @@ class MakeupRegistrationsForm(forms.Form):
         self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs,\
             attrs={'onchange':"submit();"}))
         if self.data.get('RegEvent'):
-            event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent'))
+            event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent')).first()
             studentMakeupRolls = BTRollLists.objects.filter(RegEventId_id=event.id).values_list('student__RegNo', flat=True)
             studentMakeupRolls.sort()
             studentMakeupRolls = [(row, row) for row in studentMakeupRolls]
