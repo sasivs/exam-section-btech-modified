@@ -111,16 +111,16 @@ def subject_upload_status(request):
     groups = user.groups.all().values_list('name', flat=True)
     regIDs = None
     if 'Superintendent' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode__in=['R','B'])
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode_in=['R','B'])
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=co_ordinator.BYear, Dept=co_ordinator.Dept, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=co_ordinator.BYear, Dept=co_ordinator.Dept, Mode_in=['R','B'])
     elif 'Cycle-Co-ordinator' in groups:
         co_ordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode_in=['R','B'])
     if regIDs:
         regIDs = [(row.id, row.__str__()) for row in regIDs]
     if(request.method=='POST'):
@@ -143,10 +143,10 @@ def subject_delete(request):
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
         coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode_in=['R','B'])
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode_in=['R','B'])
     if(request.method=='POST'):
         form = SubjectDeletionForm(regIDs, request.POST)
         if('regID' in request.POST.keys()):
@@ -214,7 +214,7 @@ def open_subject_upload(request):
         course_structure_obj = BTCourseStructure.objects.filter(Category__in=['OEC', 'OPC'])
         regIDs = BTRegistrationStatus.objects.none()
         for course_struc in course_structure_obj:
-            regIDs |= BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode='R', Regulation=course_struc.Regulation, \
+            regIDs |= BTRegistrationStatus.objects.filter(Status=1, OERegistrationStatus=1, Mode__in=['R','B'], Regulation=course_struc.Regulation, \
                 BYear=course_struc.BYear, BSem=course_struc.BSem,Dept=course_struc.Dept)
     if regIDs:
         regIDs = [(row.id, row.__str__()) for row in regIDs]

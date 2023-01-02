@@ -386,7 +386,7 @@ class OpenElectiveRegistrationsForm(forms.Form):
             mode = strs[5]
 
             subjects = subjects.filter(RegEventId__AYear=ayear,RegEventId__ASem=asem,\
-            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode='R',\
+            RegEventId__BYear=byear,RegEventId__BSem=asem,RegEventId__Regulation=regulation,RegEventId__Mode=mode,\
                 RegEventId__Status=1, RegEventId__OERollListStatus=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
             oe_subjects = {}
             for sub in subjects.distinct('course__SubCode'):

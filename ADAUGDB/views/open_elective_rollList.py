@@ -43,7 +43,7 @@ def open_elective_rollList(request):
                 for i in range(len(dataset)):
                     row = dataset[i]
                     rolls = BTRollLists_Staging.objects.filter(student__RegNo=row[0],RegEventId__AYear=ayear,RegEventId__ASem=asem,RegEventId__BYear=byear,RegEventId__BSem=bsem,RegEventId__Regulation=regulation,RegEventId__Mode=mode).first()
-                    subject = subjects.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem,RegEventId__Regulation=regulation, RegEventId__Mode='R', RegEventId__Dept=rolls.RegEventId.Dept).first()
+                    subject = subjects.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem,RegEventId__Regulation=regulation, RegEventId__Mode=mode, RegEventId__Dept=rolls.RegEventId.Dept).first()
                     newRow = (rolls.id,rolls.RegEventId.id,subject.id,row[1])
                     newDataset.append(newRow)
                 oerolllist_resourse = BTOpenElectiveRollListsResource()
