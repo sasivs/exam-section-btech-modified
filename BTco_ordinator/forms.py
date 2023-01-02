@@ -556,7 +556,7 @@ class MakeupRegistrationsForm(forms.Form):
 
             ROLL_CHOICES = [(row.student.RegNo, row.student.RegNo) for row in studentMakeupRolls]
             ROLL_CHOICES = [('','--Select Reg Number--')] + ROLL_CHOICES
-            self.fields['RegNo'] = forms.CharField(label='RegNo/RollNo', widget = forms.Select(choices=studentMakeupRolls,\
+            self.fields['RegNo'] = forms.CharField(label='RegNo/RollNo', widget = forms.Select(choices=ROLL_CHOICES,\
                  attrs={'onchange':'submit();'}))  
             if self.data.get('RegNo'):
                 self.myFields = []
