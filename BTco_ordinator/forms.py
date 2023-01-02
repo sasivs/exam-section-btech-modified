@@ -884,7 +884,7 @@ class MDACoursesUploadForm(forms.Form):
         REGEVENT_CHOICES = [(event.id, event.__str__()) for event in regIds]
         REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False, max_length=26, widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
-        self.fields['file'] = forms.FileField(validators=validate_file_extension)
+        self.fields['file'] = forms.FileField(validators=[validate_file_extension])
 
 class MDARegistrationsForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):
