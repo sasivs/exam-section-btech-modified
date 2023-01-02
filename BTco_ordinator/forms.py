@@ -915,7 +915,7 @@ class TemplateDownloadForm(forms.Form):
     def __init__(self, current_user, *args, **kwargs):
         super(TemplateDownloadForm, self).__init__(*args, **kwargs)
         if current_user.group == 'Co-ordinator':
-            valid_subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, Subject__course__OfferedBy=current_user.Dept, RegEventId__BYear=current_user.BYear).distinct('RegEventId')
+            valid_subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__Dept=current_user.Dept, RegEventId__BYear=current_user.BYear).distinct('RegEventId')
             REGEVENT_CHOICES = [(event.RegEventId.id, event.RegEventId.__str__()) for event in valid_subjects]
             REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
             self.fields['regID'] = forms.CharField(label='Choose Registration Event', required=False, max_length=100, \
@@ -924,7 +924,8 @@ class TemplateDownloadForm(forms.Form):
             self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
                 widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))
             if self.data.get('regID'):
-                OPTION_CHOICES.append(('1', 'Regular'))
+                if valid_subjects.filter(RegEventId_id=self.data.get('regID')).first().RegEventId.Dept == current_user.Dept: 
+                    OPTION_CHOICES.append(('1', 'Regular'))
                 student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID')).distinct('sub_id_id')
                 if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
                     OPTION_CHOICES.append(('2', 'Open Elective'))
@@ -943,7 +944,10 @@ class TemplateDownloadForm(forms.Form):
                         subjects[sub.Subject.course.SubCode] = set({sub.RegEventId.__open_str__()})
                     else:
                         subjects[sub.Subject.course.SubCode].add(sub.RegEventId.__open_str__())
-            SUBJECT_CHOICES += [(value+':'+key, value+','+key) for key, values in subjects.items() for value in values]
+                elif sub.RegEventId.Dept != current_user.Faculty.Dept:
+                    SUBJECT_CHOICES += [(str(sub.RegEventId.id)+','+sub.Subject.course.SubCode, sub.RegEventId.__str__()+','+sub.Subject.course.SubCode)]
+
+            SUBJECT_CHOICES += [('SC:'+value+':'+key, value+','+key) for key, values in subjects.items() for value in values]
             self.fields['regID'] = forms.CharField(label='Choose Subject', required=False, max_length=100, \
                 widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
         

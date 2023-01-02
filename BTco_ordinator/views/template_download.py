@@ -40,17 +40,30 @@ def download_template(request):
                     rom2int = {'I':1,'II':2,'III':3,'IV':4}
                     regid = form.cleaned_data.get('regID').split(',')[0]
                     subject = form.cleaned_data.get('regID').split(',')[1]
-                    strs = regid.split(':')
-                    ayear = int(strs[2])
-                    asem = int(strs[3])
-                    byear = rom2int[strs[0]]
-                    bsem = rom2int[strs[1]]
-                    regulation = float(strs[4])
-                    mode = strs[5]
-                    filename = subject + '-' + YEARS[byear] + '-Sem-' + SEMS[bsem] + '-' + REGULATIONS[regulation] + '-' + mode
-                    depts = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1, Subject__course__SubCode=subject,\
-                        RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem, RegEventId__Regulation=regulation, RegEventId__Mode=mode).\
-                        values_list('RegEventId__Dept', flat=True)
+                    if regid.startswith('SC'):
+                        strs = regid.split(':')
+                        ayear = int(strs[2])
+                        asem = int(strs[3])
+                        byear = rom2int[strs[0]]
+                        bsem = rom2int[strs[1]]
+                        regulation = float(strs[4])
+                        mode = strs[5]
+                        filename = subject + '-' + YEARS[byear] + '-Sem-' + SEMS[bsem] + '-' + REGULATIONS[regulation] + '-' + mode
+                        depts = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1, Subject__course__SubCode=subject,\
+                            RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=bsem, RegEventId__Regulation=regulation, RegEventId__Mode=mode).\
+                            values_list('RegEventId__Dept', flat=True)
+                    else:
+                        depts = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1, Subject__course__SubCode=subject,\
+                            RegEventId_id=regid)
+                        event_obj = depts.first().RegEventId
+                        filename = subject + '-' + DEPARTMENTS[event_obj.Dept-1] + '-' + YEARS[event_obj.BYear] + '-Sem-' + SEMS[event_obj.BSem] + '-' + REGULATIONS[event_obj.Regulation] + '-' + event_obj.Mode
+                        depts = depts.values_list('RegEventId__Dept', flat=True)
+                        mode = event_obj.Mode
+                        ayear = event_obj.AYear
+                        byear = event_obj.BYear
+                        bsem = event_obj.BSem
+                        asem = event_obj.ASem
+                        regulation = event_obj.Regulation
                     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
                     response['Content-Disposition'] = 'attachment; filename=Template({regevent}).xlsx'.format(regevent=filename)
                     if mode == 'R':
