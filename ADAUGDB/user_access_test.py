@@ -294,3 +294,9 @@ def regulation_change_status_access(user):
         or 'HOD' in groups or 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups:
         return True
     return False
+
+def dept_elective_subject_upload_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Co-ordinator' in groups:
+        return True
+    return False

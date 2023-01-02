@@ -19,6 +19,8 @@ urlpatterns = [
     path('BTSupBTSubjectFinalize', subjects.subject_finalize, name = 'BTSupBTSubjectFinalize'),
     path('BTDownloadSampleSubjectSheet', subjects.download_sample_subject_sheet, name='BTDownloadSampleSubjectSheet'),
 
+    path('BTBacklogDECSubjectUpload', subjects.dept_elective_subject_upload,name='BTBacklogDECSubjectUpload'),
+    
     path('BTSupBTOpenSubjectUpload', subjects.open_subject_upload,name='BTSupBTOpenSubjectUpload'),
     path('BTSupBTOpenSubjectFinalize', subjects.subject_finalize,name='BTSupBTOpenSubjectFinalize'),
 

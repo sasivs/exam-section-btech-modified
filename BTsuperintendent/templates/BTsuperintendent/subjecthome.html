@@ -81,6 +81,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTMDASubjectFinalize' %}">Finalize MDA Subjects</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTBacklogDECSubjectUpload' %}">Backlog DEC Subjects Upload</a>
+                </li>
                 {% elif user|BThas_group:"Cycle-Co-ordinator" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTSupBTSubjectUpload' %}">Subjects Upload</a>

@@ -8,7 +8,7 @@ from BTco_ordinator.models import BTSubjects_Staging, BTSubjects
 from ADAUGDB.models import BTRegistrationStatus
 from ADAUGDB.models import BTHOD, BTMarksDistribution, BTCycleCoordinator, BTCourses, BTCourseStructure
 from BThod.models import BTCoordinator
-from ADAUGDB.user_access_test import subject_access, subject_home_access, is_Associate_Dean_Academics
+from ADAUGDB.user_access_test import subject_access, subject_home_access, is_Associate_Dean_Academics, dept_elective_subject_upload_access
 from django.db import transaction
 
 @transaction.atomic
@@ -182,6 +182,8 @@ def subject_finalize(request):
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R')
+        backlog_regIDs = BTSubjects_Staging.objects.filter(RegEventId__Status=1, RegEventId__RegistrationsStatus=1, RegEventId__BYear=coordinator.BYear, RegEventId__Dept=coordinator.Dept, RegEventId__Mode='B')
+        regIDs |= BTRegistrationStatus.objects.filter(id__in=backlog_regIDs.values_list('RegEventId_id', flat=True))
     elif 'Associate-Dean-Academics' in groups:
         subjects = BTSubjects_Staging.objects.filter(RegEventId__Status=1, course__CourseStructure__Category__in=['OEC', 'OPC'])
         regIDs = BTRegistrationStatus.objects.filter(id__in=subjects.values_list('RegEventId_id', flat=True))
@@ -228,6 +230,79 @@ def open_subject_upload(request):
                 excessCourses = []
                 slackCourses = []
                 BTSubjects_Staging.objects.filter(RegEventId_id=event.id, course__CourseStructure__Category__in=['OEC', 'OPC']).delete()
+                for c_str in course_structure:
+                    related_courses = courses.filter(CourseStructure_id=c_str.id)
+                    if not related_courses or len(related_courses) < c_str.count:
+                        slackCourses.append((c_str, related_courses))
+                    elif len(related_courses) > c_str.count:
+                        excessCourses.append((c_str, related_courses))
+                    elif len(related_courses) == c_str.count:
+                        for course in related_courses:
+                            subject_row = BTSubjects_Staging(RegEventId_id=event.id, course_id=course.id)
+                            subject_row.save()
+                if excessCourses:
+                    excessCoursesDict = {c_str.id:[c_str.count, c_str.Category] for c_str, _ in excessCourses}
+                    form = SubjectsSelectForm(excessCourses, event)
+                    from json import dumps
+                    return render(request, 'BTco_ordinator/BTSubjectsUpload.html',{'form':form, 'excess':dumps(excessCoursesDict)})
+                msg=''
+                if not slackCourses:
+                    msg = 'Subjects uploaded successfully.'
+                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses, 'msg':msg})
+        elif request.POST.get('name') == 'SubjectsSelectForm':
+            event = BTRegistrationStatus.objects.get(id=request.POST.get('event'))
+            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept)
+            courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
+            excessCourses = []
+            slackCourses = []
+            for c_str in course_structure:
+                related_courses = courses.filter(CourseStructure_id=c_str.id)
+                if len(related_courses) > c_str.count:
+                        excessCourses.append((c_str, related_courses))
+                elif len(related_courses) < c_str.count:
+                    slackCourses.append((c_str, related_courses))
+            form = SubjectsSelectForm(excessCourses, event, request.POST)
+            if form.is_valid():
+                for course_tup in excessCourses:
+                    for course in course_tup[1]:
+                        if form.cleaned_data.get('Check'+str(course.id)):
+                            subject_row = BTSubjects_Staging(RegEventId_id=event.id, course_id=course.id)
+                            subject_row.save()
+                msg = ''
+                if not slackCourses:
+                    msg = 'Subjects uploaded successfully.'
+                return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'slackCourses':slackCourses, 'msg':msg})
+    else:
+        form = SubjectsUploadForm(Options=regIDs)
+    return (render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'msg':msg}))
+
+@transaction.atomic
+@login_required(login_url="/login/")
+@user_passes_test(dept_elective_subject_upload_access)
+def dept_elective_subject_upload(request):
+    user = request.user
+    groups = user.groups.all().values_list('name', flat=True)
+    regIDs = []
+    msg = ''
+    if 'Co-ordinator' in groups:
+        coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
+        course_structures = BTCourseStructure.objects.filter(BYear=coordinator.BYear, Dept=coordinator.Dept, Category='DEC')
+        if course_structures:
+            regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, BSem__in=course_structures.distinct('BSem').values_list('BSem', flat=True), Mode='B')
+    if regIDs:
+        regIDs = [(row.id, row.__str__()) for row in regIDs]
+    else:
+        regIDs = []
+    if(request.method=='POST'):
+        if request.POST.get('name') == 'SubjectsUploadForm':
+            form = SubjectsUploadForm(regIDs, request.POST)
+            if form.is_valid():
+                event = BTRegistrationStatus.objects.get(id=form.cleaned_data.get('regID'))
+                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['OEC', 'OPC'])
+                courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
+                excessCourses = []
+                slackCourses = []
+                BTSubjects_Staging.objects.filter(RegEventId_id=event.id, course__CourseStructure__Category__in=['DEC']).delete()
                 for c_str in course_structure:
                     related_courses = courses.filter(CourseStructure_id=c_str.id)
                     if not related_courses or len(related_courses) < c_str.count:
