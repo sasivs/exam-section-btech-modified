@@ -900,12 +900,12 @@ class MDARegistrationsForm(forms.Form):
         if self.data.get('regID'):
             event = regIDs.filter(id=self.data.get('regID')).first()
             if event.Mode == 'R':
-                subjects = BTSubjects.objects.filter(RegEventId=event, course__CourseStructure__Category__in=['MDA'])
+                subjects = BTSubjects.objects.filter(RegEventId=event, course__CourseStructure__Category__in=['MDC', 'MOE'])
             elif event.Mode == 'B':
-                subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['MDA'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                subjects = BTSubjects.objects.filter(course__CourseStructure__Category__in=['MDC', 'MOE'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
                     RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
             elif event.Mode == 'D':
-                subjects = BTSubjects.objects.filter(subject__course__CourseStructure__Category__in=['MDA'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
+                subjects = BTSubjects.objects.filter(subject__course__CourseStructure__Category__in=['MDC', 'MOE'], RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
                     RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
             subjects = [(sub.id,str(sub.course.SubCode)+" "+str(sub.course.SubName)) for sub in subjects]
             SUBJECT_CHOICES += subjects
@@ -929,7 +929,7 @@ class TemplateDownloadForm(forms.Form):
                 student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID')).distinct('sub_id_id')
                 if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
                     OPTION_CHOICES.append(('2', 'Open Elective'))
-                if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC']).exists():
+                if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC', 'MOE']).exists():
                     OPTION_CHOICES.append(('3', 'MDC'))
                 self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
                 widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))

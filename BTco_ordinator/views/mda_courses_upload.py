@@ -19,12 +19,12 @@ def add_mda_courses(request):
     regIDs = []
     if 'Cycle-Co-ordinator' in groups:
         coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDA'], BYear=1, Dept=coordinator.Cycle) 
+        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDC', 'MOE'], BYear=1, Dept=coordinator.Cycle) 
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R').\
             filter(Dept__in=valid_course_structures.values_list('Dept', flat=True), BSem__in=valid_course_structures.values_list('BSem', flat=True))
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDA'], BYear=coordinator.BYear, Dept=coordinator.Dept) 
+        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDC', 'MOE'], BYear=coordinator.BYear, Dept=coordinator.Dept) 
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R', \
             BSem__in=valid_course_structures.values_list('BSem', flat=True))
     if request.method == 'POST':
@@ -58,7 +58,7 @@ def add_mda_courses(request):
                     if not result.has_errors():
                         courses_resource.import_data(newDataset, dry_run=False)
                         with transaction.atomic():
-                            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['MDA'])
+                            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['MDC', 'MOE'])
                             courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
                             for course in courses:
                                 if not BTSubjects_Staging.objects.filter(RegEventId_id=event.id, course_id=course.id).exists():
@@ -82,7 +82,7 @@ def add_mda_courses(request):
                         if not result1.has_errors():
                             courses_resource.import_data(cleanDataset, dry_run=False)
                             with transaction.atomic():
-                                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['MDA'])
+                                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Category__in=['MDC', 'MOE'])
                                 courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
                                 for course in courses:
                                     if not BTSubjects_Staging.objects.filter(RegEventId_id=event.id, course_id=course.id).exists():
@@ -118,19 +118,19 @@ def mda_subject_finalize(request):
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
         coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDA'], BYear=1, Dept=coordinator.Cycle) 
+        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDC', 'MOE'], BYear=1, Dept=coordinator.Cycle) 
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode='R').\
             filter(Dept__in=valid_course_structures.values_list('Dept', flat=True), BSem__in=valid_course_structures.values_list('BSem', flat=True))
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDA'], BYear=coordinator.BYear, Dept=coordinator.Dept) 
+        valid_course_structures = BTCourseStructure.objects.filter(Category__in=['MDC', 'MOE'], BYear=coordinator.BYear, Dept=coordinator.Dept) 
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R', \
             BSem__in=valid_course_structures.values_list('BSem', flat=True))
     if(request.method=='POST'):
         form = SubjectFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
             subjects = []
-            subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), course__CourseStructure__in=['MDA'])
+            subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), course__CourseStructure__in=['MDC', 'MOE'])
             for sub in subjects:
                 s=BTSubjects(RegEventId_id=sub.RegEventId_id, course_id=sub.course_id)
                 s.save() 
