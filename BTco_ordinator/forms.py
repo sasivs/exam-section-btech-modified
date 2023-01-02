@@ -554,7 +554,7 @@ class MakeupRegistrationsForm(forms.Form):
             event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent')).first()
             studentMakeupRolls = BTRollLists.objects.filter(RegEventId_id=event.id).order_by('student__RegNo')
 
-            ROLL_CHOICES = [(row.student.RegNo, row.student.RegNo) for row in studentMakeupRolls]
+            ROLL_CHOICES = [(row.id, row.student.RegNo) for row in studentMakeupRolls]
             ROLL_CHOICES = [('','--Select Reg Number--')] + ROLL_CHOICES
             self.fields['RegNo'] = forms.CharField(label='RegNo/RollNo', widget = forms.Select(choices=ROLL_CHOICES,\
                  attrs={'onchange':'submit();'}))  
