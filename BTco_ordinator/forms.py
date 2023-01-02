@@ -553,7 +553,7 @@ class MakeupRegistrationsForm(forms.Form):
         if self.data.get('RegEvent'):
             event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent')).first()
             studentMakeupRolls = BTRollLists.objects.filter(RegEventId_id=event.id).values_list('student__RegNo', flat=True)
-            studentMakeupRolls.sort()
+            studentMakeupRolls.order_by('student__RegNo')
             studentMakeupRolls = [(row, row) for row in studentMakeupRolls]
             studentMakeupRolls = [('','--Select Reg Number--')] + studentMakeupRolls
             self.fields['RegNo'] = forms.CharField(label='RegNo/RollNo', widget = forms.Select(choices=studentMakeupRolls,\
