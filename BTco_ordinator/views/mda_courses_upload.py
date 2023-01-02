@@ -106,7 +106,7 @@ def add_mda_courses(request):
         pass
     else:
         form = MDACoursesUploadForm(regIDs)
-    return render('BTco_ordinator/MDAcoursesUpload.html', {'form':form})
+    return render(request, 'BTco_ordinator/MDAcoursesUpload.html', {'form':form})
 
 @transaction.atomic
 @login_required(login_url="/login/")
