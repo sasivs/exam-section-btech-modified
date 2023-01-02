@@ -44,7 +44,7 @@ def marks_upload(request):
                         Registration__sub_id_id__in=subject)
                     mark_distribution = BTSubjects.objects.get(id=subject[0]).course.MarkDistribution
                 else:
-                    marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id__in=regEvent, Registration__sub_id__course_id=subject, \
+                    marks_objects = BTMarks_Staging.objects.filter(Registration__RegEventId_id=regEvent, Registration__sub_id__course_id=subject, \
                         Registration__student__Section=section)
                     mark_distribution = BTCourses.objects.get(id=subject).MarkDistribution
                 file = form.cleaned_data.get('file')
