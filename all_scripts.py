@@ -937,7 +937,7 @@ def not_promoted_cleansing_script():
     return "Completed!!!"
 
 def dec_regs_file_upload_script(file, kwargs):
-    file = pd.read_excel(file)
+    file = pd.read_csv(file)
     if kwargs:
         if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
             return "Provide the required arguments!!!!"
@@ -957,11 +957,11 @@ def dec_regs_file_upload_script(file, kwargs):
             mode = 1
             if event.Mode == 'B':
                 mode = row['RMode']
-            subject = subjects.filter(course__SubCode=row['SubCode'])
+            subject = subjects.filter(course__SubCode=row['SubCode']).first()
             if not BTStudentRegistrations_Staging.objects.filter(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
-                sub_id_id=subject).exists():
+                sub_id_id=subject.id).exists():
                 reg = BTStudentRegistrations_Staging(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
-                    sub_id_id=subject)
+                    sub_id_id=subject.id)
                 reg.save()
     return "Completed!!"
 
@@ -975,12 +975,13 @@ kwargs = {'AYear':2019, 'ASem':2, 'BYear':1, 'BSem':2, 'Dept':10, 'Regulation':3
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[2], 'Mode':['R']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['B']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[3], 'BSem':[2], 'Dept':[6,5], 'Regulation':[1], 'Mode':['M']}
-# kwargs_grades = {'AYear':[2019], 'ASem':[2], 'BYear':[2], 'BSem':[2], 'Dept':[4], 'Regulation':[2], 'Mode':['R']}
-kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
+kwargs_grades = {'AYear':[2019], 'ASem':[2], 'BYear':[4], 'BSem':[2], 'Dept':[1], 'Regulation':[1], 'Mode':['R']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
 # print(roll_list_script(kwargs_grades))
 # print(rolls_finalize_script(kwargs_grades))
 # print(regular_regs_script(kwargs_grades))
-print(backlog_registrations(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
+# print(backlog_registrations(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
+print(dec_regs_file_upload_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(registrations_finalize(kwargs_grades))
 # print(faculty_assignment(**kwargs_grades))
 # print(add_marks(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
