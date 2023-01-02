@@ -114,13 +114,13 @@ def subject_upload_status(request):
         regIDs = BTRegistrationStatus.objects.filter(Status=1, Mode__in=['R','B'])
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode_in=['R','B'])
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=hod.Dept, Mode__in=['R','B'])
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=co_ordinator.BYear, Dept=co_ordinator.Dept, Mode_in=['R','B'])
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, BYear=co_ordinator.BYear, Dept=co_ordinator.Dept, Mode__in=['R','B'])
     elif 'Cycle-Co-ordinator' in groups:
         co_ordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode_in=['R','B'])
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, Dept=co_ordinator.Cycle, Mode__in=['R','B'])
     if regIDs:
         regIDs = [(row.id, row.__str__()) for row in regIDs]
     if(request.method=='POST'):
@@ -143,10 +143,10 @@ def subject_delete(request):
     msg = ''
     if 'Cycle-Co-ordinator' in groups:
         coordinator = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode_in=['R','B'])
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=1, Dept=coordinator.Cycle, Mode__in=['R','B'])
     elif 'Co-ordinator' in groups:
         coordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode_in=['R','B'])
+        regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode__in=['R','B'])
     if(request.method=='POST'):
         form = SubjectDeletionForm(regIDs, request.POST)
         if('regID' in request.POST.keys()):
