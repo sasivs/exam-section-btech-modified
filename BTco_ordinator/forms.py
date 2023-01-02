@@ -295,7 +295,7 @@ class BacklogRegistrationForm(forms.Form):
                     mode = Selection[bRow.sub_id]
                     self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode,\
                         widget=forms.RadioSelect())
-                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Curriculum_Credits, self['Check' + str(bRow.sub_id)], 
+                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
                                 self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
                                     bRow.Regulation, bRow.sub_id, registeredBacklogs.filter(sub_id_id=bRow.sub_id).first().id))
             else:
@@ -306,7 +306,7 @@ class BacklogRegistrationForm(forms.Form):
                 else:
                     self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
                         widget=forms.RadioSelect(),choices=[('1', 'Study Mode'), ('0', 'Exam Mode')])
-                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Curriculum_Credits, self['Check' + str(bRow.sub_id)], 
+                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
                                 self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear,\
                                         bRow.Regulation, bRow.sub_id,''))
             self.checkFields.append(self['Check' + str(bRow.sub_id)])
@@ -325,7 +325,7 @@ class BacklogRegistrationForm(forms.Form):
                     mode = Selection[bRow.sub_id] 
                     self.fields['RadioMode' + str(bRow.sub_id)] = forms.ChoiceField(required=False, \
                         choices=[(1, 'Study Mode'), (0, 'Exam Mode')], initial=mode, widget=forms.RadioSelect(),)
-                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Curriculum_Credits, self['Check' + str(bRow.sub_id)], 
+                self.myFields.append((bRow.SubCode, bRow.SubName, bRow.Credits, self['Check' + str(bRow.sub_id)], 
                                     self['RadioMode' + str(bRow.sub_id)],bRow.sub_id in Selection.keys(),'B', bRow.OfferedYear, \
                                         bRow.Regulation, bRow.sub_id, row.id))
                 self.checkFields.append(self['Check' + str(bRow.sub_id)])

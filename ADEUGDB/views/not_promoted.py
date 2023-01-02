@@ -67,7 +67,7 @@ def not_promoted_list(request):
                     filter(~Q(Grade='I')).filter(~Q(Grade='X')).filter(~Q(Grade='R'))
                 credits=0
                 for g in grades:
-                    credits += g.Curriculum_Credits
+                    credits += g.Credits
                 if credits < mandatory_credits:
                     d = {'student':roll.student, 'AYear':ayear, 'BYear':byear, 'Regulation':regulation, 'PoA_sem1':'R', 'PoA_sem2':'R'}
                     np.append(d)
