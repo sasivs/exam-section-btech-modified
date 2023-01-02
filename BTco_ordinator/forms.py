@@ -552,10 +552,10 @@ class MakeupRegistrationsForm(forms.Form):
             attrs={'onchange':"submit();"}))
         if self.data.get('RegEvent'):
             event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent')).first()
-            studentMakeupRolls = BTRollLists.objects.filter(RegEventId_id=event.id).values_list('student__RegNo', flat=True)
-            studentMakeupRolls.order_by('student__RegNo')
-            studentMakeupRolls = [(row, row) for row in studentMakeupRolls]
-            studentMakeupRolls = [('','--Select Reg Number--')] + studentMakeupRolls
+            studentMakeupRolls = BTRollLists.objects.filter(RegEventId_id=event.id).order_by('student__RegNo')
+
+            ROLL_CHOICES = [(row.student.RegNo, row.student.RegNo) for row in studentMakeupRolls]
+            ROLL_CHOICES = [('','--Select Reg Number--')] + ROLL_CHOICES
             self.fields['RegNo'] = forms.CharField(label='RegNo/RollNo', widget = forms.Select(choices=studentMakeupRolls,\
                  attrs={'onchange':'submit();'}))  
             if self.data.get('RegNo'):
