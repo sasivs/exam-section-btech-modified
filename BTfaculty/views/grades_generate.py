@@ -9,6 +9,7 @@ from BTfaculty.models import BTAttendance_Shortage, BTGradesThreshold, BTMarks_S
 from BTExamStaffDB.models import BTIXGradeStudents
 from BTfaculty.forms import MarksStatusForm
 from django.db import transaction
+from django.db.models import Q
 
 @transaction.atomic
 @login_required(login_url="/login/")
@@ -150,10 +151,10 @@ def grades_status(request):
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1)
     elif 'Co-ordinator' in groups:
         co_ordinator = BTCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=co_ordinator.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter((Q(RegEventId__Dept=co_ordinator.Dept)|Q(Faculty__Dept=co_ordinator.Dept)), RegEventId__BYear=co_ordinator.BYear, RegEventId__Status=1)
     elif 'HOD' in groups:
         hod = BTHOD.objects.filter(User=user, RevokeDate__isnull=True).first()
-        subjects = BTFacultyAssignment.objects.filter(Faculty__Dept=hod.Dept, RegEventId__Status=1)
+        subjects = BTFacultyAssignment.objects.filter((Q(RegEventId__Dept=co_ordinator.Dept)|Q(Faculty__Dept=co_ordinator.Dept)), RegEventId__Status=1)
     elif 'Cycle-Co-ordinator' in groups:
         cycle_cord = BTCycleCoordinator.objects.filter(User=user, RevokeDate__isnull=True).first()
         subjects = BTFacultyAssignment.objects.filter(RegEventId__Status=1, RegEventId__BYear=1, RegEventId__Dept=cycle_cord.Cycle)
