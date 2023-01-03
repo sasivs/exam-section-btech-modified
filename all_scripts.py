@@ -1085,7 +1085,7 @@ def finalize_grades(kwargs):
         return "No Events!!!!"
     for event in regEvents:
         print(event.__dict__)
-        grades_objs = BTStudentGrades_Staging.objects.filter(RegId_RegEventId_id=event.id)
+        grades_objs = BTStudentGrades_Staging.objects.filter(RegId__RegEventId_id=event.id)
         for grade in grades_objs:
             fgrade = BTStudentGrades(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
             fgrade.save()
@@ -1105,6 +1105,33 @@ def RefreshMaterializedViews():
     finally:
         cursor.close()
 
+def makeup_registrations_script(file, kwargs):
+    file = pd.read_excel(file)
+    if kwargs:
+        if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+            return "Provide the required arguments!!!!"
+    else:
+        return "No events"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+        BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    for event in regEvents:
+        print(event.__dict__)
+        curr_df = file[(file['AYear']==event.AYear) & (file['ASem']==event.ASem) & (file['BYear']==event.BYear)\
+            & (file['BSem']==event.BSem) & (file['Dept']==event.Dept) & (file['Regulation']==event.Regulation) & \
+            (file['Mode']==event.Mode)]
+        rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+        makeups = BTStudentMakeups.objects.filter(BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Regulation=event.Regulation, RegNo__in=rolllist.values_list('student__RegNo', flat=True))
+        for rIndex, row in curr_df.iterrows():
+            roll = rolllist.filter(student__RegNo=row['RegNo']).first()
+            subject_id = makeups.filter(RegNo=row['RegNo'], SubCode=row['SubCode']).order_by('-AYASBYBS').first().sub_id
+
+            if not BTStudentRegistrations_Staging.objects.filter(student=roll, RegEventId_id=event.id, sub_id_id=subject_id).exists():
+                new_reg = BTStudentRegistrations_Staging(student=roll, RegEventId_id=event.id, Mode=row['RMode'], sub_id_id=subject_id)
+                new_reg.save()
+            else:
+                BTStudentRegistrations_Staging.objects.filter(student=roll, RegEventId_id=event.id, sub_id_id=subject_id).update(Mode=row['RMode'])
+    return "Completed!!"
+
 dataPrefix = '/home/examsection/Desktop/Data/MarksDB/'
 duprefix = '/home/examsection/Desktop/Data/'
 aprefix = '/home/examsection/Desktop/awsp_testing_v2/database_recreate/'
@@ -1116,8 +1143,8 @@ kwargs = {'AYear':2019, 'ASem':2, 'BYear':1, 'BSem':2, 'Dept':10, 'Regulation':3
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['B']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[3], 'BSem':[2], 'Dept':[6,5], 'Regulation':[1], 'Mode':['M']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[1], 'BYear':[4], 'BSem':[1], 'Dept':[1], 'Regulation':[1], 'Mode':['R']}
-# kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,5,6], 'Regulation':[1], 'Mode':['M']}
-kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
+kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,5,6], 'Regulation':[1], 'Mode':['M']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
 # print(roll_list_script(kwargs_grades))
 # print(rolls_finalize_script(kwargs_grades))
 # print(regular_regs_script(kwargs_grades))
