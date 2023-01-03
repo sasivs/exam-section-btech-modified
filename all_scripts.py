@@ -1,6 +1,7 @@
 
 from ADAUGDB.models import BTGradePoints, BTRegistrationStatus, BTCancelledDroppedRegularCourses, BTCancelledMarks, BTCancelledNotPromoted,\
-    BTCancelledNotRegistered, BTCancelledRollLists, BTCancelledStudentGrades, BTCancelledStudentInfo, BTCancelledStudentRegistrations, BTOpenElectiveRollLists
+    BTCancelledNotRegistered, BTCancelledRollLists, BTCancelledStudentGrades, BTCancelledStudentInfo, BTCancelledStudentRegistrations, BTOpenElectiveRollLists,\
+    BTCourseStructure
 from BTco_ordinator.models import BTSubjects, BTFacultyAssignment, BTStudentRegistrations, BTStudentBacklogs, BTRollLists_Staging,\
     BTStudentRegistrations_Staging, BTRollLists, BTNotRegistered, BTNotPromoted, BTDroppedRegularCourses, BTStudentMakeups,\
         BTStudentBacklogs, BTNPRRollLists, BTNPRNotRegistered, BTNPRDroppedRegularCourses, BTNPRMarks, BTNPRStudentRegistrations, BTNPRStudentGrades
@@ -10,7 +11,7 @@ from BTExamStaffDB.models import BTFacultyInfo, BTIXGradeStudents, BTStudentInfo
 import pandas as pd
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.db import transaction
 
 def faculty_assignment(**kwargs):
@@ -1017,6 +1018,48 @@ def oe_registrations(file, kwargs):
     return "Completed!!!"
 
 
+def check_registrations_finalize_script(kwargs):
+    if kwargs:
+        if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+            return "Provide the required arguments!!!!"
+    else:
+        return "No events"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+        BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    execess_credits_students = []
+    insuff_credits_students = []
+    for event in regEvents:
+        print(event.__dict__)
+        rolllist = BTRollLists.objects.filter(RegEventId_id=event.id)
+        regs = BTStudentRegistrations_Staging.objects.filter(student__student__id__in=rolllist.values_list('student_id',flat=True), \
+                RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__BYear=event.BYear, RegEventId__Dept=event.Dept)
+        curriculum = BTCourseStructure.objects.filter(BYear=event.BYear, BSem=event.BSem, Dept=event.Dept, Regulation=event.Regulation)
+
+        for roll in rolllist:
+            study_credits = regs.filter(student__student=roll.student, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+            exam_credits = regs.filter(student__student=roll.student, Mode=0).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+        
+            if study_credits > 32 or (study_credits+exam_credits) > 34:
+                execess_credits_students.append((event.__str__(), roll.student.RegNo))
+            
+            if event.Mode == 'R':
+                dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__BYear=event.BYear, RegEventId__Dept=event.Dept, RegEventId__Regulation=event.Regulation, RegEventId__Mode='R')
+                student_regs = regs.filter(student__student=roll.student)
+                for cs in curriculum:
+                    cs_count = student_regs.filter(sub_id__course__CourseStructure_id=cs.id).count()
+                    dropped_cs_count = dropped_courses.filter(subject__course__CourseStructure_id=cs.id).count()
+                    if (dropped_cs_count+cs_count) != cs.count:
+                        insuff_credits_students.append((event.__str__(), roll.student.RegNo))
+                        break
+    for _ in execess_credits_students:
+        print(_)
+    print("These students have excess credits in the registrations")
+    for _ in insuff_credits_students:
+        print(_)
+    print("These students have unequal courses corresponding to their slots.")
+    return "Completed!!"        
+
+
 dataPrefix = '/home/examsection/Desktop/Data/MarksDB/'
 duprefix = '/home/examsection/Desktop/Data/'
 aprefix = '/home/examsection/Desktop/awsp_testing_v2/database_recreate/'
@@ -1027,13 +1070,15 @@ kwargs = {'AYear':2019, 'ASem':2, 'BYear':1, 'BSem':2, 'Dept':10, 'Regulation':3
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[2], 'Mode':['R']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['B']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[3], 'BSem':[2], 'Dept':[6,5], 'Regulation':[1], 'Mode':['M']}
-# kwargs_grades = {'AYear':[2019], 'ASem':[2], 'BYear':[4], 'BSem':[2], 'Dept':[1], 'Regulation':[1], 'Mode':['R']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[1], 'BYear':[4], 'BSem':[1], 'Dept':[1], 'Regulation':[1], 'Mode':['R']}
 kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
 # print(roll_list_script(kwargs_grades))
 # print(rolls_finalize_script(kwargs_grades))
 # print(regular_regs_script(kwargs_grades))
 # print(backlog_registrations(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
 # print(dec_regs_file_upload_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
+# print(oe_roll_lists_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
+# print(oe_registrations(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(registrations_finalize(kwargs_grades))
 # print(faculty_assignment(**kwargs_grades))
 # print(add_marks(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
