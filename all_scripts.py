@@ -811,6 +811,9 @@ def verify_grades(file, kwargs):
         if event.Mode == 'R':
             curr_df = file[(file['AYear']==event.AYear) & (file['ASem']==event.ASem) & (file['Dept']==event.Dept) & \
                 (file['Regulation']==event.Regulation) & (file['OfferedYear']==event.AYear)]
+        elif event.Mode == 'M':
+            curr_df = file[(file['AYear']==event.AYear) & (file['ASem']==event.ASem) & (file['Dept']==event.Dept) & \
+                (file['Regulation']==event.Regulation) & (file['OfferedYear']<=event.AYear)]
         else:
             curr_df = file[(file['AYear']==event.AYear) & (file['ASem']==event.ASem) & (file['Dept']==event.Dept) & \
                 (file['Regulation']==event.Regulation) & (file['OfferedYear']!=event.AYear)]
@@ -1149,6 +1152,7 @@ kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,
 # print(rolls_finalize_script(kwargs_grades))
 # print(regular_regs_script(kwargs_grades))
 # print(backlog_registrations(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
+# print(makeup_registrations_script(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
 # print(dec_regs_file_upload_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(oe_roll_lists_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(oe_registrations(dataPrefix+'electives_rolls.csv', kwargs_grades))
@@ -1158,9 +1162,9 @@ kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,
 # print(add_marks(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
 # print(add_grades_threshold(dataPrefix+'Thresholds-R15-R18-R20.xlsx', kwargs_grades))
 # print(add_grades_threshold(dataPrefix+'Thresholds-R17.xlsx', kwargs_grades))
-# print(add_Rixgrades(dataPrefix+'2019-Grades-RIX.xlsx', kwargs_grades))
+print(add_Rixgrades(dataPrefix+'2019-Grades-RIX.xlsx', kwargs_grades))
 # print(add_Rixgrades(aprefix+'2019-I-BT-RGrades-Sem-I-R.xlsx', kwargs))
-# print(generate_grades(**kwargs_grades))
-# print(verify_grades(aprefix+'All-Grades-2021-v7.xlsx', kwargs_grades))
+print(generate_grades(**kwargs_grades))
+print(verify_grades(aprefix+'All-Grades-2021-v7.xlsx', kwargs_grades))
 # print(finalize_marks(kwargs_grades))
 # print(finalize_grades(kwargs_grades))
