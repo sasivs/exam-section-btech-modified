@@ -12,7 +12,7 @@ import pandas as pd
 from import_export.formats.base_formats import XLSX
 from tablib import Dataset
 from django.db.models import Q, Sum
-from django.db import transaction
+from django.db import transaction, connection
 
 def faculty_assignment(**kwargs):
     '''
@@ -206,26 +206,27 @@ def generate_grades(**kwargs):
                 if BTStudentRegistrations.objects.filter(sub_id_id=subject.id, RegEventId_id=mark.Registration.RegEventId).exists():
                     error_events.append((event, subject.course.SubCode))
             if mark.Registration.Mode == 1:
-                promote_thresholds = subject.course.MarkDistribution.PromoteThreshold
-                promote_thresholds = promote_thresholds.split(',')
-                promote_thresholds = [thr.split('+') for thr in promote_thresholds]
-                marks_list = mark.Marks.split(',')
-                marks_list = [m.split('+') for m in marks_list]
                 graded = False
-                for outer_index in range(len(promote_thresholds)):
-                    for inner_index in range(len(promote_thresholds[outer_index])):
-                        if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
-                            graded = True
-                            if grades_objects.filter(RegId_id=mark.Registration.id):
-                                grades_objects.filter(RegId_id=mark.Registration.id).update(Grade='F', AttGrade='P')
-                                break
-                            else:
-                                grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
-                                    Grade='F', AttGrade='P')
-                                grade.save()
-                                break
-                    if graded:
-                        break
+                if event.ASem != 2 or event.AYear != 2019 or event.BYear != 4:
+                    promote_thresholds = subject.course.MarkDistribution.PromoteThreshold
+                    promote_thresholds = promote_thresholds.split(',')
+                    promote_thresholds = [thr.split('+') for thr in promote_thresholds]
+                    marks_list = mark.Marks.split(',')
+                    marks_list = [m.split('+') for m in marks_list]
+                    for outer_index in range(len(promote_thresholds)):
+                        for inner_index in range(len(promote_thresholds[outer_index])):
+                            if float(marks_list[outer_index][inner_index]) < float(promote_thresholds[outer_index][inner_index]):
+                                graded = True
+                                if grades_objects.filter(RegId_id=mark.Registration.id):
+                                    grades_objects.filter(RegId_id=mark.Registration.id).update(Grade='F', AttGrade='P')
+                                    break
+                                else:
+                                    grade = BTStudentGrades_Staging(RegId_id=mark.Registration.id, RegEventId=mark.Registration.RegEventId.id, Regulation=mark.Registration.RegEventId.Regulation, \
+                                        Grade='F', AttGrade='P')
+                                    grade.save()
+                                    break
+                        if graded:
+                            break
                 if not graded:
                     for threshold in thresholds:
                         if mark.TotalMarks >= threshold.Threshold_Mark:
@@ -1059,6 +1060,50 @@ def check_registrations_finalize_script(kwargs):
     print("These students have unequal courses corresponding to their slots.")
     return "Completed!!"        
 
+def finalize_marks(kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+            BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    if not regEvents:
+        return "No Events!!!!"
+    for event in regEvents:
+        print(event.__dict__)
+        marks_objs = BTMarks_Staging.objects.filter(Registration__RegEventId_id=event.id)
+        for mark in marks_objs:
+            BTMarks.objects.filter(Registration=mark.Registration).update(Marks=mark.Marks, TotalMarks=mark.TotalMarks)
+        event.MarkStatus = 0
+        event.save()
+    return "Completed!!"
+
+def finalize_grades(kwargs):
+    if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+        return "Provide the required arguments!!!!"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+            BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode'))
+    if not regEvents:
+        return "No Events!!!!"
+    for event in regEvents:
+        print(event.__dict__)
+        grades_objs = BTStudentGrades_Staging.objects.filter(RegId_RegEventId_id=event.id)
+        for grade in grades_objs:
+            fgrade = BTStudentGrades(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
+            fgrade.save()
+        event.GradeStatus = 0
+        event.save()
+    RefreshMaterializedViews()
+    return "Completed!!"
+
+def RefreshMaterializedViews():
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePointsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentGradePoints_StagingMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentBacklogsMV\" WITH DATA;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.\"BTStudentMakeupBacklogsMV\" WITH DATA;")
+    finally:
+        cursor.close()
 
 dataPrefix = '/home/examsection/Desktop/Data/MarksDB/'
 duprefix = '/home/examsection/Desktop/Data/'
@@ -1071,6 +1116,7 @@ kwargs = {'AYear':2019, 'ASem':2, 'BYear':1, 'BSem':2, 'Dept':10, 'Regulation':3
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['B']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[3], 'BSem':[2], 'Dept':[6,5], 'Regulation':[1], 'Mode':['M']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[1], 'BYear':[4], 'BSem':[1], 'Dept':[1], 'Regulation':[1], 'Mode':['R']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,5,6], 'Regulation':[1], 'Mode':['M']}
 kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
 # print(roll_list_script(kwargs_grades))
 # print(rolls_finalize_script(kwargs_grades))
@@ -1079,6 +1125,7 @@ kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept'
 # print(dec_regs_file_upload_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(oe_roll_lists_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(oe_registrations(dataPrefix+'electives_rolls.csv', kwargs_grades))
+# print(check_registrations_finalize_script(kwargs_grades))
 # print(registrations_finalize(kwargs_grades))
 # print(faculty_assignment(**kwargs_grades))
 # print(add_marks(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
@@ -1088,3 +1135,5 @@ kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept'
 # print(add_Rixgrades(aprefix+'2019-I-BT-RGrades-Sem-I-R.xlsx', kwargs))
 # print(generate_grades(**kwargs_grades))
 # print(verify_grades(aprefix+'All-Grades-2021-v7.xlsx', kwargs_grades))
+# print(finalize_marks(kwargs_grades))
+# print(finalize_grades(kwargs_grades))
