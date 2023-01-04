@@ -300,3 +300,9 @@ def dept_elective_subject_upload_access(user):
     if 'Co-ordinator' in groups:
         return True
     return False
+
+def curriculum_components_status_access(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Associate-Dean-Academics' in groups or 'Associate-Dean-Exams' in groups or 'Superintendent' in groups:
+        return True
+    return False

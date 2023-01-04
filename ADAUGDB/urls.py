@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from ADAUGDB.views import hod_assignment,cancellations, Marks_Distribution, add_regulation, grade_points ,\
     cycle_coordinator_assignment, open_elective_registrations, course_structure, courses, open_elective_rollList, create_registration_event,\
-        regulation_change, first_year_cycle_handler
+        regulation_change, first_year_cycle_handler, curriculum_components
 urlpatterns = [
 
     # path('BTsindex',home.sup_home, name='BTsindex'),
@@ -78,6 +78,11 @@ urlpatterns = [
     path('BTRegulationChangeStatus', regulation_change.regulation_change_status, name='BTRegulationChangeStatus'),
 
     path('BTRollListCycleHandler', first_year_cycle_handler.cycle_handler, name='BTRollListCycleHandler'),
+
+    path('BTCurriculumComponentsUpload', curriculum_components.curriculum_components_upload, name='BTCurriculumComponentsUpload'),
+    path('BTCurriculumComponentsStatus', curriculum_components.curriculum_components_status, name='BTCurriculumComponentsStatus'),
+    path('BTCurriculumComponentsDelete', curriculum_components.curriculum_components_delete, name='BTCurriculumComponentsDelete'),
+
 
 ]
 

@@ -1,0 +1,52 @@
+{% extends 'BTsuperintendent/preRegistrations_home.html' %}
+{% block title %}Delete Curriculum Components{% endblock title %}
+{% block sub %}
+
+<div class="container">
+    <form action="" method="post">
+        <div class="row">
+            {% csrf_token %} {{ form.as_p }}
+            {% if form.form_method == 'GET' %}
+            <div class="col-sm-3">
+                <button type="submit" name="submit-form" value="submit">Submit</button>
+            </div>
+            {% endif %}
+        </div>
+        {% if curriculum_components %}
+        <div class="row">
+            <table class="table table-hover table-muted table-striped">
+                <thead>
+                    <tr>
+                        <td style="border: 1px solid black;">S.No.</td>
+                        <td style="border: 1px solid black;">Regulation</td>
+                        <td style="border: 1px solid black;">Dept</td>
+                        <td style="border: 1px solid black;">Category</td>
+                        <td style="border: 1px solid black;">Credits Offered</td>
+                        <td style="border: 1px solid black;">Minimum Credits</td>
+                        <td style="border: 1px solid black;">Delete(Y/N)</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cs in curriculum_components %}
+                    <tr>
+                        <td style="border: 1px solid black;">{{ forloop.counter }}</td>
+                        <td style="border: 1px solid black;">{{ cs.Regulation }}</td>
+                        <td style="border: 1px solid black;">{{ cs.Dept }}</td>
+                        <td style="border: 1px solid black;">{{ cs.Category }}</td>
+                        <td style="border: 1px solid black;">{{ cs.CreditsOffered }}</td>
+                        <td style="border: 1px solid black;">{{ cs.MinimumCredits }}</td>
+                        <td style="border: 1px solid black;">
+                            <input type="checkbox" name="Check{{cs.id}}" id="id_Check{{cs.id}}" value="delete">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-3">
+            <button type="submit" name="delete-form" value="submit">Submit</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

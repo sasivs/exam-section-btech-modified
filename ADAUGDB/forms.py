@@ -526,3 +526,49 @@ class CoursesStatusForm(forms.Form):
         BYEAR_CHOICES = [('', 'Choose BTech Year'), (1,1), (2,2), (3,3), (4,4)]
         self.fields['BYear'] = forms.IntegerField(label='Select BYear', widget=forms.Select(choices=BYEAR_CHOICES, attrs={'required':'True'}))
 
+class CurriculumComponentsUploadForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CurriculumComponentsUploadForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct('Regulation').order_by('Regulation')
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        departments = BTProgrammeModel.objects.all().distinct('Dept').order_by('Dept')
+        DEPARTMENT_CHOICES = [(dept.Dept, dept.Dept) for dept in departments]
+        DEPARTMENT_CHOICES = [('', 'Choose Department')] + DEPARTMENT_CHOICES
+        self.fields['Regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Dept'] = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=DEPARTMENT_CHOICES, attrs={'required':'True'}))
+        self.fields['file'] = forms.FileField(label='Select File', validators=[validate_file_extension], required=False)
+        self.fields['file'].widget.attrs.update({'required':'True'})
+
+class CurriculumComponentsStatusForm(forms.Form):
+     def __init__(self, *args, **kwargs):
+        super(CurriculumComponentsStatusForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct('Regulation').order_by('Regulation')
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        departments = BTProgrammeModel.objects.all().distinct('Dept').order_by('Dept')
+        DEPARTMENT_CHOICES = [(dept.Dept, dept.Dept) for dept in departments]
+        DEPARTMENT_CHOICES = [('', 'Choose Department')] + DEPARTMENT_CHOICES
+        self.fields['Regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Dept'] = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=DEPARTMENT_CHOICES, attrs={'required':'True'}))
+
+
+class CurriculumComponentsDeleteForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CurriculumComponentsDeleteForm, self).__init__(*args, **kwargs)
+        regulations = BTRegulation.objects.all().distinct('Regulation').order_by('Regulation')
+        REGULATION_CHOICES = [('', 'Choose Regulation')]
+        REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
+        departments = BTProgrammeModel.objects.all().distinct('Dept').order_by('Dept')
+        DEPARTMENT_CHOICES = [(dept.Dept, dept.Dept) for dept in departments]
+        DEPARTMENT_CHOICES = [('', 'Choose Department')] + DEPARTMENT_CHOICES
+        self.fields['Regulation'] = forms.FloatField(label='Select Regulation', required=False, widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
+        self.fields['Dept'] = forms.CharField(label='Select Department', required=False, widget=forms.Select(choices=DEPARTMENT_CHOICES, attrs={'required':'True'}))
+
+        # self.fields['form_method'] = forms.CharField(widget=forms.HiddenInput())
+        # self.fields['form_method'].initial = 'GET'
+        self.form_method = 'GET'
+
+        if self.data.get('Regulation') and self.data.get('Dept'):
+            self.form_method = 'POST'
+

@@ -1,5 +1,5 @@
 from import_export import resources
-from ADAUGDB.models import BTGradePoints, BTCourses, BTOpenElectiveRollLists
+from ADAUGDB.models import BTGradePoints, BTCourses, BTOpenElectiveRollLists, BTCurriculumComponents
 
 class GradePointsResource(resources.ModelResource):
     class Meta:
@@ -12,3 +12,7 @@ class BTCoursesResource(resources.ModelResource):
 class BTOpenElectiveRollListsResource(resources.ModelResource):
     class Meta:
         model = BTOpenElectiveRollLists
+
+class CurriculumComponentsResource(resources.ModelResource):
+    class Meta:
+        model = BTCurriculumComponents

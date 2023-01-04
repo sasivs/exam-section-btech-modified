@@ -116,6 +116,21 @@ class BTCourses(models.Model):
         ]
         managed = True
 
+class BTCurriculumComponents(models.Model):
+    Regulation = models.IntegerField()
+    Dept = models.IntegerField()
+    Category = models.CharField(max_length=10)
+    CreditsOffered = models.IntegerField()
+    MinimumCredits = models.IntegerField()
+    history = HistoricalRecords()
+
+    class Meta:
+        db_table = 'BTCurriculumCredits'
+        constraints = [
+            models.UniqueConstraint(fields = ['Regulation', 'Dept', 'Category'], name='unique_BTCurriculumComponents_key')
+        ]
+        managed = True
+
 class BTHOD(models.Model):
     Faculty = models.ForeignKey('BTExamStaffDB.BTFacultyInfo', on_delete=models.CASCADE)
     Dept = models.IntegerField()

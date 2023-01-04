@@ -1,0 +1,87 @@
+{% extends 'BTsuperintendent/preRegistrations_home.html' %}
+{% block title %}Upload Curriculum Components{% endblock title %}
+{% block sub %}
+<div class="container">
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" name="Submit" value="upload_file_submit">Upload</button>
+        </form>
+    </div>
+    <br>
+    <hr>
+    <div class="row">
+        <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="download">Download Sample: </label>
+            <button type="submit" name="download" value="download">Download</button>
+        </form>
+    </div>
+    {% if msg %}
+    <div class="row">
+        <strong>{{msg}}</strong>
+    </div>
+    {% endif %}
+    {% if errorData %}
+    <div class="row">
+        <strong>{{error_data_msg}}</strong>
+        <br>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">S.No.</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">Dept</td>
+                    <td style="border: 1px solid black;">Category</td>
+                    <td style="border: 1px solid black;">Credits Offered</td>
+                    <td style="border: 1px solid black;">Minimum Credits</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in errorData %}
+                    <tr>
+                        <td style="border: 1px solid black">{{forloop.counter}}</td>
+                        <td style="border: 1px solid black">{{row.0}}</td>
+                        <td style="border: 1px solid black">{{row.1}}</td>
+                        <td style="border: 1px solid black">{{row.2}}</td>
+                        <td style="border: 1px solid black">{{row.3}}</td>
+                        <td style="border: 1px solid black">{{row.4}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if invalidRows %}
+    <div class="row">
+        <strong>{{invalid_data_msg}}</strong>
+        <br>
+        <table class="table table-hover table-muted table-striped">
+            <thead>
+                <tr>
+                    <td style="border: 1px solid black;">S.No.</td>
+                    <td style="border: 1px solid black;">Regulation</td>
+                    <td style="border: 1px solid black;">Dept</td>
+                    <td style="border: 1px solid black;">Category</td>
+                    <td style="border: 1px solid black;">Credits Offered</td>
+                    <td style="border: 1px solid black;">Minimum Credits</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in invalidRows %}
+                    <tr>
+                        <td style="border: 1px solid black">{{forloop.counter}}</td>
+                        <td style="border: 1px solid black">{{row.0}}</td>
+                        <td style="border: 1px solid black">{{row.1}}</td>
+                        <td style="border: 1px solid black">{{row.2}}</td>
+                        <td style="border: 1px solid black">{{row.3}}</td>
+                        <td style="border: 1px solid black">{{row.4}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
