@@ -8,6 +8,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCurriculumComponentsStatus' %}">Curriculum Components Status</a>
+                </li>
                 {% elif user|BThas_group:"Associate-Dean-Academics" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTAddRegulation' %}">Add Regulation</a>
@@ -27,12 +30,24 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRollListCycleHandler' %}">RollLists Cycle Handler</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCurriculumComponentsUpload' %}">Upload Curriculum Components</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCurriculumComponentsStatus' %}">Curriculum Components Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCurriculumComponentsDelete' %}">Delete Curriculum Components</a>
+                </li>
                 {% elif user|BThas_group:"Associate-Dean-Exams" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTRegulationChangeStatus' %}">Regulation Change Status</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'BTYearMandatoryCredits' %}">Mandatory Credits</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'BTCurriculumComponentsStatus' %}">Curriculum Components Status</a>
                 </li>
                 {% elif user|BThas_group:"ExamStaff" %}
                 <li class="nav-item">

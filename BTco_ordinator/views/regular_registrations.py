@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test 
 from django.shortcuts import render
 from BTco_ordinator.forms import RegistrationsUploadForm, RegistrationsFinalizeEventForm
-from ADAUGDB.models import BTRegistrationStatus, BTCourseStructure
+from ADAUGDB.models import BTRegistrationStatus, BTCourseStructure, BTCurriculumComponents
 from ADAUGDB.models import BTCycleCoordinator
 from BTco_ordinator.models import BTRollLists_Staging, BTRollLists, BTStudentRegistrations_Staging, BTStudentRegistrations, BTSubjects, BTNotRegistered,\
     BTDroppedRegularCourses
@@ -9,7 +9,7 @@ from BThod.models import BTCoordinator
 from django.db.models import Q
 from django.db import transaction
 from ADAUGDB.user_access_test import registration_access
-from django.db.models import Sum
+from django.db.models import Sum, F
 
 
 @transaction.atomic
@@ -100,8 +100,9 @@ def registrations_finalize(request):
             regs = BTStudentRegistrations_Staging.objects.filter(student__student__id__in=rolllist.values_list('student_id',flat=True), \
                 RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear,\
                 RegEventId__Dept=currentRegEvent.Dept)
-            curriculum = BTCourseStructure.objects.filter(BYear=currentRegEvent.BYear, BSem=currentRegEvent.BSem, Dept=currentRegEvent.Dept, Regulation=currentRegEvent.Regulation)
-            
+            curriculum = BTCourseStructure.objects.filter(Dept=currentRegEvent.Dept, Regulation=currentRegEvent.Regulation)
+            byear_curriculum = curriculum.filter(BYear=currentRegEvent.BYear, BSem=currentRegEvent.BSem)
+            curriculum_components = BTCurriculumComponents.objects.filter(Dept=currentRegEvent.Dept, Regulation=currentRegEvent.Regulation)
             for roll in rolllist:
                 study_credits = regs.filter(student__student=roll.student, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
                 exam_credits = regs.filter(student__student=roll.student, Mode=0).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
@@ -111,14 +112,30 @@ def registrations_finalize(request):
                     roll.exam = exam_credits
                     execess_credits_students.append(roll)
                 if currentRegEvent.Mode == 'R':
-                    dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear, RegEventId__Dept=currentRegEvent.Dept, RegEventId__Regulation=currentRegEvent.Regulation, RegEventId__Mode='R')
-                    student_regs = regs.filter(student__student=roll.student)
-                    for cs in curriculum:
-                        cs_count = student_regs.filter(sub_id__course__CourseStructure_id=cs.id).count()
-                        dropped_cs_count = dropped_courses.filter(subject__course__CourseStructure_id=cs.id).count()
+                    dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, Registered=False)
+                    relevant_dropped_courses = dropped_courses.filter(RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear, RegEventId__Dept=currentRegEvent.Dept, RegEventId__Regulation=currentRegEvent.Regulation, RegEventId__Mode='R')
+                
+                    student_regs = regs.filter(student_id=roll.id)
+                    for cs in byear_curriculum:
+                        cs_regs = student_regs.filter(sub_id__course__CourseStructure_id=cs.id)
+                        cs_count = cs_regs.count()
+                        cs_credits_count = cs_regs.aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                        dropped_cs_regs = relevant_dropped_courses.filter(subject__course__CourseStructure_id=cs.id)
+                        dropped_cs_count = dropped_cs_regs.count()
+                        dropped_cs_credits_count = dropped_cs_regs.aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
                         if (dropped_cs_count+cs_count) != cs.count:
-                            insuff_credits_students.append(roll)
-                            break
+                            category_regs_credits_count = BTStudentRegistrations.objects.filter(sub_id__course__CourseStructure__Category=cs.Category, RegEventId__Mode='R').exclude(RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear, sub_id__course__CourseStructure_id=cs.id).\
+                                aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                            category_dropped_regs_credits_count = dropped_courses.filter(subject__course__CourseStructure__Category=cs.Category).exclude(RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear, subject__course__CourseStructure_id=cs.id).\
+                                aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
+                            upcoming_cs = curriculum.filter(BYear__gt=currentRegEvent.BYear, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
+                            if currentRegEvent.ASem == 1:
+                                upcoming_cs += curriculum.filter(BYear=currentRegEvent.BYear, BSem=2, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
+                            total_credits = category_dropped_regs_credits_count+category_regs_credits_count+cs_credits_count+dropped_cs_credits_count+upcoming_cs
+                            if total_credits < curriculum_components.filter(Category=cs.Category).first().MinimumCredits or \
+                                total_credits > curriculum_components.filter(Category=cs.Category).first().CreditsOffered:
+                                insuff_credits_students.append(roll)
+                                break
             if execess_credits_students or insuff_credits_students:
                 return render(request, 'BTco_ordinator/BTRegistrationsFinalize.html',{'form':form, 'excess_credits':execess_credits_students, 'insuff_credits':insuff_credits_students})
             regs = regs.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC'])

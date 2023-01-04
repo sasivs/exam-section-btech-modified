@@ -4,12 +4,12 @@ from BTco_ordinator.models import  BTStudentRegistrations_Staging
 from BTco_ordinator.models import BTNotRegistered, BTSubjects_Staging, BTSubjects, BTStudentBacklogs, BTRollLists,\
     BTDroppedRegularCourses, BTStudentMakeups, BTRegularRegistrationSummary, BTBacklogRegistrationSummary, BTMakeupRegistrationSummary,\
     BTRollLists_Staging
-from ADAUGDB.models import BTRegistrationStatus, BTCourseStructure, BTOpenElectiveRollLists
+from ADAUGDB.models import BTRegistrationStatus, BTCourseStructure, BTOpenElectiveRollLists, BTCurriculumComponents
 from BTExamStaffDB.models import BTStudentInfo
 from ADAUGDB.validators import validate_file_extension
 from BTco_ordinator.models import BTStudentRegistrations, BTFacultyAssignment
 from ADAUGDB.constants import DEPARTMENTS
-from django.db.models import Sum
+from django.db.models import Sum, F
 #Create your forms here
 
 
@@ -967,29 +967,46 @@ class CheckRegistrationsFinalizeForm(forms.Form):
             asem = self.data.get('regID').split(':')[2]
             dept = self.data.get('regID').split(':')[3]
             regulation = self.data.get('regID').split(':')[4]
-            registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__BYear=byear, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__Dept=dept, RegEventId__Regulation=regulation)
-            distinct_students = registrations.distinct('student__student__RegNo')
+            distinct_students = BTRollLists_Staging.objects.filter(RegEventId__BYear=byear, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__Dept=dept, RegEventId__Regulation=regulation).distinct('student__RegNo')
+            registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__Dept=dept, RegEventId__Regulation=regulation, student__student__RegNo__in=distinct_students.values_list('student__RegNo', flat=True))
             STUDENT_CHOICES = []
             for student in distinct_students:
-                study_credits = registrations.filter(student__student__id=student.student.student.id, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
-                exam_credits = registrations.filter(student__student__id=student.student.student.id, Mode=0).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                study_credits = registrations.filter(student__student__id=student.student.id, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                exam_credits = registrations.filter(student__student__id=student.student.id, Mode=0).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
                 
                 if study_credits > 32 or (study_credits+exam_credits) > 34:
-                    STUDENT_CHOICES += [(student.student.student.id, student.student.student.RegNo)]
+                    STUDENT_CHOICES += [(student.student.id, student.student.RegNo)]
 
-            regular_rolls = registrations.filter(RegEventId__Mode='R').distinct('student__student__RegNo')
-            curriculum = BTCourseStructure.objects.filter(BYear=byear, BSem=asem, Dept=dept, Regulation=regulation)
+            regular_rolls = registrations.filter(student__RegEventId__Mode='R', student__RegEventId__BYear=byear).distinct('student__student__RegNo')
+            curriculum = BTCourseStructure.objects.filter(Dept=dept, Regulation=regulation)
+            byear_curriculum = curriculum.filter(BYear=byear, BSem=asem)
+            curriculum_components = BTCurriculumComponents.objects.filter(Dept=dept, Regulation=regulation)
             INSUFFICIENT_REGS_ROLLS = [] 
             for roll in regular_rolls:
-                dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student.student, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
+                dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student.student, Registered=False)
+                relevant_dropped_courses = dropped_courses.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
                 student_regs = registrations.filter(student=roll.student)
-                for cs in curriculum:
-                    cs_count = student_regs.filter(sub_id__course__CourseStructure_id=cs.id).count()
-                    dropped_cs_count = dropped_courses.filter(subject__course__CourseStructure_id=cs.id).count()
+                for cs in byear_curriculum:
+                    cs_regs = student_regs.filter(sub_id__course__CourseStructure_id=cs.id)
+                    cs_count = cs_regs.count()
+                    cs_credits_count = cs_regs.aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+
+                    dropped_cs_regs = relevant_dropped_courses.filter(subject__course__CourseStructure_id=cs.id)
+                    dropped_cs_count = dropped_cs_regs.count()
+                    dropped_cs_credits_count = dropped_cs_regs.aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
                     if (dropped_cs_count+cs_count) != cs.count:
-                        INSUFFICIENT_REGS_ROLLS.append((roll.student.student.id, roll.student.student.RegNo))
-                        break
-            
+                        category_regs_credits_count = BTStudentRegistrations.objects.filter(sub_id__course__CourseStructure__Category=cs.Category, RegEventId__Mode='R').exclude(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, sub_id__course__CourseStructure_id=cs.id).\
+                            aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                        category_dropped_regs_credits_count = dropped_courses.filter(subject__course__CourseStructure__Category=cs.Category).exclude(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, subject__course__CourseStructure_id=cs.id).\
+                            aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
+                        upcoming_cs = curriculum.filter(BYear__gt=byear, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
+                        if asem == 1:
+                            upcoming_cs += curriculum.filter(BYear=byear, BSem=2, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
+                        total_credits = category_dropped_regs_credits_count+category_regs_credits_count+cs_credits_count+dropped_cs_credits_count+upcoming_cs
+                        if total_credits < curriculum_components.filter(Category=cs.Category).first().MinimumCredits or\
+                            total_credits > curriculum_components.filter(Category=cs.Category).first().CreditsOffered:
+                            INSUFFICIENT_REGS_ROLLS.append((roll.student.id, roll.student.student.RegNo))
+                            break
             INSUFFICIENT_REGS_ROLLS = [('', 'Choose Student(Insufficient Regs)')] + sorted(INSUFFICIENT_REGS_ROLLS, key=lambda x:x[1])
 
             STUDENT_CHOICES = [('', 'Choose Student(Excess credits)')] + sorted(STUDENT_CHOICES, key=lambda x:x[1])
@@ -1052,13 +1069,16 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                 self.checkFields = []
                 self.radioFields = []
                 self.deleteFields = []
-                student_registrations = registrations.filter(student__student__id=self.data.get('insuff_credits_RegNo'), RegEventId__Mode='R')
-                dropped_courses = BTDroppedRegularCourses.objects.filter(student__RegNo=self.data.get('insuff_credits_RegNo'), RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
+                student_registrations = registrations.filter(student_id=self.data.get('insuff_credits_RegNo'))
+                roll = student_registrations.first().student
+                dropped_courses = BTDroppedRegularCourses.objects.filter(student_id=roll.student.id, Registered=False,  RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
                 
-                for cs in curriculum:
+                for cs in byear_curriculum:
                     cs_registrations = student_registrations.filter(sub_id__course__CourseStructure_id=cs.id)
                     dropped_cs_registrations = dropped_courses.filter(subject__course__CourseStructure_id=cs.id)
+                    cs_credits_count = cs_registrations.aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
                     cs_count = cs_registrations.count()
+                    dropped_cs_credits_count = dropped_cs_registrations.aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
                     dropped_cs_count = dropped_cs_registrations.count()
                     if cs.count == (cs_count+dropped_cs_count):
                         for reg in cs_registrations:

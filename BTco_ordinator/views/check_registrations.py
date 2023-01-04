@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from ADAUGDB.user_access_test import registration_access
 from BThod.models import BTCoordinator
-from ADAUGDB.models import BTRegistrationStatus, BTCycleCoordinator, BTCourseStructure
+from ADAUGDB.models import BTRegistrationStatus, BTCycleCoordinator, BTCourseStructure, BTCurriculumComponents
 from BTco_ordinator.forms import CheckRegistrationsFinalizeForm
-from BTco_ordinator.models import BTStudentRegistrations_Staging, BTDroppedRegularCourses, BTRollLists_Staging
+from BTco_ordinator.models import BTStudentRegistrations_Staging, BTStudentRegistrations, BTDroppedRegularCourses, BTRollLists_Staging
 from django.db import transaction
+from django.db.models import Sum, F
 
 @transaction.atomic
 @login_required(login_url="/login/")
@@ -87,7 +88,7 @@ def check_registrations_finalize(request):
                 if request.POST.get('submit-form'):
                     if form.is_valid():
 
-                        roll = BTRollLists_Staging.objects.filter(student_id=form.cleaned_data.get('insuff_credits_RegNo'), RegEventId__BYear=byear, RegEventId__AYear=ayear, \
+                        roll = BTRollLists_Staging.objects.filter(id=form.cleaned_data.get('insuff_credits_RegNo'), RegEventId__BYear=byear, RegEventId__AYear=ayear, \
                             RegEventId__ASem=asem, RegEventId__Dept=dept, RegEventId__BSem=asem, RegEventId__Regulation=regulation, RegEventId__Mode='R').first()
                         for sub in form.myFields:
                             if sub[9] > sub[10]:
@@ -101,19 +102,36 @@ def check_registrations_finalize(request):
                                     elif sub[5] == 'D':
                                         BTDroppedRegularCourses.objects.filter(id=sub[8]).delete()
                         
-                        curriculum = BTCourseStructure.objects.filter(BYear=byear, BSem=asem, Dept=dept, Regulation=regulation)
-                        registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__BYear=byear, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__Dept=dept, \
-                            RegEventId__Regulation=regulation, student__student__id=form.cleaned_data.get('insuff_credits_RegNo'))
-                        dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
-                        for cs in curriculum:
-                            cs_count = registrations.filter(student=roll, sub_id__course__CourseStructure_id=cs.id).count()
-                            dropped_cs_count = dropped_courses.filter(subject__course__CourseStructure_id=cs.id).count()
+                        curriculum = BTCourseStructure.objects.filter(Dept=dept, Regulation=regulation)
+                        byear_curriculum = curriculum.filter(BYear=byear, BSem=asem)
+                        registrations = BTStudentRegistrations_Staging.objects.filter(student_id=roll.id)
+                        dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, Registered=False)
+                        relevant_dropped_courses = dropped_courses.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
+                        curriculum_components = BTCurriculumComponents.objects.filter(Dept=dept, Regulation=regulation)
+                        
+                        for cs in byear_curriculum:
+                            cs_regs = registrations.filter(sub_id__course__CourseStructure_id=cs.id)
+                            cs_count = cs_regs.count()
+                            cs_credits_count = cs_regs.aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                            dropped_cs_regs = relevant_dropped_courses.filter(subject__course__CourseStructure_id=cs.id)
+                            dropped_cs_count = dropped_cs_regs.count()
+                            dropped_cs_credits_count = dropped_cs_regs.aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
                             if (dropped_cs_count+cs_count) != cs.count:
-                                form = CheckRegistrationsFinalizeForm(regIDs, request.POST)
-                                mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in registrations}
-                                from json import dumps
-                                modes = dumps(mode_selection)
-                                return render(request, 'BTco_ordinator/BTCheckRegistrationsFinalize.html', {'form':form, 'modes':modes})
+                                category_regs_credits_count = BTStudentRegistrations.objects.filter(sub_id__course__CourseStructure__Category=cs.Category, RegEventId__Mode='R').exclude(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, sub_id__course__CourseStructure_id=cs.id).\
+                                    aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
+                                category_dropped_regs_credits_count = dropped_courses.filter(subject__course__CourseStructure__Category=cs.Category).exclude(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, subject__course__CourseStructure_id=cs.id).\
+                                    aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
+                                upcoming_cs = curriculum.filter(BYear__gt=byear, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
+                                if asem == 1:
+                                    upcoming_cs += curriculum.filter(BYear=byear, BSem=2, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
+                                total_credits = category_dropped_regs_credits_count+category_regs_credits_count+cs_credits_count+dropped_cs_credits_count+upcoming_cs
+                                if total_credits < curriculum_components.filter(Category=cs.Category).first().MinimumCredits or \
+                                    total_credits > curriculum_components.filter(Category=cs.Category).first().CreditsOffered:
+                                    form = CheckRegistrationsFinalizeForm(regIDs, request.POST)
+                                    mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in registrations}
+                                    from json import dumps
+                                    modes = dumps(mode_selection)
+                                    return render(request, 'BTco_ordinator/BTCheckRegistrationsFinalize.html', {'form':form, 'modes':modes})
                         return render(request, 'BTco_ordinator/BTCheckRegistrationsFinalizeSuccess.html')
 
     else:
