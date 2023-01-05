@@ -100,10 +100,12 @@ def registrations_finalize(request):
             regs = BTStudentRegistrations_Staging.objects.filter(student__student__id__in=rolllist.values_list('student_id',flat=True), \
                 RegEventId__AYear=currentRegEvent.AYear, RegEventId__ASem=currentRegEvent.ASem, RegEventId__BYear=currentRegEvent.BYear,\
                 RegEventId__Dept=currentRegEvent.Dept)
-            curriculum = BTCourseStructure.objects.filter(Dept=currentRegEvent.Dept, Regulation=currentRegEvent.Regulation)
-            byear_curriculum = curriculum.filter(BYear=currentRegEvent.BYear, BSem=currentRegEvent.BSem)
-            curriculum_components = BTCurriculumComponents.objects.filter(Dept=currentRegEvent.Dept, Regulation=currentRegEvent.Regulation)
+            regulation_curriculum = BTCourseStructure.objects.filter(Regulation=currentRegEvent.Regulation)
+            regulation_curriculum_components = BTCurriculumComponents.objects.filter(Regulation=currentRegEvent.Regulation)
             for roll in rolllist:
+                curriculum = regulation_curriculum.filter(Dept=roll.student.Dept)
+                byear_curriculum = curriculum.filter(BYear=currentRegEvent.BYear, BSem=currentRegEvent.BSem)
+                curriculum_components = regulation_curriculum_components.filter(Dept=roll.student.Dept)
                 study_credits = regs.filter(student__student=roll.student, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
                 exam_credits = regs.filter(student__student=roll.student, Mode=0).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
                 

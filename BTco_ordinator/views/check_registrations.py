@@ -25,11 +25,11 @@ def check_registrations_finalize(request):
         form = CheckRegistrationsFinalizeForm(regIDs, request.POST)
         if request.POST.get('regID'):
             if request.POST.get('excess_credits_RegNo'):
-                byear = request.POST.get('regID').split(':')[0]
-                ayear = request.POST.get('regID').split(':')[1]
-                asem = request.POST.get('regID').split(':')[2]
-                dept = request.POST.get('regID').split(':')[3]
-                regulation = request.POST.get('regID').split(':')[4]
+                byear = int(request.POST.get('regID').split(':')[0])
+                ayear = int(request.POST.get('regID').split(':')[1])
+                asem = int(request.POST.get('regID').split(':')[2])
+                dept = int(request.POST.get('regID').split(':')[3])
+                regulation = float(request.POST.get('regID').split(':')[4])
                 registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__BYear=byear, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__Dept=dept, \
                     RegEventId__Regulation=regulation, student__student__id=request.POST.get('excess_credits_RegNo'))
                 mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in registrations}
@@ -75,11 +75,11 @@ def check_registrations_finalize(request):
                         else:
                             return render(request, 'BTco_ordinator/BTCheckRegistrationsFinalize.html', {'form':form, 'msg':1, 'study':study_mode, 'exam':exam_mode, 'modes':modes})
             elif request.POST.get('insuff_credits_RegNo'):
-                byear = request.POST.get('regID').split(':')[0]
-                ayear = request.POST.get('regID').split(':')[1]
-                asem = request.POST.get('regID').split(':')[2]
-                dept = request.POST.get('regID').split(':')[3]
-                regulation = request.POST.get('regID').split(':')[4]
+                byear = int(request.POST.get('regID').split(':')[0])
+                ayear = int(request.POST.get('regID').split(':')[1])
+                asem = int(request.POST.get('regID').split(':')[2])
+                dept = int(request.POST.get('regID').split(':')[3])
+                regulation = float(request.POST.get('regID').split(':')[4])
                 registrations = BTStudentRegistrations_Staging.objects.filter(RegEventId__BYear=byear, RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__Dept=dept, \
                     RegEventId__Regulation=regulation, student__student__id=request.POST.get('insuff_credits_RegNo'))
                 mode_selection = {'RadioMode'+str(reg.sub_id_id): reg.Mode for reg in registrations}
@@ -102,12 +102,12 @@ def check_registrations_finalize(request):
                                     elif sub[5] == 'D':
                                         BTDroppedRegularCourses.objects.filter(id=sub[8]).delete()
                         
-                        curriculum = BTCourseStructure.objects.filter(Dept=dept, Regulation=regulation)
+                        curriculum = BTCourseStructure.objects.filter(Dept=roll.student.student.Dept, Regulation=regulation)
                         byear_curriculum = curriculum.filter(BYear=byear, BSem=asem)
                         registrations = BTStudentRegistrations_Staging.objects.filter(student_id=roll.id)
                         dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, Registered=False)
                         relevant_dropped_courses = dropped_courses.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
-                        curriculum_components = BTCurriculumComponents.objects.filter(Dept=dept, Regulation=regulation)
+                        curriculum_components = BTCurriculumComponents.objects.filter(Dept=roll.student.student.Dept, Regulation=regulation)
                         
                         for cs in byear_curriculum:
                             cs_regs = registrations.filter(sub_id__course__CourseStructure_id=cs.id)
