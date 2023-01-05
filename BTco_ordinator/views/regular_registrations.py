@@ -103,7 +103,7 @@ def registrations_finalize(request):
             regulation_curriculum = BTCourseStructure.objects.filter(Regulation=currentRegEvent.Regulation)
             regulation_curriculum_components = BTCurriculumComponents.objects.filter(Regulation=currentRegEvent.Regulation)
             for roll in rolllist:
-                curriculum = regulation_curriculum.filter(Dept=roll.student.Dept)
+                curriculum = regulation_curriculum.filter(Dept=currentRegEvent.Dept)
                 byear_curriculum = curriculum.filter(BYear=currentRegEvent.BYear, BSem=currentRegEvent.BSem)
                 curriculum_components = regulation_curriculum_components.filter(Dept=roll.student.Dept)
                 study_credits = regs.filter(student__student=roll.student, Mode=1).aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0

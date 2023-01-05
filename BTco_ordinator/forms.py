@@ -957,7 +957,7 @@ class CheckRegistrationsFinalizeForm(forms.Form):
         int2rom = {1:'I',2:'II',3:'III',4:'IV'}
         self.regIDs=[]
         if regIDs:
-            self.regIDs = [(str(row.BYear)+':'+str(row.AYear)+':'+str(row.ASem)+':'+str(row.Dept)+':'+str(row.Regulation), DEPARTMENTS[row.Dept-1]+':'+int2rom[row.BYear]+':'+str(row.AYear)+':'+str(row.ASem)+':'+str(row.Regulation)) for row in regIDs.distinct('AYear', 'BYear','ASem')]
+            self.regIDs = [(str(row.BYear)+':'+str(row.AYear)+':'+str(row.ASem)+':'+str(row.Dept)+':'+str(row.Regulation), DEPARTMENTS[row.Dept-1]+':'+int2rom[row.BYear]+':'+str(row.AYear)+':'+str(row.ASem)+':'+str(row.Regulation)) for row in regIDs.distinct('AYear', 'BYear','ASem', 'Dept', 'Regulation')]
         myChoices = [('','--Choose Event--')]+self.regIDs
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False,\
             max_length=30, widget=forms.Select(choices=myChoices, attrs={'required':'True', 'onchange':'submit()'}))
@@ -978,12 +978,11 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                     STUDENT_CHOICES += [(student.student.id, student.student.RegNo)]
 
             regular_rolls = registrations.filter(student__RegEventId__Mode='R', student__RegEventId__BYear=byear).distinct('student__student__RegNo')
-            print(regular_rolls)
             regulation_curriculum = BTCourseStructure.objects.filter(Regulation=regulation)
             regulation_curriculum_components = BTCurriculumComponents.objects.filter(Regulation=regulation)
             INSUFFICIENT_REGS_ROLLS = [] 
             for roll in regular_rolls:
-                curriculum = regulation_curriculum.filter(Dept=roll.student.student.Dept)
+                curriculum = regulation_curriculum.filter(Dept=dept)
                 byear_curriculum = curriculum.filter(BYear=byear, BSem=asem)
                 curriculum_components = regulation_curriculum_components.filter(Dept=roll.student.student.Dept)
                 dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student.student, Registered=False)
@@ -997,7 +996,6 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                     dropped_cs_regs = relevant_dropped_courses.filter(subject__course__CourseStructure_id=cs.id)
                     dropped_cs_count = dropped_cs_regs.count()
                     dropped_cs_credits_count = dropped_cs_regs.aggregate(Sum('subject__course__CourseStructure__Credits')).get('subject__course__CourseStructure__Credits__sum') or 0
-                    print((cs.Category, dropped_cs_count+cs_count, cs.count))
                     if (dropped_cs_count+cs_count) != cs.count:
                         category_regs_credits_count = BTStudentRegistrations.objects.filter(sub_id__course__CourseStructure__Category=cs.Category, RegEventId__Mode='R').exclude(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, sub_id__course__CourseStructure_id=cs.id).\
                             aggregate(Sum('sub_id__course__CourseStructure__Credits')).get('sub_id__course__CourseStructure__Credits__sum') or 0
@@ -1007,7 +1005,6 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                         if asem == 1:
                             upcoming_cs += curriculum.filter(BYear=byear, BSem=2, Category=cs.Category).aggregate(credits=Sum(F('Credits')*F('count'))).get('credits') or 0
                         total_credits = category_dropped_regs_credits_count+category_regs_credits_count+cs_credits_count+dropped_cs_credits_count+upcoming_cs
-                        print(total_credits, curriculum_components.filter(Category=cs.Category).first().MinimumCredits, curriculum_components.filter(Category=cs.Category).first().CreditsOffered)
                         if total_credits < curriculum_components.filter(Category=cs.Category).first().MinimumCredits or\
                             total_credits > curriculum_components.filter(Category=cs.Category).first().CreditsOffered:
                             INSUFFICIENT_REGS_ROLLS.append((roll.student.id, roll.student.student.RegNo))

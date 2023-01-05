@@ -102,7 +102,7 @@ def check_registrations_finalize(request):
                                     elif sub[5] == 'D':
                                         BTDroppedRegularCourses.objects.filter(id=sub[8]).delete()
                         
-                        curriculum = BTCourseStructure.objects.filter(Dept=roll.student.student.Dept, Regulation=regulation)
+                        curriculum = BTCourseStructure.objects.filter(Dept=dept, Regulation=regulation)
                         byear_curriculum = curriculum.filter(BYear=byear, BSem=asem)
                         registrations = BTStudentRegistrations_Staging.objects.filter(student_id=roll.id)
                         dropped_courses = BTDroppedRegularCourses.objects.filter(student=roll.student, Registered=False)
