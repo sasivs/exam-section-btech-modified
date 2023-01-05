@@ -117,7 +117,7 @@ class BTCourses(models.Model):
         managed = True
 
 class BTCurriculumComponents(models.Model):
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     Category = models.CharField(max_length=10)
     CreditsOffered = models.IntegerField()

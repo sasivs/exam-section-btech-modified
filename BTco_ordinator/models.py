@@ -376,7 +376,7 @@ class BTRegistrationDetails(models.Model):
     ASem = models.IntegerField()
     BYear = models.IntegerField()
     BSem = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     Dept = models.IntegerField()
     Mode = models.CharField(max_length=1) 
     SubCode = models.CharField(max_length=10)

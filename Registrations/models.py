@@ -89,7 +89,7 @@ class CoordinatorMakeupSubCodesV(models.Model):
     Dept = models.IntegerField()    
     SubCode = models.CharField(max_length=10)
     SubName = models.CharField(max_length=100)
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     class Meta:
         db_table = 'CoordinatorMakeupSubCodesV'
         managed = False
@@ -105,7 +105,7 @@ class StudentMakeupMarks(models.Model):
     Marks= models.IntegerField()
     Status = models.BooleanField(default=False)
     Grade = models.CharField(max_length=2)
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     class Meta:
         db_table = "StudentMakeupMarks"  
 
@@ -118,7 +118,7 @@ class StudentMakeupMarksDetails(models.Model):
     ASem = models.IntegerField()
     OfferedYear = models.IntegerField()
     Dept = models.IntegerField()
-    Regulation = models.IntegerField()
+    Regulation = models.FloatField()
     BYear = models.IntegerField()
     Marks= models.IntegerField()
     Status = models.BooleanField(default=False)
