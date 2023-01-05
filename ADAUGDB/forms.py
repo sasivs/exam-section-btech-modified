@@ -352,7 +352,7 @@ class CycleCoordinatorAssignmentForm(forms.Form):
 class MarksDistributionForm(forms.Form):
     def __init__(self, *args,**kwargs):
         super(MarksDistributionForm, self).__init__(*args, **kwargs)
-        regulations = BTRegulation.objects.all().distinct()
+        regulations = BTRegulation.objects.all().distinct('Regulation')
         REGULATION_CHOICES = [('', 'Choose Regulation')]
         REGULATION_CHOICES += [(regulation.Regulation, regulation.Regulation)for regulation in regulations]
         self.fields['Regulation'] = forms.FloatField(label='Select Regulation', widget=forms.Select(choices=REGULATION_CHOICES, attrs={'required':'True'}))
