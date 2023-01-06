@@ -27,7 +27,7 @@ def add_course_structre(request):
                 newDataset = Dataset()
                 invalidDataset = []
                 errorData = []
-                newDataset.headers = ['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits', 'Rigid', 'count']
+                newDataset.headers = ['BYear', 'BSem', 'Dept', 'Regulation', 'Category', 'Type', 'Creditable', 'Credits', 'count', 'Rigid']
                 for row in dataset:
                     if row[3] == float(form.cleaned_data.get('regulation')):
                         newRow = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
