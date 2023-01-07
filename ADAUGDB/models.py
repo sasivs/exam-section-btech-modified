@@ -81,7 +81,7 @@ class BTCourseStructure(models.Model):
     BSem = models.IntegerField()
     Dept = models.IntegerField()
     Regulation = models.FloatField()
-    Category = models.CharField(max_length=10)
+    Category = models.CharField(max_length=15)
     Type = models.CharField(max_length=10)
     Creditable = models.IntegerField()
     Credits = models.IntegerField()

@@ -1376,3 +1376,30 @@ CREATE OR REPLACE VIEW public."BTGradeThresholdDetailsV"
   GROUP BY tv."AYear", tv."ASem", tv."BYear", tv."BSem", tv."Regulation", tv."Dept", tv."Mode", tv."RegEventId", tv."SubCode";
 
 
+
+CREATE OR REPLACE VIEW public."BTSubjectInfoV"
+ AS
+ SELECT row_number() OVER () AS id,
+    rs."AYear",
+    rs."ASem",
+    rs."BYear",
+    rs."BSem",
+    rs."Dept",
+    rs."Regulation",
+    rs."Mode",
+    sub.id AS "SubId",
+    btc."SubCode",
+    btc."SubName",
+    btcs."Credits",
+    btc."OfferedBy",
+    btcs."Type",
+    btcs."Category",
+    btc."DistributionRatio",
+    md."Distribution",
+    md."DistributionNames",
+    md."PromoteThreshold"
+   FROM "BTSubjects" sub
+     JOIN "BTRegistration_Status" rs ON sub."RegEventId_id" = rs.id
+     join "BTCourses" btc on sub."course_id"=btc."id"
+     join "BTCourseStructure" btcs on btc."CourseStructure_id"=btcs."id"
+	 JOIN "BTMarksDistribution" md ON btc."MarkDistribution_id" = md.id;
