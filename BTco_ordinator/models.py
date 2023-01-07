@@ -394,3 +394,26 @@ class BTRegistrationDetails(models.Model):
     class Meta:
         db_table = 'BTRegistrationDetailsV'
         managed = False 
+
+class BTSubjectInfo(models.Model):
+    AYear = models.IntegerField()
+    ASem = models.IntegerField()
+    BYear = models.IntegerField()
+    BSem = models.IntegerField()
+    Regulation = models.IntegerField()
+    Mode = models.CharField(max_length=1) 
+    Dept = models.IntegerField()
+    SubId = models.IntegerField()
+    SubCode = models.CharField(max_length=10)
+    SubName = models.CharField(max_length=100)
+    Credits = models.IntegerField()
+    OfferedBy = models.IntegerField()
+    Type = models.CharField(max_length=10)
+    Category = models.CharField(max_length=10)
+    DistributionRatio = models.TextField()
+    Distribution = models.TextField()
+    DistributionNames = models.TextField()
+    PromoteThreshold = models.TextField()    
+    class Meta:
+        db_table = 'BTSubjectInfoV'
+        managed = False

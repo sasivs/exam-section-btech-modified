@@ -924,15 +924,31 @@ class TemplateDownloadForm(forms.Form):
             self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
                 widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))
             if self.data.get('regID'):
-                if valid_subjects.filter(RegEventId_id=self.data.get('regID')).first().RegEventId.Dept == current_user.Dept: 
-                    OPTION_CHOICES.append(('1', 'Regular'))
-                student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID')).distinct('sub_id_id')
-                if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
-                    OPTION_CHOICES.append(('2', 'Open Elective'))
-                if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC', 'MOE']).exists():
-                    OPTION_CHOICES.append(('3', 'MDC'))
+                mode = valid_subjects.filter(RegEventId_id=self.data.get('regID')).first().RegEventId.Mode
+                if mode == 'R':
+                    if valid_subjects.filter(RegEventId_id=self.data.get('regID')).first().RegEventId.Dept == current_user.Dept: 
+                        OPTION_CHOICES.append(('1', 'Regular'))
+                    student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID')).distinct('sub_id_id')
+                    if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC']).exists():
+                        OPTION_CHOICES.append(('2', 'Open Elective'))
+                    if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC']).exists():
+                        OPTION_CHOICES.append(('3', 'MDC'))
+                elif mode == 'B':
+                    student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=self.data.get('regID'))
+                    if student_regs.filter(Mode=1).exists():
+                        OPTION_CHOICES.append(('1', 'Study'))
+                    if student_regs.filter(Mode=0).exists():
+                        OPTION_CHOICES.append(('1-Exam', 'Exam'))
+                    if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC'], Mode=0).exists():
+                        OPTION_CHOICES.append(('2-Exam', 'Open Elective(Exam)'))
+                    if student_regs.filter(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC'], Mode=1).exists():
+                        OPTION_CHOICES.append(('2', 'Open Elective(Study)'))
+                    if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC'], Mode=0).exists():
+                        OPTION_CHOICES.append(('3-Exam', 'MDC(Exam)'))
+                    if student_regs.filter(sub_id__course__CourseStructure__Category__in=['MDC'], Mode=1).exists():
+                        OPTION_CHOICES.append(('3', 'MDC(Study)'))
                 self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
-                widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))
+                    widget=forms.Select(choices=OPTION_CHOICES,  attrs={'required':'True'}))
         elif current_user.group == 'Faculty':
             valid_subjects = BTFacultyAssignment.objects.filter(Coordinator_id=current_user.Faculty_id, RegEventId__Status=1)
             SUBJECT_CHOICES = [('', 'Choose Subject')]
@@ -950,6 +966,20 @@ class TemplateDownloadForm(forms.Form):
             SUBJECT_CHOICES += [('SC:'+value+':'+key, value+','+key) for key, values in subjects.items() for value in values]
             self.fields['regID'] = forms.CharField(label='Choose Subject', required=False, max_length=100, \
                 widget=forms.Select(choices=SUBJECT_CHOICES, attrs={'required':'True'}))
+            if self.data.get('regID'):
+                regid = self.data.get('regID').split(',')[0]
+                subject = self.data.get('regID').split(',')[1]
+                mode = valid_subjects.filter(RegEventId_id=regid).first().RegEventId.Mode
+                if mode == 'B':
+                    OPTION_CHOICES = [('', 'Choose Template')]
+                    student_regs = BTStudentRegistrations.objects.filter(RegEventId_id=regid, sub_id__course__SubCode=subject)
+                    if student_regs.filter(Mode=1).exists():
+                        OPTION_CHOICES.append(('Study', 'Study'))
+                    if student_regs.filter(Mode=0).exists():
+                        OPTION_CHOICES.append(('Exam', 'Exam'))
+                    self.fields['option'] = forms.CharField(label='Choose Template Type', required=False, max_length=100, \
+                        widget=forms.Select(choices=OPTION_CHOICES, attrs={'required':'True'}))
+                    self.fields['backlog-faculty'] = forms.CharField(required=False,widget=forms.HiddenInput(attrs={'required':'True', 'value':'Backlog_Faculty_Exam_Option'}))
         
 class CheckRegistrationsFinalizeForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):
