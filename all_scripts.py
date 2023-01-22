@@ -1,7 +1,7 @@
 
 from ADAUGDB.models import BTGradePoints, BTRegistrationStatus, BTCancelledDroppedRegularCourses, BTCancelledMarks, BTCancelledNotPromoted,\
     BTCancelledNotRegistered, BTCancelledRollLists, BTCancelledStudentGrades, BTCancelledStudentInfo, BTCancelledStudentRegistrations, BTOpenElectiveRollLists,\
-    BTCourseStructure
+    BTCourseStructure, BTMarksDistribution
 from BTco_ordinator.models import BTSubjects, BTFacultyAssignment, BTStudentRegistrations, BTStudentBacklogs, BTRollLists_Staging,\
     BTStudentRegistrations_Staging, BTRollLists, BTNotRegistered, BTNotPromoted, BTDroppedRegularCourses, BTStudentMakeups,\
         BTStudentBacklogs, BTNPRRollLists, BTNPRNotRegistered, BTNPRDroppedRegularCourses, BTNPRMarks, BTNPRStudentRegistrations, BTNPRStudentGrades
@@ -417,9 +417,9 @@ def roll_list_script(kwargs):
                         previous_year_rolllist = BTRollLists.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear-1, \
                             RegEventId__Regulation=event.Regulation, RegEventId__Mode=event.Mode, RegEventId__Dept=event.Dept).exclude(student__in=prev_yr_not_prom_students.values_list('student', flat=True))
                     
-                    not_prom_r_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, student__Regulation=event.Regulation, PoA_sem1='R')
+                    not_prom_r_students = BTNotPromoted.objects.filter(AYear=event.AYear-1, BYear=event.BYear, student__Regulation=event.Regulation, PoA_sem1='R', student__Dept=event.Dept)
 
-                    not_prom_b_students = BTNotPromoted.objects.filter(AYear=event.AYear-2, BYear=event.BYear-1, student__Regulation=event.Regulation, PoA_sem1='B', PoA_sem2='B')
+                    not_prom_b_students = BTNotPromoted.objects.filter(Q(PoA_sem1='B')|Q(PoA_sem2='B'), AYear=event.AYear-2, BYear=event.BYear-1, student__Regulation=event.Regulation, student__Dept=event.Dept)
 
                     not_registered_students = BTNotRegistered.objects.filter(RegEventId__AYear=event.AYear-1, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, \
                         Student__Regulation=event.Regulation, RegEventId__Dept=event.Dept)
@@ -625,7 +625,8 @@ def rollnoverification(event):
     roll_list_name = 'RollList({event}).xlsx'.format(event=event.__str__().replace(':','_'))
     df  = pd.read_excel(dprefix + roll_list_name)
     # dddf = pd.read_excel(dprefix + roll_list_name)
-    ddf = pd.read_excel(dataPrefix + '2019-Marks-Data-4.xlsx')
+    ddf = pd.read_excel(dataPrefix + '2020-subject-rolls.xlsx')
+    # ddf = pd.read_excel(dataPrefix + '2019-Marks-Data-4.xlsx')
     ddf = ddf[(ddf['Regulation']==event.Regulation) & (ddf['Dept']==event.Dept) & (ddf['BSem']==event.BSem)\
         &(ddf['BYear']==event.BYear) &(ddf['ASem']==event.ASem)&(ddf['AYear']==event.AYear)&(ddf['Mode']==event.Mode)].drop_duplicates(subset='RegNo')
 
@@ -668,7 +669,7 @@ def regular_regs_script(kwargs):
             if len(rolls)==0:
                 msg = 'There is no roll list for the selected registration event.'
                 result.append((msg, event.__str__()))
-            subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event)
+            subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event).exclude(course__CourseStructure__Category__in=['MOE']).exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
             if len(subs)==0:
                 msg = 'There are no subjects for the selected registration event.'
                 result.append((msg, event.__str__()))
@@ -686,7 +687,7 @@ def regular_regs_script(kwargs):
             if len(rolls)==0:
                 msg = 'There is no roll list for the selected registration event.'
                 result.append((msg, event.__str__()))
-            subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event)
+            subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event).exclude(course__CourseStructure__Category__in=['MOE']).exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
             if len(subs)==0:
                 msg = 'There are no subjects for the selected registration event.'
                 result.append((msg, event.__str__()))
@@ -958,6 +959,37 @@ def dec_regs_file_upload_script(file, kwargs):
         subjects = BTSubjects.objects.filter(RegEventId_id=event.id, course__CourseStructure__Category='DEC')
         rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
         for rIndex, row in curr_df.iterrows():
+            print(row)
+            regNo = row['RegNo']
+            mode = 1
+            if event.Mode == 'B':
+                mode = row['RMode']
+            subject = subjects.filter(course__SubCode=row['SubCode']).first()
+            if not BTStudentRegistrations_Staging.objects.filter(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
+                sub_id_id=subject.id).exists():
+                reg = BTStudentRegistrations_Staging(student=rolls.filter(student__RegNo=regNo).first(), RegEventId_id=event.id,Mode=mode,\
+                    sub_id_id=subject.id)
+                reg.save()
+    return "Completed!!"
+
+def mdc_regs_file_upload_script(file, kwargs):
+    file = pd.read_csv(file)
+    if kwargs:
+        if not (kwargs.get('Mode') or kwargs.get('AYear') or kwargs.get('BYear') or kwargs.get('BSem') or kwargs.get('ASem') or kwargs.get('Regulation')):
+            return "Provide the required arguments!!!!"
+    else:
+        return "No events"
+    regEvents = BTRegistrationStatus.objects.filter(AYear__in=kwargs.get('AYear'), ASem__in=kwargs.get('ASem'), BYear__in=kwargs.get('BYear'),
+        BSem__in=kwargs.get('BSem'), Dept__in=kwargs.get('Dept'), Regulation__in=kwargs.get('Regulation'), Mode__in=kwargs.get('Mode')).filter(BYear__gt=1)
+    for event in regEvents:
+        print(event.__dict__)
+        curr_df = file[(file['AYear']==event.AYear) & (file['ASem']==event.ASem) & (file['BYear']==event.BYear)\
+            & (file['BSem']==event.BSem) & (file['Dept']==event.Dept) & (file['Regulation']==event.Regulation) & \
+            (file['Mode']==event.Mode) & (file['Category']=='MDC')]
+        subjects = BTSubjects.objects.filter(RegEventId_id=event.id, course__CourseStructure__Category='MDC')
+        rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
+        for rIndex, row in curr_df.iterrows():
+            print(row)
             regNo = row['RegNo']
             mode = 1
             if event.Mode == 'B':
@@ -1053,7 +1085,7 @@ def check_registrations_finalize_script(kwargs):
                     cs_count = student_regs.filter(sub_id__course__CourseStructure_id=cs.id).count()
                     dropped_cs_count = dropped_courses.filter(subject__course__CourseStructure_id=cs.id).count()
                     if (dropped_cs_count+cs_count) != cs.count:
-                        insuff_credits_students.append((event.__str__(), roll.student.RegNo))
+                        insuff_credits_students.append((event.__str__(), roll.student.RegNo, cs.Category))
                         break
     for _ in execess_credits_students:
         print(_)
@@ -1090,8 +1122,11 @@ def finalize_grades(kwargs):
         print(event.__dict__)
         grades_objs = BTStudentGrades_Staging.objects.filter(RegId__RegEventId_id=event.id)
         for grade in grades_objs:
-            fgrade = BTStudentGrades(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
-            fgrade.save()
+            if not BTStudentGrades.objects.filter(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation).exists():
+                fgrade = BTStudentGrades(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation, Grade=grade.Grade, AttGrade=grade.AttGrade)
+                fgrade.save()
+            else:
+                BTStudentGrades.objects.filter(RegId_id=grade.RegId.id, RegEventId=grade.RegEventId, Regulation=grade.Regulation).update(Grade=grade.Grade, AttGrade=grade.AttGrade)
         event.GradeStatus = 0
         event.save()
     RefreshMaterializedViews()
@@ -1135,6 +1170,38 @@ def makeup_registrations_script(file, kwargs):
                 BTStudentRegistrations_Staging.objects.filter(student=roll, RegEventId_id=event.id, sub_id_id=subject_id).update(Mode=row['RMode'])
     return "Completed!!"
 
+def mark_distribution_script(file):
+    file = pd.read_excel(file)
+    for _, row in file.iterrows():
+        if not BTMarksDistribution.objects.filter(Regulation=row['Regulation'], Distribution=row['Distribution'], \
+            DistributionNames=row['DistributionNames'], PromoteThreshold=row['PromoteThreshold']).exists():
+            new_row = BTMarksDistribution(Regulation=row['Regulation'], Distribution=row['Distribution'], \
+            DistributionNames=row['DistributionNames'], PromoteThreshold=row['PromoteThreshold'])
+            new_row.save()
+    return 'Completed!!'
+
+
+
+def clean_dropped_regs_script(file):
+    file = pd.read_excel(file)
+    error_rows=[]
+    for _, row in file.iterrows():
+        related_regs = BTStudentRegistrations.objects.filter(student__student__RegNo=row['RegNo'], sub_id__course__SubCode=row['SubCode'], RegEventId__Regulation=row['Regulation'])
+        if related_regs.count() == 1:
+            grade = BTStudentGrades.objects.filter(Regid=related_regs.first().id).first()
+            if grade.Grade=='F':
+                reg = related_regs.first()
+                dropped_course = BTDroppedRegularCourses(student_id=reg.student.student, subject_id=reg.sub_id_id, RegEventId_id=reg.RegEventId_id, Registered=False)
+                dropped_course.save()
+                related_regs.delete()
+                BTStudentRegistrations_Staging.objects.filter(student__student__RegNo=row['RegNo'], sub_id__course__SubCode=row['SubCode'], RegEventId__Regulation=row['Regulation']).delete()
+            else:
+                error_rows.append((row, "Grade is not F but {}".format(grade.Grade)))
+        else:
+            error_rows.append((row, "There are more than one registration({})".format(related_regs.count())))
+    print(error_rows)
+    return 
+
 dataPrefix = '/home/examsection/Desktop/Data/MarksDB/'
 duprefix = '/home/examsection/Desktop/Data/'
 aprefix = '/home/examsection/Desktop/awsp_testing_v2/database_recreate/'
@@ -1146,8 +1213,11 @@ kwargs = {'AYear':2019, 'ASem':2, 'BYear':1, 'BSem':2, 'Dept':10, 'Regulation':3
 # kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[3], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['B']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[3], 'BSem':[2], 'Dept':[6,5], 'Regulation':[1], 'Mode':['M']}
 # kwargs_grades = {'AYear':[2019], 'ASem':[1], 'BYear':[4], 'BSem':[1], 'Dept':[1], 'Regulation':[1], 'Mode':['R']}
-kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,5,6], 'Regulation':[1], 'Mode':['M']}
-# kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[4], 'BSem':[1,2], 'Dept':[i for i in range(1,9)], 'Regulation':[1], 'Mode':['R']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[1,2,3], 'BYear':[1,2,3,4], 'BSem':[1,2], 'Dept':[1,2,3,4,5,6,7,8,9,10], 'Regulation':[1,2,3,3.1], 'Mode':['R', 'B', 'M']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[1,2], 'BYear':[2,3,4], 'BSem':[1,2], 'Dept':[1,2,3,4,5,6,7,8], 'Regulation':[1,2,3], 'Mode':['R']}
+kwargs_grades = {'AYear':[2020], 'ASem':[1,2], 'BYear':[2,3,4], 'BSem':[1,2], 'Dept':[1,2,3,4,5,6,7,8], 'Regulation':[3.1,2,3,4], 'Mode':['R']}
+# kwargs_grades = {'AYear':[2020], 'ASem':[1,2], 'BYear':[1], 'BSem':[1,2], 'Dept':[9,10], 'Regulation':[4], 'Mode':['R']}
+# kwargs_grades = {'AYear':[2019], 'ASem':[2], 'BYear':[2], 'BSem':[2], 'Dept':[4], 'Regulation':[2], 'Mode':['R']}
 # print(roll_list_script(kwargs_grades))
 # print(rolls_finalize_script(kwargs_grades))
 # print(regular_regs_script(kwargs_grades))
@@ -1156,15 +1226,17 @@ kwargs_grades = {'AYear':[2019], 'ASem':[3], 'BYear':[4], 'BSem':[1], 'Dept':[4,
 # print(dec_regs_file_upload_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(oe_roll_lists_script(dataPrefix+'electives_rolls.csv', kwargs_grades))
 # print(oe_registrations(dataPrefix+'electives_rolls.csv', kwargs_grades))
-# print(check_registrations_finalize_script(kwargs_grades))
+# print(mdc_regs_file_upload_script(dataPrefix+'mdc_rolls.csv', kwargs_grades))
+print(check_registrations_finalize_script(kwargs_grades))
 # print(registrations_finalize(kwargs_grades))
 # print(faculty_assignment(**kwargs_grades))
 # print(add_marks(dataPrefix+'2019-Marks-Data-4.xlsx', kwargs_grades))
 # print(add_grades_threshold(dataPrefix+'Thresholds-R15-R18-R20.xlsx', kwargs_grades))
 # print(add_grades_threshold(dataPrefix+'Thresholds-R17.xlsx', kwargs_grades))
-print(add_Rixgrades(dataPrefix+'2019-Grades-RIX.xlsx', kwargs_grades))
+# print(add_Rixgrades(dataPrefix+'2019-Grades-RIX.xlsx', kwargs_grades))
 # print(add_Rixgrades(aprefix+'2019-I-BT-RGrades-Sem-I-R.xlsx', kwargs))
-print(generate_grades(**kwargs_grades))
-print(verify_grades(aprefix+'All-Grades-2021-v7.xlsx', kwargs_grades))
+# print(generate_grades(**kwargs_grades))
+# print(verify_grades(aprefix+'All-Grades-2021-v7.xlsx', kwargs_grades))
 # print(finalize_marks(kwargs_grades))
 # print(finalize_grades(kwargs_grades))
+# print(mark_distribution_script(aprefix+'r-4-d-10-b-1_marks_distribution.xlsx'))
