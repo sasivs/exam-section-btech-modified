@@ -244,13 +244,15 @@ def generateRollList(request):
             elif event.Mode == 'D':
                 initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
 
-                dropped_courses_students = BTDroppedRegularCourses.objects.filter(Registered=False, subject__RegEventId__BYear=event.BYear, subject__RegEventId__Regulation=event.Regulation).\
+                dropped_courses_students = BTDroppedRegularCourses.objects.filter(Registered=False, subject__RegEventId__BYear=event.BYear, subject__RegEventId__Regulation=event.Regulation, RegEventId__Dept=event.Dept).\
                     exclude(subject__RegEventId__AYear=event.AYear).distinct('student__RegNo').order_by('student__RegNo')
 
                 for student in dropped_courses_students:
-                    if not initial_rolllist.filter(student=student).exists():
-                        roll = BTRollLists_Staging(student=student, RegEventId_id=event.id)
+                    if not initial_rolllist.filter(student=student.student).exists():
+                        roll = BTRollLists_Staging(student=student.student, RegEventId_id=event.id)
                         roll.save()
+                
+                BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student_id__in=dropped_courses_students.values_list('student_id', flat=True)).delete()
             return render(request, 'BTco_ordinator/RollListGenerateSuccess.html')
     else:
         form = GenerateRollListForm(regIDs)
