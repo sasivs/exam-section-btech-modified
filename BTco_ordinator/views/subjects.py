@@ -32,11 +32,11 @@ def subject_upload(request):
             form = SubjectsUploadForm(regIDs, request.POST)
             if form.is_valid():
                 event = BTRegistrationStatus.objects.get(id=form.cleaned_data.get('regID'))
-                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).exclude(Category__in=['OEC', 'OPC'])
+                course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).exclude(Category__in=['OEC', 'OPC', 'MOE']).exclude(Category='MDC', BYear__gt=1)
                 courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
                 excessCourses = []
                 slackCourses = []
-                BTSubjects_Staging.objects.filter(RegEventId_id=event.id).exclude(course__CourseStructure__Category__in=['OEC', 'OPC']).delete()
+                BTSubjects_Staging.objects.filter(RegEventId_id=event.id).exclude(course__CourseStructure__Category__in=['OEC', 'OPC',  'MOE']).exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1).delete()
                 for c_str in course_structure:
                     related_courses = courses.filter(CourseStructure_id=c_str.id)
                     if len(related_courses)==c_str.count:
@@ -58,7 +58,7 @@ def subject_upload(request):
                 return render(request, 'BTco_ordinator/BTSubjectsUpload.html', {'form':form, 'slackCourses': slackCourses, 'msg':msg} )
         elif request.POST.get('name') == 'SubjectsSelectForm':
             event = BTRegistrationStatus.objects.get(id=request.POST.get('event'))
-            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).exclude(Category__in=['OEC', 'OPC'])
+            course_structure = BTCourseStructure.objects.filter(Regulation=event.Regulation, BYear=event.BYear, BSem=event.BSem, Dept=event.Dept).exclude(Category__in=['OEC', 'OPC', 'MOE']).exclude(Category='MDC', BYear__gt=1)
             courses = BTCourses.objects.filter(CourseStructure_id__in=course_structure.values_list('id', flat=True))
             excessCourses = []
             slackCourses = []
@@ -195,7 +195,7 @@ def subject_finalize(request):
                 subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), \
                     course__CourseStructure__Category__in=['OEC', 'OPC'])
             else:
-                subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'))
+                subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID')).exclude(course__CourseStructure__Category__in=['MOE']).exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
             for sub in subjects:
                 s=BTSubjects(RegEventId_id=sub.RegEventId_id, course_id=sub.course_id)
                 s.save() 

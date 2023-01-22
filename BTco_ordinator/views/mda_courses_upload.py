@@ -28,7 +28,7 @@ def add_mda_courses(request):
         regIDs = BTRegistrationStatus.objects.filter(Status=1, RegistrationStatus=1, BYear=coordinator.BYear, Dept=coordinator.Dept, Mode='R', \
             BSem__in=valid_course_structures.values_list('BSem', flat=True))
     if request.method == 'POST':
-        form = MDACoursesUploadForm(regIDs, request.POST)
+        form = MDACoursesUploadForm(regIDs, request.POST, request.FILES)
         if form.is_valid():
             if request.POST.get('Submit'):
                 file = form.cleaned_data.get('file')
@@ -45,10 +45,10 @@ def add_mda_courses(request):
                     if (row[2], row[3], row[4], row[6]) != (event.BYear, event.BSem, event.Dept, event.Regulation):
                         invalidData.append(row)
                         continue
-                    course_struct_obj = BTCourseStructure.objects.filter(Category=row[10].upper(), Type=row[9].upper(), Creditable=row[7], Credits=row[8],\
-                        Regulation=row[6], BYear=row[2], BSem=row[3], Dept=row[4]).first()
+                    course_struct_obj = BTCourseStructure.objects.filter(Category=row[10].upper(), Type=row[9].upper(), Creditable=row[7], Credits__lte=row[8],\
+                        Regulation=row[6], BYear=row[2], BSem=row[3], Dept=row[4], Rigid=False).first()
                     mark_dis = row[15].split(';')
-                    mark_distribution = BTMarksDistribution.objects.filter(Regulation=form.cleaned_data.get('Regulation'), Distribution=mark_dis[0], \
+                    mark_distribution = BTMarksDistribution.objects.filter(Regulation=event.Regulation, Distribution=mark_dis[0], \
                         DistributionNames=mark_dis[-1], PromoteThreshold=mark_dis[1]).first()
                     newRow = (row[0], row[1], row[5], course_struct_obj.id, row[11], row[12], row[13], row[14], mark_distribution.id)
 
@@ -97,8 +97,9 @@ def add_mda_courses(request):
                         return render(request, 'BTco_ordinator/MDAcoursesUpload.htmll', {'form':form, 'invalidData':invalidData, 'msg': msg})
             elif request.POST.get('download'):
                 from ADAUGDB.utils import CoursesTemplateExcelFile
+                event = regIDs.filter(id=form.cleaned_data.get('regID')).first()
                 response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
-                response['Content-Disposition'] = 'attachment; filename=R-{regulation}_BYear-{byear}.xlsx'.format(regulation=form.cleaned_data.get('Regulation'), byear=form.cleaned_data.get("BYear"))
+                response['Content-Disposition'] = 'attachment; filename={event_str}.xlsx'.format(event_str=event.__str__())
                 BookGenerator = CoursesTemplateExcelFile(event.Regulation, event.BYear)
                 workbook = BookGenerator.generate_workbook()
                 workbook.save(response)
@@ -130,7 +131,7 @@ def mda_subject_finalize(request):
         form = SubjectFinalizeEventForm(regIDs, request.POST)
         if(form.is_valid()):
             subjects = []
-            subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), course__CourseStructure__in=['MDC', 'MOE'])
+            subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), course__CourseStructure__Category__in=['MDC', 'MOE'])
             for sub in subjects:
                 s=BTSubjects(RegEventId_id=sub.RegEventId_id, course_id=sub.course_id)
                 s.save() 

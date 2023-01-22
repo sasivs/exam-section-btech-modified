@@ -42,7 +42,8 @@ def btech_regular_registration(request):
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
-                    subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event)
+                    subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event).exclude(course__CourseStructure__Category__in=['MOE']).\
+                        exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
@@ -56,11 +57,12 @@ def btech_regular_registration(request):
                     msg = 'Your data upload for Student Registrations has been done successfully.'
                     return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'form':form, 'msg':msg})
                 else:
-                    rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', values=True))
+                    rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', flat=True))
                     if len(rolls)==0:
                         msg = 'There is no roll list for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'msg':msg})
-                    subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event)
+                    subs = BTSubjects.objects.filter(~Q(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']),RegEventId=event).exclude(course__CourseStructure__Category__in=['MOE']).\
+                        exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
                     if len(subs)==0:
                         msg = 'There are no subjects for the selected registration event.'
                         return render(request, 'BTco_ordinator/BTRegularRegistrationUpload.html', {'msg':msg})
@@ -140,7 +142,8 @@ def registrations_finalize(request):
                                 break
             if execess_credits_students or insuff_credits_students:
                 return render(request, 'BTco_ordinator/BTRegistrationsFinalize.html',{'form':form, 'excess_credits':execess_credits_students, 'insuff_credits':insuff_credits_students})
-            regs = regs.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC'])
+            regs = regs.filter(RegEventId=currentRegEventId).exclude(sub_id__course__CourseStructure__Category__in=['OEC', 'OPC']).exclude(sub_id__course__CourseStructure__Category__in=['MOE']).\
+                        exclude(sub_id__course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
             for reg in regs:
                 roll = rolllist.filter(student=reg.student.student).first()
                 if not BTStudentRegistrations.objects.filter(student=roll, RegEventId=reg.RegEventId, Mode=reg.Mode, sub_id=reg.sub_id).exists():
@@ -184,7 +187,7 @@ def regular_regs_script(kwargs):
             msg = 'Your data upload for Student Registrations has been done successfully.'
             return msg
         else:
-            rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', values=True))
+            rolls = BTRollLists_Staging.objects.filter(RegEventId_id=event.id).exclude(student__in=not_registered_students.values_list('Student', flat=True))
             if len(rolls)==0:
                 msg = 'There is no roll list for the selected registration event.'
                 return msg

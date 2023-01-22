@@ -275,6 +275,7 @@ class BacklogRegistrationForm(forms.Form):
                     studentBacklogs = studentBacklogs.exclude(sub_id__in=subjects.filter(course__CourseStructure__Category__in=['OEC', 'OPC', 'DEC']))
                 if event.ASem == 2:
                     studentBacklogs = studentBacklogs.exclude(sub_id__in=studentRegistrations.filter(RegEventId__ASem=1).values_list('sub_id_id', flat=True))
+                print(studentBacklogs, studentRegistrations)
                 self.addBacklogSubjects(studentBacklogs,registeredBacklogs,Selection)
                 self.addRegularSubjects(studentRegularRegistrations)
                 self.addDroppedRegularSubjects(dropped_subjects)
@@ -466,7 +467,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
         self.fields['RegEvent'] = forms.CharField(label='Registration Evernt', widget = forms.Select(choices=regEventIDKVs,\
             attrs={'onchange':"submit();"}))
         if self.data.get('RegEvent'):
-            event = BTRegistrationStatus.objects.filter(id=self.data.get('RegEvent').first())
+            event = regIDs.filter(id=self.data.get('RegEvent')).first()
             dropped_regno = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
             dropped_regno = [(reg.id, reg.student.RegNo) for reg in dropped_regno]  
             dropped_regno = [('','--Select Roll Number --')] + dropped_regno
@@ -884,7 +885,7 @@ class MDACoursesUploadForm(forms.Form):
         REGEVENT_CHOICES = [(event.id, event.__str__()) for event in regIds]
         REGEVENT_CHOICES = [('', 'Choose Event')] + REGEVENT_CHOICES
         self.fields['regID'] = forms.CharField(label='Choose Registration ID', required=False, max_length=26, widget=forms.Select(choices=REGEVENT_CHOICES, attrs={'required':'True'}))
-        self.fields['file'] = forms.FileField(validators=[validate_file_extension])
+        self.fields['file'] = forms.FileField(required=False, validators=[validate_file_extension])
 
 class MDARegistrationsForm(forms.Form):
     def __init__(self, regIDs, *args, **kwargs):
