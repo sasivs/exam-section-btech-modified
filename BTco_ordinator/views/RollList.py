@@ -244,7 +244,7 @@ def generateRollList(request):
             elif event.Mode == 'D':
                 initial_rolllist = BTRollLists_Staging.objects.filter(RegEventId_id=event.id)
 
-                dropped_courses_students = BTDroppedRegularCourses.objects.filter(Registered=False, subject_RegEventId__BYear=event.BYear, subject__RegEventId__Regulation=event.Regulation).\
+                dropped_courses_students = BTDroppedRegularCourses.objects.filter(Registered=False, subject__RegEventId__BYear=event.BYear, subject__RegEventId__Regulation=event.Regulation).\
                     exclude(subject__RegEventId__AYear=event.AYear).distinct('student__RegNo').order_by('student__RegNo')
 
                 for student in dropped_courses_students:
