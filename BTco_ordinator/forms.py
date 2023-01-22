@@ -480,7 +480,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 self.radioFields = []
                 self.selectFields = [self.fields['RegEvent'], self.fields['RegNo']]
                 roll = BTRollLists_Staging.objects.filter(id=self.data['RegNo']).first()
-                droppedCourses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__BYear=event.BYear, RegEventId__regulation=event.Regualtion)
+                droppedCourses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__BYear=event.BYear, RegEventId__regulation=event.Regulation)
 
                 studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student=roll,\
                     RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation)
