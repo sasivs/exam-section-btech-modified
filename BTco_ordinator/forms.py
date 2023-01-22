@@ -482,7 +482,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 roll = BTRollLists_Staging.objects.filter(id=self.data['RegNo']).first()
                 droppedCourses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__BYear=event.BYear, RegEventId__Regulation=event.Regulation)
 
-                studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student=roll,\
+                studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student=roll.student,\
                     RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation)
 
                 Selection={reg.sub_id_id:reg.Mode for reg in studentRegistrations}
