@@ -1148,7 +1148,7 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                                 'D', reg.subject.id, reg.RegEventId.__str__(), reg.id, cs.count, cs_count+dropped_cs_count, '')) 
 
                         related_subjects = BTSubjects.objects.filter(RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__BSem=asem, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R', course__CourseStructure_id=cs.id).\
-                            exclude(Q(id__in=cs_registrations.values_list('sub_id_id', flat=True))|Q(id__in=dropped_cs_registrations.values_list('subject_id', flat=True)))        
+                            exclude(Q(course_id__in=cs_registrations.values_list('sub_id__course_id', flat=True))|Q(course_id__in=dropped_cs_registrations.values_list('subject__course_id', flat=True)))        
 
                         for subject in related_subjects:
                             if subject.course.CourseStructure.Category in ['OEC', 'OPC']:
