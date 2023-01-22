@@ -480,7 +480,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
                 self.radioFields = []
                 self.selectFields = [self.fields['RegEvent'], self.fields['RegNo']]
                 roll = BTRollLists_Staging.objects.filter(id=self.data['RegNo']).first()
-                droppedCourses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__BYear=event.BYear, RegEventId__Regulation=event.Regulation)
+                droppedCourses = BTDroppedRegularCourses.objects.filter(student=roll.student, RegEventId__BYear=event.BYear, RegEventId__BSem=event.BSem, RegEventId__Regulation=event.Regulation)
 
                 studentRegistrations = BTStudentRegistrations_Staging.objects.filter(student__student=roll.student,\
                     RegEventId__AYear=event.AYear, RegEventId__ASem=event.ASem, RegEventId__Regulation=event.Regulation)
@@ -527,7 +527,7 @@ class DroppedRegularRegistrationsForm(forms.Form):
     def addDroppedRegularSubjects(self, dropped_courses, registeredDroppedCourses,Selection):
         for bRow in dropped_courses:
             self.fields['Check' + str(bRow.subject.id)] = forms.BooleanField(required=False, \
-                widget=forms.CheckboxInput(attrs={'checked': True}))
+                widget=forms.CheckboxInput())
             self.fields['RadioMode' + str(bRow.subject.id)] = forms.ChoiceField(required=False, \
                 widget=forms.RadioSelect(attrs={'checked': True}), choices=[(1, 'Study Mode')])
             self.checkFields.append(self['Check' + str(bRow.subject.id)])
