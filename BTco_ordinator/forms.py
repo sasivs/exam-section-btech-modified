@@ -1094,16 +1094,16 @@ class CheckRegistrationsFinalizeForm(forms.Form):
                     self.myFields.append((reg.subject.course.SubCode, reg.subject.course.SubName, reg.subject.course.CourseStructure.Credits,self['Check' + str(reg.subject.id)], self['RadioMode' + str(reg.subject.id)],\
                         'D', reg.subject.id, reg.RegEventId.__str__(), reg.id, '', '', ''))
                 
-                self.student = BTStudentInfo.objects.filter(id=self.data.get('excess_credits_RegNo')).first()
+                self.student = BTStudentInfo.objects.filter(id=student_registrations[0].student.student.RegNo).first()
             
             if self.data.get('insuff_credits_RegNo'):
-                self.student = BTStudentInfo.objects.filter(id=self.data.get('insuff_credits_RegNo')).first()
                 self.myFields = []
                 self.checkFields = []
                 self.radioFields = []
                 self.deleteFields = []
                 student_registrations = registrations.filter(student_id=self.data.get('insuff_credits_RegNo'))
                 roll = student_registrations.first().student
+                self.student = BTStudentInfo.objects.filter(id=roll.student.id).first()
                 dropped_courses = BTDroppedRegularCourses.objects.filter(student_id=roll.student.id, Registered=False,  RegEventId__AYear=ayear, RegEventId__ASem=asem, RegEventId__BYear=byear, RegEventId__Dept=dept, RegEventId__Regulation=regulation, RegEventId__Mode='R')
                 
                 for cs in byear_curriculum:
