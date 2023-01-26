@@ -195,7 +195,7 @@ def subject_finalize(request):
                 subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID'), \
                     course__CourseStructure__Category__in=['OEC', 'OPC'])
             else:
-                subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID')).exclude(course__CourseStructure__Category__in=['MOE']).exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
+                subjects = BTSubjects_Staging.objects.filter(RegEventId_id=form.cleaned_data.get('regID')).exclude(course__CourseStructure__Category__in=['MOE', 'OPC', 'OEC']).exclude(course__CourseStructure__Category='MDC', RegEventId__BYear__gt=1)
             for sub in subjects:
                 s=BTSubjects(RegEventId_id=sub.RegEventId_id, course_id=sub.course_id)
                 s.save() 
