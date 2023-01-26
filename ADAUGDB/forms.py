@@ -246,14 +246,14 @@ class CourseStructureStatusForm(forms.Form):
 class CourseStructureDeletionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(CourseStructureDeletionForm, self).__init__(*args, **kwargs)
-        regulations = BTRegulation.objects.all().distinct()
+        regulations = BTRegulation.objects.all().distinct().order_by('Regulation')
         CHOICES = [('', 'Choose Event')]
         CHOICES += [(str(dept)+':'+str(year)+':'+str(sem)+':'+str(regulation.Regulation),str(DEPARTMENTS[dept-1])+':'+str(YEARS[year])+':'+str(SEMS[sem])+':'+str(regulation.Regulation))for regulation in regulations for dept in range(1,11) for year in range(1,5) for sem in range(1,3) if not((year==1 and dept<9)or(year>=2 and dept>=9))]
         self.fields['event'] = forms.CharField(label='Event', widget = forms.Select(choices=CHOICES, attrs={'onchange':'submit();'}))
         self.eventBox = self['event']
 
         if self.data.get('event'):
-            event = [int(x) for x in self.data.get('event').split(':')]
+            event = [float(x) for x in self.data.get('event').split(':')]
             course_structure = BTCourseStructure.objects.filter(Dept=event[0], BYear=event[1], BSem=event[2], Regulation=event[3]) 
             self.myFields = []
             for cs in course_structure:
